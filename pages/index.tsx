@@ -1,15 +1,11 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
     <>
       <Head>
         <meta charSet='UTF-8' />
-        <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+        <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
         <meta
           name='description'
           content='Restaurant App To Find Order And Delicious Food'
@@ -27,11 +23,6 @@ export default function Home() {
         <link rel='manifest' href='./public/manifest.json' />
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='' />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap'
-          rel='stylesheet'
-          crossOrigin='anonymous'
-        />
         <link
           rel='shortcut icon'
           type='image/png'
@@ -183,7 +174,6 @@ export default function Home() {
         <meta name='twitter:title' content='{{pageTitle}}' />
         <meta name='twitter:description' content='{{description}}' />
         <meta name='twitter:image' content='{{imageUrl}}' />
-        <script src='https://www.paypal.com/sdk/js?client-id=AVHjwQ-58XYH3WXHbZTF8JOcnCIFdHVAA-XpasumZ72E_g7nQy4ppsOBi33IQiLArVrsmMIk58zxyvFh'></script>
         <title>Resaturant App</title>
       </Head>
       <h1>Hello NextJS</h1>
