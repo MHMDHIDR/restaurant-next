@@ -10,7 +10,7 @@ export default function Document() {
           crossOrigin='anonymous'
         />
       </Head>
-      <body>
+      <body className='flex flex-col justify-between h-screen overflow-x-hidden transition-all bg-gray-300'>
         <Main />
         <NextScript />
         <script src='https://www.paypal.com/sdk/js?client-id=AVHjwQ-58XYH3WXHbZTF8JOcnCIFdHVAA-XpasumZ72E_g7nQy4ppsOBi33IQiLArVrsmMIk58zxyvFh' />
