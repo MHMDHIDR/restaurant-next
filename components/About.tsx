@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
-import useAxios from '../hooks/useAxios'
+// import useAxios from '../hooks/useAxios'
 
 const About = () => {
   const [data, setData] = useState<string | any>()
 
-  const { response } = useAxios({ url: '/settings' })
+  // const { response } = useAxios({ url: '/settings' })
 
-  useEffect(() => {
-    if (response !== null) {
-      setData(response)
-    }
-  }, [response])
+  // useEffect(() => {
+  //   if (response !== null) {
+  //     setData(response)
+  //   }
+  // }, [response])
 
   return (
     <section id='about' className='py-12 my-8 about'>

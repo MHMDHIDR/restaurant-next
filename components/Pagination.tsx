@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import Arrow from './Icons/Arrow'
 import scrollToView from '../utils/functions/scrollToView'
 import { Key } from 'react'
@@ -13,11 +13,11 @@ const Pagination = ({
   itemsPerPage,
   category
 }: PaginationProps) => {
-  numberOfPages = [...Array(numberOfPages).keys()]
+  // numberOfPages = [...Array(numberOfPages).keys()]
 
   // only render pagination if there is no food id (not multiple food items)
   if (!foodId) {
-    if (count > itemsPerPage) {
+    if (count > 10 /*itemsPerPage*/) {
       return (
         <div
           className='flex flex-wrap items-center justify-center mt-8 text-lg select-none ltr'
@@ -25,7 +25,7 @@ const Pagination = ({
         >
           {/* Previous Link Arrow */}
           <Link
-            to={`/${routeName}${
+            href={`/${routeName}${
               category
                 ? '/' + category + '/' + (pageNum - 1 === 1 ? '' : pageNum - 1)
                 : pageNum - 1 === 1
@@ -44,7 +44,7 @@ const Pagination = ({
             {numberOfPages.map((page: number, index: Key) => (
               <Link
                 key={index}
-                to={`/${routeName}${
+                href={`/${routeName}${
                   category
                     ? '/' + category + '/' + (page + 1 === 1 ? '' : page + 1)
                     : page + 1 === 1
@@ -65,7 +65,7 @@ const Pagination = ({
 
           {/* Next Link Arrow */}
           <Link
-            to={`/${routeName}${
+            href={`/${routeName}${
               category ? '/' + category + '/' + (pageNum + 1) : '/' + (pageNum + 1)
             }`}
             className={`${

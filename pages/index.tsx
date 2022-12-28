@@ -1,5 +1,11 @@
 import Head from 'next/head'
+import About from '../components/About'
+import Contact from '../components/Contact'
+import FetchCategories from '../components/FetchCategories'
+import Footer from '../components/Footer'
 import Layout from '../components/Layout'
+import Menu from '../components/Menu'
+import NewFood from '../components/NewFood'
 
 const Index = () => (
   <>
@@ -176,7 +182,14 @@ const Index = () => (
       <meta name='twitter:image' content='{{imageUrl}}' />
       <title>Resaturant App</title>
     </Head>
-    <Layout>hi</Layout>
+    <Layout>
+      <Menu />
+      <FetchCategories />
+      <NewFood />
+      <About />
+      <Contact />
+      <Footer />
+    </Layout>
   </>
 )
 

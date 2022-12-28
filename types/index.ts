@@ -248,3 +248,9 @@ export interface orderInfoProps {
   status: string
   email: string
 }
+
+//Notification Types
+export interface notificationProps {
+  sendStatus: number
+  sendStatusMsg: string
+}

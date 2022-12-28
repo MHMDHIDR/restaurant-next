@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 export const AcceptBtn = ({ id, email }) => (
   <button

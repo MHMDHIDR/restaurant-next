@@ -1,4 +1,6 @@
-const Notification = ({ sendStatus, sendStatusMsg }) => {
+import { notificationProps } from '../types'
+
+const Notification = ({ sendStatus, sendStatusMsg }: notificationProps) => {
   return sendStatusMsg ? (
     <p
       className={`notification__msg relative border border-solid py-4 px-6 mb-10 rounded-lg text-center font-bold text-sm sm:text-base transition-all duration-500 rtl ${
@@ -14,7 +16,7 @@ const Notification = ({ sendStatus, sendStatusMsg }) => {
         title='close noification'
         onClick={e => {
           const noification = (e.target as HTMLButtonElement).parentElement
-          noification.remove()
+          // noification.remove()
         }}
       >
         X

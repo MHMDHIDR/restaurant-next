@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import ThemeToggler from '../ThemeToggler'
+import Link from 'next/link'
+// import ThemeToggler from '../ThemeToggler'
 import Logo from '../Icons/Logo'
 
-import useAxios from '../../hooks/useAxios'
+// import useAxios from '../../hooks/useAxios'
 
 import menuToggler from '../../utils/functions/menuToggler'
 
@@ -15,11 +15,11 @@ const DashboardNav = () => {
   }
 
   const [websiteLogoDisplayPath, setWebsiteLogoDisplayPath] = useState('')
-  const { response } = useAxios({ url: '/settings' })
+  // const { response } = useAxios({ url: '/settings' })
 
-  useEffect(() => {
-    if (response !== null) setWebsiteLogoDisplayPath(response.websiteLogoDisplayPath)
-  }, [response])
+  // useEffect(() => {
+  //   if (response !== null) setWebsiteLogoDisplayPath(response.websiteLogoDisplayPath)
+  // }, [response])
 
   return (
     <nav
@@ -34,7 +34,7 @@ const DashboardNav = () => {
             src={websiteLogoDisplayPath}
             width='50'
             height='50'
-            className='w-10 xl:w-14 h-10 xl:h-14 rounded-2xl opacity-50 hover:opacity-80'
+            className='w-10 h-10 opacity-50 xl:w-14 xl:h-14 rounded-2xl hover:opacity-80'
             alt='Website Logo'
           />
         ) : (
@@ -42,18 +42,18 @@ const DashboardNav = () => {
         )}
       </Link>
 
-      <ThemeToggler />
+      {/* <ThemeToggler /> */}
 
       <div className='flex flex-wrap justify-end gap-4'>
         <Link
-          to='/#'
+          href='/#'
           className='inline-block px-2 py-1 text-white bg-orange-700 border rounded-lg cursor-pointer hover:bg-opacity-30'
           onClick={handleLogout}
         >
           تسجيل الخروج
         </Link>
         <Link
-          to='/'
+          href='/'
           className='inline-block px-2 py-1 text-white bg-orange-700 border rounded-lg cursor-pointer hover:bg-opacity-30'
         >
           زيارة الموقع

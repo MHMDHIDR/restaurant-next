@@ -1,143 +1,145 @@
 import { useState, useEffect, useCallback, Key } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { DotButton, PrevButton, NextButton } from './EmblaCarouselButtons'
-import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react'
+// import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react'
 import { Thumb } from './EmblaCarouselThumb'
 import { removeSlug } from '../../utils/functions/slug'
 
-const EmblaCarousel = ({ slides, media, smallView = false }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false)
-  const [nextBtnEnabled, setNextBtnEnabled] = useState(false)
-  const [scrollSnaps, setScrollSnaps] = useState([])
+const EmblaCarousel = () => null
 
-  const [mainViewportRef, embla] = useEmblaCarousel({ skipSnaps: false })
-  const [thumbViewportRef, emblaThumbs] = useEmblaCarousel({
-    containScroll: 'keepSnaps',
-    selectedClass: '',
-    dragFree: true
-  } as EmblaOptionsType)
-  const scrollPrev = useCallback(() => embla && embla.scrollPrev(), [embla])
-  const scrollNext = useCallback(() => embla && embla.scrollNext(), [embla])
-  const scrollTo = useCallback(index => embla && embla.scrollTo(index), [embla])
+// const EmblaCarousel = ({ slides, media, smallView = false }) => {
+//   const [selectedIndex, setSelectedIndex] = useState(0)
+//   const [prevBtnEnabled, setPrevBtnEnabled] = useState(false)
+//   const [nextBtnEnabled, setNextBtnEnabled] = useState(false)
+//   const [scrollSnaps, setScrollSnaps] = useState([])
 
-  const onThumbClick = useCallback(
-    (index: number) => {
-      if (!embla || !emblaThumbs) return
-      if (emblaThumbs.clickAllowed()) embla.scrollTo(index)
-    },
-    [embla, emblaThumbs]
-  )
+//   const [mainViewportRef, embla] = useEmblaCarousel({ skipSnaps: false })
+//   const [thumbViewportRef, emblaThumbs] = useEmblaCarousel({
+//     containScroll: 'keepSnaps',
+//     selectedClass: '',
+//     dragFree: true
+//   } as EmblaOptionsType)
+//   const scrollPrev = useCallback(() => embla && embla.scrollPrev(), [embla])
+//   const scrollNext = useCallback(() => embla && embla.scrollNext(), [embla])
+//   const scrollTo = useCallback(index => embla && embla.scrollTo(index), [embla])
 
-  const onSelect = useCallback(() => {
-    if (!embla || !emblaThumbs) return
-    setSelectedIndex(embla.selectedScrollSnap())
-    emblaThumbs.scrollTo(embla.selectedScrollSnap())
+//   const onThumbClick = useCallback(
+//     (index: number) => {
+//       if (!embla || !emblaThumbs) return
+//       if (emblaThumbs.clickAllowed()) embla.scrollTo(index)
+//     },
+//     [embla, emblaThumbs]
+//   )
 
-    setPrevBtnEnabled(embla.canScrollPrev())
-    setNextBtnEnabled(embla.canScrollNext())
-  }, [embla, emblaThumbs, setSelectedIndex])
+//   const onSelect = useCallback(() => {
+//     if (!embla || !emblaThumbs) return
+//     setSelectedIndex(embla.selectedScrollSnap())
+//     emblaThumbs.scrollTo(embla.selectedScrollSnap())
 
-  useEffect(() => {
-    if (!embla) return
-    onSelect()
-    setScrollSnaps(embla.scrollSnapList())
-    embla.on('select', onSelect)
-  }, [embla, setScrollSnaps, onSelect])
+//     setPrevBtnEnabled(embla.canScrollPrev())
+//     setNextBtnEnabled(embla.canScrollNext())
+//   }, [embla, emblaThumbs, setSelectedIndex])
 
-  //get food id, image, name, price from the array of object
-  const IdByIndex = (index: number) => media[index % media.length].foodId
-  const priceByIndex = (index: number) => media[index % media.length].foodPrice
-  const mediaByIndex = (index: number) => media[index % media.length].foodImgDisplayPath
-  const nameByIndex = (index: number) => media[index % media.length].foodName
-  const HEADER_BG_IMG = '/assets/img/header-bg-1.webp' // or using data.heroBg
+//   useEffect(() => {
+//     if (!embla) return
+//     onSelect()
+//     setScrollSnaps(embla.scrollSnapList())
+//     embla.on('select', onSelect)
+//   }, [embla, setScrollSnaps, onSelect])
 
-  return (
-    <div dir={`ltr`}>
-      {/* Big Menu View */}
-      <div
-        className={`w-full relative p-1 rounded-xl cursor-grab bg-center before:absolute before:bg-gray-100 before:dark:bg-gray-600 before:inset-0 before:bg-opacity-[.85] before:dark:bg-opacity-[.85] before:rounded-xl before:transition-colors`}
-        style={{ backgroundImage: `url(${HEADER_BG_IMG})` }}
-      >
-        <div className='w-full overflow-hidden' ref={mainViewportRef}>
-          <div className='flex -ml-2 select-none'>
-            {slides.map((index: number) => (
-              <Link
-                to={`/view/item/${IdByIndex(index)}`}
-                className='relative min-w-full pl-2'
-                key={index}
-              >
-                {priceByIndex(index) && (
-                  <span className='absolute z-40 flex items-center justify-center px-4 py-2 text-base font-bold text-white bg-green-900 sm:px-6 sm:text-xl rounded-xl top-3 left-4 rtl'>
-                    {priceByIndex(index)} ر.ق
-                  </span>
-                )}
-                <div
-                  className={`relative overflow-hidden rounded-xl ${
-                    smallView
-                      ? slides.length > 1 //many images
-                        ? 'h-[19.3rem]'
-                        : 'h-[19.3rem] sm:[19.3rem] md:h-[19.3rem]'
-                      : 'h-[19.3rem] sm:[19.3rem] md:h-96'
-                  }`}
-                >
-                  <img
-                    loading='lazy'
-                    className={`absolute z-30 block object-cover w-full min-h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 hover:scale-110 transition-transform duration-200`}
-                    src={mediaByIndex(index)}
-                    alt={removeSlug(nameByIndex(index))}
-                  />
-                </div>
-                {!smallView && (
-                  <span className='inline-block w-full py-2 text-base text-center sm:text-2xl'>
-                    {removeSlug(nameByIndex(index))}
-                  </span>
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-        {slides.length > 1 && (
-          <>
-            <PrevButton onClick={scrollPrev} enabled={prevBtnEnabled} />
-            <NextButton onClick={scrollNext} enabled={nextBtnEnabled} />
-          </>
-        )}
-      </div>
+//   //get food id, image, name, price from the array of object
+//   const IdByIndex = (index: number) => media[index % media.length].foodId
+//   const priceByIndex = (index: number) => media[index % media.length].foodPrice
+//   const mediaByIndex = (index: number) => media[index % media.length].foodImgDisplayPath
+//   const nameByIndex = (index: number) => media[index % media.length].foodName
+//   const HEADER_BG_IMG = '/assets/img/header-bg-1.webp' // or using data.heroBg
 
-      {/* Dots (buttons) View */}
-      {!smallView && (
-        <div className='flex justify-center pt-3 list-none'>
-          {scrollSnaps.map((_, index) => (
-            <DotButton
-              key={index}
-              selected={index === selectedIndex}
-              onClick={() => scrollTo(index)}
-            />
-          ))}
-        </div>
-      )}
+//   return (
+//     <div dir={`ltr`}>
+//       {/* Big Menu View */}
+//       <div
+//         className={`w-full relative p-1 rounded-xl cursor-grab bg-center before:absolute before:bg-gray-100 before:dark:bg-gray-600 before:inset-0 before:bg-opacity-[.85] before:dark:bg-opacity-[.85] before:rounded-xl before:transition-colors`}
+//         style={{ backgroundImage: `url(${HEADER_BG_IMG})` }}
+//       >
+//         <div className='w-full overflow-hidden' ref={mainViewportRef}>
+//           <div className='flex -ml-2 select-none'>
+//             {slides.map((index: number) => (
+//               <Link
+//                 href={`/view/item/${IdByIndex(index)}`}
+//                 className='relative min-w-full pl-2'
+//                 key={index}
+//               >
+//                 {priceByIndex(index) && (
+//                   <span className='absolute z-40 flex items-center justify-center px-4 py-2 text-base font-bold text-white bg-green-900 sm:px-6 sm:text-xl rounded-xl top-3 left-4 rtl'>
+//                     {priceByIndex(index)} ر.ق
+//                   </span>
+//                 )}
+//                 <div
+//                   className={`relative overflow-hidden rounded-xl ${
+//                     smallView
+//                       ? slides.length > 1 //many images
+//                         ? 'h-[19.3rem]'
+//                         : 'h-[19.3rem] sm:[19.3rem] md:h-[19.3rem]'
+//                       : 'h-[19.3rem] sm:[19.3rem] md:h-96'
+//                   }`}
+//                 >
+//                   <img
+//                     loading='lazy'
+//                     className={`absolute z-30 block object-cover w-full min-h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 hover:scale-110 transition-transform duration-200`}
+//                     src={mediaByIndex(index)}
+//                     alt={removeSlug(nameByIndex(index))}
+//                   />
+//                 </div>
+//                 {!smallView && (
+//                   <span className='inline-block w-full py-2 text-base text-center sm:text-2xl'>
+//                     {removeSlug(nameByIndex(index))}
+//                   </span>
+//                 )}
+//               </Link>
+//             ))}
+//           </div>
+//         </div>
+//         {slides.length > 1 && (
+//           <>
+//             <PrevButton onClick={scrollPrev} enabled={prevBtnEnabled} />
+//             <NextButton onClick={scrollNext} enabled={nextBtnEnabled} />
+//           </>
+//         )}
+//       </div>
 
-      {/* Thumb View */}
-      {slides.length > 1 && (
-        <div className='relative w-full p-2 transition-colors bg-gray-100 dark:bg-gray-600 rounded-xl'>
-          <div className='w-full overflow-hidden' ref={thumbViewportRef}>
-            <div className={`flex justify-between cursor-default select-none`}>
-              {slides.map((index: number) => (
-                <Thumb
-                  onClick={() => onThumbClick(index)}
-                  selected={index === selectedIndex}
-                  imgSrc={mediaByIndex(index)}
-                  alt={removeSlug(nameByIndex(index))}
-                  key={index}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
+//       {/* Dots (buttons) View */}
+//       {!smallView && (
+//         <div className='flex justify-center pt-3 list-none'>
+//           {scrollSnaps.map((_, index) => (
+//             <DotButton
+//               key={index}
+//               selected={index === selectedIndex}
+//               onClick={() => scrollTo(index)}
+//             />
+//           ))}
+//         </div>
+//       )}
+
+//       {/* Thumb View */}
+//       {slides.length > 1 && (
+//         <div className='relative w-full p-2 transition-colors bg-gray-100 dark:bg-gray-600 rounded-xl'>
+//           <div className='w-full overflow-hidden' ref={thumbViewportRef}>
+//             <div className={`flex justify-between cursor-default select-none`}>
+//               {slides.map((index: number) => (
+//                 <Thumb
+//                   onClick={() => onThumbClick(index)}
+//                   selected={index === selectedIndex}
+//                   imgSrc={mediaByIndex(index)}
+//                   alt={removeSlug(nameByIndex(index))}
+//                   key={index}
+//                 />
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   )
+// }
 
 export default EmblaCarousel

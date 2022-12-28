@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { NoItemsProps } from '../types'
 import goTo from '../utils/functions/goTo'
 

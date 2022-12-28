@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-import { CartContext } from '../Contexts/CartContext'
+// import { CartContext } from '../Contexts/CartContext'
 
-import useAxios from '../hooks/useAxios'
+// import useAxios from '../hooks/useAxios'
 
 import abstractText from '../utils/functions/abstractText'
 import { removeSlug } from '../utils/functions/slug'
@@ -16,18 +16,18 @@ import { viewFoodDataProps } from '../types'
 const NewFood = () => {
   const [data, setData] = useState<any>()
 
-  const { ...response } = useAxios({ url: '/foods/1/7?category=foods' })
+  // const { ...response } = useAxios({ url: '/foods/1/7?category=foods' })
 
-  useEffect(() => {
-    if (response.response !== null) {
-      setData(response.response)
-    }
-  }, [response.response])
+  // useEffect(() => {
+  //   if (response.response !== null) {
+  //     setData(response.response)
+  //   }
+  // }, [response.response])
 
-  const { items } = useContext(CartContext)
+  // const { items } = useContext(CartContext)
 
   return (
-    <section id='new' className='py-12 my-8 new overflow-x-hidden'>
+    <section id='new' className='py-12 my-8 overflow-x-hidden new'>
       <div className='container mx-auto text-center'>
         <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
           الوجبات الجديدة
@@ -61,30 +61,31 @@ const NewFood = () => {
                 cToppings={item.foodToppings}
                 cImg={item.foodImgs}
                 cImgAlt={item.foodName}
-                cCtaLabel={
-                  //add to cart button, if item is already in cart then disable the button
-                  items.find(itemInCart => itemInCart.cItemId === item._id) ? (
-                    <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
-                      <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
-                        ❌
-                      </span>
-                      &nbsp;&nbsp;
-                      <span className='mr-4 text-center pointer-events-none'>
-                        إحذف من السلة
-                      </span>
-                    </div>
-                  ) : (
-                    <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
-                      <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
-                        🛒
-                      </span>
-                      &nbsp;&nbsp;
-                      <span className='mr-4 text-center pointer-events-none'>
-                        أضف إلى السلة
-                      </span>
-                    </div>
-                  )
-                }
+                cCtaLabel={'testing'}
+                // cCtaLabel={
+                //   //add to cart button, if item is already in cart then disable the button
+                //   items.find(itemInCart => itemInCart.cItemId === item._id) ? (
+                //     <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
+                //       <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
+                //         ❌
+                //       </span>
+                //       &nbsp;&nbsp;
+                //       <span className='mr-4 text-center pointer-events-none'>
+                //         إحذف من السلة
+                //       </span>
+                //     </div>
+                //   ) : (
+                //     <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
+                //       <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
+                //         🛒
+                //       </span>
+                //       &nbsp;&nbsp;
+                //       <span className='mr-4 text-center pointer-events-none'>
+                //         أضف إلى السلة
+                //       </span>
+                //     </div>
+                //   )
+                // }
               />
             </motion.div>
           ))
