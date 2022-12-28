@@ -1,6 +1,6 @@
 {
-  "start_url": "https://mhmdhidr-restaurant.netlify.app",
-  "scope": "https://mhmdhidr-restaurant.netlify.app",
+  "start_url": "./",
+  "scope": "./",
   "orientation": "portrait",
   "background_color": "#b73306",
   "theme_color": "#b73306",

@@ -12,7 +12,7 @@ const Search = () => {
   // const { setSearch, search, searchResults } = useContext(SearchContext)
   // const router = useRouter()
 
-  const searchWrapper = document.querySelector('.search__wrapper')
+  // const searchWrapper = document.querySelector('.search__wrapper')
 
   // useEventListener('click', (e: any) => {
   //   // when clicking outside search input

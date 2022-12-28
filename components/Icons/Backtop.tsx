@@ -1,23 +1,23 @@
 import { toggleCSSclasses } from '../../utils/functions/toggleCSSclasses'
 
 const Backtop = ({ color = 'orange' }) => {
-  const backTop = document.getElementById('back__top')
+  // const backTop = document.getElementById('back__top')
   const ScrollLimit = 400
 
-  if (backTop !== null) {
-    window.addEventListener('scroll', () => {
-      toggleCSSclasses(
-        [window.scrollY > ScrollLimit],
-        backTop,
-        ['opacity-100', 'bottom-[10%]', 'pointer-events-auto'],
-        ['opacity-0', 'bottom-1/2', 'pointer-events-none']
-      )
-    })
+  // if (backTop !== null) {
+  //   window.addEventListener('scroll', () => {
+  //     toggleCSSclasses(
+  //       [window.scrollY > ScrollLimit],
+  //       backTop,
+  //       ['opacity-100', 'bottom-[10%]', 'pointer-events-auto'],
+  //       ['opacity-0', 'bottom-1/2', 'pointer-events-none']
+  //     )
+  //   })
 
-    backTop.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    })
-  }
+  //   backTop.addEventListener('click', () => {
+  //     window.scrollTo({ top: 0, behavior: 'smooth' })
+  //   })
+  // }
 
   return (
     <button
@@ -28,7 +28,7 @@ const Backtop = ({ color = 'orange' }) => {
       <svg
         aria-hidden='true'
         focusable='false'
-        className='w-4 h-4 group-hover:-translate-y-1 transition-transform'
+        className='w-4 h-4 transition-transform group-hover:-translate-y-1'
         role='button'
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 448 512'

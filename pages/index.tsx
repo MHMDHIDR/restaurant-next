@@ -20,7 +20,7 @@ const Index = () => (
         content='width=device-width, initial-scale=1.0, viewport-fit=cover'
       />
       <title>Restaurant</title>
-      <link rel='manifest' href='./public/manifest.json' />
+      <link rel='manifest' href='manifest.json' />
       <link rel='preconnect' href='https://fonts.googleapis.com' />
       <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='' />
       <link

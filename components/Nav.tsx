@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
 // import { CartContext } from '../Contexts/CartContext'
-import ThemeToggler from './ThemeToggler'
+// import ThemeToggler from './ThemeToggler'
 import Logo from './Icons/Logo'
 
 import menuToggler from '../utils/functions/menuToggler'
@@ -29,7 +29,7 @@ const Nav = () => {
   //   if (response !== null) setWebsiteLogoDisplayPath(response.websiteLogoDisplayPath)
   // }, [response])
 
-  let lastScrollY = window.scrollY
+  // let lastScrollY = window.scrollY
 
   // useEventListener('scroll', () => {
   //   const nav = document.querySelector('.nav')
@@ -47,9 +47,12 @@ const Nav = () => {
   return (
     <div className='fixed inset-0 bottom-auto z-[9999] w-full transition-transform duration-300 nav ltr'>
       <nav
-        className={`flex flex-wrap items-center justify-between px-5 xl:px-10 lg:px-20 py-1 bg-gray-300 bg-opacity-90 dark:bg-neutral-900 dark:bg-opacity-90 shadow-xl backdrop-blur-sm saturate-[180%] transition-all${
-          navigator.userAgent.includes('iPhone') ? ' standalone:pt-10' : ''
-        }`}
+        className={`flex flex-wrap items-center justify-between px-5 xl:px-10 lg:px-20 py-1 bg-gray-300 bg-opacity-90 dark:bg-neutral-900 dark:bg-opacity-90 shadow-xl backdrop-blur-sm
+          saturate-[180%] transition-all ${
+            ''
+            // navigator.userAgent.includes('iPhone') ? ' standalone:pt-10' : ''
+          }
+        `}
       >
         <Link aria-label='App Logo' title='App Logo' href='/'>
           {websiteLogoDisplayPath ? (
@@ -65,7 +68,7 @@ const Nav = () => {
           )}
         </Link>
 
-        <ThemeToggler />
+        {/* <ThemeToggler /> */}
 
         <Link href='/order-food' className='underline-hover'>
           <span className='hidden sm:inline'>سلة الطلبات: </span>
@@ -75,7 +78,8 @@ const Nav = () => {
         {/* Nav toggler */}
         <input
           className={`absolute w-10 h-10 opacity-0 cursor-pointer xl:pointer-events-none right-5 lg:right-20 top-1 peer group ${
-            navigator.userAgent.includes('iPhone') ? ' standalone:top-10' : ''
+            ''
+            // navigator.userAgent.includes('iPhone') ? ' standalone:top-10' : ''
           }`}
           type='checkbox'
           aria-label='Navigation Menu'
@@ -122,7 +126,8 @@ const Nav = () => {
             <li>
               <MyLink to='contact'>تواصل معنا</MyLink>
             </li>
-            {'user' in localStorage ? (
+            {'user' in {} ? (
+              // localStorage
               <li className='flex gap-3'>
                 {/* <NavMenu
                   label={`مرحباً عزيزي ${USER.userFullName || ''}`}
