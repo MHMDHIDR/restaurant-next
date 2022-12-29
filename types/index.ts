@@ -1,4 +1,4 @@
-export interface UserProps {
+export type UserProps = {
   token: string
   userAccountType: string
   userEmail: string
@@ -6,7 +6,7 @@ export interface UserProps {
   _id: string
 }
 
-export interface ModalProps {
+export type ModalProps = {
   msg?: string
   extraComponents?: React.ReactNode
   status?: React.ReactNode
@@ -20,7 +20,7 @@ export interface ModalProps {
   ctaSpecialBtns?: string[]
 }
 
-export interface CartProps {
+export type CartProps = {
   items: any[]
   setItems: any
   addToCart: any
@@ -29,7 +29,7 @@ export interface CartProps {
   grandPrice: number
 }
 
-export interface orderProps {
+export type orderProps = {
   ordersData: {
     grandPrice: number
     orderDate: string
@@ -63,7 +63,7 @@ export interface orderProps {
   setOrderItemsGrandPrice: any
 }
 
-export interface FileUploadProps {
+export type FileUploadProps = {
   file: File[]
   fileURLs: string[]
   setFileURLs(fileURLs: string[]): void
@@ -71,7 +71,7 @@ export interface FileUploadProps {
   onFileRemove(fileUrl: string, fileName: string): void
 }
 
-export interface cardProps {
+export type cardProps = {
   cItemId: string
   cHeading: any
   cDesc: string
@@ -86,12 +86,12 @@ export interface cardProps {
   cQuantity?: number
 }
 
-export interface orderMsgProps {
+export type orderMsgProps = {
   Success: string
   Failure: string
 }
 
-export interface responseTypes {
+export type responseTypes = {
   orderMsg: orderMsgProps
   orderItems: any
   orderToppings: any
@@ -111,18 +111,18 @@ export interface responseTypes {
   whatsAppNumber: string
 }
 
-export interface DividerProps {
+export type DividerProps = {
   thickness?: number
   style?: 'dashed'
   marginY?: number
 }
 
-export interface ImgsProps {
+export type ImgsProps = {
   length: number
   foodImgs?: string[]
 }
 
-export interface settingsProps {
+export type settingsProps = {
   appName: string
   websiteLogoDisplayPath: string
   appDesc: string
@@ -131,25 +131,25 @@ export interface settingsProps {
   twitterAccount: string
 }
 
-export interface headerProps {
+export type headerProps = {
   appTagline: string
   websiteLogoDisplayPath: string
 }
 
-export interface MyLinkProps {
+export type MyLinkProps = {
   children: React.ReactNode
   to?: string
   className?: string
 }
 
-export interface NavMenuPros {
+export type NavMenuPros = {
   children: React.ReactNode
   isOptions?: boolean
   label?: string
   className?: string
 }
 
-export interface PaginationProps {
+export type PaginationProps = {
   routeName: string
   pageNum: number
   numberOfPages: number[]
@@ -160,21 +160,21 @@ export interface PaginationProps {
   loaction?: string
 }
 
-export interface ArrowProps {
+export type ArrowProps = {
   width?: string
   height?: string
   toLeft?: boolean
   css?: string
 }
 
-export interface LogoProps {
+export type LogoProps = {
   width?: string | number
   height?: string | number
   className?: string
   color?: 'white' | 'black' | ''
 }
 
-export interface SearchContextProps {
+export type SearchContextProps = {
   setSearch: (search: string) => void
   search: string
   searchResults: any[]
@@ -184,7 +184,7 @@ export interface SearchContextProps {
   error: any
 }
 
-export interface TagsProps {
+export type TagsProps = {
   tags: string[]
   setTags: (tags: string[]) => void
   removeTags: (index: number) => void
@@ -194,23 +194,23 @@ export interface TagsProps {
   selectedTags: { id: string; tags: string[] }[]
 }
 
-export interface AddTagsProps {
+export type AddTagsProps = {
   key: string
   preventDefault: () => void
   target: { value: string }
 }
 
-export interface removeSelectedTagsProps {
+export type removeSelectedTagsProps = {
   id: string
 }
 
-export interface ThemeProps {
+export type ThemeProps = {
   isDark: boolean
   setIsDark: (isDark: boolean) => void
   getLocalStorageTheme: () => boolean
 }
 
-export interface viewFoodDataProps {
+export type viewFoodDataProps = {
   _id: string
   foodName: string
   foodPrice: number
@@ -222,13 +222,13 @@ export interface viewFoodDataProps {
   length: number
 }
 
-export interface selectedToppingsProps {
+export type selectedToppingsProps = {
   toppingId: string
   toppingQuantity: number
   toppingPrice: number
 }
 
-export interface NoItemsProps {
+export type NoItemsProps = {
   msg?: string
   links: {
     to: string
@@ -236,21 +236,20 @@ export interface NoItemsProps {
   }[]
 }
 
-export interface cCategory {
+export type cCategory = {
   foods: number
   drinks: number
   sweets: number
 }
 
-export interface orderInfoProps {
+export type orderInfoProps = {
   order?: Object | null
   id?: string
   status: string
   email: string
 }
 
-//Notification Types
-export interface notificationProps {
+export type notificationProps = {
   sendStatus: number
   sendStatusMsg: string
 }

@@ -1,22 +1,16 @@
 import mongoose from 'mongoose'
-const connection = mongoose.createConnection(process.env.CONNECTION_URL)
+
+const typeString = { type: String }
+const typeArray = { type: Array }
 
 const reqString = {
   type: String,
   required: true
 }
 
-const typeString = {
-  type: String
-}
-
 const reqNumber = {
   type: Number,
   required: true
-}
-
-const typeArray = {
-  type: Array
 }
 
 const foodToppingsType = {
@@ -51,6 +45,4 @@ const FoodSchema = new mongoose.Schema(
   { collection: 'restaurant_food' }
 )
 
-const WorkModel = connection.model('restaurant', FoodSchema)
-
-export default WorkModel
+export default mongoose.models.restaurant || mongoose.model('restaurant', FoodSchema)

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-const connection = mongoose.createConnection(process.env.CONNECTION_URL)
 
 const reqNumber = {
   type: Number,
@@ -50,6 +49,4 @@ const OrderSchema = new mongoose.Schema(
   { collection: 'restaurant_orders' }
 )
 
-const FoodModel = connection.model('restaurant', OrderSchema)
-
-export default FoodModel
+export default mongoose.models.restaurant || mongoose.model('restaurant', OrderSchema)

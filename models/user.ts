@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-const connection = mongoose.createConnection(process.env.CONNECTION_URL)
 
 const reqString = {
   type: String,
@@ -37,6 +36,4 @@ const UserSchema = new mongoose.Schema(
   { collection: 'restaurant_users' }
 )
 
-const UserModel = connection.model('restaurant', UserSchema)
-
-export default UserModel
+export default mongoose.models.restaurant || mongoose.model('restaurant', UserSchema)

@@ -6,7 +6,7 @@ import { LoadingSpinner } from './Loading'
 
 import { validEmail } from '../utils/functions/validForm'
 
-import { API_URL } from '../data/constants'
+import { API_URL } from '../constants'
 
 const Contact = () => {
   const [theName, setName] = useState('')

@@ -11,7 +11,7 @@ import { toggleCSSclasses } from '../../utils/functions/toggleCSSclasses'
 import { createLocaleDateString } from '../../utils/functions/convertDate'
 import scrollToView from '../../utils/functions/scrollToView'
 
-// import { API_URL } from '../../data/constants'
+// import { API_URL } from '../../constants'
 
 import Modal from '../Modal/Modal'
 import { Success, Error, Loading } from '../Icons/Status'

@@ -1,5 +1,5 @@
-const paginatedResults = model => {
-  return async (req, res, next) => {
+const paginatedResults = (model: any) => {
+  return async (req: any, res: any) => {
     const page = parseInt(req.params.page)
     const limit = parseInt(req.params.limit)
     const { itemId } = req.params
@@ -8,7 +8,7 @@ const paginatedResults = model => {
     const startIndex = (page - 1) * limit
     const endIndex = page * limit
 
-    const response = {}
+    const response: any = {}
 
     if (endIndex < (await model.countDocuments())) {
       response.next = {
@@ -48,8 +48,9 @@ const paginatedResults = model => {
       response.category = category
 
       res.paginatedResults = response
-      next()
-    } catch (e) {
+
+      return response
+    } catch (e: any) {
       res.status(500).json({ message: e.message })
     }
   }
