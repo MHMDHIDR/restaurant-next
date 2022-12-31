@@ -1,28 +1,24 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect /*, useContext*/ } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-
 // import { CartContext } from '../Contexts/CartContext'
-
 // import useAxios from '../hooks/useAxios'
-
 import abstractText from '../utils/functions/abstractText'
 import { removeSlug } from '../utils/functions/slug'
-
 import Card from './Card'
 import { LoadingCard } from './Loading'
 import { viewFoodDataProps } from '../types'
 
-const NewFood = () => {
+const NewFood = (foods: any) => {
   const [data, setData] = useState<any>()
 
   // const { ...response } = useAxios({ url: '/foods/1/7?category=foods' })
 
-  // useEffect(() => {
-  //   if (response.response !== null) {
-  //     setData(response.response)
-  //   }
-  // }, [response.response])
+  useEffect(() => {
+    if (foods !== null) {
+      setData(foods)
+    }
+  }, [foods])
 
   // const { items } = useContext(CartContext)
 
@@ -101,6 +97,20 @@ const NewFood = () => {
       </div>
     </section>
   )
+}
+
+export async function getServerSideProps() {
+  const response = await fetch(
+    'http://dev.com:3000/api/foods?page=1&limit=2&category=foods'
+  )
+  const data = await response.json()
+  console.log(data)
+
+  return {
+    props: {
+      foods: data
+    }
+  }
 }
 
 export default NewFood

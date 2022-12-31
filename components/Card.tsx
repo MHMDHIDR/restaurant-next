@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { useContext } from 'react'
 
-// import { CartContext } from '../Contexts/CartContext'
-// import { ToppingsContext } from '../Contexts/ToppingsContext'
+import { CartContext } from '../Contexts/CartContext'
+import { ToppingsContext } from '../Contexts/ToppingsContext'
 import TagIcon from './Icons/TagIcon'
 import EmblaCarousel from './Embla/EmblaCarousel'
 

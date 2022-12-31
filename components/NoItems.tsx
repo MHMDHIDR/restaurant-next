@@ -13,7 +13,7 @@ const NoItems = ({ msg, links }: NoItemsProps) => (
       {links?.map((link: { to: string; label: string }, idx) => (
         <Link
           key={idx}
-          to={goTo(link.to)}
+          href={goTo(link.to)}
           className='px-3 py-1 text-orange-800 transition-colors bg-orange-100 border border-orange-700 rounded hover:bg-orange-200'
         >
           {link.label}

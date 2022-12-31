@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import paginatedResults from '../../../middleware/paginatedResults'
 
-import FoodsModel from '../../../models/food'
+import SettingsModel from '../../../models/settings'
 import dbConnect from '../../../utils/db'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -12,8 +11,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   switch (method) {
     case 'GET': {
       try {
-        const foods = await paginatedResults(FoodsModel, req, res)
-        res.status(200).json(foods)
+        const settings = await SettingsModel.find()
+        res.status(200).json(settings)
       } catch (err) {
         res.status(500).json(err)
       }
