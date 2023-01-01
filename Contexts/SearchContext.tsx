@@ -1,7 +1,6 @@
 import { useState, createContext, useEffect } from 'react'
-import useAxios from '../hooks/useAxios'
 import { SearchContextProps } from '../types'
-import { removeSlug } from '../utils/slug'
+import { removeSlug } from '../utils/functions/slug'
 
 export const SearchContext = createContext<SearchContextProps>({} as SearchContextProps)
 

@@ -256,9 +256,10 @@ export type notificationProps = {
   sendStatusMsg: string
 }
 
-export type menuMediaProps = Array<{
-  _id: ObjectId
+export type mediaProps = {
+  foodId?: string
   foodImgDisplayPath: string
   foodName: string
-  foodPrice: number
-}>
+  _id?: ObjectId
+  foodPrice?: number
+}[]

@@ -1,9 +1,9 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState, useEffect, lazy } from 'react'
+import { useState, useEffect, lazy, useContext } from 'react'
 import { motion } from 'framer-motion'
-import { viewFoodDataProps, menuMediaProps } from '../types'
-// import { CartContext } from '../Contexts/CartContext'
+import { viewFoodDataProps, mediaProps } from '../types'
+import { CartContext } from '../Contexts/CartContext'
 // import { LoadingCard } from '../components/Loading'
 const EmblaCarousel = lazy(() => import('../components/Embla/EmblaCarousel'))
 import Layout from '../components/Layout'
@@ -23,12 +23,12 @@ const Index = ({
   catSweetResponse,
   newFood
 }: any) => {
-  // const { items } = useContext(CartContext)
+  const { items } = useContext(CartContext)
 
   const SlidesCount =
     SLIDES_IN_MENU > menuFood?.itemsCount ? menuFood?.itemsCount : SLIDES_IN_MENU
   const slides = Array.from(Array(SlidesCount).keys())
-  let media: menuMediaProps = []
+  let media: mediaProps = []
 
   //push food images to media array
   menuFood &&

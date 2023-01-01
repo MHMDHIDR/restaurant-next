@@ -2,14 +2,14 @@ import Link from 'next/link'
 import { useContext } from 'react'
 
 import { CartContext } from '../Contexts/CartContext'
-// import { ToppingsContext } from '../Contexts/ToppingsContext'
+import { ToppingsContext } from '../Contexts/ToppingsContext'
 import TagIcon from './Icons/TagIcon'
 import EmblaCarousel from './Embla/EmblaCarousel'
 
 import { removeSlug } from '../utils/functions/slug'
 
 import Logo from './Icons/Logo'
-import { cardProps, CartProps } from '../types'
+import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '../types'
 
 const Card = ({
   cItemId,
@@ -24,41 +24,41 @@ const Card = ({
   cPrice,
   cCategory
 }: cardProps) => {
-  // const { items, addToCart, removeFromCart } = useContext<CartProps>(CartContext)
-  // const { handleToppingChecked, checkedToppings } = useContext(ToppingsContext)
+  const { items, addToCart, removeFromCart } = useContext<CartProps>(CartContext)
+  const { handleToppingChecked, checkedToppings } = useContext(ToppingsContext)
 
-  // const handleCart = () => {
-  //   const item = items.find(item => item.cItemId === cItemId)
-  //   if (item) {
-  //     if (
-  //       window.confirm(`هل أنت متأكد من حذف (${cHeading.props.children}) من سلة الطلبات؟`)
-  //     ) {
-  //       removeFromCart(cItemId)
-  //     }
-  //   } else {
-  //     addToCart(
-  //       cItemId,
-  //       cHeading.props.children,
-  //       cImg,
-  //       cPrice,
-  //       cCategory,
-  //       cDesc,
-  //       cToppings
-  //     )
-  //   }
-  // }
+  const handleCart = () => {
+    const item = items.find(item => item.cItemId === cItemId)
+    if (item) {
+      if (
+        window.confirm(`هل أنت متأكد من حذف (${cHeading.props.children}) من سلة الطلبات؟`)
+      ) {
+        removeFromCart(cItemId)
+      }
+    } else {
+      addToCart(
+        cItemId,
+        cHeading.props.children,
+        cImg,
+        cPrice,
+        cCategory,
+        cDesc,
+        cToppings
+      )
+    }
+  }
 
   const SlidesCount = cImg.length
   const slides = Array.from(Array(SlidesCount).keys())
-  // let media = []
-  // cImg &&
-  //   cImg.map(({ foodImgDisplayPath }) =>
-  //     media.push({
-  //       foodImgDisplayPath,
-  //       foodId: cItemId,
-  //       foodName: cHeading.props.children
-  //     })
-  //   )
+  let media: mediaProps = []
+  cImg &&
+    cImg.map(({ foodImgDisplayPath }: any) =>
+      media.push({
+        foodId: cItemId,
+        foodImgDisplayPath,
+        foodName: cHeading.props.children
+      })
+    )
 
   return (
     <div className='mb-32'>
@@ -103,10 +103,11 @@ const Card = ({
                       type='checkbox'
                       id={cToppingId}
                       className='cursor-pointer min-w-[1.5rem] min-h-[1.5rem]'
-                      // onChange={() => handleToppingChecked(cToppingId, toppingPrice)}
-                      // defaultChecked={checkedToppings.find(
-                      //   topping => topping.toppingId === cToppingId
-                      // )}
+                      onChange={() => handleToppingChecked(cToppingId, toppingPrice)}
+                      defaultChecked={checkedToppings.find(
+                        (topping: selectedToppingsProps) =>
+                          topping.toppingId === cToppingId
+                      )}
                     />
                     <label
                       htmlFor={cToppingId}
@@ -135,8 +136,7 @@ const Card = ({
                   {cCtaLabel}
                 </Link>
               ) : (
-                <button>button</button>
-                // <button onClick={() => handleCart()}>{cCtaLabel}</button>
+                <button onClick={() => handleCart()}>{cCtaLabel}</button>
               )}
             </div>
           ) : null}
@@ -146,8 +146,7 @@ const Card = ({
           className='[--cardImgSize:20rem] min-w-[var(--cardImgSize)] max-w-[calc(var(--cardImgSize))] overflow-hidden transition-colors bg-gray-100 border border-gray-400 rounded-lg dark:bg-gray-600 min-h-[var(--cardImgSize)*2] max-h-[calc(var(--cardImgSize)*2)]'
         >
           {cImg ? (
-            // <EmblaCarousel slides={slides} media={media} smallView={true} />
-            <div>Carousel</div>
+            <EmblaCarousel slides={slides} media={media} smallView={true} />
           ) : (
             <Logo width='32 md:w-60' height='32 md:h-60' className='mx-auto my-2' />
           )}

@@ -13,28 +13,16 @@ export const ToppingsContext = createContext({
   ) => {}
 })
 
-const checkedToppingsFromLocalStorage = JSON.parse(
-  localStorage.getItem('restCheckedToppings') || '[]'
-)
-
-// const orderItemToppingsFromLocalStorage = JSON.parse(
-//   localStorage.getItem('restOrderItemToppingsToppings') || '[]'
+// const checkedToppingsFromLocalStorage = JSON.parse(
+//   localStorage.getItem('restCheckedToppings') || '[]'
 // )
 
 const ToppingsContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [checkedToppings, setCheckedToppings] = useState(checkedToppingsFromLocalStorage)
-  const [orderItemToppings, setOrderItemToppings] = useState(
-    []
-    // orderItemToppingsFromLocalStorage
-  )
+  const [orderItemToppings, setOrderItemToppings] = useState([])
 
   useEffect(() => {
     localStorage.setItem('restCheckedToppings', JSON.stringify(checkedToppings))
-    // localStorage.setItem(
-    //   'restOrderItemToppingsToppings',
-    //   JSON.stringify(orderItemToppings)
-    // )
-  }, [checkedToppings /*, orderItemToppings*/])
+  }, [checkedToppings])
 
   const handleToppingChecked = (toppingId: string, toppingPrice: number) => {
     const addTopping = (toppingId: string, toppingPrice: number) => {
