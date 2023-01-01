@@ -7,7 +7,6 @@ import { viewFoodDataProps, menuMediaProps } from '../types'
 // import { LoadingCard } from '../components/Loading'
 const EmblaCarousel = lazy(() => import('../components/Embla/EmblaCarousel'))
 import Layout from '../components/Layout'
-import FetchCategories from '../components/FetchCategories'
 import About from '../components/About'
 import Contact from '../components/Contact'
 
