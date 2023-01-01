@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 
-// import useAxios from '../hooks/useAxios'
 import { ImgsProps } from '../types'
-
-import { LoadingCard } from './Loading'
 
 const FetchCategories = () => {
   const [foodImgs, setFoodImgs] = useState<ImgsProps>()
@@ -43,10 +40,8 @@ const FetchCategories = () => {
   //   return drinkImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
   // }
 
-  return !foodImgs || !drinkImgs ? (
-    <LoadingCard />
-  ) : (
-    <div className='container mx-auto'>
+  return (
+    <section className='container mx-auto'>
       <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
         الوجبات والتصنيفات
       </h3>
@@ -99,7 +94,7 @@ const FetchCategories = () => {
           </h3>
         </Link>
       </div>
-    </div>
+    </section>
   )
 }
 

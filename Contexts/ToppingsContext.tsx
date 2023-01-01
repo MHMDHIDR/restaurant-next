@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
+
 export const ToppingsContext = createContext({
   handleToppingChecked: (_toppingId: string, _toppingPrice: number) => {},
   checkedToppings: [],
@@ -15,6 +16,7 @@ export const ToppingsContext = createContext({
 const checkedToppingsFromLocalStorage = JSON.parse(
   localStorage.getItem('restCheckedToppings') || '[]'
 )
+
 // const orderItemToppingsFromLocalStorage = JSON.parse(
 //   localStorage.getItem('restOrderItemToppingsToppings') || '[]'
 // )

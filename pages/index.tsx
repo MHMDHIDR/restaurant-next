@@ -1,30 +1,68 @@
 import Head from 'next/head'
-import { useState, useEffect, useContext } from 'react'
 import Link from 'next/link'
+import { useState, useEffect, lazy } from 'react'
 import { motion } from 'framer-motion'
-import { CartContext } from '../Contexts/CartContext'
-import { LoadingCard } from '../components/Loading'
-import { viewFoodDataProps } from '../types'
+import { viewFoodDataProps, menuMediaProps } from '../types'
+// import { CartContext } from '../Contexts/CartContext'
+// import { LoadingCard } from '../components/Loading'
+const EmblaCarousel = lazy(() => import('../components/Embla/EmblaCarousel'))
+import Layout from '../components/Layout'
+import FetchCategories from '../components/FetchCategories'
 import About from '../components/About'
 import Contact from '../components/Contact'
-import FetchCategories from '../components/FetchCategories'
-import Menu from '../components/Menu'
-import Layout from '../components/Layout'
+
 import Card from '../components/Card'
 import abstractText from '../utils/functions/abstractText'
 import { removeSlug } from '../utils/functions/slug'
 
-const Index = ({ foods }: any) => {
-  const [data, setData] = useState<any>()
-  console.log(foods)
+import { SLIDES_IN_MENU, API_URL } from '../constants'
 
+const Index = ({
+  menuFood,
+  catFoodResponse,
+  catDrinkResponse,
+  catSweetResponse,
+  newFood
+}: any) => {
+  // const { items } = useContext(CartContext)
+
+  const SlidesCount =
+    SLIDES_IN_MENU > menuFood?.itemsCount ? menuFood?.itemsCount : SLIDES_IN_MENU
+  const slides = Array.from(Array(SlidesCount).keys())
+  let media: menuMediaProps = []
+
+  //push food images to media array
+  menuFood &&
+    menuFood?.response.map(({ _id, foodImgs, foodName, foodPrice }: any) =>
+      media.push({
+        _id,
+        foodImgDisplayPath: foodImgs[0]?.foodImgDisplayPath,
+        foodName,
+        foodPrice
+      })
+    )
+
+  const [foodImgs, setFoodImgs] = useState<any>()
+  const [drinkImgs, setDrinkImgs] = useState<any>()
+  const [sweetsImgs, setSweetsImgs] = useState<any>()
   useEffect(() => {
-    if (foods !== null) {
-      setData(foods)
-    }
-  }, [foods])
+    setFoodImgs(catFoodResponse?.response)
+    setSweetsImgs(catDrinkResponse?.response)
+    setDrinkImgs(catSweetResponse?.response)
+  }, [])
 
-  const { items } = useContext(CartContext)
+  const getRandomFoodImg = () => {
+    const randomIndex = Math.floor(Math.random() * foodImgs?.length)
+    return foodImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
+  }
+  const getRandomDrinkImg = () => {
+    const randomIndex = Math.floor(Math.random() * drinkImgs?.length)
+    return drinkImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
+  }
+  const getSweetsDrinkImg = () => {
+    const randomIndex = Math.floor(Math.random() * sweetsImgs?.length)
+    return sweetsImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
+  }
 
   return (
     <>
@@ -44,7 +82,6 @@ const Index = ({ foods }: any) => {
           name='viewport'
           content='width=device-width, initial-scale=1.0, viewport-fit=cover'
         />
-        <title>Restaurant</title>
         <link rel='manifest' href='manifest.json' />
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='' />
@@ -199,21 +236,92 @@ const Index = ({ foods }: any) => {
         <meta name='twitter:title' content='{{pageTitle}}' />
         <meta name='twitter:description' content='{{description}}' />
         <meta name='twitter:image' content='{{imageUrl}}' />
-        <title>Resaturant App</title>
+        <title>Resaturant</title>
       </Head>
       <Layout>
-        <Menu />
-        <FetchCategories />
+        {/* Menu */}
+        <section id='menu' className='py-12 my-8 menu'>
+          <div className='container relative mx-auto'>
+            <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>القائمة</h2>
+            <div className='w-11/12 mx-auto overflow-hidden'>
+              {menuFood && menuFood?.response?.length > 0 ? (
+                <div className='max-w-5xl mx-auto transition-transform translate-x-0 select-none'>
+                  <EmblaCarousel slides={slides} media={media} />
+                </div>
+              ) : (
+                <span className='inline-block w-full my-2 text-lg font-bold text-center text-red-500'>
+                  عفواً! لم يتم العثور على وجبات 😥
+                </span>
+              )}
+            </div>
+          </div>
+        </section>
+        {/* Categories */}
+        <section className='container mx-auto'>
+          <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
+            الوجبات والتصنيفات
+          </h3>
+          <div className='flex flex-wrap justify-center mt-32 gap-14 xl:justify-between'>
+            <Link
+              href={`/view`}
+              className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
+              style={{
+                backgroundImage: `url("${getRandomFoodImg()}")`
+              }}
+            >
+              <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
+                كل الوجبات والمشروبات
+              </h3>
+            </Link>
+
+            <Link
+              href={`/view/foods/`}
+              className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
+              style={{
+                backgroundImage: `url("${getRandomFoodImg()}")`
+              }}
+            >
+              <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
+                الوجبات
+              </h3>
+            </Link>
+
+            <Link
+              href={`/view/drinks/`}
+              className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
+              style={{
+                backgroundImage: `url("${getRandomDrinkImg()}")`
+              }}
+            >
+              <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
+                المشروبات
+              </h3>
+            </Link>
+
+            <Link
+              href={`/view/sweets/`}
+              className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
+              style={{
+                backgroundImage: `url("${getSweetsDrinkImg()}")`
+              }}
+            >
+              <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
+                الحلويات
+              </h3>
+            </Link>
+          </div>
+        </section>
+        {/* New Food */}
         <section id='new' className='py-12 my-8 overflow-x-hidden new'>
           <div className='container mx-auto text-center'>
             <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
               الوجبات الجديدة
             </h2>
-            {data && data?.response?.length > 0 ? (
-              data?.response?.map((item: viewFoodDataProps, idx: number) => (
+            {newFood && newFood?.response?.length > 0 ? (
+              newFood?.response?.map((item: viewFoodDataProps, idx: number) => (
                 <motion.div
                   className='odd:ltr'
-                  key={item._id}
+                  key={idx}
                   initial={
                     idx % 2 === 0 ? { x: '50vw', opacity: 0 } : { x: '-50vw', opacity: 0 }
                   }
@@ -225,7 +333,7 @@ const Index = ({ foods }: any) => {
                   }}
                 >
                   <Card
-                    cItemId={item._id}
+                    cItemId={idx + ''}
                     cHeading={
                       <Link href={`/view/item/${item._id}`}>
                         {removeSlug(abstractText(item.foodName, 40))}
@@ -238,37 +346,34 @@ const Index = ({ foods }: any) => {
                     cToppings={item.foodToppings}
                     cImg={item.foodImgs}
                     cImgAlt={item.foodName}
-                    cCtaLabel={
-                      //add to cart button, if item is already in cart then disable the button
-                      items.find(itemInCart => itemInCart.cItemId === item._id) ? (
-                        <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
-                          <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
-                            ❌
-                          </span>
-                          &nbsp;&nbsp;
-                          <span className='mr-4 text-center pointer-events-none'>
-                            إحذف من السلة
-                          </span>
-                        </div>
-                      ) : (
-                        <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
-                          <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
-                            🛒
-                          </span>
-                          &nbsp;&nbsp;
-                          <span className='mr-4 text-center pointer-events-none'>
-                            أضف إلى السلة
-                          </span>
-                        </div>
-                      )
-                    }
+                    cCtaLabel={'problem in "add to cart button" functionality'}
+                    // cCtaLabel={
+                    //   //add to cart button, if item is already in cart then disable the button
+                    //   items.find(itemInCart => itemInCart.cItemId === item._id) ? (
+                    //     <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
+                    //       <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
+                    //         ❌
+                    //       </span>
+                    //       &nbsp;&nbsp;
+                    //       <span className='mr-4 text-center pointer-events-none'>
+                    //         إحذف من السلة
+                    //       </span>
+                    //     </div>
+                    //   ) : (
+                    //     <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
+                    //       <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
+                    //         🛒
+                    //       </span>
+                    //       &nbsp;&nbsp;
+                    //       <span className='mr-4 text-center pointer-events-none'>
+                    //         أضف إلى السلة
+                    //       </span>
+                    //     </div>
+                    //   )
+                    // }
                   />
                 </motion.div>
               ))
-            ) : !data?.response ||
-              data?.response === null ||
-              data?.response?.itemsCount === undefined ? (
-              <LoadingCard />
             ) : (
               <p className='form__msg inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'>
                 عفواً، لم يتم العثور على وجبات جديدة 😕
@@ -284,15 +389,35 @@ const Index = ({ foods }: any) => {
 }
 
 export async function getServerSideProps() {
-  const response = await fetch(
-    'http://dev.com:3000/api/foods?page=1&limit=2&category=foods'
+  const fetchURLs = {
+    menu: `${API_URL}/foods?page=0&limit=0&category=foods&createdAt=1`,
+    categories: {
+      foods: `${API_URL}/foods?page=0&limit=0&category=foods`,
+      drinks: `${API_URL}/foods?page=0&limit=0&category=drinks`,
+      sweets: `${API_URL}/foods?page=0&limit=0&category=sweets`
+    },
+    new: `${API_URL}/foods?page=1&limit=7&category=foods`
+  }
+
+  const catFoodResponse = await fetch(fetchURLs.categories.foods).then(catFood =>
+    catFood.json()
   )
-  const data = await response.json()
-  console.log(data)
+  const catDrinkResponse = await fetch(fetchURLs.categories.drinks).then(catDrink =>
+    catDrink.json()
+  )
+  const catSweetResponse = await fetch(fetchURLs.categories.sweets).then(catSweet =>
+    catSweet.json()
+  )
+  const menuFood = await fetch(fetchURLs.menu).then(menu => menu.json())
+  const newFood = await fetch(fetchURLs.new).then(newFood => newFood.json())
 
   return {
     props: {
-      foods: data
+      menuFood,
+      catFoodResponse,
+      catDrinkResponse,
+      catSweetResponse,
+      newFood
     }
   }
 }

@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongoose'
+
 export type UserProps = {
   token: string
   userAccountType: string
@@ -211,7 +213,7 @@ export type ThemeProps = {
 }
 
 export type viewFoodDataProps = {
-  _id: string
+  _id: ObjectId
   foodName: string
   foodPrice: number
   category: string
@@ -253,3 +255,10 @@ export type notificationProps = {
   sendStatus: number
   sendStatusMsg: string
 }
+
+export type menuMediaProps = Array<{
+  _id: ObjectId
+  foodImgDisplayPath: string
+  foodName: string
+  foodPrice: number
+}>

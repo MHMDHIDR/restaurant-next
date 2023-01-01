@@ -1,16 +1,16 @@
 import { useState, createContext, useContext, useEffect } from 'react'
-import { CartProps } from '../types'
-import { ToppingsContext } from './ToppingsContext'
+// import { CartProps } from '../types'
+// import { ToppingsContext } from './ToppingsContext'
 
-const cartFromLocalStorage = JSON.parse(localStorage.getItem('restCartItems') || '[]')
+// const cartFromLocalStorage = JSON.parse(localStorage.getItem('restCartItems') || '[]')
 
-export const CartContext = createContext({} as CartProps)
+// export const CartContext = createContext({} as CartProps)
 
 const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [items, setItems] = useState(cartFromLocalStorage)
   const [grandPrice, setGrandPrice] = useState<number>(0)
 
-  const { checkedToppings, setCheckedToppings } = useContext(ToppingsContext)
+  // const { checkedToppings, setCheckedToppings } = useContext(ToppingsContext)
 
   useEffect(() => {
     localStorage.setItem('restCartItems', JSON.stringify(items))
@@ -50,11 +50,11 @@ const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
   //remove items from card
   const removeFromCart = (cItemId: string) => {
     setItems(items.filter((item: { cItemId: string }) => item.cItemId !== cItemId))
-    setCheckedToppings(
-      checkedToppings.filter(
-        (topping: { toppingId: string }) => topping.toppingId.slice(0, -2) !== cItemId
-      )
-    )
+    // setCheckedToppings(
+    //   checkedToppings.filter(
+    //     (topping: { toppingId: string }) => topping.toppingId.slice(0, -2) !== cItemId
+    //   )
+    // )
   }
 
   return (
