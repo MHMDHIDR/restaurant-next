@@ -1,19 +1,16 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState, useEffect, lazy, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { motion } from 'framer-motion'
 import { viewFoodDataProps, mediaProps } from '../types'
-import { CartContext } from '../Contexts/CartContext'
-// import { LoadingCard } from '../components/Loading'
-const EmblaCarousel = lazy(() => import('../components/Embla/EmblaCarousel'))
+import { CartContext } from '../contexts/CartContext'
+import EmblaCarousel from '../components/EmblaCarousel'
 import Layout from '../components/Layout'
 import About from '../components/About'
 import Contact from '../components/Contact'
-
 import Card from '../components/Card'
 import abstractText from '../utils/functions/abstractText'
 import { removeSlug } from '../utils/functions/slug'
-
 import { SLIDES_IN_MENU, API_URL } from '../constants'
 
 const Index = ({

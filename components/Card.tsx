@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { useContext } from 'react'
 
-import { CartContext } from '../Contexts/CartContext'
-import { ToppingsContext } from '../Contexts/ToppingsContext'
+import { CartContext } from '../contexts/CartContext'
+import { ToppingsContext } from '../contexts/ToppingsContext'
 import TagIcon from './Icons/TagIcon'
-import EmblaCarousel from './Embla/EmblaCarousel'
+import EmblaCarousel from './EmblaCarousel'
 
 import { removeSlug } from '../utils/functions/slug'
 
