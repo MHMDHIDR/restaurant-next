@@ -74,7 +74,7 @@ export type FileUploadProps = {
 }
 
 export type cardProps = {
-  cItemId: string
+  cItemId: ObjectId
   cHeading: any
   cDesc: string
   cTags: string[]

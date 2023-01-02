@@ -4,6 +4,8 @@
 
 export const SLIDES_IN_MENU = 10
 
+export const ITEMS_PER_PAGE = 5
+
 export const API_URL =
   process.env.NODE_ENV === 'development'
     ? process.env.APP_LOCAL_URL + '/api'
