@@ -1,4 +1,4 @@
-import { Schema, models, model } from 'mongoose'
+import mongoose from 'mongoose'
 
 const reqString = {
   type: String,
@@ -16,7 +16,7 @@ const orderMsg = {
   Failure: typeString
 }
 
-const SettingsSchema = new Schema(
+const SettingsSchema = new mongoose.Schema(
   {
     websiteLogoDisplayPath: reqString,
     websiteLogoDisplayName: reqString,
@@ -34,4 +34,4 @@ const SettingsSchema = new Schema(
   { collection: 'restaurant_settings' }
 )
 
-export default models.restaurant || model('restaurant', SettingsSchema)
+export default mongoose.models.restaurant || mongoose.model('restaurant', SettingsSchema)

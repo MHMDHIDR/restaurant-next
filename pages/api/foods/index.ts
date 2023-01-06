@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import paginatedResults from '../../../middleware/paginatedResults'
+import dbConnect from '../../../utils/db'
 import FoodsModel from '../../../models/food'
-import connectMongo from '../../../utils/db'
+import paginatedResults from '../../../middleware/paginatedResults'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req
+  await dbConnect()
 
   switch (method) {
     case 'GET': {
       try {
-        await connectMongo()
         const foods = await paginatedResults(FoodsModel, req, res)
         res.status(200).json(foods)
       } catch (error) {
