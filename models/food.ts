@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import { Schema, models, model } from 'mongoose'
 
 const typeString = { type: String }
 const typeArray = { type: Array }
@@ -29,7 +29,7 @@ const reqDate = {
   required: true
 }
 
-const FoodSchema = new mongoose.Schema(
+const FoodSchema = new Schema(
   {
     foodImgs: typeArray,
     foodName: reqString,
@@ -45,4 +45,4 @@ const FoodSchema = new mongoose.Schema(
   { collection: 'restaurant_food' }
 )
 
-export default mongoose.models.restaurant || mongoose.model('restaurant', FoodSchema)
+export default models.restaurant || model('restaurant', FoodSchema)

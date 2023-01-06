@@ -1,15 +1,24 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-
+import paginatedResults from '../../../middleware/paginatedResults'
 import SettingsModel from '../../../models/settings'
-import dbConnect from '../../../utils/db'
+import connectMongo from '../../../utils/db'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    if (await dbConnect()) {
-      const settings = await SettingsModel.find()
-      res.status(200).json(settings)
+  const { method } = req
+
+  switch (method) {
+    case 'GET': {
+      try {
+        await connectMongo()
+        const settings = await paginatedResults(SettingsModel, req, res)
+        res.status(200).json(settings)
+      } catch (error) {
+        res.json('Failed to get orders!' + error)
+      }
+      break
     }
-  } catch (err) {
-    res.status(500).json(err)
+
+    default:
+      break
   }
 }

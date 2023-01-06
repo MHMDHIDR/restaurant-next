@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import { Schema, models, model } from 'mongoose'
 
 const reqString = {
   type: String,
@@ -21,7 +21,7 @@ const userAccountType = {
   default: 'user'
 }
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new Schema(
   {
     userFullName: reqString,
     userEmail: reqString,
@@ -36,4 +36,4 @@ const UserSchema = new mongoose.Schema(
   { collection: 'restaurant_users' }
 )
 
-export default mongoose.models.restaurant || mongoose.model('restaurant', UserSchema)
+export default models.restaurant || model('restaurant', UserSchema)

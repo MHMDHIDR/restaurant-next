@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import { Schema, models, model } from 'mongoose'
 
 const reqNumber = {
   type: Number,
@@ -27,7 +27,7 @@ const reqDate = {
   required: true
 }
 
-const OrderSchema = new mongoose.Schema(
+const OrderSchema = new Schema(
   {
     orderId: reqString,
     userId: reqString,
@@ -49,4 +49,4 @@ const OrderSchema = new mongoose.Schema(
   { collection: 'restaurant_orders' }
 )
 
-export default mongoose.models.restaurant || mongoose.model('restaurant', OrderSchema)
+export default models.restaurant || model('restaurant', OrderSchema)
