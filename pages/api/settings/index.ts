@@ -10,7 +10,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   switch (method) {
     case 'GET':
       try {
-        // const settings = await SettingsModel.find({})
         const settings = await paginatedResults(SettingsModel, req, res)
         res.status(200).json(settings)
       } catch (error) {

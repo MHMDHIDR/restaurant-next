@@ -53,7 +53,7 @@ const index = () => {
           {!data?.response?.length
             ? //single food item (Title)
               data?.response && (
-                <Link to={`/view/item/${data?.response?._id}`}>
+                <Link href={`/view/item/${data?.response?._id}`}>
                   {removeSlug(data?.response?.foodName)}
                 </Link>
               )
@@ -79,7 +79,7 @@ const index = () => {
                   <Card
                     cItemId={item._id}
                     cHeading={
-                      <Link to={`/view/item/${item._id}`}>
+                      <Link href={`/view/item/${item._id}`}>
                         {removeSlug(abstractText(item.foodName, 70))}
                       </Link>
                     }
@@ -141,7 +141,7 @@ const index = () => {
                 key={data?.response?._id}
                 cItemId={data?.response?._id}
                 cHeading={
-                  <Link to={`/view/item/${data?.response?._id}`}>
+                  <Link href={`/view/item/${data?.response?._id}`}>
                     {removeSlug(data?.response?.foodName)}
                   </Link>
                 }

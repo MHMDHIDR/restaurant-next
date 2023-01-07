@@ -329,7 +329,7 @@ const Index = ({
                   }}
                 >
                   <Card
-                    cItemId={idx}
+                    cItemId={item._id}
                     cHeading={
                       <Link href={`/view/item/${item._id}`}>
                         {removeSlug(abstractText(item.foodName, 40))}

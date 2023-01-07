@@ -1,27 +1,26 @@
-import { useState, useEffect } from 'react'
-// import useAxios from '../hooks/useAxios'
-
+import { useState, useEffect, useRef } from 'react'
+import useAxios from '../hooks/useAxios'
 import Search from './Search'
 import Nav from './Nav'
 import ScrollDown from './ScrollDown'
-
-// import Typewriter from 'typewriter-effect/dist/core'
+import Typewriter from 'typewriter-effect'
 import { headerProps } from '../types'
+import Image from 'next/image'
 
 const Header = () => {
+  const typewriterRef = useRef(null)
   const [data, setData] = useState<headerProps>()
+  const { response } = useAxios({ url: '/settings' })
 
-  // const { response } = useAxios({ url: '/settings' })
+  useEffect(() => {
+    if (response !== null) setData(response)
+  }, [response])
 
-  // useEffect(() => {
-  //   if (response !== null) setData(response)
-  // }, [response])
-
-  // new Typewriter(document.getElementById('typewriter'), {
-  //   strings: data?.appTagline || `نحن الأفضل، وسنبقى كذلك ... إلى الأبد 😄 🤍`,
-  //   autoStart: true,
-  //   loop: true
-  // })
+  new Typewriter(typewriterRef, {
+    strings: data?.appTagline || `نحن الأفضل، وسنبقى كذلك ... إلى الأبد 😄 🤍`,
+    autoStart: true,
+    loop: true
+  })
 
   return (
     <header
@@ -39,28 +38,28 @@ const Header = () => {
           {/* Search form and main hero */}
           <main className='flex flex-col items-center justify-center min-h-screen'>
             {/* logo */}
-            {/* {data?.websiteLogoDisplayPath ? (
-              <img
+            {data?.websiteLogoDisplayPath ? (
+              <Image
                 src={data.websiteLogoDisplayPath}
-                width='50'
-                height='50'
+                width={128}
+                height={128}
                 className='w-32 h-32 mb-12 md:w-60 md:h-60 rounded-2xl opacity-30'
                 alt='Website Logo'
               />
             ) : (
-              <img
+              <Image
                 src='/assets/img/icons/logo.svg'
                 alt='logo'
                 className='w-32 h-32 mb-12 md:w-60 md:h-60'
                 width={150}
                 height={150}
               />
-            )} */}
+            )}
 
             <h1 className='max-w-xs px-2 text-lg leading-loose text-center text-white select-none sm:max-w-fit xl:text-3xl sm:text-xl md:text-4xl rtl'>
               <span
                 className='inline-block h-20 my-4 overflow-x-hidden sm:whitespace-nowrap'
-                id='typewriter'
+                ref={typewriterRef}
               ></span>
             </h1>
             <Search />

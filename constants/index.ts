@@ -4,9 +4,11 @@
 
 export const SLIDES_IN_MENU = 10
 
+export const SUGGESTED_FOOTER_ITEMS_COUNT = 2
+
 export const ITEMS_PER_PAGE = 5
 
 export const API_URL =
   process.env.NODE_ENV === 'development'
-    ? process.env.APP_LOCAL_URL + '/api'
-    : process.env.APP_PUBLIC_URL + '/api'
+    ? process.env.NEXT_PUBLIC_APP_LOCAL_URL + '/api'
+    : process.env.NEXT_PUBLIC_APP_PUBLIC_URL + '/api'

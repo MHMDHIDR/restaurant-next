@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Key, useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import { FileUploadContext } from '../contexts/FileUploadContext'
@@ -20,9 +21,11 @@ const FileUpload = ({ data }) => {
             <div
               className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
             >
-              <img
+              <Image
                 src={`https://source.unsplash.com/random?food`}
                 alt={`Delicious Food`}
+                height={122}
+                width={122}
                 className='object-cover p-1 border border-gray-400 w-28 min-h-fit h-28 dark:border-gray-300 rounded-xl'
               />
             </div>
@@ -33,10 +36,12 @@ const FileUpload = ({ data }) => {
                 key={index}
                 className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
               >
-                <img
+                <Image
                   loading='lazy'
                   src={fileURL}
                   alt={data?.foodName}
+                  height={122}
+                  width={122}
                   className={`object-cover p-1 border border-gray-400 max-w-[7rem] w-28 min-h-fit h-28 dark:border-gray-300 rounded-xl`}
                 />
                 <button
@@ -57,9 +62,11 @@ const FileUpload = ({ data }) => {
                   key={index}
                   className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
                 >
-                  <img
+                  <Image
                     src={foodImgDisplayPath}
                     alt={foodImgDisplayName}
+                    height={122}
+                    width={122}
                     className='object-cover p-1 border border-gray-400 w-28 min-h-fit h-28 dark:border-gray-300 rounded-xl'
                   />
                   <button

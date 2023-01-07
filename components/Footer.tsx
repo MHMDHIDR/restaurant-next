@@ -1,35 +1,34 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-// import useAxios from '../hooks/useAxios'
-
+import useAxios from '../hooks/useAxios'
 import abstractText from '../utils/functions/abstractText'
 import { removeSlug } from '../utils/functions/slug'
 import MyLink from './MyLink'
-
 import Logo from './Icons/Logo'
 import Backtop from './Icons/Backtop'
 import { WhatsApp, Twitter, Instagram } from './Icons/Socials'
 import { settingsProps } from '../types'
+import { SUGGESTED_FOOTER_ITEMS_COUNT } from '../constants'
+import Image from 'next/image'
 
 const Footer = () => {
   const [settings, setSettings] = useState<settingsProps | any>()
   const [suggestedItems, setSuggestedItems] = useState([])
 
-  // const fetchSettings = useAxios({ method: 'get', url: '/settings' })
-  // const productsNames = useAxios({ method: 'get', url: '/foods/1/0' })
-  const SUGGESTED_ITEMS_COUNT = 2
+  const fetchSettings = useAxios({ url: '/settings' })
+  const productsNames = useAxios({ url: '/foods?page=1&limit=0' })
 
-  // useEffect(() => {
-  //   if (fetchSettings.response !== null || productsNames.response !== null) {
-  //     setSettings(fetchSettings.response)
-  //     setSuggestedItems(
-  //       productsNames.response?.response
-  //         .map((product: any) => product)
-  //         .sort(() => Math.random() - 0.5)
-  //         .slice(0, SUGGESTED_ITEMS_COUNT)
-  //     )
-  //   }
-  // }, [fetchSettings.response, productsNames.response])
+  useEffect(() => {
+    if (fetchSettings.response !== null || productsNames.response !== null) {
+      setSettings(fetchSettings.response?.response)
+      setSuggestedItems(
+        productsNames.response?.response
+          .map((product: any) => product)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, SUGGESTED_FOOTER_ITEMS_COUNT)
+      )
+    }
+  }, [fetchSettings.response, productsNames.response])
 
   return (
     <footer className='text-white bg-orange-700 footer'>
@@ -38,10 +37,10 @@ const Footer = () => {
           <div className='flex flex-wrap items-center justify-center flex-1 sm:flex-nowrap'>
             <Link href='/' aria-label='App Logo' title='App Logo'>
               {settings?.websiteLogoDisplayPath ? (
-                <img
+                <Image
                   src={settings.websiteLogoDisplayPath}
-                  width='50'
-                  height='50'
+                  width={40}
+                  height={40}
                   className='w-10 h-10 transition-transform opacity-50 md:w-14 md:h-14 rounded-2xl hover:opacity-70 hover:scale-105'
                   alt='Website Logo'
                 />

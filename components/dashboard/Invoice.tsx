@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { createLocaleDateString } from '../../utils/functions/convertDate'
 import Divider from '../Divider'
 
@@ -58,7 +59,7 @@ const Invoice = ({
 
             <div className='max-h-screen overflow-hidden transition-all duration-300 ordered-items'>
               {order?.orderItems.length === 0 ? (
-                <p className='max-w-lg my-2 text-lg font-bold leading-10 tracking-wider mx-auto text-red-500'>
+                <p className='max-w-lg mx-auto my-2 text-lg font-bold leading-10 tracking-wider text-red-500'>
                   لا يوجد تفاصيل خاصة بهذا الطلب
                 </p>
               ) : (
@@ -67,7 +68,7 @@ const Invoice = ({
                     <div className='flex flex-col gap-4'>
                       <div className='flex flex-col items-start gap-2'>
                         <div className='flex items-center w-full gap-4'>
-                          <img
+                          <Image
                             loading='lazy'
                             src={item.cImg[0].foodImgDisplayPath}
                             alt={item.cHeading}

@@ -1,4 +1,5 @@
 import { useState, createContext, useEffect } from 'react'
+import useAxios from '../hooks/useAxios'
 import { SearchContextProps } from '../types'
 import { removeSlug } from '../utils/functions/slug'
 

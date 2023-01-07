@@ -29,6 +29,7 @@ import {
 } from './OrdersTableActions'
 
 import { cardProps } from '../../types'
+import Image from 'next/image'
 // import Invoice from './Invoice'
 
 interface orderInfoProps {
@@ -311,12 +312,12 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                   <div className='flex flex-col gap-4'>
                                     <div className='flex flex-col items-start gap-2'>
                                       <div className='flex items-center w-full gap-4'>
-                                        <img
+                                        <Image
                                           loading='lazy'
                                           src={item.cImg[0].foodImgDisplayPath}
                                           alt={item.cHeading}
-                                          width='50'
-                                          height='50'
+                                          width={56}
+                                          height={56}
                                           className='object-cover rounded-lg shadow-md w-14 h-14'
                                         />
                                         <div className='flex flex-col items-start'>
@@ -507,12 +508,12 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                               <div className='flex flex-col gap-4'>
                                 <div className='flex flex-col items-start gap-2'>
                                   <div className='flex items-center w-full gap-4'>
-                                    <img
+                                    <Image
                                       loading='lazy'
                                       src={item.cImg[0].foodImgDisplayPath}
                                       alt={item.cHeading}
-                                      width='50'
-                                      height='50'
+                                      width={56}
+                                      height={56}
                                       className='object-cover rounded-lg shadow-md w-14 h-14'
                                     />
                                     <div className='flex flex-col items-start'>

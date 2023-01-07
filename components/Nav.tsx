@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
-// import { CartContext } from '../Contexts/CartContext'
+import { CartContext } from '../contexts/CartContext'
 // import ThemeToggler from './ThemeToggler'
 import Logo from './Icons/Logo'
 
@@ -12,6 +12,7 @@ import MyLink from './MyLink'
 // import useAxios from '../hooks/useAxios'
 import NavMenu from './NavMenu'
 import { UserProps } from '../types'
+import Image from 'next/image'
 
 const Nav = () => {
   const handleLogout = () => {
@@ -56,10 +57,10 @@ const Nav = () => {
       >
         <Link aria-label='App Logo' title='App Logo' href='/'>
           {websiteLogoDisplayPath ? (
-            <img
+            <Image
               src={websiteLogoDisplayPath}
-              width='50'
-              height='50'
+              width={40}
+              height={40}
               className='w-10 h-10 xl:w-14 xl:h-14 rounded-2xl opacity-70'
               alt='Website Logo'
             />

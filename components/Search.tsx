@@ -1,44 +1,49 @@
-// import { useContext } from 'react'
+import { useContext, useRef } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-
-// import { SearchContext } from '../Contexts/SearchContext'
-
-// import useEventListener from '../hooks/useEventListener'
-
+import { SearchContext } from '../contexts/SearchContext'
+import useEventListener from '../hooks/useEventListener'
 import { removeSlug } from '../utils/functions/slug'
 
 const Search = () => {
-  // const { setSearch, search, searchResults } = useContext(SearchContext)
-  // const router = useRouter()
+  const searchWrapperRef = useRef<HTMLDivElement>(null)
+  const { setSearch, search, searchResults } = useContext(SearchContext)
+  const router = useRouter()
 
-  // const searchWrapper = document.querySelector('.search__wrapper')
+  useEventListener('click', (e: any) => {
+    // when clicking outside search input
+    if (e.target.id !== 'search') {
+      searchWrapperRef!.current!.classList.remove('opacity-100')
+    }
+  })
 
-  // useEventListener('click', (e: any) => {
-  //   // when clicking outside search input
-  //   if (e.target.id !== 'search') searchWrapper?.classList.remove('opacity-100')
-  // })
-
-  // const handleSearch = (e: { preventDefault: () => void }) => {
-  //   e.preventDefault()
-  //   router.push(`/search/${search}`)
-  // }
+  const handleSearch = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
+    router.push(`/search/${search}`)
+  }
 
   return (
-    <form method='post' className='relative z-20 w-full px-2' /*onSubmit={handleSearch}*/>
+    <form method='post' className='relative z-20 w-full px-2' onSubmit={handleSearch}>
       <input
         type='search'
         id='search'
         className='text-2xl font-[600] p-5 pl-16 sm:pl-28 w-[inherit] text-black outline-orange-400 border border-orange-400 outline-offset-2 rtl bg-neutral-200 dark:bg-neutral-300'
         placeholder='ابحث عن طعامك المفضل'
-        // onChange={e => (e.target.value.trim() ? setSearch(e.target.value.trim()) : '')}
-        // onKeyUp={e => {
-        //   const searchValue = e.target.value.trim()
+        onChange={e => (e.target.value.trim() ? setSearch(e.target.value.trim()) : '')}
+        onKeyUp={(e: any) => {
+          const searchValue = e.target.value.trim()
 
-        //   searchValue.length > 0
-        //     ? searchWrapper?.classList.add('opacity-100', 'pointer-events-auto')
-        //     : searchWrapper?.classList.remove('opacity-100', 'pointer-events-auto')
-        // }}
+          searchValue.length > 0
+            ? searchWrapperRef!.current!.classList.add(
+                'opacity-100',
+                'pointer-events-auto'
+              )
+            : searchWrapperRef!.current!.classList.remove(
+                'opacity-100',
+                'pointer-events-auto'
+              )
+        }}
       />
       <button
         type='submit'
@@ -60,27 +65,30 @@ const Search = () => {
         </svg>
       </button>
 
-      <div className='absolute w-[inherit] bg-neutral-200 dark:bg-neutral-300 opacity-0 pointer-events-none search__wrapper rtl border-2 border-b-orange-400 border-r-orange-400 border-l-orange-400 '>
+      <div
+        ref={searchWrapperRef}
+        className='absolute w-[inherit] bg-neutral-200 dark:bg-neutral-300 opacity-0 pointer-events-none rtl border-2 border-b-orange-400 border-r-orange-400 border-l-orange-400 '
+      >
         <ul className='overflow-y-auto rtl:text-right max-h-60'>
-          {
-            // search &&
-            //   searchResults?.map(({ _id, foodName, foodImgs }, idx) => (
-            //     <Link
-            //       key={idx}
-            //       href={`/view/item/${_id}`}
-            //       className={`w-full flex px-4 py-2 justify-start items-center gap-x-5 transition-colors font-[600] text-orange-600 dark:text-orange-700 text-xl hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-400 border-b border-b-gray-300 dark:border-b-gray-400`}
-            //     >
-            //       {/* food img */}
-            //       <img
-            //         loading='lazy'
-            //         src={foodImgs[0].foodImgDisplayPath}
-            //         alt={foodName}
-            //         className={`object-cover rounded-lg shadow-md w-14 h-14`}
-            //       />
-            //       <p>{removeSlug(foodName)}</p>
-            //     </Link>
-            //   ))
-          }
+          {search &&
+            searchResults?.map(({ _id, foodName, foodImgs }, idx) => (
+              <Link
+                key={idx}
+                href={`/view/item/${_id}`}
+                className={`w-full flex px-4 py-2 justify-start items-center gap-x-5 transition-colors font-[600] text-orange-600 dark:text-orange-700 text-xl hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-400 border-b border-b-gray-300 dark:border-b-gray-400`}
+              >
+                {/* food img */}
+                <Image
+                  loading='lazy'
+                  src={foodImgs[0].foodImgDisplayPath}
+                  alt={foodName}
+                  height={56}
+                  width={56}
+                  className={`object-cover rounded-lg shadow-md w-14 h-14`}
+                />
+                <p>{removeSlug(foodName)}</p>
+              </Link>
+            ))}
         </ul>
       </div>
     </form>

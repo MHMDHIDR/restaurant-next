@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongoose'
+import { MouseEventHandler } from 'react'
 
 export type UserProps = {
   token: string
@@ -257,9 +258,29 @@ export type notificationProps = {
 }
 
 export type mediaProps = {
-  foodId?: string
+  foodId?: string | ObjectId
   foodImgDisplayPath: string
   foodName: string
   _id?: ObjectId
   foodPrice?: number
 }[]
+
+export type axiosProps = {
+  url: string
+  method?: string
+  body?: string | null
+  headers?: string | null
+}
+
+export type ServerSideProps = {
+  params: {
+    id: ObjectId
+  }
+}
+
+export type EmblaThumbProps = {
+  selected: boolean
+  onClick: MouseEventHandler<HTMLButtonElement>
+  imgSrc: string
+  alt: string
+}

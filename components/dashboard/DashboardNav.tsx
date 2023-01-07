@@ -6,6 +6,7 @@ import Logo from '../Icons/Logo'
 // import useAxios from '../../hooks/useAxios'
 
 import menuToggler from '../../utils/functions/menuToggler'
+import Image from 'next/image'
 
 const DashboardNav = () => {
   const handleLogout = () => {
@@ -30,10 +31,10 @@ const DashboardNav = () => {
     >
       <Link href='/'>
         {websiteLogoDisplayPath ? (
-          <img
+          <Image
             src={websiteLogoDisplayPath}
-            width='50'
-            height='50'
+            width={40}
+            height={40}
             className='w-10 h-10 opacity-50 xl:w-14 xl:h-14 rounded-2xl hover:opacity-80'
             alt='Website Logo'
           />
