@@ -227,7 +227,7 @@ export type viewFoodDataProps = {
 
 export type selectedToppingsProps = {
   toppingId: string
-  toppingQuantity: number
+  toppingQuantity?: number
   toppingPrice: number
 }
 

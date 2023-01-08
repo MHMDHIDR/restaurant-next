@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
+import { selectedToppingsProps } from '../types'
 
 export const ToppingsContext = createContext({
   handleToppingChecked: (_toppingId: string, _toppingPrice: number) => {},
@@ -7,25 +8,31 @@ export const ToppingsContext = createContext({
     _checkedToppings: { toppingId: string; toppingPrice: string }[]
   ) => {},
   handleOrderItemToppingChecked: (_toppingId: string, _toppingPrice: number) => {},
-  orderItemToppings: [],
-  setOrderItemToppings: (
-    _orderItemToppings: { toppingId: string; toppingPrice: string }[]
-  ) => {}
+  orderItemToppings: {},
+  setOrderItemToppings: (_orderItemToppings: selectedToppingsProps[]) => {}
 })
 
-// const checkedToppingsFromLocalStorage = JSON.parse(
-//   localStorage.getItem('restCheckedToppings') || '[]'
-// )
+const checkedToppingsFromLocalStorage = JSON.parse(
+  // localStorage.getItem('restCheckedToppings') || '[]'
+  '[]'
+)
 
 const ToppingsContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [orderItemToppings, setOrderItemToppings] = useState([])
+  const [checkedToppings, setCheckedToppings] = useState(checkedToppingsFromLocalStorage)
+  const [orderItemToppings, setOrderItemToppings] = useState<selectedToppingsProps[]>([])
 
   useEffect(() => {
     localStorage.setItem('restCheckedToppings', JSON.stringify(checkedToppings))
   }, [checkedToppings])
 
-  const handleToppingChecked = (toppingId: string, toppingPrice: number) => {
-    const addTopping = (toppingId: string, toppingPrice: number) => {
+  const handleToppingChecked = (
+    toppingId: selectedToppingsProps['toppingId'],
+    toppingPrice: selectedToppingsProps['toppingPrice']
+  ) => {
+    const addTopping = (
+      toppingId: selectedToppingsProps['toppingId'],
+      toppingPrice: selectedToppingsProps['toppingPrice']
+    ) => {
       setCheckedToppings([
         ...checkedToppings,
         {
@@ -49,8 +56,14 @@ const ToppingsContextProvider = ({ children }: { children: React.ReactNode }) =>
     !topping ? addTopping(toppingId, toppingPrice) : removeTopping(toppingId)
   }
 
-  const handleOrderItemToppingChecked = (toppingId: string, toppingPrice: number) => {
-    const addOrderItemTopping = (toppingId: string, toppingPrice: number) => {
+  const handleOrderItemToppingChecked = (
+    toppingId: selectedToppingsProps['toppingId'],
+    toppingPrice: selectedToppingsProps['toppingPrice']
+  ) => {
+    const addOrderItemTopping = (
+      toppingId: selectedToppingsProps['toppingId'],
+      toppingPrice: selectedToppingsProps['toppingPrice']
+    ) => {
       setOrderItemToppings([
         ...orderItemToppings,
         {

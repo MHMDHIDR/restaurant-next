@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
+import { ThemeProvider } from 'next-themes'
 import FileUploadContextProvider from '../contexts/FileUploadContext'
-import ThemeContextProvider from '../contexts/ThemeContext'
 import ToppingsContextProvider from '../contexts/ToppingsContext'
 import CartContextProvider from '../contexts/CartContext'
 import TagsContextProvider from '../contexts/TagsContext'
@@ -11,7 +11,7 @@ import DashboardOrderContextProvider from '../contexts/DashboardOrderContext'
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <FileUploadContextProvider>
-      <ThemeContextProvider>
+      <ThemeProvider attribute='class'>
         <ToppingsContextProvider>
           <CartContextProvider>
             <TagsContextProvider>
@@ -23,7 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
             </TagsContextProvider>
           </CartContextProvider>
         </ToppingsContextProvider>
-      </ThemeContextProvider>
+      </ThemeProvider>
     </FileUploadContextProvider>
   )
 }

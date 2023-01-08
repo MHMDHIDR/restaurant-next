@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-// import ThemeToggler from '../ThemeToggler'
+import ThemeToggler from '../ThemeToggler'
 import Logo from '../Icons/Logo'
 
 // import useAxios from '../../hooks/useAxios'
@@ -43,7 +43,7 @@ const DashboardNav = () => {
         )}
       </Link>
 
-      {/* <ThemeToggler /> */}
+      <ThemeToggler />
 
       <div className='flex flex-wrap justify-end gap-4'>
         <Link

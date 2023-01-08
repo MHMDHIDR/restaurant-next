@@ -1,13 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { CartContext } from '../contexts/CartContext'
-// import ThemeToggler from './ThemeToggler'
+import ThemeToggler from './ThemeToggler'
 import Logo from './Icons/Logo'
-
 import menuToggler from '../utils/functions/menuToggler'
-
 import MyLink from './MyLink'
-
 // import useEventListener from '../hooks/useEventListener'
 // import useAxios from '../hooks/useAxios'
 import NavMenu from './NavMenu'
@@ -69,7 +66,7 @@ const Nav = () => {
           )}
         </Link>
 
-        {/* <ThemeToggler /> */}
+        <ThemeToggler />
 
         <Link href='/order-food' className='underline-hover'>
           <span className='hidden sm:inline'>سلة الطلبات: </span>

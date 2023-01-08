@@ -87,6 +87,8 @@ const EmblaCarousel = ({ slides, media, smallView = false }: any) => {
                     className={`absolute z-30 block object-cover w-full min-h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 hover:scale-110 transition-transform duration-200`}
                     src={mediaByIndex(index)}
                     alt={removeSlug(nameByIndex(index))}
+                    width={300}
+                    height={300}
                   />
                 </div>
                 {!smallView && (

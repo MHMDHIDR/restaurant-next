@@ -18,6 +18,8 @@ export const Thumb = ({ selected, onClick, imgSrc, alt }: EmblaThumbProps) => (
         className={`absolute top-0 bottom-0 -left-[10000%] -right-[10000%] m-auto min-w-[1000%] min-h-[1000%] max-w-none scale-[0.1]`}
         src={imgSrc}
         alt={alt}
+        width={96}
+        height={96}
       />
     </button>
   </div>

@@ -1,4 +1,4 @@
-// import ThemeToggler from '../ThemeToggler'
+import ThemeToggler from '../ThemeToggler'
 import { Loading } from '../Icons/Status'
 import { ModalProps } from '../../types'
 
@@ -28,7 +28,7 @@ const Modal = ({
     >
       <span className='hidden'>
         {/* hidden theme toggler because I don't want user to change theme inside a modal view */}
-        {/* <ThemeToggler /> */}
+        <ThemeToggler />
       </span>
       <div className='container mx-auto'>
         <div
