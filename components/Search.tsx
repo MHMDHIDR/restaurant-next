@@ -12,7 +12,6 @@ const Search = () => {
   const router = useRouter()
 
   useEventListener('click', (e: any) => {
-    // when clicking outside search input
     if (e.target.id !== 'search') {
       searchWrapperRef!.current!.classList.remove('opacity-100')
     }

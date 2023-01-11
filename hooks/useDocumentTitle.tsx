@@ -1,11 +1,8 @@
 import { useEffect } from 'react'
-import { API_URL } from '../constants'
+import useAxios from './useAxios'
 
 const useDocumentTitle = (title: string) => {
-  const response = fetch(`${API_URL}/settings`).then(res => res.json())
-
-  console.log(response)
-
+  const { response } = useAxios({ url: '/api/settings' })
   const appName = response?.appName || 'Restaurant'
 
   useEffect(() => {

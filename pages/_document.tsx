@@ -1,6 +1,18 @@
 import { Html, Head, Main, NextScript } from 'next/document'
+import { useEffect } from 'react'
 
 export default function Document() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () =>
+        navigator.serviceWorker
+          .register('/sw.js')
+          .then(reg => reg)
+          .catch(err => console.error(err))
+      )
+    }
+  }, [])
+
   return (
     <Html dir='rtl' lang='ar'>
       <Head>

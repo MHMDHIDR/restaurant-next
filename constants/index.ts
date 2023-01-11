@@ -2,6 +2,8 @@
 
 // export const ADMIN_EMAIL = await UserModel.find().limit(1)
 
+export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
+
 export const SLIDES_IN_MENU = 10
 
 export const SUGGESTED_FOOTER_ITEMS_COUNT = 2

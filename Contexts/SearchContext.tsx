@@ -12,7 +12,7 @@ const SearchContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [searchFor, setSearchFor] = useState('foods')
 
   const { error, loading, ...response } = useAxios({
-    url: `/${searchFor}/0/0?category=${foodCategory}`
+    url: `/${searchFor}?page=0&limit=0&category=${foodCategory}`
   })
 
   useEffect(() => {

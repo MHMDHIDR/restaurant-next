@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 const useEventListener = (
   eventType: string = '',
   listener: EventListenerOrEventListenerObject = () => null,
-  target: EventTarget /*= window*/,
+  target?: EventTarget /*= window*/,
   options?: any
 ) => {
   const savedListener = useRef<any>()

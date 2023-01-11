@@ -5,6 +5,7 @@ import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react'
 import { Thumb } from './EmblaCarouselThumb'
 import { removeSlug } from '../../utils/functions/slug'
 import Image from 'next/image'
+import { HEADER_BG_IMG } from '../../constants'
 
 const EmblaCarousel = ({ slides, media, smallView = false }: any) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -51,7 +52,6 @@ const EmblaCarousel = ({ slides, media, smallView = false }: any) => {
   const priceByIndex = (index: number) => media[index % media.length].foodPrice
   const mediaByIndex = (index: number) => media[index % media.length].foodImgDisplayPath
   const nameByIndex = (index: number) => media[index % media.length].foodName
-  const HEADER_BG_IMG = '/assets/img/header-bg-1.webp' // or using data.heroBg
 
   return (
     <div dir={`ltr`}>

@@ -30,7 +30,7 @@ const index = ({ item }: any) => {
     <Layout>
       <section id='viewFood' className='py-12 my-8'>
         <div className='container mx-auto'>
-          {!item?.response?.length ? (
+          {item?.response?.length > 0 ? (
             <>
               <h2 className='text-xl font-bold text-center mb-28 md:text-2xl'>
                 <Link href={`/view/item/${item?.response?._id}`}>

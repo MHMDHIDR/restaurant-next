@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import useAxios from '../hooks/useAxios'
 import Search from './Search'
 import Nav from './Nav'
@@ -8,19 +8,13 @@ import { headerProps } from '../types'
 import Image from 'next/image'
 
 const Header = () => {
-  const typewriterRef = useRef(null)
   const [data, setData] = useState<headerProps>()
   const { response } = useAxios({ url: '/settings' })
 
   useEffect(() => {
     if (response !== null) setData(response)
   }, [response])
-
-  new Typewriter(typewriterRef, {
-    strings: data?.appTagline || `نحن الأفضل، وسنبقى كذلك ... إلى الأبد 😄 🤍`,
-    autoStart: true,
-    loop: true
-  })
+  //data?.appTagline || `نحن الأفضل، وسنبقى كذلك ... إلى الأبد 😄 🤍`,
 
   return (
     <header
@@ -56,11 +50,15 @@ const Header = () => {
               />
             )}
 
-            <h1 className='max-w-xs px-2 text-lg leading-loose text-center text-white select-none sm:max-w-fit xl:text-3xl sm:text-xl md:text-4xl rtl'>
-              <span
-                className='inline-block h-20 my-4 overflow-x-hidden sm:whitespace-nowrap'
-                ref={typewriterRef}
-              ></span>
+            <h1 className='inline-block h-20 max-w-xs px-2 my-4 overflow-x-hidden text-lg leading-loose text-center text-white select-none sm:max-w-fit xl:text-3xl sm:text-xl md:text-4xl rtl sm:whitespace-nowrap'>
+              <Typewriter
+                options={{
+                  strings:
+                    data?.appTagline || `نحن الأفضل، وسنبقى كذلك ... إلى الأبد 😄 🤍`,
+                  autoStart: true,
+                  loop: true
+                }}
+              />
             </h1>
             <Search />
             <ScrollDown />
