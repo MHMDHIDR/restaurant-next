@@ -28,19 +28,20 @@ const Index = ({
   let media: mediaProps = []
 
   //push food images to media array
+
   menuFood &&
     menuFood?.response.map(({ _id, foodImgs, foodName, foodPrice }: any) =>
       media.push({
-        _id,
+        foodId: _id,
         foodImgDisplayPath: foodImgs[0]?.foodImgDisplayPath,
         foodName,
         foodPrice
       })
     )
 
-  const [foodImgs, setFoodImgs] = useState<any>()
-  const [drinkImgs, setDrinkImgs] = useState<any>()
-  const [sweetsImgs, setSweetsImgs] = useState<any>()
+  const [foodImgs, setFoodImgs] = useState<any>('')
+  const [drinkImgs, setDrinkImgs] = useState<any>('')
+  const [sweetsImgs, setSweetsImgs] = useState<any>('')
   useEffect(() => {
     setFoodImgs(catFoodResponse?.response)
     setSweetsImgs(catDrinkResponse?.response)
@@ -51,6 +52,7 @@ const Index = ({
     const randomIndex = Math.floor(Math.random() * foodImgs?.length)
     return foodImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
   }
+
   const getRandomDrinkImg = () => {
     const randomIndex = Math.floor(Math.random() * drinkImgs?.length)
     return drinkImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
@@ -262,7 +264,9 @@ const Index = ({
               href={`/view`}
               className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
               style={{
-                backgroundImage: `url("${getRandomFoodImg()}")`
+                backgroundImage: `url("${
+                  getRandomFoodImg() || '/assets/img/icons/logo.svg'
+                }")`
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
@@ -274,7 +278,9 @@ const Index = ({
               href={`/view/foods/`}
               className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
               style={{
-                backgroundImage: `url("${getRandomFoodImg()}")`
+                backgroundImage: `url("${
+                  getRandomFoodImg() || '/assets/img/icons/logo.svg'
+                }")`
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
@@ -286,7 +292,9 @@ const Index = ({
               href={`/view/drinks/`}
               className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
               style={{
-                backgroundImage: `url("${getRandomDrinkImg()}")`
+                backgroundImage: `url("${
+                  getRandomDrinkImg() || '/assets/img/icons/logo.svg'
+                }")`
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
@@ -298,7 +306,9 @@ const Index = ({
               href={`/view/sweets/`}
               className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
               style={{
-                backgroundImage: `url("${getSweetsDrinkImg()}")`
+                backgroundImage: `url("${
+                  getSweetsDrinkImg() || '/assets/img/icons/logo.svg'
+                }")`
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>

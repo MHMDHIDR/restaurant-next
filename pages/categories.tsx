@@ -37,7 +37,9 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             href={`/view`}
             className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
             style={{
-              backgroundImage: `url("${getRandomFoodImg()}")`
+              backgroundImage: `url("${
+                getRandomFoodImg() || '/assets/img/icons/logo.svg'
+              }")`
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
@@ -49,7 +51,9 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             href={`/view/foods/`}
             className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
             style={{
-              backgroundImage: `url("${getRandomFoodImg()}")`
+              backgroundImage: `url("${
+                getRandomFoodImg() || '/assets/img/icons/logo.svg'
+              }")`
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
@@ -61,7 +65,9 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             href={`/view/drinks/`}
             className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
             style={{
-              backgroundImage: `url("${getRandomDrinkImg()}")`
+              backgroundImage: `url("${
+                getRandomDrinkImg() || '/assets/img/icons/logo.svg'
+              }")`
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
@@ -73,7 +79,9 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             href={`/view/sweets/`}
             className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
             style={{
-              backgroundImage: `url("${getSweetsDrinkImg()}")`
+              backgroundImage: `url("${
+                getSweetsDrinkImg() || '/assets/img/icons/logo.svg'
+              }")`
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
