@@ -29,20 +29,15 @@ const reqDate = {
   required: true
 }
 
-const FoodSchema = new Schema(
-  {
-    foodImgs: typeArray,
-    foodName: reqString,
-    foodPrice: reqNumber,
-    category: reqString,
-    foodDesc: reqString,
-    foodToppings: foodToppingsType,
-    foodTags: typeArray,
-    createdAt: reqDate,
-    updatedAt: reqDate
-  },
-  //Collection Name
-  { collection: 'restaurant_food' }
-)
-
-export default models.restaurant || model('restaurant', FoodSchema)
+const FoodSchema = new Schema({
+  foodImgs: typeArray,
+  foodName: reqString,
+  foodPrice: reqNumber,
+  category: reqString,
+  foodDesc: reqString,
+  foodToppings: foodToppingsType,
+  foodTags: typeArray,
+  createdAt: reqDate,
+  updatedAt: reqDate
+})
+export default models?.restaurant_foods || model('restaurant_foods', FoodSchema)

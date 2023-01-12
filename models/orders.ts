@@ -27,26 +27,22 @@ const reqDate = {
   required: true
 }
 
-const OrderSchema = new Schema(
-  {
-    orderId: reqString,
-    userId: reqString,
-    userEmail: reqString,
-    personName: reqString,
-    personPhone: reqString,
-    personAddress: reqString,
-    personNotes: {
-      type: String
-    },
-    orderItems: reqObject,
-    orderToppings: reqObject,
-    grandPrice: reqNumber,
-    paymentData: reqObject,
-    orderStatus,
-    orderDate: reqDate
+const OrderSchema = new Schema({
+  orderId: reqString,
+  userId: reqString,
+  userEmail: reqString,
+  personName: reqString,
+  personPhone: reqString,
+  personAddress: reqString,
+  personNotes: {
+    type: String
   },
-  //Collection Name
-  { collection: 'restaurant_orders' }
-)
+  orderItems: reqObject,
+  orderToppings: reqObject,
+  grandPrice: reqNumber,
+  paymentData: reqObject,
+  orderStatus,
+  orderDate: reqDate
+})
 
-export default models.restaurant || model('restaurant', OrderSchema)
+export default models?.restaurant_orders || model('restaurant_orders', OrderSchema)

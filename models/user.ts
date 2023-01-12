@@ -21,19 +21,15 @@ const userAccountType = {
   default: 'user'
 }
 
-const UserSchema = new Schema(
-  {
-    userFullName: reqString,
-    userEmail: reqString,
-    userTel: reqString,
-    userPassword: reqString,
-    userAccountStatus,
-    userAccountType,
-    userResetPasswordToken: typeString,
-    userResetPasswordExpires: typeString
-  },
-  //Collection Name
-  { collection: 'restaurant_users' }
-)
+const UserSchema = new Schema({
+  userFullName: reqString,
+  userEmail: reqString,
+  userTel: reqString,
+  userPassword: reqString,
+  userAccountStatus,
+  userAccountType,
+  userResetPasswordToken: typeString,
+  userResetPasswordExpires: typeString
+})
 
-export default models.restaurant || model('restaurant', UserSchema)
+export default models.restaurant_users || model('restaurant_users', UserSchema)

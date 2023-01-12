@@ -1235,6 +1235,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jsonwebtoken@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@types/jsonwebtoken@npm:9.0.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: c7791354ba895759524c18ba609ea04efdc576e2b660bd6f80d5b917db8dc4b01acd4d1bc115a62d35406a82e627067973d475c4b36035dabaa27862b141ae49
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*, @types/node@npm:18.11.18":
   version: 18.11.18
   resolution: "@types/node@npm:18.11.18"
@@ -4831,6 +4840,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "restaurant-next@workspace:."
   dependencies:
+    "@types/jsonwebtoken": ^9.0.0
     "@types/node": 18.11.18
     "@types/react": 18.0.26
     "@types/react-dom": 18.0.10

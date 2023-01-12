@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import paginatedResults from '../../../middleware/paginatedResults'
 
-import FoodsModel from '../../../models/food'
+import FoodsModel from '../../../models/Food'
 import dbConnect from '../../../utils/db'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

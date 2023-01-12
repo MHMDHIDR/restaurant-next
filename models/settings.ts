@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import { model, models, Schema } from 'mongoose'
 
 const reqString = {
   type: String,
@@ -16,22 +16,17 @@ const orderMsg = {
   Failure: typeString
 }
 
-const SettingsSchema = new mongoose.Schema(
-  {
-    websiteLogoDisplayPath: reqString,
-    websiteLogoDisplayName: reqString,
-    appName: reqString,
-    appDesc: reqString,
-    appTagline: reqString,
-    whatsAppNumber: typeString,
-    instagramAccount: typeString,
-    twitterAccount: typeString,
-    heroBg: reqArray,
-    CategoryList: reqArray,
-    orderMsg
-  },
-  //Collection Name
-  { collection: 'restaurant_settings' }
-)
-
-export default mongoose.models.restaurant || mongoose.model('restaurant', SettingsSchema)
+const SettingsSchema = new Schema({
+  websiteLogoDisplayPath: reqString,
+  websiteLogoDisplayName: reqString,
+  appName: reqString,
+  appDesc: reqString,
+  appTagline: reqString,
+  whatsAppNumber: typeString,
+  instagramAccount: typeString,
+  twitterAccount: typeString,
+  heroBg: reqArray,
+  CategoryList: reqArray,
+  orderMsg
+})
+export default models?.restaurant_settings || model('restaurant_settings', SettingsSchema)

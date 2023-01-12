@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
-import FoodsModel from '../../../models/food'
+import FoodsModel from '../../../models/Food'
 import paginatedResults from '../../../middleware/paginatedResults'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

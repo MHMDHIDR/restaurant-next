@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongoose'
 import { MouseEventHandler } from 'react'
+import { NextApiRequest } from 'next'
 
 export type UserProps = {
   token: string
@@ -283,4 +284,8 @@ export type EmblaThumbProps = {
   onClick: MouseEventHandler<HTMLButtonElement>
   imgSrc: string
   alt: string
+}
+
+export type authUserRequestProps = NextApiRequest & {
+  user: any
 }
