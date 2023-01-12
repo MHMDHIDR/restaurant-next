@@ -2,8 +2,7 @@ import { useState, createContext, useContext, useEffect } from 'react'
 import { CartProps } from '../types'
 import { ToppingsContext } from './ToppingsContext'
 
-const cartFromLocalStorage = '[]'
-// const cartFromLocalStorage = JSON.parse(localStorage.getItem('restCartItems') || '[]')
+const cartFromLocalStorage = JSON.parse(/*localStorage.getItem('restCartItems') ||*/ '[]')
 
 export const CartContext = createContext({} as CartProps)
 

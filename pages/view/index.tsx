@@ -9,6 +9,7 @@ import abstractText from '../../utils/functions/abstractText'
 import { removeSlug } from '../../utils/functions/slug'
 import ModalNotFound from '../../components/Modal/ModalNotFound'
 import Card from '../../components/Card'
+import Layout from '../../components/Layout'
 // import Pagination from '../../components/Pagination'
 import { API_URL, ITEMS_PER_PAGE } from '../../constants'
 import { ObjectId } from 'mongoose'
@@ -31,28 +32,15 @@ const index = ({ viewFood }: any) => {
   const { items } = useContext(CartContext)
 
   return (
-    <section id='viewFood' className='py-12 my-8'>
-      <div className='container mx-auto'>
-        <h2 className='text-xl font-bold text-center mb-28 md:text-2xl'>
-          {!data?.response?.length
-            ? //single food item (Title)
-              data?.response && (
-                <Link href={`/view/item/${data?.response?._id}`}>
-                  {removeSlug(data?.response?.foodName)}
-                </Link>
-              )
-            : 'عرض الوجبات'}
-        </h2>
-
-        {data ?? data !== undefined ? (
-          // if data.length gives a number that means there are Multiple food items
-          data?.response?.length > 0 ? (
+    <Layout>
+      <section id='viewFood' className='py-12 my-8'>
+        <div className='container mx-auto'>
+          <h2 className='text-xl font-bold text-center mb-28 md:text-2xl'>عرض الوجبات</h2>
+          {data?.length > 0 ? (
             <>
-              {data?.response?.map((item: viewFoodDataProps, idx: number) => (
-                // View Multiple (Many) food items
+              {data?.map((item: viewFoodDataProps) => (
                 <motion.div
-                  // key={item._id}
-                  key={idx}
+                  key={item._id + ''}
                   initial={{ x: '50vw', opacity: 0 }}
                   whileInView={{ x: 0, opacity: 1 }}
                   viewport={{ once: true }}
@@ -76,7 +64,6 @@ const index = ({ viewFood }: any) => {
                     cImg={item.foodImgs}
                     cImgAlt={item.foodName}
                     cCtaLabel={
-                      //add to cart button, if item is already in cart then disable the button
                       items.find(
                         (itemInCart: { cItemId: ObjectId }) =>
                           itemInCart.cItemId === item._id
@@ -117,12 +104,12 @@ const index = ({ viewFood }: any) => {
                 category={category}
               /> */}
             </>
-          ) : data?.response?.length === 0 ? (
+          ) : data?.length === 0 ? (
             <ModalNotFound />
-          ) : null
-        ) : null}
-      </div>
-    </section>
+          ) : null}
+        </div>
+      </section>
+    </Layout>
   )
 }
 
@@ -134,9 +121,7 @@ export const getServerSideProps = async () => {
   const viewFood = await fetch(fetchURLs.new).then(viewFood => viewFood.json())
 
   return {
-    props: {
-      viewFood
-    }
+    props: { viewFood }
   }
 }
 
