@@ -20,7 +20,7 @@ const Footer = () => {
 
   useEffect(() => {
     if (fetchSettings.response !== null || productsNames.response !== null) {
-      setSettings(fetchSettings.response?.response)
+      setSettings(fetchSettings.response?.response[0])
       setSuggestedItems(
         productsNames.response?.response
           .map((product: any) => product)
@@ -65,11 +65,14 @@ const Footer = () => {
                     </Link>
                   </li>
                 ) : (
-                  suggestedItems.map((item, idx) => (
-                    <li key={idx}>
-                      {/* <Link href={`/view/item/${item._id}`} className='hover:text-gray-700'>
+                  suggestedItems.map((item: any) => (
+                    <li key={item._id}>
+                      <Link
+                        href={`/view/item/${item._id}`}
+                        className='hover:text-gray-700'
+                      >
                         {removeSlug(abstractText(item.foodName, 20))}
-                      </Link> */}
+                      </Link>
                     </li>
                   ))
                 )}

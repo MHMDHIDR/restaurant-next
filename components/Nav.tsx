@@ -5,8 +5,8 @@ import ThemeToggler from './ThemeToggler'
 import Logo from './Icons/Logo'
 import menuToggler from '../utils/functions/menuToggler'
 import MyLink from './MyLink'
-// import useEventListener from '../hooks/useEventListener'
-// import useAxios from '../hooks/useAxios'
+import useEventListener from '../hooks/useEventListener'
+import useAxios from '../hooks/useAxios'
 import NavMenu from './NavMenu'
 import { UserProps } from '../types'
 import Image from 'next/image'
@@ -14,43 +14,46 @@ import Image from 'next/image'
 const Nav = () => {
   const handleLogout = () => {
     'user' in localStorage && localStorage.removeItem('user')
-
     window.location.href = '/'
   }
 
   const [websiteLogoDisplayPath, setWebsiteLogoDisplayPath] = useState('')
-  // const USER: UserProps = JSON.parse(localStorage.getItem('user'))
+  const USER: UserProps = JSON.parse(
+    typeof window !== 'undefined' ? localStorage.getItem('user') || '{}' : '{}'
+  )
+  const { response } = useAxios({ url: '/settings' })
 
-  // const { response } = useAxios({ url: '/settings' })
+  useEffect(() => {
+    response
+      ? setWebsiteLogoDisplayPath(response?.response[0].websiteLogoDisplayPath)
+      : setWebsiteLogoDisplayPath('')
+  }, [response])
 
-  // useEffect(() => {
-  //   if (response !== null) setWebsiteLogoDisplayPath(response.websiteLogoDisplayPath)
-  // }, [response])
+  let lastScrollY = typeof window !== 'undefined' ? window.scrollY : 0
 
-  // let lastScrollY = window.scrollY
+  useEventListener('scroll', () => {
+    const nav = document.querySelector('.nav')
+    const hideNavClass = '-translate-y-[1000px]'
 
-  // useEventListener('scroll', () => {
-  //   const nav = document.querySelector('.nav')
-  //   const hideNavClass = '-translate-y-[1000px]'
+    lastScrollY < window.scrollY
+      ? nav?.classList.add(hideNavClass)
+      : nav?.classList.remove(hideNavClass)
+    lastScrollY = window.scrollY
+  })
 
-  //   lastScrollY < window.scrollY
-  //     ? nav?.classList.add(hideNavClass)
-  //     : nav?.classList.remove(hideNavClass)
-
-  //   lastScrollY = window.scrollY
-  // })
-
-  // const { items } = useContext(CartContext)
+  const { items } = useContext(CartContext)
 
   return (
     <div className='fixed inset-0 bottom-auto z-[9999] w-full transition-transform duration-300 nav ltr'>
       <nav
         className={`flex flex-wrap items-center justify-between px-5 xl:px-10 lg:px-20 py-1 bg-gray-300 bg-opacity-90 dark:bg-neutral-900 dark:bg-opacity-90 shadow-xl backdrop-blur-sm
           saturate-[180%] transition-all ${
-            ''
-            // navigator.userAgent.includes('iPhone') ? ' standalone:pt-10' : ''
-          }
-        `}
+            typeof window !== 'undefined'
+              ? navigator.userAgent.includes('iPhone')
+                ? ' standalone:pt-10'
+                : ''
+              : ''
+          }`}
       >
         <Link aria-label='App Logo' title='App Logo' href='/'>
           {websiteLogoDisplayPath ? (
@@ -70,14 +73,17 @@ const Nav = () => {
 
         <Link href='/order-food' className='underline-hover'>
           <span className='hidden sm:inline'>سلة الطلبات: </span>
-          {/* <span>{items?.length || 0}&nbsp;&nbsp;🛒</span> */}
+          <span>{items?.length || 0}&nbsp;&nbsp;🛒</span>
         </Link>
 
         {/* Nav toggler */}
         <input
           className={`absolute w-10 h-10 opacity-0 cursor-pointer xl:pointer-events-none right-5 lg:right-20 top-1 peer group ${
-            ''
-            // navigator.userAgent.includes('iPhone') ? ' standalone:top-10' : ''
+            typeof window !== 'undefined'
+              ? navigator.userAgent.includes('iPhone')
+                ? ' standalone:top-10'
+                : ''
+              : ''
           }`}
           type='checkbox'
           aria-label='Navigation Menu'
@@ -127,33 +133,33 @@ const Nav = () => {
             {'user' in {} ? (
               // localStorage
               <li className='flex gap-3'>
-                {/* <NavMenu
+                <NavMenu
                   label={`مرحباً عزيزي ${USER.userFullName || ''}`}
                   isOptions={false}
                 >
                   {(USER?.userAccountType === 'admin' ||
                     USER?.userAccountType === 'cashier') && (
                     <Link
-                      to='/dashboard'
+                      href='/dashboard'
                       className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 xl:border-0'
                     >
                       لوحة التحكم
                     </Link>
                   )}
                   <Link
-                    to='/my-orders'
+                    href='/my-orders'
                     className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 xl:border-0'
                   >
                     طلباتي
                   </Link>
                   <Link
-                    to='/#'
+                    href='/#'
                     className='px-3 py-1 text-sm text-center text-white transition-colors bg-red-700 border-2 rounded-lg select-none hover:bg-red-600 xl:border-0'
                     onClick={handleLogout}
                   >
                     تسجيل الخروج
                   </Link>
-                </NavMenu> */}
+                </NavMenu>
               </li>
             ) : (
               <li>

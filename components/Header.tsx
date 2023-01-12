@@ -12,9 +12,13 @@ const Header = () => {
   const { response } = useAxios({ url: '/settings' })
 
   useEffect(() => {
-    if (response !== null) setData(response)
+    response
+      ? setData(response?.response[0])
+      : setData({
+          appTagline: '',
+          websiteLogoDisplayPath: ''
+        })
   }, [response])
-  //data?.appTagline || `نحن الأفضل، وسنبقى كذلك ... إلى الأبد 😄 🤍`,
 
   return (
     <header
