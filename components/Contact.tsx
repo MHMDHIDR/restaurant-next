@@ -19,44 +19,44 @@ const Contact = () => {
   const [sendStatus, setSendStatus] = useState(0)
   const [sendStatusMsg, setSendStatusMsg] = useState('')
 
-  // const sendContactForm = async (e: any) => {
-  //   e.preventDefault()
+  const sendContactForm = async (e: any) => {
+    e.preventDefault()
 
-  //   if (email === '' || msg === '' || theName === '' || subject === '') {
-  //     setSendStatus(0)
-  //     setSendStatusMsg('الرجاء ملء جميع الحقول بطريقة صحيحة')
+    if (email === '' || msg === '' || theName === '' || subject === '') {
+      setSendStatus(0)
+      setSendStatusMsg('الرجاء ملء جميع الحقول بطريقة صحيحة')
 
-  //     return
-  //   }
+      return
+    }
 
-  //   const formData = new FormData()
-  //   formData.append('name', theName)
-  //   formData.append('subject', subject)
-  //   formData.append('from', email)
-  //   formData.append('msg', msg)
+    const formData = new FormData()
+    formData.append('name', theName)
+    formData.append('subject', subject)
+    formData.append('from', email)
+    formData.append('msg', msg)
 
-  //   // if there's no error in the form
-  //   e.target.reset()
-  //   e.target.querySelector('button').setAttribute('disabled', 'disabled')
-  //   setLoading(true)
+    // if there's no error in the form
+    e.target.reset()
+    e.target.querySelector('button').setAttribute('disabled', 'disabled')
+    setLoading(true)
 
-  //   try {
-  //     const { data } = await Axios.post(`${API_URL}/contact`, formData)
+    try {
+      const { data } = await Axios.post(`${API_URL}/contact`, formData)
 
-  //     setSendStatus(data.mailSent)
-  //     setSendStatusMsg(
-  //       data?.message === 'Email Sent Successfully'
-  //         ? 'شكراً على تواصلك معنا، سيتم الرد عليك في أقرب وقت ممكن 😄'
-  //         : data?.message
-  //     )
-  //   } catch ({ response }) {
-  //     setSendStatusMsg(
-  //       response.status === 400 ? 'رجاء تعبئة جميع الحقول أدناه' : response.statusText
-  //     )
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
+      setSendStatus(data.mailSent)
+      setSendStatusMsg(
+        data?.message === 'Email Sent Successfully'
+          ? 'شكراً على تواصلك معنا، سيتم الرد عليك في أقرب وقت ممكن 😄'
+          : data?.message
+      )
+    } catch ({ response }) {
+      setSendStatusMsg(
+        response.status === 400 ? 'رجاء تعبئة جميع الحقول أدناه' : response.statusText
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <>
@@ -69,11 +69,7 @@ const Contact = () => {
               <strong className='inline-block w-full mt-3'>نسعد بخدمتك دائماً</strong>
             </p>
 
-            <form
-              method='POST'
-              className='form'
-              // onSubmit={sendContactForm}
-            >
+            <form method='POST' className='form' onSubmit={sendContactForm}>
               <Notification sendStatus={sendStatus} sendStatusMsg={sendStatusMsg} />
 
               <label htmlFor='name' className='form__group'>

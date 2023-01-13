@@ -5,8 +5,8 @@ import useAxios from './useAxios'
  * Custom hook to check if user is logged in then redirect to dashboard or home page
  */
 
-//setting user token from local storage
-const USER = JSON.parse(localStorage.getItem('user'))
+const USER =
+  typeof window !== 'undefined' && JSON.parse(localStorage.getItem('user') || '{}')
 
 const useAuth = () => {
   const [isAuth, setIsAuth] = useState(false)

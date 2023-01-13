@@ -8,6 +8,8 @@ export type UserProps = {
   userEmail: string
   userFullName: string
   _id: string
+  LoggedIn: number
+  message: string
 }
 
 export type ModalProps = {

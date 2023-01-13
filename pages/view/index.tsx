@@ -10,7 +10,7 @@ import { removeSlug } from '../../utils/functions/slug'
 import ModalNotFound from '../../components/Modal/ModalNotFound'
 import Card from '../../components/Card'
 import Layout from '../../components/Layout'
-// import Pagination from '../../components/Pagination'
+import Pagination from '../../components/Pagination'
 import { API_URL, ITEMS_PER_PAGE } from '../../constants'
 import { ObjectId } from 'mongoose'
 
@@ -93,7 +93,7 @@ const index = ({ viewFood }: any) => {
                 </motion.div>
               ))}
 
-              {/* <Pagination
+              <Pagination
                 routeName={`view`}
                 pageNum={pageNumber}
                 numberOfPages={data?.numberOfPages}
@@ -102,7 +102,7 @@ const index = ({ viewFood }: any) => {
                 itemsPerPage={itemsPerPage}
                 loaction={loaction}
                 category={category}
-              /> */}
+              />
             </>
           ) : data?.length === 0 ? (
             <ModalNotFound />
