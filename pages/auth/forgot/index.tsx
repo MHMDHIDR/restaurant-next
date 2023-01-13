@@ -15,7 +15,7 @@ import { API_URL } from '../../../constants'
 import useAuth from '../../../hooks/useAuth'
 
 const ForgotDataFromLocalStorage =
-  'ForgotData' in localStorage && JSON.parse(localStorage.getItem('ForgotData'))
+  typeof window !== 'undefined' && JSON.parse(localStorage.getItem('ForgotData') || '{}')
 
 const ForgotPassword = () => {
   useDocumentTitle('Forgot Password')
@@ -27,7 +27,8 @@ const ForgotPassword = () => {
   const [forgotLinkSentStatus, setForgotLinkSentStatus] = useState(0)
   const [forgotLinkMsg, setForgotLinkMsg] = useState('')
 
-  const modalLoading = document.querySelector('#modal')
+  const modalLoading =
+    typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
   const router = useRouter()
 
@@ -79,8 +80,8 @@ const ForgotPassword = () => {
 
       //if user is logged in
       setForgotLinkMsg(message)
-    } catch ({ response }) {
-      setForgotLinkMsg(response?.message)
+    } catch (response: any) {
+      setForgotLinkMsg(response?.response.message)
     } finally {
       setSendingForgotForm(false)
     }
