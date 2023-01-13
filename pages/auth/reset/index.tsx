@@ -11,7 +11,7 @@ import useEventListener from '../../../hooks/useEventListener'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 
 import { API_URL } from '../../../constants'
-import { validPassword } from '../../utils/validForm'
+import { validPassword } from '../../../utils/functions/validForm'
 import useAuth from '../../../hooks/useAuth'
 
 const ResetPassword = () => {

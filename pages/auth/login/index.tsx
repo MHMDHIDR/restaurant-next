@@ -13,7 +13,7 @@ import GoogleLogin from 'react-google-login'
 // import { gapi } from 'gapi-script'
 import { EyeIconOpen, EyeIconClose } from '../../../components/Icons/EyeIcon'
 import { UserProps } from '../../../types'
-import { API_URL, GOOGLE_CLIENT_ID } from '../../../constants'
+import { API_URL } from '../../../constants'
 
 const LoginDataFromLocalStorage =
   typeof window !== 'undefined' && JSON.parse(localStorage.getItem('LoginData') || '{}')
@@ -33,7 +33,8 @@ const Login = () => {
 
   const redirect = router.route
 
-  const modalLoading = typeof window !== 'undefined' && document.querySelector('#modal')
+  const modalLoading =
+    typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
   const { isAuth, userType, loading } = useAuth()
   useEffect(() => {
@@ -101,7 +102,7 @@ const Login = () => {
   useEffect(() => {
     function start() {
       // gapi.client.init({
-      //   clientId: GOOGLE_CLIENT_ID,
+      //   clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       //   scope: 'profile email'
       // })
     }
@@ -210,7 +211,7 @@ const Login = () => {
                     أو تسجيل الدخول عن طريق حسابك في جوجل
                   </strong>
                   <GoogleLogin
-                    clientId={GOOGLE_CLIENT_ID || ''}
+                    clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}
                     buttonText='Log in with Google'
                     onSuccess={handleGoogleLogin}
                     onFailure={(result: any) => {
