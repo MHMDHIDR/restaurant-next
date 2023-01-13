@@ -32,4 +32,4 @@ const UserSchema = new Schema({
   userResetPasswordExpires: typeString
 })
 
-export default models.restaurant_users || model('restaurant_users', UserSchema)
+export default models?.restaurant_users || model('restaurant_users', UserSchema)
