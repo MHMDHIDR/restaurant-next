@@ -12,7 +12,7 @@ import { viewFoodDataProps } from '../types'
 const NewFood = (foods: any) => {
   const [data, setData] = useState<any>()
 
-  // const { ...response } = useAxios({ url: '/foods/1/7?category=foods' })
+  // const { ...response } = useAxios({ url: '/foods/1/7?category=food' })
 
   useEffect(() => {
     if (foods !== null) {
@@ -31,8 +31,7 @@ const NewFood = (foods: any) => {
         {data && data?.response?.length > 0 ? (
           data?.response?.map((item: viewFoodDataProps, idx: number) => (
             <motion.div
-              className='odd:ltr'
-              key={item._id}
+              key={item._id + ''}
               initial={
                 idx % 2 === 0 ? { x: '50vw', opacity: 0 } : { x: '-50vw', opacity: 0 }
               }
@@ -42,6 +41,7 @@ const NewFood = (foods: any) => {
                 type: 'spring',
                 duration: 3
               }}
+              className='odd:ltr'
             >
               <Card
                 cItemId={item._id}
@@ -101,7 +101,7 @@ const NewFood = (foods: any) => {
 
 export async function getServerSideProps() {
   const response = await fetch(
-    'http://dev.com:3000/api/foods?page=1&limit=2&category=foods'
+    'http://dev.com:3000/api/foods?page=1&limit=2&category=food'
   )
   const data = await response.json()
   console.log(data)

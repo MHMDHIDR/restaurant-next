@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
-import FoodsModel from '../../../models/Food'
+import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps } from '../../../types'
 import sharp from 'sharp'
@@ -21,7 +21,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
   switch (method) {
     case 'GET': {
       try {
-        const foods = await paginatedResults(FoodsModel, req, res)
+        const foods = await paginatedResults(FoodModel, req, res)
         res.status(200).json(foods)
       } catch (error) {
         res.json('Failed to get food!' + error)
@@ -57,7 +57,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         })
       )
 
-      await FoodsModel.create({
+      await FoodModel.create({
         foodName,
         foodPrice: parseInt(foodPrice),
         category,
