@@ -10,9 +10,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   switch (method) {
     case 'GET': {
-      const foods = await paginatedResults(UsersModel, req, res)
+      const users = await paginatedResults(UsersModel, req, res)
+      res.status(200).json(users)
+      break
+    }
 
-      res.status(200).json(foods)
+    case 'POST': {
+      break
+    }
+
+    case 'PATCH': {
+      break
+    }
+
+    case 'DELETE': {
+      break
+    }
+
+    default: {
+      res.status(405).end(`Method ${method} Not Allowed`)
+      break
     }
   }
 }
