@@ -1,16 +1,12 @@
 import { useContext, useState, useRef, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import Link from 'next/link'
 import Axios from 'axios'
-
 import { ToppingsContext } from '../../../contexts/ToppingsContext'
 import { DashboardOrderContext } from '../../../contexts/DashboardOrderContext'
-
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
-
 import { validPhone } from '../../../utils/functions/validForm'
-
-import { API_URL } from '../../../constants'
-
+import { API_URL, USER } from '../../../constants'
 import Modal from '../../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../../components/Icons/Status'
 import { LoadingCard, LoadingSpinner } from '../../../components/Loading'
@@ -25,8 +21,6 @@ const DashboardOrdersEdit = () => {
   const { orderItemToppings, setOrderItemToppings } = useContext(ToppingsContext)
   const { ordersData, setOrdersData, orderItemsGrandPrice, setOrderItemsGrandPrice } =
     useContext(DashboardOrderContext)
-
-  const USER = JSON.parse(localStorage.getItem('user'))
 
   //global variables
   const MAX_CHARACTERS = 100

@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
+import { USER } from '../constants'
 import useAxios from './useAxios'
 
 /**
  * Custom hook to check if user is logged in then redirect to dashboard or home page
  */
-
-const USER =
-  typeof window !== 'undefined' && JSON.parse(localStorage.getItem('user') || '{}')
 
 const useAuth = () => {
   const [isAuth, setIsAuth] = useState(false)

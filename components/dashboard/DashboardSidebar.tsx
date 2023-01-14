@@ -1,18 +1,16 @@
 import { useState, useEffect, useRef, Children } from 'react'
 import { NavLink } from 'react-router-dom'
-import { UserProps } from '../../types'
+import { USER } from '../../constants'
 
 import goTo from '../../utils/functions/goTo'
 import menuToggler from '../../utils/functions/menuToggler'
 
 const DashboardSidebar = () => {
   const menuTogglerRef = useRef<any>()
-  const [top, setTop] = useState<number>()
+  const [top, setTop] = useState<number>(0)
   useEffect(() => {
     setTop(menuTogglerRef?.current?.getBoundingClientRect().top)
   }, [])
-
-  const USER: UserProps = JSON.parse(localStorage.getItem('user'))
 
   return (
     <aside>
@@ -82,12 +80,12 @@ const DashboardSidebar = () => {
   )
 }
 
-const SideBarLink = ({ to, children }) => (
+const SideBarLink = ({ to, children }: any) => (
   <li className='hover:bg-orange-700'>
     <NavLink
       end
       to={goTo(to)}
-      className={({ isActive }) =>
+      className={({ isActive }: boolean) =>
         !isActive ? 'dashboard__nav' : 'dashboard__nav isActive'
       }
       onClick={() => menuToggler()}

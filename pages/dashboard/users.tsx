@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react'
 import useAxios from '../../hooks/useAxios'
-import { Link, useParams } from 'react-router-dom'
+// import { useParams } from 'react-router-dom'
+import Link from 'next/link'
 import Axios from 'axios'
-
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useEventListener from '../../hooks/useEventListener'
-
 import goTo from '../../utils/functions/goTo'
 import logoutUser from '../../utils/functions/logoutUser'
-
-import { API_URL } from '../../constants'
-
+import { API_URL, USER } from '../../constants'
 import Modal from '../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../components/Icons/Status'
 import { LoadingSpinner } from '../../components/Loading'
@@ -21,19 +18,17 @@ import ModalNotFound from '../../components/Modal/ModalNotFound'
 const DashboardUsers = () => {
   useDocumentTitle('Users')
 
-  let { pageNum }: any = useParams()
+  // let { pageNum }: any = useParams()
 
-  const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
+  // const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
   const itemsPerPage = 10
 
-  const [userId, setUserId] = useState()
-  const [userAccountAction, setUserAccountAction] = useState()
+  const [userId, setUserId] = useState('')
+  const [userAccountAction, setUserAccountAction] = useState('')
   const [userName, setUserName] = useState('')
   const [deleteUserStatus, setDeleteUserStatus] = useState()
   const [userUpdated, setUserUpdated] = useState()
   const [data, setData] = useState<any>('')
-
-  const USER = JSON.parse(localStorage.getItem('user'))
 
   const modalLoading = document.querySelector('#modal')
 
@@ -59,11 +54,11 @@ const DashboardUsers = () => {
       setUserName(e.target.dataset.name)
       setUserAccountAction(e.target.dataset.action)
       //show modal
-      modalLoading.classList.remove('hidden')
+      modalLoading!.classList.remove('hidden')
     }
 
     if (e.target.id === 'cancel') {
-      modalLoading.classList.add('hidden')
+      modalLoading!.classList.add('hidden')
     } else if (e.target.id === 'confirm') {
       handleUser(userId, userAccountAction)
     }
@@ -80,7 +75,7 @@ const DashboardUsers = () => {
         setDeleteUserStatus(userDeleted)
         //Remove waiting modal
         setTimeout(() => {
-          modalLoading.classList.add('hidden')
+          modalLoading!.classList.add('hidden')
         }, 300)
 
         logoutUser(userId)
@@ -98,7 +93,7 @@ const DashboardUsers = () => {
         setUserUpdated(userUpdated)
         //Remove waiting modal
         setTimeout(() => {
-          modalLoading.classList.add('hidden')
+          modalLoading!.classList.add('hidden')
         }, 300)
       } catch (err) {
         console.error(err)
@@ -412,7 +407,7 @@ const DashboardUsers = () => {
                       عفواً، لم يتم العثور على مستخدمين
                     </p>
                     <Link
-                      to='dashboard'
+                      href='dashboard'
                       className='w-fit mx-auto bg-orange-700 hover:bg-orange-800 text-white py-1.5 text-lg px-6 rounded-md'
                     >
                       العودة للوحة التحكم

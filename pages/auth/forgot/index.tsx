@@ -2,15 +2,12 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Axios from 'axios'
-
 import Header from '../../../components/Header'
 import Footer from '../../../components/Footer'
 import Notification from '../../../components/Notification'
 import { LoadingPage, LoadingSpinner } from '../../../components/Loading'
-
 import useEventListener from '../../../hooks/useEventListener'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
-
 import { API_URL } from '../../../constants'
 import useAuth from '../../../hooks/useAuth'
 

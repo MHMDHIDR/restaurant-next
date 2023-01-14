@@ -1,24 +1,22 @@
 import { useState, useEffect, Suspense, lazy } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import Link from 'next/link'
 
 import useAxios from '../../hooks/useAxios'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useEventListener from '../../hooks/useEventListener'
 
-import goTo from '../../utils/goTo'
-import logoutUser from '../../utils/logoutUser'
-import menuToggler from '../../utils/menuToggler'
+import goTo from '../../utils/functions/goTo'
+import logoutUser from '../../utils/functions/logoutUser'
+import menuToggler from '../../utils/functions/menuToggler'
 
 import ModalNotFound from '../../components/Modal/ModalNotFound'
 import { LoadingPage } from '../../components/Loading'
+import { USER } from '../../constants'
 const DashboardNav = lazy(() => import('../../components/dashboard/DashboardNav'))
 const DashboardSidebar = lazy(() => import('../../components/dashboard/DashboardSidebar'))
 
 const DashboardHome = () => {
   useDocumentTitle('Home')
-
-  //getting user id from local storage
-  const USER = JSON.parse(localStorage.getItem('user'))
 
   const [userStatus, setUserStatus] = useState<string>('')
   const [userType, setUserType] = useState<string>('')
@@ -38,7 +36,7 @@ const DashboardHome = () => {
       setUserStatus(currentUser?.response?.response?.userAccountStatus)
       setUserType(currentUser?.response?.response?.userAccountType)
       setMenuCount(menu?.response?.itemsCount)
-      setOrdersCount(orders?.response?.itemsCount)
+      setOrdersCount(orders?.response?.itemsCount || 0)
     }
   }, [currentUser?.response, menu?.response, orders?.response])
 
@@ -55,7 +53,7 @@ const DashboardHome = () => {
     <LoadingPage />
   ) : (
     <Suspense fallback={<LoadingPage />}>
-      <section className='overflow-x-auto h-screen'>
+      <section className='h-screen overflow-x-auto'>
         <DashboardSidebar />
         <DashboardNav />
         <div className='container mx-auto'>
@@ -68,7 +66,7 @@ const DashboardHome = () => {
             {/* Orders */}
             {(userType === 'admin' || userType === 'cashier') && (
               <Link
-                to={goTo('orders')}
+                href={goTo('orders')}
                 className='inline-flex flex-col items-center justify-center p-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
               >
                 <img
@@ -86,7 +84,7 @@ const DashboardHome = () => {
             {userType === 'admin' && (
               <>
                 <Link
-                  to={goTo('menu')}
+                  href={goTo('menu')}
                   className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
                 >
                   <img
@@ -100,7 +98,7 @@ const DashboardHome = () => {
                 </Link>
 
                 <Link
-                  to={goTo('add-food')}
+                  href={goTo('add-food')}
                   className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
                 >
                   <img
@@ -115,7 +113,6 @@ const DashboardHome = () => {
             )}
           </div>
         </div>
-        <Outlet />
       </section>
     </Suspense>
   )

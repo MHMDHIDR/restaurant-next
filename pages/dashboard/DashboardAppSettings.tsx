@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef, ChangeEvent } from 'react'
 import useAxios from '../../hooks/useAxios'
 import Axios from 'axios'
-
 import useDocumentTitle from '../../hooks/useDocumentTitle'
-
-import { API_URL } from '../../constants'
-
+import { API_URL, USER } from '../../constants'
 import Modal from '../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../components/Icons/Status'
 import { LoadingSpinner } from '../../components/Loading'
@@ -36,8 +33,6 @@ const About = () => {
   const [loading, setLoading] = useState(false)
   const [websiteLogo, setWebsiteLogo] = useState<any>('')
   const [preview, setPreview] = useState<any>()
-
-  const USER = JSON.parse(localStorage.getItem('user'))
 
   //fetching description data
   const { response } = useAxios({ url: '/settings' })

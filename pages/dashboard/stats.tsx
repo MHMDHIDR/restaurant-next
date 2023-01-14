@@ -1,5 +1,4 @@
 import { useState, useEffect, Suspense, lazy } from 'react'
-import { Outlet } from 'react-router-dom'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -8,19 +7,17 @@ import useAxios from '../../hooks/useAxios'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useEventListener from '../../hooks/useEventListener'
 
-import logoutUser from '../../utils/logoutUser'
-import menuToggler from '../../utils/menuToggler'
+import logoutUser from '../../utils/functions/logoutUser'
+import menuToggler from '../../utils/functions/menuToggler'
 
 import ModalNotFound from '../../components/Modal/ModalNotFound'
 import { LoadingPage } from '../../components/Loading'
 import { cCategory } from '../../types'
+import { USER } from '../../constants'
 const DashboardNav = lazy(() => import('../../components/dashboard/DashboardNav'))
 
 const DashboardHome = () => {
   useDocumentTitle('Home')
-
-  //getting user id from local storage
-  const USER = JSON.parse(localStorage.getItem('user'))
 
   const [userStatus, setUserStatus] = useState<string>('')
   const [userType, setUserType] = useState<string>('')
@@ -41,10 +38,10 @@ const DashboardHome = () => {
       setUserStatus(currentUser?.response?.response?.userAccountStatus)
       setUserType(currentUser?.response?.response?.userAccountType)
       //Statistics
-      setCategories(getCategories?.response?.CategoryList)
+      setCategories(getCategories?.response?.CategoryList || [])
       setOrdersBycCategory(
         orders?.response?.response
-          ?.map(({ orderItems }) => orderItems[0])
+          ?.map(({ orderItems }: any) => orderItems[0])
           ?.reduce((acc: { [x: string]: any }, cur: { cCategory: string | number }) => {
             acc[cur.cCategory] = (acc[cur.cCategory] || 0) + 1
             return acc
@@ -69,7 +66,7 @@ const DashboardHome = () => {
     <LoadingPage />
   ) : (
     <Suspense fallback={<LoadingPage />}>
-      <section className='overflow-x-auto h-screen'>
+      <section className='h-screen overflow-x-auto'>
         <div className='container mx-auto'>
           <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>
             عدد الطلبات حسب التصنيف
@@ -100,7 +97,6 @@ const DashboardHome = () => {
             }}
           />
         </div>
-        <Outlet />
       </section>
     </Suspense>
   )

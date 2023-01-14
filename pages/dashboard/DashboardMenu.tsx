@@ -18,6 +18,7 @@ import { createLocaleDateString } from '../../utils/convertDate'
 import scrollToView from '../../utils/scrollToView'
 import ModalNotFound from '../../components/Modal/ModalNotFound'
 import NavMenu from '../../components/NavMenu'
+import { USER } from '../../constants'
 
 const DashboardMenu = () => {
   useDocumentTitle('Menu')
@@ -35,8 +36,6 @@ const DashboardMenu = () => {
   const [delFoodName, setDelFoodName] = useState('')
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
   const [data, setData] = useState<any>('')
-
-  const USER = JSON.parse(localStorage.getItem('user'))
 
   const modalLoading = document.querySelector('#modal')
   const API_URL =
@@ -58,11 +57,11 @@ const DashboardMenu = () => {
     if (e.target.id === 'deleteFood') {
       setDelFoodId(e.target.dataset.id)
       setDelFoodName(removeSlug(e.target.dataset.name))
-      modalLoading.classList.remove('hidden')
+      modalLoading!.classList.remove('hidden')
     }
 
     if (e.target.id === 'cancel') {
-      modalLoading.classList.add('hidden')
+      modalLoading!.classList.add('hidden')
     } else if (e.target.id === 'confirm') {
       handleDeleteFood(delFoodId)
     }
@@ -92,7 +91,7 @@ const DashboardMenu = () => {
       setDeleteFoodStatus(foodDeleted)
       //Remove waiting modal
       setTimeout(() => {
-        modalLoading.classList.add('hidden')
+        modalLoading!.classList.add('hidden')
       }, 300)
     } catch (err) {
       console.error(err)

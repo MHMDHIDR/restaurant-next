@@ -2,18 +2,13 @@ import { useContext, useState, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import Link from 'next/link'
 import Axios from 'axios'
-
 import { CartContext } from '../../contexts/CartContext'
 import { ToppingsContext } from '../../contexts/ToppingsContext'
-
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useAxios from '../../hooks/useAxios'
-
 import { validPhone } from '../../utils/functions/validForm'
 import scrollToView from '../../utils/functions/scrollToView'
-
-import { API_URL } from '../../constants'
-
+import { API_URL, USER } from '../../constants'
 import Modal from '../../components/Modal/Modal'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
@@ -25,7 +20,8 @@ import { selectedToppingsProps, orderMsgProps } from '../../types'
 import NoItems from '../../components/NoItems'
 
 const formDataFromLocalStorage =
-  'formDataCart' in localStorage && JSON.parse(localStorage.getItem('formDataCart'))
+  'formDataCart' in localStorage &&
+  JSON.parse(localStorage.getItem('formDataCart') || '{}')
 
 //orderFood
 const OrderFood = () => {
@@ -80,8 +76,8 @@ const OrderFood = () => {
   }, [response.response])
 
   useEffect(() => {
-    setUserId(JSON.parse(localStorage.getItem('user'))?._id)
-    setUserEmail(JSON.parse(localStorage.getItem('user'))?.userEmail)
+    setUserId(USER?._id)
+    setUserEmail(USER?.userEmail)
 
     localStorage.setItem(
       'formDataCart',
@@ -111,7 +107,7 @@ const OrderFood = () => {
       formErr.current.textContent = ''
 
       //if there's No user in localStorage then show modal to login or register else collect order
-      if (JSON.parse(localStorage.getItem('user'))) {
+      if (USER) {
         setShowLoginRegisterModal(false)
         setShowPaymentModal(true)
       } else {

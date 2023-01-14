@@ -27,9 +27,10 @@ import {
   // InvoiceBtn,
   RejectBtn
 } from './OrdersTableActions'
-
 import { cardProps } from '../../types'
 import Image from 'next/image'
+import { USER } from '../../constants'
+import useAxios from '../../hooks/useAxios'
 // import Invoice from './Invoice'
 
 interface orderInfoProps {
@@ -66,8 +67,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const [invoiceBase64, setInvoiceBase64] = useState<any>('')
 
   const modalLoading = document.querySelector('#modal')
-
-  const USER = JSON.parse(localStorage.getItem('user'))
 
   const logo = useAxios({ url: '/settings' })
   const { ...response } = useAxios({
