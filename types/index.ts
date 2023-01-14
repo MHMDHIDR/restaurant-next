@@ -289,7 +289,11 @@ export type EmblaThumbProps = {
 }
 
 export type authUserRequestProps = NextApiRequest & {
-  user: any
+  user: {
+    _id: ObjectId
+    userEmail: string
+    userAccountType: string
+  }
 }
 
 export type fileRequestProps = NextApiRequest & {

@@ -95,7 +95,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         const { foodImg } = req.files
         const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
         const foodImgNames = foodImgs?.map(
-          img => uuidv4() + img.name.split('.')[0] + '.webp'
+          img => crypto.randomUUID() + img.name.split('.')[0] + '.webp'
         )
 
         let foodImgDisplayPath = prevFoodImgPathsAndNames.map(

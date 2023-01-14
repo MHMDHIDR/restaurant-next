@@ -41,7 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const { websiteLogo } = req.files || ''
-      const websiteLogoName = uuidv4() + websiteLogo?.name.split('.')[0] + '.webp' || ''
+      const websiteLogoName =
+        crypto.randomUUID() + websiteLogo?.name.split('.')[0] + '.webp' || ''
       let websiteLogoDisplayPath = prevLogoImgPath
       let websiteLogoDisplayName = prevLogoImgName
 

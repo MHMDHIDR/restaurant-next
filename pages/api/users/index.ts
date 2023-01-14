@@ -1,29 +1,22 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import UsersModel from '../../../models/User'
-import paginatedResults from '../../../middleware/paginatedResults'
+import { authUserRequestProps } from '../../../types'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: authUserRequestProps, res: NextApiResponse) {
   const { method } = req
 
   dbConnect()
 
   switch (method) {
     case 'GET': {
-      const users = await paginatedResults(UsersModel, req, res)
-      res.status(200).json(users)
-      break
-    }
+      const { _id, userEmail, userAccountType } = await UsersModel.findById(req.user._id)
 
-    case 'POST': {
-      break
-    }
-
-    case 'PATCH': {
-      break
-    }
-
-    case 'DELETE': {
+      res.status(200).json({
+        _id,
+        userEmail,
+        userAccountType
+      })
       break
     }
 

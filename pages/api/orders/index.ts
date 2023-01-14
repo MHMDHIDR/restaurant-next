@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       try {
         const orders = new OrdersModel({
-          orderId: uuidv4(),
+          orderId: crypto.randomUUID(),
           userId,
           userEmail,
           personName,
