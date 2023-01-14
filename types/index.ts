@@ -268,6 +268,11 @@ export type mediaProps = {
   foodPrice?: number
 }[]
 
+export type deleteFoodImgsProps = {
+  foodImgDisplayPath: string
+  foodImgDisplayName: string
+}
+
 export type axiosProps = {
   url: string
   method?: string
