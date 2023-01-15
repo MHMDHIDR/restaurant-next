@@ -2,21 +2,18 @@ import { useState, useEffect, Suspense, lazy } from 'react'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 ChartJS.register(ArcElement, Tooltip, Legend)
-
 import useAxios from '../../hooks/useAxios'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useEventListener from '../../hooks/useEventListener'
-
 import logoutUser from '../../utils/functions/logoutUser'
 import menuToggler from '../../utils/functions/menuToggler'
-
 import ModalNotFound from '../../components/Modal/ModalNotFound'
 import { LoadingPage } from '../../components/Loading'
 import { cCategory } from '../../types'
 import { USER } from '../../constants'
-const DashboardNav = lazy(() => import('../../components/dashboard/DashboardNav'))
+import Layout from '../../components/dashboard/Layout'
 
-const DashboardHome = () => {
+const DashboardStatistics = () => {
   useDocumentTitle('Home')
 
   const [userStatus, setUserStatus] = useState<string>('')
@@ -25,9 +22,9 @@ const DashboardHome = () => {
   const [ordersBycCategory, setOrdersBycCategory] = useState<cCategory>()
 
   //if there's food id then fetch with food id, otherwise fetch everything
-  const currentUser = useAxios({ method: 'get', url: `/users/all/1/1/${USER?._id}` })
+  const currentUser = useAxios({ url: `/users/all/1/1/${USER?._id}` })
   const getCategories = useAxios({ url: `/settings` })
-  const menu = useAxios({ method: 'get', url: `/foods/0/0` })
+  const menu = useAxios({ url: `/foods/0/0` })
   const orders = useAxios({
     url: `/orders/0/0`,
     headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
@@ -65,41 +62,37 @@ const DashboardHome = () => {
   ) : !userStatus || !userType ? (
     <LoadingPage />
   ) : (
-    <Suspense fallback={<LoadingPage />}>
-      <section className='h-screen overflow-x-auto'>
-        <div className='container mx-auto'>
-          <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>
-            عدد الطلبات حسب التصنيف
-          </h1>
+    <Layout>
+      <div className='container mx-auto'>
+        <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>عدد الطلبات حسب التصنيف</h1>
 
-          <Doughnut
-            width={100}
-            height={50}
-            data={{
-              labels: categories?.map(category => category[1]), //ordersBycCategory && Object.keys(ordersBycCategory)
-              datasets: [
-                {
-                  label: 'عدد الطلبات حسب التصنيف',
-                  data: ordersBycCategory && Object.values(ordersBycCategory),
-                  backgroundColor: [
-                    'rgba(155, 52, 18, 0.7)',
-                    'rgba(171, 0, 87, 0.2)',
-                    'rgba(255, 206, 86, 0.2)'
-                  ],
-                  borderColor: [
-                    'rgba(155, 52, 18, 0.95)',
-                    'rgba(171, 0, 87, 1)',
-                    'rgba(255, 206, 86, 1)'
-                  ],
-                  borderWidth: 0.5
-                }
-              ]
-            }}
-          />
-        </div>
-      </section>
-    </Suspense>
+        <Doughnut
+          width={100}
+          height={50}
+          data={{
+            labels: categories?.map(category => category[1]), //ordersBycCategory && Object.keys(ordersBycCategory)
+            datasets: [
+              {
+                label: 'عدد الطلبات حسب التصنيف',
+                data: ordersBycCategory && Object.values(ordersBycCategory),
+                backgroundColor: [
+                  'rgba(155, 52, 18, 0.7)',
+                  'rgba(171, 0, 87, 0.2)',
+                  'rgba(255, 206, 86, 0.2)'
+                ],
+                borderColor: [
+                  'rgba(155, 52, 18, 0.95)',
+                  'rgba(171, 0, 87, 1)',
+                  'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 0.5
+              }
+            ]
+          }}
+        />
+      </div>
+    </Layout>
   )
 }
 
-export default DashboardHome
+export default DashboardStatistics

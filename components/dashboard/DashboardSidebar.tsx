@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, Children } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { USER } from '../../constants'
 
 import goTo from '../../utils/functions/goTo'
@@ -56,21 +56,21 @@ const DashboardSidebar = () => {
           className='fixed z-10 flex flex-col w-56 h-full pt-24 overflow-x-hidden overflow-y-auto transition-all translate-x-full bg-orange-800 shadow-inner dashboard__sidebar sm:pt-20 peer-checked:translate-x-0'
           id='menu'
         >
-          <SideBarLink to={'dashboard'}>لوحة التحكم</SideBarLink>
+          <SideBarLink href={'dashboard'}>لوحة التحكم</SideBarLink>
           {USER?.userAccountType === 'admin' ? (
             <>
-              <SideBarLink to={'orders'}>الطلبات</SideBarLink>
-              <SideBarLink to={'stats'}>الإحصائيات</SideBarLink>
-              <SideBarLink to={'menu'}>قائمة الوجبات</SideBarLink>
-              <SideBarLink to={'add-food'}>إضافة وجبة</SideBarLink>
-              <SideBarLink to={'users'}>المستخدمين</SideBarLink>
-              <SideBarLink to={'settings'}>إعدادات الموقع</SideBarLink>
+              <SideBarLink href={'orders'}>الطلبات</SideBarLink>
+              <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
+              <SideBarLink href={'menu'}>قائمة الوجبات</SideBarLink>
+              <SideBarLink href={'add-food'}>إضافة وجبة</SideBarLink>
+              <SideBarLink href={'users'}>المستخدمين</SideBarLink>
+              <SideBarLink href={'settings'}>إعدادات الموقع</SideBarLink>
             </>
           ) : (
             USER?.userAccountType === 'cashier' && (
               <>
-                <SideBarLink to={'orders'}>الطلبات</SideBarLink>
-                <SideBarLink to={'stats'}>الإحصائيات</SideBarLink>
+                <SideBarLink href={'orders'}>الطلبات</SideBarLink>
+                <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
               </>
             )
           )}
@@ -80,18 +80,17 @@ const DashboardSidebar = () => {
   )
 }
 
-const SideBarLink = ({ to, children }: any) => (
+const SideBarLink = ({ href, children }: any) => (
   <li className='hover:bg-orange-700'>
-    <NavLink
-      end
-      to={goTo(to)}
-      className={({ isActive }: boolean) =>
-        !isActive ? 'dashboard__nav' : 'dashboard__nav isActive'
-      }
+    <Link
+      href={goTo(href)}
+      // className={({ isActive }: boolean) =>
+      //   !isActive ? 'dashboard__nav' : 'dashboard__nav isActive'
+      // }
       onClick={() => menuToggler()}
     >
       {children}
-    </NavLink>
+    </Link>
   </li>
 )
 

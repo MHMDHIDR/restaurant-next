@@ -10,7 +10,9 @@ export const SUGGESTED_FOOTER_ITEMS_COUNT = 2
 export const ITEMS_PER_PAGE = 5
 
 export const USER: UserProps =
-  'user' in localStorage && JSON.parse(localStorage.getItem('user') || '{}')
+  typeof window !== 'undefined' &&
+  'user' in localStorage &&
+  JSON.parse(localStorage.getItem('user') || '{}')
 
 export const APP_URL =
   process.env.NODE_ENV === 'development'

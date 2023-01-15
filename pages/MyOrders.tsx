@@ -16,7 +16,7 @@ const MyOrders = () => {
   const USER_ID = USER._id || ''
   const [userStatus, setUserStatus] = useState<any>('')
 
-  const currentUser = useAxios({ method: 'get', url: `/users/all/1/1/${USER_ID}` })
+  const currentUser = useAxios({ url: `/users/all/1/1/${USER_ID}` })
 
   useEffect(() => {
     if (currentUser?.response !== null) {

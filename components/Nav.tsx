@@ -13,8 +13,10 @@ import Image from 'next/image'
 
 const Nav = () => {
   const handleLogout = () => {
-    'user' in localStorage && localStorage.removeItem('user')
-    window.location.href = '/'
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user')
+      window.location.href = '/'
+    }
   }
 
   const [websiteLogoDisplayPath, setWebsiteLogoDisplayPath] = useState('')
