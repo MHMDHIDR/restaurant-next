@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import { verify } from 'jsonwebtoken'
 import UserModel from '../models/User.js'
 import { NextApiResponse } from 'next'
 import { authUserRequestProps } from '../types/index.js'
@@ -16,11 +16,17 @@ const protect = async (
       // Get token from header
       token = req.headers.authorization.split(' ')[1]
 
+      interface JwtPayload {
+        _id: string
+      }
       // Verify token
-      const decoded = jwt.verify(token, JWT_SECRET)
+      const { _id } = verify(token, JWT_SECRET as string) as JwtPayload
 
       // Get user from the token and put it in the request object to be used in the next middleware
-      req.user = await UserModel.findById(decoded.id).select('-userPassword')
+      req.user = await UserModel.findOne({ _id, 'tokens.token': token }).select(
+        '-userPassword'
+      )
+      // req.user = await UserModel.findById(decoded.id).select('-userPassword')
 
       next()
     } catch (error) {

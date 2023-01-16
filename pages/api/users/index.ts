@@ -4,13 +4,13 @@ import UsersModel from '../../../models/User'
 import { authUserRequestProps } from '../../../types'
 
 export default async function handler(req: authUserRequestProps, res: NextApiResponse) {
-  const { method } = req
+  const { method, user } = req
 
   dbConnect()
 
   switch (method) {
     case 'GET': {
-      const { _id, userEmail, userAccountType } = await UsersModel.findById(req.user._id)
+      const { _id, userEmail, userAccountType } = await UsersModel.findById(user._id)
 
       res.status(200).json({
         _id,

@@ -4,11 +4,13 @@ import DashboardNav from './DashboardNav'
 import DashboardSidebar from './DashboardSidebar'
 
 const Layout = ({ children }: any) => (
-  <section className='h-screen overflow-x-auto'>
-    <DashboardSidebar />
-    <DashboardNav />
-    {children}
-  </section>
+  <Suspense fallback={<LoadingPage />}>
+    <section className='h-screen overflow-x-auto'>
+      <DashboardSidebar />
+      <DashboardNav />
+      {children}
+    </section>
+  </Suspense>
 )
 
 export default Layout

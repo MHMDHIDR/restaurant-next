@@ -5,13 +5,13 @@ import { ToppingsContext } from './ToppingsContext'
 export const DashboardOrderContext = createContext({} as orderProps)
 
 const DashboardOrderContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [ordersData, setOrdersData] = useState(null)
+  const [ordersData, setOrdersData] = useState<any>([])
   const [orderItemsGrandPrice, setOrderItemsGrandPrice] = useState<number>(0)
   const { orderItemToppings, setOrderItemToppings } = useContext(ToppingsContext)
 
   //remove items from card
   const removeOrderFromItems = (cItemId: string) => {
-    setOrdersData((ordersData: { orderItems: { cItemId: string }[] }) => {
+    setOrdersData((ordersData: any) => {
       return {
         ...ordersData,
         orderItems: ordersData.orderItems.filter(

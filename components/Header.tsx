@@ -29,7 +29,6 @@ const Header = () => {
       }}
     >
       <Nav />
-
       {/* Overlay layer */}
       <div className='bg-gray-800 bg-opacity-90'>
         <div className='container mx-auto ltr'>

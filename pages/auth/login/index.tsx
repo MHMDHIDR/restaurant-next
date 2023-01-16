@@ -14,6 +14,7 @@ import GoogleLogin from 'react-google-login'
 import { EyeIconOpen, EyeIconClose } from '../../../components/Icons/EyeIcon'
 import { UserProps } from '../../../types'
 import { API_URL } from '../../../constants'
+import Layout from '../../../components/Layout'
 
 const LoginDataFromLocalStorage =
   typeof window !== 'undefined' && JSON.parse(localStorage.getItem('LoginData') || '{}')
@@ -37,6 +38,7 @@ const Login = () => {
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
   const { isAuth, userType, loading } = useAuth()
+
   useEffect(() => {
     isAuth && userType === 'admin'
       ? router.push('/dashboard')
@@ -142,8 +144,7 @@ const Login = () => {
 
   // if done loading (NOT Loading) then show the login form
   return !loading ? (
-    <>
-      <Header />
+    <Layout>
       <section className='py-12 my-8'>
         <div className='container mx-auto'>
           <Notification sendStatus={loggedInStatus} sendStatusMsg={loginMsg} />
@@ -245,8 +246,7 @@ const Login = () => {
           </div>
         </div>
       </section>
-      <Footer />
-    </>
+    </Layout>
   ) : (
     <LoadingPage />
   )

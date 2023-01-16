@@ -23,7 +23,7 @@ const DashboardHome = ({ menu }: any) => {
   const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId${USER?._id}` })
   const orders = useAxios({
     url: `/orders?page=0&limit=0`,
-    headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
+    headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : '{}'
   })
 
   useEffect(() => {
@@ -40,14 +40,13 @@ const DashboardHome = ({ menu }: any) => {
   useEventListener('keydown', (e: any) => e.key === 'Escape' && menuToggler())
 
   //check if userStatus is active and the userType is admin
-  // return !USER?._id ? (
-  //   <ModalNotFound />
-  // ) : !USER?._id || userStatus === 'block' || userType === 'user' ? (
-  //   logoutUser(USER?._id)
-  // ) : !userStatus || !userType ? (
-  //   <LoadingPage />
-  // ) :
-  return (
+  return !USER?._id ? (
+    <ModalNotFound />
+  ) : !USER?._id || userStatus === 'block' || userType === 'user' ? (
+    logoutUser(USER?._id)
+  ) : !userStatus || !userType ? (
+    <LoadingPage />
+  ) : (
     <Layout>
       <div className='container mx-auto'>
         <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>لوحة التحكم</h1>
