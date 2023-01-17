@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { USER } from '../../constants'
+// import { USER } from '../../constants'
 
 import goTo from '../../utils/functions/goTo'
 import menuToggler from '../../utils/functions/menuToggler'
@@ -57,23 +57,25 @@ const DashboardSidebar = () => {
           id='menu'
         >
           <SideBarLink href={'dashboard'}>لوحة التحكم</SideBarLink>
-          {USER?.userAccountType === 'admin' ? (
-            <>
-              <SideBarLink href={'orders'}>الطلبات</SideBarLink>
-              <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
-              <SideBarLink href={'menu'}>قائمة الوجبات</SideBarLink>
-              <SideBarLink href={'add-food'}>إضافة وجبة</SideBarLink>
-              <SideBarLink href={'users'}>المستخدمين</SideBarLink>
-              <SideBarLink href={'settings'}>إعدادات الموقع</SideBarLink>
-            </>
-          ) : (
-            USER?.userAccountType === 'cashier' && (
-              <>
-                <SideBarLink href={'orders'}>الطلبات</SideBarLink>
-                <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
-              </>
-            )
-          )}
+          {/* {USER?.userAccountType === 'admin' ? ( */}
+          <>
+            <SideBarLink href={'orders'}>الطلبات</SideBarLink>
+            <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
+            <SideBarLink href={'menu'}>قائمة الوجبات</SideBarLink>
+            <SideBarLink href={'add-food'}>إضافة وجبة</SideBarLink>
+            <SideBarLink href={'users'}>المستخدمين</SideBarLink>
+            <SideBarLink href={'settings'}>إعدادات الموقع</SideBarLink>
+          </>
+          {/* 
+             ) : (
+               USER?.userAccountType === 'cashier' && (
+                 <>
+                   <SideBarLink href={'orders'}>الطلبات</SideBarLink>
+                   <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
+                 </>
+               )
+             )}
+           */}
         </ul>
       </>
     </aside>
@@ -84,6 +86,7 @@ const SideBarLink = ({ href, children }: any) => (
   <li className='hover:bg-orange-700'>
     <Link
       href={goTo(href)}
+      className='dashboard__nav'
       // className={({ isActive }: boolean) =>
       //   !isActive ? 'dashboard__nav' : 'dashboard__nav isActive'
       // }
