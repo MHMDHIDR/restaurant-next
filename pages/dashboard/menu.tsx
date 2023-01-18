@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 // import { useParams } from 'react-router-dom'
 import Link from 'next/link'
 import Axios from 'axios'
-import useAxios from '../../hooks/useAxios'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useEventListener from '../../hooks/useEventListener'
 import Modal from '../../components/Modal/Modal'
@@ -14,17 +13,14 @@ import { removeSlug } from '../../utils/functions/slug'
 import goTo from '../../utils/functions/goTo'
 import { createLocaleDateString } from '../../utils/functions/convertDate'
 import scrollToView from '../../utils/functions/scrollToView'
-import ModalNotFound from '../../components/Modal/ModalNotFound'
+// import ModalNotFound from '../../components/Modal/ModalNotFound'
 import NavMenu from '../../components/NavMenu'
-import { USER } from '../../constants'
+// import { USER } from '../../constants'
 import Layout from '../../components/dashboard/Layout'
+import { API_URL } from '../../constants'
 
 const DashboardMenu = () => {
   useDocumentTitle('Menu')
-
-  useEffect(() => {
-    scrollToView()
-  }, [])
 
   // let { pageNum }: any = useParams()
   // const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
@@ -33,24 +29,17 @@ const DashboardMenu = () => {
   const [delFoodId, setDelFoodId] = useState('')
   const [delFoodName, setDelFoodName] = useState('')
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
-  const [data, setData] = useState<any>('')
-
-  const modalLoading = typeof window !== 'undefined' && document.querySelector('#modal')
-  const API_URL =
-    process.env.NODE_ENV === 'development'
-      ? process.env.API_LOCAL_URL
-      : process.env.API_URL
-
-  const { ...response } = useAxios({
-    // url: `/foods/${pageNumber}/${itemsPerPage}?updatedAt=-1`
-    url: `/foods?page=0&limit=10&updatedAt=-1`
-  })
+  const [modalLoading, setModalLoading] = useState<Element>()
+  const [menuFood, setMenuFood] = useState<any>('')
 
   useEffect(() => {
-    if (response.response !== null) {
-      setData(response.response)
-    }
-  }, [response.response])
+    fetch(`${API_URL}/foods?page=1&limit=7&createdAt=-1`)
+      .then(res => res.json())
+      .then(({ response }) => setMenuFood(response))
+
+    scrollToView()
+    setModalLoading(document.querySelector('#modal')!)
+  }, [])
 
   useEventListener('click', (e: any) => {
     if (e.target.id === 'deleteFood') {
@@ -97,9 +86,10 @@ const DashboardMenu = () => {
     }
   }
 
-  return USER?.userAccountType !== 'admin' ? (
-    <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
-  ) : (
+  // return USER?.userAccountType !== 'admin' ? (
+  //   <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
+  // ) :
+  return (
     <>
       {deleteFoodStatus === 1 ? (
         <Modal
@@ -147,9 +137,9 @@ const DashboardMenu = () => {
               </thead>
 
               <tbody>
-                {(data ?? data !== undefined) && data?.response?.length > 0 ? (
+                {menuFood?.length > 0 ? (
                   <>
-                    {data?.response?.map((item: any, idx: number) => (
+                    {menuFood?.map((item: any, idx: number) => (
                       <tr
                         key={item._id}
                         className='transition-colors even:bg-gray-200 odd:bg-gray-300 dark:even:bg-gray-600 dark:odd:bg-gray-700'
@@ -213,15 +203,15 @@ const DashboardMenu = () => {
                         {/* <Pagination
                         routeName={`dashboard/menu`}
                         pageNum={pageNumber}
-                        numberOfPages={data?.numberOfPages}
-                        count={data?.itemsCount}
-                        foodId={data?.response?._id}
+                        numberOfPages={menuFood?.numberOfPages}
+                        count={menuFood?.itemsCount}
+                        foodId={menuFood?._id}
                         itemsPerPage={itemsPerPage}
                       /> */}
                       </td>
                     </tr>
                   </>
-                ) : !data || !data === null || data?.itemsCount === undefined ? (
+                ) : !menuFood ? (
                   <tr>
                     <td />
                     <td />

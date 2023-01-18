@@ -99,5 +99,4 @@ const Modal = ({
     </section>
   )
 }
-
 export default Modal
