@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongoose'
-import { MouseEventHandler } from 'react'
+import { Key, MouseEventHandler } from 'react'
 import { NextApiRequest } from 'next'
 
 export type UserProps = {
@@ -78,7 +78,7 @@ export type FileUploadProps = {
 }
 
 export type cardProps = {
-  cItemId: ObjectId
+  cItemId: Key | ObjectId
   cHeading: any
   cDesc: string
   cTags: string[]
@@ -232,6 +232,7 @@ export type selectedToppingsProps = {
   toppingId: string
   toppingQuantity?: number
   toppingPrice: number
+  toppingName?: string
 }
 
 export type NoItemsProps = {
@@ -268,7 +269,7 @@ export type mediaProps = {
   foodPrice?: number
 }[]
 
-export type deleteFoodImgsProps = {
+export type FoodImgsProps = {
   foodImgDisplayPath: string
   foodImgDisplayName: string
 }

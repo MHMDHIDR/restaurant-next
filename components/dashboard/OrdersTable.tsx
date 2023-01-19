@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react'
-// import {  useParams, useLocation } from 'react-router-dom'
+// import { useParams } from 'react-router-dom'
 import Link from 'next/link'
-// import Axios from 'axios'
-
-// import useEventListener from '../../hooks/useEventListener'
-// import useAxios from '../../hooks/useAxios'
-
+import { useRouter } from 'next/router'
+import Axios from 'axios'
 import goTo from '../../utils/functions/goTo'
 import { toggleCSSclasses } from '../../utils/functions/toggleCSSclasses'
 import { createLocaleDateString } from '../../utils/functions/convertDate'
 import scrollToView from '../../utils/functions/scrollToView'
-
-// import { API_URL } from '../../constants'
-
 import Modal from '../Modal/Modal'
 import { Success, Error, Loading } from '../Icons/Status'
 import { PayPal } from '../Icons/Payments'
@@ -27,10 +21,11 @@ import {
   // InvoiceBtn,
   RejectBtn
 } from './OrdersTableActions'
-import { cardProps } from '../../types'
+import { cardProps, orderProps, selectedToppingsProps } from '../../types'
 import Image from 'next/image'
-import { USER } from '../../constants'
+import { API_URL, USER } from '../../constants'
 import useAxios from '../../hooks/useAxios'
+import useEventListener from '../../hooks/useEventListener'
 // import Invoice from './Invoice'
 
 interface orderInfoProps {
@@ -45,11 +40,11 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     scrollToView()
   }, [])
 
-  let { pageNum }: any = useParams()
-  const { pathname } = useLocation()
+  // let { pageNum }: any = useParams()
+  const { pathname } = useRouter()
   const redirectPath = pathname.includes('dashboard/orders') ? 'orders' : 'my-orders'
 
-  const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
+  // const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
   const itemsPerPage = 5
 
   const [orderUpdated, setOrderUpdated] = useState()
@@ -62,15 +57,17 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const [ordersData, setOrdersData] = useState<any>()
   const [siteLogo, setSiteLogo] = useState<string>('')
   const [orderItemsIds, setOrderItemsIds] = useState([])
-  const [orderToppingsId, setOrderToppingsId] = useState([])
+  const [orderToppingsId, setOrderToppingsId] = useState<string[]>([''])
   const [isLoading, setIsLoading] = useState(false)
-  const [invoiceBase64, setInvoiceBase64] = useState<any>('')
+  // const [invoiceBase64, setInvoiceBase64] = useState<any>('')
 
-  const modalLoading = document.querySelector('#modal')
+  const modalLoading =
+    typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
   const logo = useAxios({ url: '/settings' })
   const { ...response } = useAxios({
-    url: `/orders/${pageNumber}/${itemsPerPage}?orderDate=-1`,
+    // url: `/orders/${pageNumber}/${itemsPerPage}?orderDate=-1`,
+    url: `/orders?page=1&limit=${itemsPerPage}?orderDate=-1`,
     headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
   })
 
@@ -79,23 +76,25 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       setSiteLogo(logo.response?.websiteLogoDisplayPath)
       setOrdersData(response.response)
       setOrderItemsIds(
-        response.response.response.map(({ orderItems }) =>
+        response.response.response.map(({ orderItems }: orderProps['ordersData']) =>
           orderItems?.map(({ cItemId }) => cItemId)
         )
       )
       setOrderToppingsId(
         response.response.response.map(
-          ({ orderToppings }) =>
+          ({ orderToppings }: orderProps['ordersData']) =>
             orderToppings?.length > 0 && orderToppings.map(({ toppingId }) => toppingId)
         )
       )
     }
   }, [response.response, logo.response])
 
-  const inSeletedToppings = orderToppingsId?.map(selected =>
+  const inSeletedToppings = orderToppingsId?.map((selected: any) =>
     //if there is no toppings in order then selected will be empty array
-    (selected || []).filter((element: string | any[]) =>
-      orderItemsIds.map(id => id?.includes(element?.slice(0, -2)))
+    (selected || ['']).filter((element: string) =>
+      orderItemsIds.map((id: orderProps['ordersData']['orderId']) =>
+        id?.includes(element?.slice(0, -2))
+      )
     )
   )
 
@@ -113,11 +112,11 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
         email: e?.target?.dataset?.email
       })
       //show modal
-      modalLoading.classList.remove('hidden')
+      modalLoading!.classList.remove('hidden')
     }
 
     if (e.target.id === 'cancel') {
-      modalLoading.classList.add('hidden')
+      modalLoading!.classList.add('hidden')
     } else if (e.target.id === 'confirm') {
       orderInfo.status === 'invoice' ? console.log(orderInfo) : handleOrder(orderInfo)
     } else if (e.target.dataset.orderContentArrow) {
@@ -148,7 +147,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
         setDeleteOrderStatus(orderDeleted)
         //Remove waiting modal
         setTimeout(() => {
-          modalLoading.classList.add('hidden')
+          modalLoading!.classList.add('hidden')
         }, 300)
       } catch (err) {
         console.error(err)
@@ -170,7 +169,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       setOrderUpdated(OrderStatusUpdated)
       //Remove waiting modal
       setTimeout(() => {
-        modalLoading.classList.add('hidden')
+        modalLoading!.classList.add('hidden')
       }, 300)
     } catch (err) {
       console.error(err)
@@ -254,9 +253,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
             <th className='px-1 py-2'>رقم الطلب</th>
             <th className='px-1 py-2 min-w-[6rem]'>وسلة الدفع</th>
             <th className='px-1 py-2'>حالة الطلب</th>
-            {(USER.userAccountType === 'admin' || USER.userAccountType === 'cashier') && (
-              <th className='px-1 py-2'>الاجراء</th>
-            )}
+            {/* {(USER.userAccountType === 'admin' || USER.userAccountType === 'cashier') && ( */}
+            <th className='px-1 py-2'>الاجراء</th>
+            {/* )} */}
           </tr>
         </thead>
 
@@ -307,7 +306,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                               </p>
                             ) : (
                               order?.orderItems?.map((item: cardProps, idx: number) => (
-                                <div key={item.cItemId}>
+                                <div key={item.cItemId + ''}>
                                   <div className='flex flex-col gap-4'>
                                     <div className='flex flex-col items-start gap-2'>
                                       <div className='flex items-center w-full gap-4'>
@@ -328,8 +327,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                       <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
                                         السعر على حسب الكميات: &nbsp;
                                         <strong>
-                                          {item.cPrice * item.cQuantity}
-                                        </strong>{' '}
+                                          {item.cPrice * item.cQuantity!}
+                                          &nbsp;&nbsp;
+                                        </strong>
                                         ر.ق
                                       </span>
                                     </div>
@@ -536,7 +536,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                       toppingName,
                                       toppingPrice,
                                       toppingQuantity
-                                    }) =>
+                                    }: selectedToppingsProps) =>
                                       inSeletedToppings[idx]?.includes(toppingId) && (
                                         <div key={toppingId} className='flex gap-4'>
                                           <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
@@ -550,7 +550,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                           </span>
                                           <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
                                             السعر حسب الكمية:{' '}
-                                            {toppingPrice * toppingQuantity} ر.ق
+                                            {toppingPrice * toppingQuantity!} ر.ق
                                           </span>
                                           <hr />
                                         </div>
@@ -639,7 +639,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                 <td colSpan={100}>
                   <Pagination
                     routeName={ordersByUserEmail ? `my-orders` : `dashboard/orders`}
-                    pageNum={pageNumber}
+                    pageNum={0 /*pageNumber*/}
                     numberOfPages={ordersData?.numberOfPages}
                     count={ordersData?.itemsCount}
                     foodId={ordersData?.response?._id}

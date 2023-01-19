@@ -22,11 +22,11 @@ const DashboardStatistics = () => {
   const [ordersBycCategory, setOrdersBycCategory] = useState<cCategory>()
 
   //if there's food id then fetch with food id, otherwise fetch everything
-  const currentUser = useAxios({ url: `/users/all/1/1/${USER?._id}` })
+  const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId${USER?._id}` })
   const getCategories = useAxios({ url: `/settings` })
-  const menu = useAxios({ url: `/foods/0/0` })
+  const menu = useAxios({ url: `/foods?page=0&limit=0` })
   const orders = useAxios({
-    url: `/orders/0/0`,
+    url: `/orders?page=0&limit=0`,
     headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
   })
 
@@ -55,20 +55,21 @@ const DashboardStatistics = () => {
   useEventListener('keydown', (e: any) => e.key === 'Escape' && menuToggler())
 
   //check if userStatus is active and the userType is admin
-  return !USER?._id ? (
-    <ModalNotFound />
-  ) : !USER?._id || userStatus === 'block' || userType === 'user' ? (
-    logoutUser(USER?._id)
-  ) : !userStatus || !userType ? (
-    <LoadingPage />
-  ) : (
+  // return !USER?._id ? (
+  //   <ModalNotFound />
+  // ) : !USER?._id || userStatus === 'block' || userType === 'user' ? (
+  //   logoutUser(USER?._id)
+  // ) : !userStatus || !userType ? (
+  //   <LoadingPage />
+  // ) :
+  return (
     <Layout>
       <div className='container mx-auto'>
         <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>عدد الطلبات حسب التصنيف</h1>
 
         <Doughnut
-          width={100}
-          height={50}
+          width={200}
+          height={200}
           data={{
             labels: categories?.map(category => category[1]), //ordersBycCategory && Object.keys(ordersBycCategory)
             datasets: [
@@ -89,6 +90,7 @@ const DashboardStatistics = () => {
               }
             ]
           }}
+          className='max-w-sm mx-auto max-h-96'
         />
       </div>
     </Layout>

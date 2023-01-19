@@ -60,9 +60,9 @@ const DashboardSidebar = () => {
           {/* {USER?.userAccountType === 'admin' ? ( */}
           <>
             <SideBarLink href={'orders'}>الطلبات</SideBarLink>
-            <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
+            <SideBarLink href={'statistics'}>الإحصائيات</SideBarLink>
             <SideBarLink href={'menu'}>قائمة الوجبات</SideBarLink>
-            <SideBarLink href={'add-food'}>إضافة وجبة</SideBarLink>
+            <SideBarLink href={'food/add'}>إضافة وجبة</SideBarLink>
             <SideBarLink href={'users'}>المستخدمين</SideBarLink>
             <SideBarLink href={'settings'}>إعدادات الموقع</SideBarLink>
           </>

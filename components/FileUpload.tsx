@@ -1,14 +1,13 @@
 import Image from 'next/image'
 import { Key, useContext } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import { FileUploadContext } from '../contexts/FileUploadContext'
+import { FileUploadProps, FoodImgsProps } from '../types'
 
-import { FileUploadProps } from '../types'
-
-const FileUpload = ({ data }) => {
+const FileUpload = ({ data }: any) => {
   const { file, fileURLs, onFileRemove, onFileAdd } =
     useContext<FileUploadProps>(FileUploadContext)
-  let { pathname } = useLocation()
+  let { pathname } = useRouter()
 
   return (
     <>
@@ -31,7 +30,7 @@ const FileUpload = ({ data }) => {
             </div>
           ) : //if there's image in Preview (fileURLs)
           fileURLs.length > 0 ? (
-            fileURLs.map((fileURL: string, index: Key) => (
+            fileURLs.map((fileURL: string, index: number) => (
               <div
                 key={index}
                 className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
@@ -57,7 +56,7 @@ const FileUpload = ({ data }) => {
             //if there's images in the data base
             data.defaultImg.length > 0 &&
             data.defaultImg.map(
-              ({ foodImgDisplayName, foodImgDisplayPath }, index: Key) => (
+              ({ foodImgDisplayName, foodImgDisplayPath }: FoodImgsProps, index: Key) => (
                 <div
                   key={index}
                   className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}

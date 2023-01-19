@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
-import { deleteFoodImgsProps, fileRequestProps } from '../../../types'
+import { FoodImgsProps, fileRequestProps } from '../../../types'
 import sharp from 'sharp'
 import { S3 } from 'aws-sdk'
 
@@ -36,10 +36,10 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         )
 
         let foodImgDisplayPath = prevFoodImgPathsAndNames.map(
-          ({ foodImgDisplayPath }: deleteFoodImgsProps) => foodImgDisplayPath
+          ({ foodImgDisplayPath }: FoodImgsProps) => foodImgDisplayPath
         )
         let foodImgDisplayName = prevFoodImgPathsAndNames.map(
-          ({ foodImgDisplayName }: deleteFoodImgsProps) => foodImgDisplayName
+          ({ foodImgDisplayName }: FoodImgsProps) => foodImgDisplayName
         )
 
         //delete the old images from s3 bucket using the prevFoodImgPathsAndNames
@@ -200,7 +200,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         const prevFoodImgPathsAndNames = JSON.parse(req.body.prevFoodImgPathsAndNames)
         //delete the old images from s3 bucket using the prevFoodImgPathsAndNames
         const Objects = prevFoodImgPathsAndNames.map(
-          ({ foodImgDisplayName }: deleteFoodImgsProps) => ({
+          ({ foodImgDisplayName }: FoodImgsProps) => ({
             Key: foodImgDisplayName
           })
         )
