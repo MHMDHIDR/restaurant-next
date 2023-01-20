@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, Suspense } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { viewFoodDataProps } from '../../types'
@@ -10,6 +10,9 @@ import { removeSlug } from '../../utils/functions/slug'
 import ModalNotFound from '../../components/Modal/ModalNotFound'
 import Card from '../../components/Card'
 import Pagination from '../../components/Pagination'
+import { useRouter } from 'next/router'
+import { LoadingCard } from '../../components/Loading'
+import useAxios from '../../hooks/useAxios'
 
 const index = () => {
   useDocumentTitle('View Foods')
@@ -18,11 +21,11 @@ const index = () => {
     scrollToView()
   }, [])
 
-  let { pageNum, foodId }: any = useParams()
+  const { pathname } = useRouter()
+  let { pageNum, foodId }: any = useRouter()
 
-  const loaction =
-    useLocation().pathname.split('/')[useLocation().pathname.split('/').length - 2]
-  const category = loaction !== 'view' && loaction
+  const loaction = pathname.split('/')[pathname.split('/').length - 2]
+  const category = loaction !== 'view' ? loaction : ''
 
   const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
   const itemsPerPage = 5
@@ -67,7 +70,7 @@ const index = () => {
               {data?.response?.map((item: viewFoodDataProps, idx: number) => (
                 // View Multiple (Many) food items
                 <motion.div
-                  key={item._id}
+                  key={item._id + ''}
                   initial={{ x: '50vw', opacity: 0 }}
                   whileInView={{ x: 0, opacity: 1 }}
                   viewport={{ once: true }}
@@ -94,7 +97,7 @@ const index = () => {
                       //add to cart button, if item is already in cart then disable the button
                       items.find(
                         (itemInCart: { cItemId: string }) =>
-                          itemInCart.cItemId === item._id
+                          itemInCart.cItemId === item._id + ''
                       ) ? (
                         <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
                           <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
