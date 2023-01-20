@@ -17,7 +17,7 @@ const Pagination = ({
 
   // only render pagination if there is no food id (not multiple food items)
   if (!foodId) {
-    if (count > 10 /*itemsPerPage*/) {
+    if (count > itemsPerPage!) {
       return (
         <div
           className='flex flex-wrap items-center justify-center mt-8 text-lg select-none ltr'

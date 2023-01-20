@@ -93,16 +93,18 @@ const index = ({ viewFood }: any) => {
                 </motion.div>
               ))}
 
+              {/*
               <Pagination
                 routeName={`view`}
                 pageNum={pageNumber}
                 numberOfPages={data?.numberOfPages}
                 count={data?.itemsCount}
                 foodId={data?.response?._id}
-                itemsPerPage={itemsPerPage}
+                itemsPerPage={ITEMS_PER_PAGE}
                 loaction={loaction}
                 category={category}
               />
+              */}
             </>
           ) : data?.length === 0 ? (
             <ModalNotFound />
