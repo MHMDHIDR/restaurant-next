@@ -7,49 +7,41 @@ import useEventListener from '../../hooks/useEventListener'
 import Modal from '../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../components/Icons/Status'
 import { LoadingSpinner } from '../../components/Loading'
-// import Pagination from '../../components/Pagination'
+import Pagination from '../../components/Pagination'
 import abstractText from '../../utils/functions/abstractText'
 import { removeSlug } from '../../utils/functions/slug'
 import goTo from '../../utils/functions/goTo'
 import { createLocaleDateString } from '../../utils/functions/convertDate'
 import scrollToView from '../../utils/functions/scrollToView'
-// import ModalNotFound from '../../components/Modal/ModalNotFound'
+import ModalNotFound from '../../components/Modal/ModalNotFound'
 import NavMenu from '../../components/NavMenu'
-// import { USER } from '../../constants'
 import Layout from '../../components/dashboard/Layout'
-import { API_URL } from '../../constants'
+import { API_URL, ITEMS_PER_PAGE, USER } from '../../constants'
 
-const DashboardMenu = () => {
+const DashboardMenu = ({ menuFood }: any) => {
   useDocumentTitle('Menu')
 
   // let { pageNum }: any = useParams()
   // const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
-  // const itemsPerPage = 10
 
   const [delFoodId, setDelFoodId] = useState('')
   const [delFoodName, setDelFoodName] = useState('')
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
-  const [modalLoading, setModalLoading] = useState<Element>()
-  const [menuFood, setMenuFood] = useState<any>('')
+  const [modalLoading, setModalLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    fetch(`${API_URL}/foods?page=1&limit=7&createdAt=-1`)
-      .then(res => res.json())
-      .then(({ response }) => setMenuFood(response))
-
     scrollToView()
-    setModalLoading(document.querySelector('#modal')!)
   }, [])
 
   useEventListener('click', (e: any) => {
     if (e.target.id === 'deleteFood') {
       setDelFoodId(e.target.dataset.id)
       setDelFoodName(removeSlug(e.target.dataset.name))
-      modalLoading!.classList.remove('hidden')
+      setModalLoading(true)
     }
 
     if (e.target.id === 'cancel') {
-      modalLoading!.classList.add('hidden')
+      setModalLoading(false)
     } else if (e.target.id === 'confirm') {
       handleDeleteFood(delFoodId)
     }
@@ -79,7 +71,7 @@ const DashboardMenu = () => {
       setDeleteFoodStatus(foodDeleted)
       //Remove waiting modal
       setTimeout(() => {
-        modalLoading!.classList.add('hidden')
+        setModalLoading(false)
       }, 300)
     } catch (err) {
       console.error(err)
@@ -111,13 +103,16 @@ const DashboardMenu = () => {
         <section className='py-12 my-8 dashboard'>
           <div className='container mx-auto'>
             {/* Confirm Box */}
-            <Modal
-              status={Loading}
-              modalHidden='hidden'
-              classes='text-blue-600 dark:text-blue-400 text-lg'
-              msg={`هل أنت متأكد من حذف ${delFoodName} ؟ لا يمكن التراجع عن هذا القرار`}
-              ctaConfirmBtns={['حذف', 'الغاء']}
-            />
+
+            {modalLoading && (
+              <Modal
+                status={Loading}
+                modalHidden='hidden'
+                classes='text-blue-600 dark:text-blue-400 text-lg'
+                msg={`هل أنت متأكد من حذف ${delFoodName} ؟ لا يمكن التراجع عن هذا القرار`}
+                ctaConfirmBtns={['حذف', 'الغاء']}
+              />
+            )}
 
             <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
               قائمة الوجبات والمشروبات
@@ -137,9 +132,9 @@ const DashboardMenu = () => {
               </thead>
 
               <tbody>
-                {menuFood?.length > 0 ? (
+                {menuFood?.response?.length > 0 ? (
                   <>
-                    {menuFood?.map((item: any, idx: number) => (
+                    {menuFood?.response?.map((item: any, idx: number) => (
                       <tr
                         key={item._id}
                         className='transition-colors even:bg-gray-200 odd:bg-gray-300 dark:even:bg-gray-600 dark:odd:bg-gray-700'
@@ -154,13 +149,13 @@ const DashboardMenu = () => {
                           />
                         </td>
                         <td className='px-1 py-2'>
-                          {window.innerWidth < 1360
+                          {typeof window !== 'undefined' && window.innerWidth < 1360
                             ? abstractText(removeSlug(item.foodName), 10)
                             : removeSlug(item.foodName)}
                         </td>
                         <td className='px-1 py-2'>
                           <p>
-                            {window.innerWidth < 1200
+                            {typeof window !== 'undefined' && window.innerWidth < 1200
                               ? abstractText(item.foodDesc, 20)
                               : item.foodDesc}
                           </p>
@@ -205,13 +200,13 @@ const DashboardMenu = () => {
                         pageNum={pageNumber}
                         numberOfPages={menuFood?.numberOfPages}
                         count={menuFood?.itemsCount}
-                        foodId={menuFood?._id}
+                        foodId={menuFood?.response?._id}
                         itemsPerPage={itemsPerPage}
                       /> */}
                       </td>
                     </tr>
                   </>
-                ) : !menuFood ? (
+                ) : !menuFood?.response ? (
                   <tr>
                     <td />
                     <td />
@@ -247,6 +242,20 @@ const DashboardMenu = () => {
       </Layout>
     </>
   )
+}
+
+export async function getStaticProps() {
+  const menuFood = await fetch(
+    `${API_URL}/foods?page=0limit=${ITEMS_PER_PAGE}&createdAt=-1`
+  ).then(menu => menu.json())
+
+  console.log(menuFood)
+
+  return {
+    props: {
+      menuFood
+    }
+  }
 }
 
 export default DashboardMenu
