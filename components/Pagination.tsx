@@ -13,7 +13,8 @@ const Pagination = ({
   itemsPerPage,
   category
 }: PaginationProps) => {
-  // numberOfPages = [...Array(numberOfPages).keys()]
+  numberOfPages = [...Array(numberOfPages).keys()]
+  // numberOfPages = Array.from(Array(numberOfPages).keys())
 
   // only render pagination if there is no food id (not multiple food items)
   if (!foodId) {
@@ -41,7 +42,7 @@ const Pagination = ({
 
           {/* Current Link Number */}
           <div>
-            {numberOfPages.map((page: number, index: Key) => (
+            {numberOfPages?.map((page: number, index: Key) => (
               <Link
                 key={index}
                 href={`/${routeName}${
@@ -69,7 +70,7 @@ const Pagination = ({
               category ? '/' + category + '/' + (pageNum + 1) : '/' + (pageNum + 1)
             }`}
             className={`${
-              pageNum < numberOfPages.length
+              pageNum < numberOfPages?.length
                 ? 'opacity-100'
                 : 'opacity-50 pointer-events-none'
             } ml-3`}

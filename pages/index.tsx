@@ -352,31 +352,30 @@ const Index = ({
                     cToppings={item.foodToppings}
                     cImg={item.foodImgs}
                     cImgAlt={item.foodName}
-                    cCtaLabel={'problem in "add to cart button" functionality'}
-                    // cCtaLabel={
-                    //   //add to cart button, if item is already in cart then disable the button
-                    //   items.find(itemInCart => itemInCart.cItemId === item._id) ? (
-                    //     <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
-                    //       <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
-                    //         ❌
-                    //       </span>
-                    //       &nbsp;&nbsp;
-                    //       <span className='mr-4 text-center pointer-events-none'>
-                    //         إحذف من السلة
-                    //       </span>
-                    //     </div>
-                    //   ) : (
-                    //     <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
-                    //       <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
-                    //         🛒
-                    //       </span>
-                    //       &nbsp;&nbsp;
-                    //       <span className='mr-4 text-center pointer-events-none'>
-                    //         أضف إلى السلة
-                    //       </span>
-                    //     </div>
-                    //   )
-                    // }
+                    cCtaLabel={
+                      //add to cart button, if item is already in cart then disable the button
+                      items.find(itemInCart => itemInCart.cItemId === item._id) ? (
+                        <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
+                          <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
+                            ❌
+                          </span>
+                          &nbsp;&nbsp;
+                          <span className='mr-4 text-center pointer-events-none'>
+                            إحذف من السلة
+                          </span>
+                        </div>
+                      ) : (
+                        <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
+                          <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
+                            🛒
+                          </span>
+                          &nbsp;&nbsp;
+                          <span className='mr-4 text-center pointer-events-none'>
+                            أضف إلى السلة
+                          </span>
+                        </div>
+                      )
+                    }
                   />
                 </motion.div>
               ))

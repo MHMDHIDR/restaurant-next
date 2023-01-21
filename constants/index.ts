@@ -1,6 +1,4 @@
 import { UserProps } from '../types'
-import UsersModel from '../models/User'
-import dbConnect from '../utils/db'
 
 export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
 

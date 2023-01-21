@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, Suspense } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -23,14 +23,18 @@ const ViewFood = () => {
   }, [])
 
   const [data, setData] = useState<any>()
-  const { query } = useRouter()
+  const { pathname, query } = useRouter()
   let { pageNum }: any = query
 
+  const loaction = pathname.split('/')[pathname.split('/').length - 2]
+  const category = loaction !== 'view' ? loaction : ''
   const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
 
   //if there's food id then fetch with food id, otherwise fetch everything
   const { error, ...response } = useAxios({
-    url: `/foods?page=${pageNumber}&limit=${ITEMS_PER_PAGE}`
+    url: category
+      ? `/foods?page=${pageNumber}&limit=${ITEMS_PER_PAGE}&category=${category}`
+      : `/foods?page=${pageNumber}&limit=${ITEMS_PER_PAGE}`
   })
 
   useEffect(() => {
@@ -121,8 +125,8 @@ const ViewFood = () => {
                   count={data?.itemsCount}
                   foodId={data?.response?._id}
                   itemsPerPage={ITEMS_PER_PAGE}
-                  loaction={''}
-                  category={''}
+                  loaction={loaction}
+                  category={category}
                 />
               </>
             ) : data?.response?.length === 0 ? (
