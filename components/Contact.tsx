@@ -1,19 +1,15 @@
 import { useState } from 'react'
-// import Axios from 'axios'
-
 import Notification from './Notification'
 import { LoadingSpinner } from './Loading'
-
 import { validEmail } from '../utils/functions/validForm'
-
 import { API_URL } from '../constants'
+import Axios from 'axios'
 
 const Contact = () => {
   const [theName, setName] = useState('')
   const [subject, setSubject] = useState('')
   const [email, setEmail] = useState('')
   const [msg, setMsg] = useState('')
-
   //Msg returned from server
   const [loading, setLoading] = useState(false)
   const [sendStatus, setSendStatus] = useState(0)
@@ -22,18 +18,23 @@ const Contact = () => {
   const sendContactForm = async (e: any) => {
     e.preventDefault()
 
-    if (email === '' || msg === '' || theName === '' || subject === '') {
+    if (
+      email.length === 0 ||
+      msg.length === 0 ||
+      theName.length === 0 ||
+      subject.length === 0
+    ) {
       setSendStatus(0)
       setSendStatusMsg('الرجاء ملء جميع الحقول بطريقة صحيحة')
-
       return
     }
 
-    const formData = new FormData()
-    formData.append('name', theName)
-    formData.append('subject', subject)
-    formData.append('from', email)
-    formData.append('msg', msg)
+    const formData = {
+      name: theName,
+      subject: subject,
+      from: email,
+      msg: msg
+    }
 
     // if there's no error in the form
     e.target.reset()
@@ -49,10 +50,8 @@ const Contact = () => {
           ? 'شكراً على تواصلك معنا، سيتم الرد عليك في أقرب وقت ممكن 😄'
           : data?.message
       )
-    } catch ({ response }) {
-      setSendStatusMsg(
-        response.status === 400 ? 'رجاء تعبئة جميع الحقول أدناه' : response.statusText
-      )
+    } catch (error: any) {
+      setSendStatusMsg(error)
     } finally {
       setLoading(false)
     }
@@ -78,7 +77,7 @@ const Contact = () => {
                   type='text'
                   name='name'
                   id='name'
-                  onChange={e => setName(e.target.value)}
+                  onChange={e => setName((e.target as HTMLInputElement).value)}
                   required
                 />
                 <span className='form__label'>الاســـــــــــــــــم</span>
@@ -90,7 +89,7 @@ const Contact = () => {
                   type='text'
                   name='subject'
                   id='subject'
-                  onChange={e => setSubject(e.target.value)}
+                  onChange={e => setSubject((e.target as HTMLInputElement).value)}
                   required
                 />
                 <span className='form__label'>الموضــــــــــــوع</span>
@@ -102,16 +101,8 @@ const Contact = () => {
                   type='email'
                   id='email'
                   name='email'
-                  onChange={e => {
-                    const parent = e.target.parentElement
-                    if (e.target.value && !validEmail(e.target.value)) {
-                      // parent.classList.add('notvalid')
-                    } else if (!e.target.value) {
-                      // parent.classList.remove('notvalid')
-                      return
-                    }
-
-                    if (validEmail(e.target.value)) setEmail(e.target.value)
+                  onChange={({ target }) => {
+                    validEmail(target.value) ? setEmail(target.value) : setEmail('')
                   }}
                   required
                 />
@@ -123,7 +114,7 @@ const Contact = () => {
                   className='form__input'
                   id='message'
                   name='message'
-                  onChange={e => setMsg(e.target.value)}
+                  onChange={e => setMsg((e.target as HTMLTextAreaElement).value)}
                   required
                 ></textarea>
                 <span className='form__label'>أكتب لنا ماذا تريد؟</span>

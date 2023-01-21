@@ -1,13 +1,13 @@
 import nodemailer from 'nodemailer'
-// import { ADMIN_EMAIL } from '../../constants'
+import { ADMIN_EMAIL } from '../../constants'
 
 const email = async ({ name, subject, from, to, msg }: any) => {
   /**
    * @returns {Promise<any>} JSON
    */
 
-  to = to /*|| ADMIN_EMAIL?.userEmail*/
-  from = from /*|| ADMIN_EMAIL?.userEmail*/
+  to = to || (await ADMIN_EMAIL())
+  from = from || (await ADMIN_EMAIL())
   name = name || to
 
   // create reusable transporter object using the default SMTP transport

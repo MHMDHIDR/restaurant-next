@@ -1,5 +1,6 @@
-import UserModel from '../models/User'
 import { UserProps } from '../types'
+import UsersModel from '../models/User'
+import dbConnect from '../utils/db'
 
 export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
 
@@ -19,12 +20,9 @@ export const APP_URL =
     ? process.env.NEXT_PUBLIC_APP_LOCAL_URL
     : process.env.NEXT_PUBLIC_APP_PUBLIC_URL
 
-export const API_URL =
-  process.env.NODE_ENV === 'development'
-    ? process.env.NEXT_PUBLIC_APP_LOCAL_URL + '/api'
-    : process.env.NEXT_PUBLIC_APP_PUBLIC_URL + '/api'
+export const API_URL = APP_URL + '/api'
 
 export const ADMIN_EMAIL = async () =>
-  await UserModel.find()
-    .limit(1)
-    .then((res: any) => res.json())
+  await fetch(API_URL + `/users/all`)
+    .then(res => res.json())
+    .then(({ response }) => response[0].userEmail)

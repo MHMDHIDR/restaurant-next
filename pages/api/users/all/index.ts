@@ -7,7 +7,7 @@ import paginatedResults from '../../../../middleware/paginatedResults'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req
 
-  dbConnect()
+  await dbConnect()
 
   switch (method) {
     case 'GET': {

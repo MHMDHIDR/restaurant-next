@@ -47,8 +47,8 @@
     @apply absolute px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none right-1 sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60;
   }
 
+  /*.form__group.notvalid > .form__label,*/
   .form__input:focus ~ .form__label,
-  .form__group.notvalid > .form__label,
   .form__input:valid ~ .form__label,
   .focused ~ .form__label,
   .form__input ~ .form__label.active {

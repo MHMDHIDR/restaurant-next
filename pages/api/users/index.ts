@@ -6,7 +6,7 @@ import { authUserRequestProps } from '../../../types'
 export default async function handler(req: authUserRequestProps, res: NextApiResponse) {
   const { method, user } = req
 
-  dbConnect()
+  await dbConnect()
 
   switch (method) {
     case 'GET': {
