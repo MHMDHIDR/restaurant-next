@@ -54,7 +54,7 @@ const Card = ({
   cImg &&
     cImg.map(({ foodImgDisplayPath }: any) =>
       media.push({
-        foodId: cItemId,
+        foodId: cItemId + '',
         foodImgDisplayPath,
         foodName: cHeading.props.children
       })

@@ -134,8 +134,16 @@ const ViewFood = ({ viewFood }: any) => {
   )
 }
 
-export async function getServerSideProps() {
-  const URL = `${API_URL}/foods?page=1&limit=${ITEMS_PER_PAGE}`
+export async function getServerSideProps({ query: { params } }: any) {
+  const categoriesURL = `${API_URL}/settings`
+  const { response } = await fetch(categoriesURL).then(viewFood => viewFood.json())
+
+  const pageNum =
+    !params[0] || params[0] < 1 || isNaN(params[0]) ? 1 : parseInt(params[0])
+  const URL = `${API_URL}/foods?page=${pageNum}&limit=${ITEMS_PER_PAGE}${
+    response[0].CategoryList.map((c: string[]) => c[0]).includes(params[0]) &&
+    `&category=${params[1]}`
+  }`
   const viewFood = await fetch(URL).then(viewFood => viewFood.json())
   return { props: { viewFood } }
 }

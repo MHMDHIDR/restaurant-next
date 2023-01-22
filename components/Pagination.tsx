@@ -11,7 +11,7 @@ const Pagination = ({
   count,
   foodId,
   itemsPerPage,
-  category
+  category = ''
 }: PaginationProps) => {
   numberOfPages = [...Array(numberOfPages).keys()]
   // numberOfPages = Array.from(Array(numberOfPages).keys())

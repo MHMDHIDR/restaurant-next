@@ -5,7 +5,6 @@ const paginatedResults = async (model: any, req: any, res: any) => {
 
   const startIndex = (page - 1) * limit
   const endIndex = page * limit
-
   const response: any = {}
 
   if (endIndex < (await model.countDocuments())) {

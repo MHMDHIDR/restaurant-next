@@ -22,6 +22,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
     case 'GET': {
       try {
         const foods = await paginatedResults(FoodModel, req, res)
+
         res.status(200).json(foods)
       } catch (error) {
         res.json('Failed to get food!: ' + error)
