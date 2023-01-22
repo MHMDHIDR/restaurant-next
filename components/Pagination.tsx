@@ -11,10 +11,12 @@ const Pagination = ({
   count,
   foodId,
   itemsPerPage,
-  category = ''
+  category
 }: PaginationProps) => {
-  numberOfPages = [...Array(numberOfPages).keys()]
   // numberOfPages = Array.from(Array(numberOfPages).keys())
+  numberOfPages = [...Array(numberOfPages).keys()]
+
+  // console.log(category)
 
   // only render pagination if there is no food id (not multiple food items)
   if (!foodId) {

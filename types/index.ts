@@ -163,7 +163,6 @@ export type PaginationProps = {
   foodId?: string
   itemsPerPage?: number
   category?: string
-  loaction?: string
 }
 
 export type ArrowProps = {

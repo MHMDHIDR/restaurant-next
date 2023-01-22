@@ -21,11 +21,20 @@ const ViewFood = ({ viewFood }: any) => {
   }, [])
 
   const [data, setData] = useState<any>()
-  const { pathname, query } = useRouter()
-  let { pageNum }: any = query
-  const loaction = pathname.split('/')[pathname.split('/').length - 2]
+  const { asPath } = useRouter()
+
+  const loaction = asPath.split('/')[asPath.split('/').length - 2]
+  // console.log(loaction)
+
   const category = loaction !== 'view' ? loaction : ''
-  const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
+  const pageNumber = 0
+  //!pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
+  console.log(asPath.split('/'))
+
+  /**
+   * TODO:
+   * 1- make the pagination work
+   */
 
   useEffect(() => {
     setData(viewFood)
@@ -111,7 +120,6 @@ const ViewFood = ({ viewFood }: any) => {
                 count={data?.itemsCount}
                 foodId={data?.response?._id}
                 itemsPerPage={ITEMS_PER_PAGE}
-                loaction={loaction}
                 category={category}
               />
             </Suspense>
@@ -137,13 +145,19 @@ const ViewFood = ({ viewFood }: any) => {
 export async function getServerSideProps({ query: { params } }: any) {
   const categoriesURL = `${API_URL}/settings`
   const { response } = await fetch(categoriesURL).then(viewFood => viewFood.json())
+  const isCategory = response[0].CategoryList.map((c: string[]) => c[0]).includes(
+    params[0]
+  )
 
   const pageNum =
     !params[0] || params[0] < 1 || isNaN(params[0]) ? 1 : parseInt(params[0])
-  const URL = `${API_URL}/foods?page=${pageNum}&limit=${ITEMS_PER_PAGE}${
-    response[0].CategoryList.map((c: string[]) => c[0]).includes(params[0]) &&
-    `&category=${params[1]}`
-  }`
+  const pageNumWithCat =
+    !params[1] || params[1] < 1 || isNaN(params[1]) ? 1 : parseInt(params[1])
+
+  const URL = `${API_URL}/foods?page=${
+    isCategory ? pageNumWithCat : pageNum
+  }&limit=${ITEMS_PER_PAGE}${isCategory && `&category=${params[0]}`}`
+
   const viewFood = await fetch(URL).then(viewFood => viewFood.json())
   return { props: { viewFood } }
 }
