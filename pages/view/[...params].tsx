@@ -21,20 +21,14 @@ const ViewFood = ({ viewFood }: any) => {
   }, [])
 
   const [data, setData] = useState<any>()
-  const { asPath } = useRouter()
-
-  const loaction = asPath.split('/')[asPath.split('/').length - 2]
-  // console.log(loaction)
-
+  const {
+    asPath,
+    query: { params }
+  }: any = useRouter()
+  const loaction = asPath.split('/')[asPath.split('/').length - 1]
   const category = loaction !== 'view' ? loaction : ''
-  const pageNumber = 0
-  //!pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
-  console.log(asPath.split('/'))
-
-  /**
-   * TODO:
-   * 1- make the pagination work
-   */
+  const pageNumber =
+    !params[1] || params[1] < 1 || isNaN(params[1]) ? 1 : parseInt(params[1])
 
   useEffect(() => {
     setData(viewFood)
@@ -148,7 +142,6 @@ export async function getServerSideProps({ query: { params } }: any) {
   const isCategory = response[0].CategoryList.map((c: string[]) => c[0]).includes(
     params[0]
   )
-
   const pageNum =
     !params[0] || params[0] < 1 || isNaN(params[0]) ? 1 : parseInt(params[0])
   const pageNumWithCat =

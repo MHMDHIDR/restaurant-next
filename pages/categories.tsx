@@ -9,8 +9,8 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
   const [sweetsImgs, setSweetsImgs] = useState<any>()
   useEffect(() => {
     setFoodImgs(catFoodResponse?.response)
-    setSweetsImgs(catDrinkResponse?.response)
-    setDrinkImgs(catSweetResponse?.response)
+    setDrinkImgs(catDrinkResponse?.response)
+    setSweetsImgs(catSweetResponse?.response)
   }, [])
 
   const getRandomFoodImg = () => {
@@ -21,7 +21,7 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
     const randomIndex = Math.floor(Math.random() * drinkImgs?.length)
     return drinkImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
   }
-  const getSweetsDrinkImg = () => {
+  const getRandomSweetImg = () => {
     const randomIndex = Math.floor(Math.random() * sweetsImgs?.length)
     return sweetsImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
   }
@@ -80,7 +80,7 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             className='block overflow-hidden transition-transform duration-300 bg-cover w-72 h-72 rounded-2xl hover:-translate-y-2'
             style={{
               backgroundImage: `url("${
-                getSweetsDrinkImg() || '/assets/img/icons/logo.svg'
+                getRandomSweetImg() || '/assets/img/icons/logo.svg'
               }")`
             }}
           >
