@@ -108,6 +108,7 @@ export type responseTypes = {
   _id: string
   websiteLogoDisplayPath: string
   websiteLogoDisplayName: string
+  itemsPerPage: number
   heroBg: string[]
   appName: string
   appDesc: string

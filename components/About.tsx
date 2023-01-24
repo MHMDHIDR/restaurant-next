@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
-// import useAxios from '../hooks/useAxios'
+import useAxios from '../hooks/useAxios'
 
 const About = () => {
   const [data, setData] = useState<string | any>()
 
-  // const { response } = useAxios({ url: '/settings' })
+  const { response, loading } = useAxios({ url: '/settings' })
 
-  // useEffect(() => {
-  //   if (response !== null) {
-  //     setData(response)
-  //   }
-  // }, [response])
+  useEffect(() => {
+    if (response !== null) {
+      setData(response?.response[0])
+    }
+  }, [response])
 
   return (
     <section id='about' className='py-12 my-8 about'>
@@ -21,7 +21,9 @@ const About = () => {
             data?.appDesc?.length > 75 ? 'text-justify' : 'text-center'
           }`}
         >
-          {data ? data?.appDesc : 'أطلب ألذ الأطعمة والمشروبات الطازجة من مطعمنا العالمي'}
+          {loading
+            ? `أطلب ألذ الأطعمة والمشروبات الطازجة من مطعمنا العالمي`
+            : data?.appDesc}
         </p>
       </div>
     </section>

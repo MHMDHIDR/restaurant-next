@@ -2,8 +2,7 @@ import { useEffect } from 'react'
 import useAxios from './useAxios'
 
 const useDocumentTitle = (title: string) => {
-  const { response } = useAxios({ url: 'settings' })
-  // console.log(response)
+  const { response } = useAxios({ url: '/settings' })
 
   const appName = response?.appName || 'Restaurant'
 

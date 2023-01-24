@@ -1,8 +1,10 @@
-import Link from 'next/link'
 import Arrow from './Icons/Arrow'
 import scrollToView from '../utils/functions/scrollToView'
 import { Key } from 'react'
 import { PaginationProps } from '../types'
+import useSettings from '../hooks/useSettings'
+
+const { ITEMS_PER_PAGE } = useSettings()
 
 const Pagination = ({
   routeName,
@@ -10,24 +12,21 @@ const Pagination = ({
   numberOfPages,
   count,
   foodId,
-  itemsPerPage,
+  itemsPerPage = ITEMS_PER_PAGE,
   category
 }: PaginationProps) => {
-  // numberOfPages = Array.from(Array(numberOfPages).keys())
   numberOfPages = [...Array(numberOfPages).keys()]
-
-  // console.log(category)
 
   // only render pagination if there is no food id (not multiple food items)
   if (!foodId) {
-    if (count > itemsPerPage!) {
+    if (count > itemsPerPage) {
       return (
         <div
           className='flex flex-wrap items-center justify-center mt-8 text-lg select-none ltr'
           onClick={scrollToView}
         >
           {/* Previous Link Arrow */}
-          <Link
+          <a
             href={`/${routeName}${
               category
                 ? '/' + category + '/' + (pageNum - 1 === 1 ? '' : pageNum - 1)
@@ -40,12 +39,12 @@ const Pagination = ({
             } mr-3`}
           >
             <Arrow css='p-1.5' height='36' width='36' />
-          </Link>
+          </a>
 
           {/* Current Link Number */}
           <div>
-            {numberOfPages?.map((page: number, index: Key) => (
-              <Link
+            {numberOfPages.map((page: number, index: Key) => (
+              <a
                 key={index}
                 href={`/${routeName}${
                   category
@@ -62,23 +61,23 @@ const Pagination = ({
                   } px-4 py-0.5 last:rounded-r-md first:rounded-l-md`}
               >
                 {page + 1}
-              </Link>
+              </a>
             ))}
           </div>
 
           {/* Next Link Arrow */}
-          <Link
+          <a
             href={`/${routeName}${
               category ? '/' + category + '/' + (pageNum + 1) : '/' + (pageNum + 1)
             }`}
             className={`${
-              pageNum < numberOfPages?.length
+              pageNum < numberOfPages.length
                 ? 'opacity-100'
                 : 'opacity-50 pointer-events-none'
             } ml-3`}
           >
             <Arrow toLeft css='p-1.5' height='36' width='36' />
-          </Link>
+          </a>
         </div>
       )
     }
