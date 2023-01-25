@@ -12,27 +12,38 @@ import abstractText from '../../utils/functions/abstractText'
 import { removeSlug } from '../../utils/functions/slug'
 import scrollToView from '../../utils/functions/scrollToView'
 import { viewFoodDataProps } from '../../types'
-import { API_URL } from '../../constants'
-import useSettings from '../../hooks/useSettings'
+import { API_URL, ITEMS_PER_PAGE } from '../../constants'
+import { isNumber } from '../../utils/functions/isNumber'
 
 const ViewFood = ({ viewFood }: any) => {
   useDocumentTitle('View Foods')
 
   const [data, setData] = useState<any>()
-  const { ITEMS_PER_PAGE } = useSettings()
-  console.log('from view params', ITEMS_PER_PAGE)
-
   const {
     asPath,
     query: { params }
   }: any = useRouter()
-  const loaction = asPath.split('/')[asPath.split('/').length - 1]
-  const category = loaction !== 'view' && isNaN(loaction) ? loaction : ''
+  const loaction = (splitBy: number) =>
+    asPath.split('/')[asPath.split('/').length - splitBy]
+  const category = loaction(2) !== 'view' && loaction(2)
 
-  const pageNumber =
-    !params[0] || params[0] < 1 || isNaN(params[0]) ? 1 : parseInt(params[0])
+  const pageNumber = isNumber(params[0])
+    ? parseInt(params[0])
+    : params[1]
+    ? parseInt(params[1])
+    : 1
 
   const { items } = useContext(CartContext)
+
+  console.table({
+    pageNumber,
+    numberOfPages: data?.numberOfPages,
+    itemsCount: data?.itemsCount,
+    _id: data?.response?._id,
+    ITEMS_PER_PAGE,
+    loaction: loaction(2),
+    category
+  })
 
   useEffect(() => {
     scrollToView()
@@ -117,6 +128,7 @@ const ViewFood = ({ viewFood }: any) => {
                 count={data?.itemsCount}
                 foodId={data?.response?._id}
                 itemsPerPage={ITEMS_PER_PAGE}
+                loaction={loaction(2)}
                 category={category}
               />
             </Suspense>
@@ -151,9 +163,9 @@ export async function getServerSideProps({ query: { params } }: any) {
   const pageNumWithCat =
     !params[1] || params[1] < 1 || isNaN(params[1]) ? 1 : parseInt(params[1])
 
-  const URL = `${API_URL}/foods?page=${isCategory ? pageNumWithCat : pageNum}&limit=${1}${
-    isCategory && `&category=${params[0]}`
-  }`
+  const URL = `${API_URL}/foods?page=${
+    isCategory ? pageNumWithCat : pageNum
+  }&limit=${ITEMS_PER_PAGE}${isCategory && `&category=${params[0]}`}`
 
   const viewFood = await fetch(URL).then(viewFood => viewFood.json())
   return { props: { viewFood } }

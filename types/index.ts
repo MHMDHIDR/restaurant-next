@@ -108,7 +108,6 @@ export type responseTypes = {
   _id: string
   websiteLogoDisplayPath: string
   websiteLogoDisplayName: string
-  itemsPerPage: number
   heroBg: string[]
   appName: string
   appDesc: string
@@ -164,6 +163,7 @@ export type PaginationProps = {
   foodId?: string
   itemsPerPage?: number
   category?: string
+  loaction?: string
 }
 
 export type ArrowProps = {

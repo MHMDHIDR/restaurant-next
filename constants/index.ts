@@ -6,6 +6,8 @@ export const SLIDES_IN_MENU = 10
 
 export const SUGGESTED_FOOTER_ITEMS_COUNT = 2
 
+export const ITEMS_PER_PAGE = 3
+
 export const USER: UserProps =
   typeof window !== 'undefined' &&
   'user' in localStorage &&
