@@ -2,15 +2,13 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Axios from 'axios'
-import Header from '../../../components/Header'
-import Footer from '../../../components/Footer'
 import Notification from '../../../components/Notification'
 import { LoadingSpinner, LoadingPage } from '../../../components/Loading'
 import useEventListener from '../../../hooks/useEventListener'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import useAuth from '../../../hooks/useAuth'
 import GoogleLogin from 'react-google-login'
-// import { gapi } from 'gapi-script'
+import { gapi } from 'gapi-script'
 import { EyeIconOpen, EyeIconClose } from '../../../components/Icons/EyeIcon'
 import { UserProps } from '../../../types'
 import { API_URL } from '../../../constants'
@@ -32,7 +30,7 @@ const Login = () => {
   const [loginMsg, setLoginMsg] = useState('')
   const router = useRouter()
 
-  const redirect = router.route
+  const { redirect } = router.query
 
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
@@ -103,7 +101,7 @@ const Login = () => {
   //this useEffect is for google login
   useEffect(() => {
     function start() {
-      // gapi.client.init({
+      // gapi.client?.init({
       //   clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       //   scope: 'profile email'
       // })
@@ -186,7 +184,11 @@ const Login = () => {
                   className='absolute cursor-pointer px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none left-1 sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60;'
                   onClick={() => setPasswordVisible(prevState => !prevState)}
                 >
-                  {passwordVisible ? <EyeIconClose /> : <EyeIconOpen />}
+                  {passwordVisible ? (
+                    <EyeIconClose className={`stroke-red-700 dark:stroke-red-400`} />
+                  ) : (
+                    <EyeIconOpen className={`fill-green-700 dark:fill-green-400`} />
+                  )}
                 </span>
                 <span className='form__label'>كلمة المرور</span>
               </label>

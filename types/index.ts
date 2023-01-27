@@ -155,6 +155,13 @@ export type NavMenuPros = {
   className?: string
 }
 
+export type orderInfoProps = {
+  order?: Object | null
+  id?: string
+  status: string
+  email: string
+}
+
 export type PaginationProps = {
   routeName: string
   pageNum: number
@@ -247,13 +254,6 @@ export type cCategory = {
   foods: number
   drinks: number
   sweets: number
-}
-
-export type orderInfoProps = {
-  order?: Object | null
-  id?: string
-  status: string
-  email: string
 }
 
 export type notificationProps = {

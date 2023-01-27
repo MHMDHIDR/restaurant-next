@@ -131,9 +131,13 @@ const Join = () => {
                 />
                 <span
                   className='absolute cursor-pointer px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none left-1 sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60;'
-                  onClick={() => setPasswordVisible(prevState => !prevState)}
+                  onClick={prevState2 => setPasswordVisible(prevState => !prevState)}
                 >
-                  {passwordVisible ? <EyeIconClose /> : <EyeIconOpen />}
+                  {passwordVisible ? (
+                    <EyeIconClose className={`stroke-red-700 dark:stroke-red-400`} />
+                  ) : (
+                    <EyeIconOpen className={`fill-green-700 dark:fill-green-400`} />
+                  )}
                 </span>
                 <span className='form__label'>كلمــة المــــــرور</span>
               </label>

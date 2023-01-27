@@ -1,19 +1,15 @@
-import { useContext, lazy, Suspense } from 'react'
-import { Link } from 'react-router-dom'
-
+import { useContext, Suspense } from 'react'
+import Link from 'next/link'
 import useDocumentTitle from '../hooks/useDocumentTitle'
-
-import abstractText from '../utils/abstractText'
-import { removeSlug } from '../utils/slug'
-
-import { CartContext } from '../Contexts/CartContext'
-import { SearchContext } from '../Contexts/SearchContext'
-
+import abstractText from '../utils/functions/abstractText'
+import { removeSlug } from '../utils/functions/slug'
+import { CartContext } from '../contexts/CartContext'
+import { SearchContext } from '../contexts/SearchContext'
 import { LoadingCard } from '../components/Loading'
-const Card = lazy(() => import('../components/Card'))
-const Nav = lazy(() => import('../components/Nav'))
-const Footer = lazy(() => import('../components/Footer'))
-const Search = lazy(() => import('../components/Search'))
+import Card from '../components/Card'
+import Nav from '../components/Nav'
+import Footer from '../components/Footer'
+import Search from '../components/Search'
 
 const SearchResults: React.FC = () => {
   const { search, searchResults, loading } = useContext(SearchContext)
@@ -50,7 +46,7 @@ const SearchResults: React.FC = () => {
                   <Card
                     cItemId={data._id}
                     cHeading={
-                      <Link to={`/view/item/${data._id}`}>
+                      <Link href={`/view/item/${data._id}`}>
                         {removeSlug(abstractText(data.foodName, 70))}
                       </Link>
                     }

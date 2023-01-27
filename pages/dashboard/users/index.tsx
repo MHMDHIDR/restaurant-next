@@ -1,43 +1,44 @@
-import { useState, useEffect, useRef } from 'react'
-import useAxios from '../../hooks/useAxios'
-// import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Axios from 'axios'
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import useEventListener from '../../hooks/useEventListener'
-import goTo from '../../utils/functions/goTo'
-import logoutUser from '../../utils/functions/logoutUser'
-import { API_URL, USER } from '../../constants'
-import Modal from '../../components/Modal/Modal'
-import { Success, Error, Loading } from '../../components/Icons/Status'
-import { LoadingSpinner } from '../../components/Loading'
-import Pagination from '../../components/Pagination'
-import NavMenu from '../../components/NavMenu'
-import ModalNotFound from '../../components/Modal/ModalNotFound'
-import Layout from '../../components/dashboard/Layout'
+import useDocumentTitle from '../../../hooks/useDocumentTitle'
+import useEventListener from '../../../hooks/useEventListener'
+import goTo from '../../../utils/functions/goTo'
+import logoutUser from '../../../utils/functions/logoutUser'
+import { API_URL, USER, ITEMS_PER_PAGE } from '../../../constants'
+import Modal from '../../../components/Modal/Modal'
+import { Success, Error, Loading } from '../../../components/Icons/Status'
+import { LoadingSpinner } from '../../../components/Loading'
+import Pagination from '../../../components/Pagination'
+import NavMenu from '../../../components/NavMenu'
+import ModalNotFound from '../../../components/Modal/ModalNotFound'
+import Layout from '../../../components/dashboard/Layout'
+import { isNumber } from '../../../utils/functions/isNumber'
+import useAxios from '../../../hooks/useAxios'
 
-const DashboardUsers = () => {
+const DashboardUsers = ({ usersData }: any) => {
   useDocumentTitle('Users')
 
-  // let { pageNum }: any = useParams()
-
-  // const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
-  const itemsPerPage = 10
+  const { query } = useRouter()
+  const { pageNum }: any = query
+  const pageNumber = !pageNum || !isNumber(pageNum) || pageNum < 1 ? 1 : parseInt(pageNum)
 
   const [userId, setUserId] = useState('')
   const [userAccountAction, setUserAccountAction] = useState('')
   const [userName, setUserName] = useState('')
   const [deleteUserStatus, setDeleteUserStatus] = useState()
   const [userUpdated, setUserUpdated] = useState()
-  const [data, setData] = useState<any>('')
+  const [users, setUsers] = useState<any>('')
   const [modalLoading, setModalLoading] = useState(false)
 
-  //get users data only if the admin is authenticated and logged in
-  const { ...response } = useAxios({ url: `/users/all?page=0&limit=0` })
+  const { loading, ...response } = useAxios({
+    url: `/users/all?page=${pageNumber}&limit=${ITEMS_PER_PAGE}`
+  })
 
   useEffect(() => {
-    if (response.response !== null) {
-      setData(response.response)
+    if (response?.response !== null) {
+      setUsers(response?.response)
     }
   }, [response.response])
 
@@ -68,7 +69,7 @@ const DashboardUsers = () => {
     if (userAccountAction === 'delete') {
       try {
         //You need to name the body {data} so it can be recognized in (.delete) method
-        const response = await Axios.delete(`${API_URL}/users/${userId}`, { data })
+        const response = await Axios.delete(`${API_URL}/users/${userId}`, { data: '' })
 
         const { userDeleted } = response.data
 
@@ -203,9 +204,9 @@ const DashboardUsers = () => {
               </thead>
 
               <tbody>
-                {(data ?? data !== undefined) && data?.response?.length > 0 ? (
+                {users?.response?.length > 0 ? (
                   <>
-                    {data?.response?.map((item: any, idx: number) => (
+                    {users?.response?.map((item: any, idx: number) => (
                       <tr
                         key={item._id}
                         className='transition-colors even:bg-gray-200 odd:bg-gray-300 dark:even:bg-gray-600 dark:odd:bg-gray-700'
@@ -381,30 +382,22 @@ const DashboardUsers = () => {
                       </tr>
                     ))}
 
-                    {/* Pagination */}
                     <tr>
                       <td colSpan={100}>
                         <Pagination
                           routeName={`dashboard/users`}
-                          pageNum={/*pageNumber*/ 1}
-                          numberOfPages={data?.numberOfPages}
-                          count={data?.itemsCount}
-                          foodId={data?.response?._id}
-                          itemsPerPage={itemsPerPage}
+                          pageNum={pageNumber}
+                          numberOfPages={users?.numberOfPages}
+                          count={users?.itemsCount}
+                          foodId={users?.response?._id}
+                          itemsPerPage={ITEMS_PER_PAGE}
                         />
                       </td>
                     </tr>
                   </>
-                ) : !data || !data === null || data?.itemsCount === undefined ? (
-                  <tr>
-                    <td />
-                    <td className='flex justify-center py-10'>
-                      <LoadingSpinner size='10' />
-                    </td>
-                    <td />
-                  </tr>
                 ) : (
                   <tr>
+                    <td />
                     <td />
                     <td className='flex flex-col px-1 py-2'>
                       <p className='my-2 md:text-2xl text-red-600 dark:text-red-400 font-[600] py-2 px-1'>

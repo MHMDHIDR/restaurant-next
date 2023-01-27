@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-// import { useParams } from 'react-router-dom'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Axios from 'axios'
@@ -21,31 +20,18 @@ import {
   // InvoiceBtn,
   RejectBtn
 } from './OrdersTableActions'
-import { cardProps, orderProps, selectedToppingsProps } from '../../types'
+import { cardProps, orderInfoProps, orderProps, selectedToppingsProps } from '../../types'
 import Image from 'next/image'
-import { API_URL, USER } from '../../constants'
+import { API_URL, ITEMS_PER_PAGE, USER } from '../../constants'
 import useAxios from '../../hooks/useAxios'
 import useEventListener from '../../hooks/useEventListener'
+import { isNumber } from '../../utils/functions/isNumber'
 // import Invoice from './Invoice'
-
-interface orderInfoProps {
-  order?: Object | null
-  id?: string
-  status: string
-  email: string
-}
 
 const OrdersTable = ({ ordersByUserEmail = false }) => {
   useEffect(() => {
     scrollToView()
   }, [])
-
-  // let { pageNum }: any = useParams()
-  const { pathname } = useRouter()
-  const redirectPath = pathname.includes('dashboard/orders') ? 'orders' : 'my-orders'
-
-  // const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
-  const itemsPerPage = 5
 
   const [orderUpdated, setOrderUpdated] = useState()
   const [deleteOrderStatus, setDeleteOrderStatus] = useState()
@@ -55,7 +41,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     email: 'string'
   })
   const [ordersData, setOrdersData] = useState<any>()
-  const [siteLogo, setSiteLogo] = useState<string>('')
   const [orderItemsIds, setOrderItemsIds] = useState([])
   const [orderToppingsId, setOrderToppingsId] = useState<string[]>([''])
   const [isLoading, setIsLoading] = useState(false)
@@ -64,16 +49,18 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
-  const logo = useAxios({ url: '/settings' })
+  const { pathname, query } = useRouter()
+  const { pageNum }: any = query
+  const redirectPath = pathname.includes('dashboard/orders') ? 'orders' : 'my-orders'
+  const pageNumber = !pageNum || !isNumber(pageNum) || pageNum < 1 ? 1 : parseInt(pageNum)
+
   const { ...response } = useAxios({
-    // url: `/orders/${pageNumber}/${itemsPerPage}?orderDate=-1`,
-    url: `/orders?page=1&limit=${itemsPerPage}?orderDate=-1`,
+    url: `/orders?page=${pageNumber}&limit=${ITEMS_PER_PAGE}?orderDate=-1`,
     headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
   })
 
   useEffect(() => {
-    if (response.response !== null && logo.response !== null) {
-      setSiteLogo(logo.response?.websiteLogoDisplayPath)
+    if (response.response !== null) {
       setOrdersData(response.response)
       setOrderItemsIds(
         response.response.response.map(({ orderItems }: orderProps['ordersData']) =>
@@ -87,7 +74,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
         )
       )
     }
-  }, [response.response, logo.response])
+  }, [response.response])
 
   const inSeletedToppings = orderToppingsId?.map((selected: any) =>
     //if there is no toppings in order then selected will be empty array
@@ -639,11 +626,11 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                 <td colSpan={100}>
                   <Pagination
                     routeName={ordersByUserEmail ? `my-orders` : `dashboard/orders`}
-                    pageNum={0 /*pageNumber*/}
+                    pageNum={pageNumber}
                     numberOfPages={ordersData?.numberOfPages}
                     count={ordersData?.itemsCount}
                     foodId={ordersData?.response?._id}
-                    itemsPerPage={itemsPerPage}
+                    itemsPerPage={ITEMS_PER_PAGE}
                   />
                 </td>
               </tr>
