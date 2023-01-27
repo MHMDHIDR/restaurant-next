@@ -26,7 +26,9 @@ const ViewFood = ({ viewFood }: any) => {
 
   const loaction = (splitBy: number) =>
     asPath.split('/')[asPath.split('/').length - splitBy]
-  const category = loaction(2) !== 'view' && loaction(2)
+  const category =
+    loaction(2) !== 'view' ? loaction(2) : !isNumber(params[0]) && loaction(1)
+
   const pageNumber = isNumber(params[0])
     ? parseInt(params[0])
     : params[1]
@@ -34,21 +36,6 @@ const ViewFood = ({ viewFood }: any) => {
     : 1
 
   const { items } = useContext(CartContext)
-
-  // console.table({
-  //   pageNumber,
-  //   numberOfPages: data?.numberOfPages,
-  //   itemsCount: data?.itemsCount,
-  //   _id: data?.response?._id,
-  //   ITEMS_PER_PAGE,
-  //   loaction: loaction(2),
-  //   category
-  // })
-
-  console.log('loaction=>', !isNumber(params[0]) ? loaction(1) : loaction(2))
-  console.log('category=>', category)
-
-  // console.log('category=>', !isNumber(params[0]) ? loaction(1) : loaction(2))
 
   useEffect(() => {
     scrollToView()
