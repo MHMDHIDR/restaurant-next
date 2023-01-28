@@ -13,7 +13,7 @@ import Layout from '../../components/dashboard/Layout'
 import Image from 'next/image'
 
 const About = () => {
-  useDocumentTitle('App Settings')
+  useDocumentTitle('Settings')
 
   //Description Form States
   const [appName, setAppName] = useState('')

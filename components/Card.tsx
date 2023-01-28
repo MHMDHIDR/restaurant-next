@@ -1,13 +1,10 @@
 import Link from 'next/link'
 import { useContext } from 'react'
-
 import { CartContext } from '../contexts/CartContext'
 import { ToppingsContext } from '../contexts/ToppingsContext'
 import TagIcon from './Icons/TagIcon'
 import EmblaCarousel from './EmblaCarousel'
-
 import { removeSlug } from '../utils/functions/slug'
-
 import Logo from './Icons/Logo'
 import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '../types'
 
@@ -90,7 +87,7 @@ const Card = ({
               ))}
             </ul>
           )}
-          {/* {typeof cToppings[0]?.toppingName === 'string' && (
+          {typeof cToppings[0]?.toppingName === 'string' && (
             // if this item has toppings and it's a string
             <div className='flex flex-col flex-wrap items-start gap-4 rtl'>
               <span>الإضافات:</span>
@@ -125,7 +122,7 @@ const Card = ({
                 )
               })}
             </div>
-          )} */}
+          )}
           {cCtaLabel ? (
             <div className='flex justify-evenly gap-3 flex-wrap grow-[0.5] text-center bg-transparent'>
               {cCtaLink ? (

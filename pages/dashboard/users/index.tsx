@@ -9,7 +9,7 @@ import logoutUser from '../../../utils/functions/logoutUser'
 import { API_URL, USER, ITEMS_PER_PAGE } from '../../../constants'
 import Modal from '../../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../../components/Icons/Status'
-import { LoadingSpinner } from '../../../components/Loading'
+import { LoadingPage } from '../../../components/Loading'
 import Pagination from '../../../components/Pagination'
 import NavMenu from '../../../components/NavMenu'
 import ModalNotFound from '../../../components/Modal/ModalNotFound'
@@ -102,11 +102,11 @@ const DashboardUsers = ({ usersData }: any) => {
     }
   }
 
-  // return USER?.userAccountType !== 'admin' ? (
-  //   <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
-  // ) :
-
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?.userAccountType !== 'admin' ? (
+    <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
+  ) : (
     <>
       {deleteUserStatus === 1 ? (
         <Modal

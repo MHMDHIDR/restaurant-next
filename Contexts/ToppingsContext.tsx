@@ -15,7 +15,7 @@ export const ToppingsContext = createContext({
 const checkedToppingsFromLocalStorage =
   typeof window !== 'undefined'
     ? JSON.parse(localStorage.getItem('restCheckedToppings') || '[]')
-    : '[]'
+    : []
 
 const ToppingsContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [checkedToppings, setCheckedToppings] = useState(checkedToppingsFromLocalStorage)

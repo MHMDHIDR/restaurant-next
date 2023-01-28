@@ -6,7 +6,7 @@ const PayPalButton = (window as any)?.paypal?.Buttons?.driver('react', {
   ReactDOM
 })
 
-const PaymentButton = ({ value, onSuccess }) => {
+const PaymentButton = ({ value, onSuccess }: any) => {
   const createOrder = (
     _: any,
     actions: {

@@ -16,11 +16,13 @@ const DashboardHome = ({ menu }: any) => {
 
   const [userStatus, setUserStatus] = useState<string>('')
   const [userType, setUserType] = useState<string>('')
+  const [userID, setUserID] = useState<string>('')
   const [menuCount, setMenuCount] = useState<number>()
   const [ordersCount, setOrdersCount] = useState<number>(0)
 
   //if there's food id then fetch with food id, otherwise fetch everything
-  const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId${USER?._id}` })
+  const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId=${USER?._id}` })
+  const { loading } = currentUser
   const orders = useAxios({
     url: `/orders?page=0&limit=0`,
     headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : '{}'
@@ -30,6 +32,7 @@ const DashboardHome = ({ menu }: any) => {
     if (currentUser?.response !== null || menu.response !== null) {
       setUserStatus(currentUser?.response?.response?.userAccountStatus)
       setUserType(currentUser?.response?.response?.userAccountType)
+      setUserID(currentUser?.response?.response?._id)
       setMenuCount(menu?.response?.itemsCount)
       setOrdersCount(orders?.response?.itemsCount || 0)
     }
@@ -40,14 +43,13 @@ const DashboardHome = ({ menu }: any) => {
   useEventListener('keydown', (e: any) => e.key === 'Escape' && menuToggler())
 
   //check if userStatus is active and the userType is admin
-  // return !USER?._id ? (
-  //   <ModalNotFound />
-  // ) : !USER?._id || userStatus === 'block' || userType === 'user' ? (
-  //   logoutUser(USER?._id)
-  // ) : !userStatus || !userType ? (
-  //   <LoadingPage />
-  // ) :
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?._id !== userID ? (
+    <ModalNotFound />
+  ) : userStatus === 'block' || userType === 'user' ? (
+    logoutUser(USER?._id)
+  ) : (
     <Layout>
       <div className='container mx-auto'>
         <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>لوحة التحكم</h1>

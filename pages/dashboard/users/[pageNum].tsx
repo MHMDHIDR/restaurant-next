@@ -10,7 +10,7 @@ import logoutUser from '../../../utils/functions/logoutUser'
 import { API_URL, USER, ITEMS_PER_PAGE } from '../../../constants'
 import Modal from '../../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../../components/Icons/Status'
-import { LoadingSpinner } from '../../../components/Loading'
+import { LoadingPage, LoadingSpinner } from '../../../components/Loading'
 import Pagination from '../../../components/Pagination'
 import NavMenu from '../../../components/NavMenu'
 import ModalNotFound from '../../../components/Modal/ModalNotFound'
@@ -103,11 +103,11 @@ const DashboardUsers = () => {
     }
   }
 
-  // return USER?.userAccountType !== 'admin' ? (
-  //   <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
-  // ) :
-
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?.userAccountType !== 'admin' ? (
+    <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
+  ) : (
     <>
       {deleteUserStatus === 1 ? (
         <Modal
@@ -429,14 +429,6 @@ const DashboardUsers = () => {
       </Layout>
     </>
   )
-}
-
-export async function getServerSideProps({ query: { params } }: any) {
-  console.log('params pageNum', params)
-
-  // const fetchURL = `${API_URL}/users/all?page=${pageNumber}&limit=${ITEMS_PER_PAGE}`
-  // const users = await fetch(fetchURL).then(users => users.json())
-  return { props: { users: '' } }
 }
 
 export default DashboardUsers

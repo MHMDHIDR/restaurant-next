@@ -249,13 +249,7 @@ export async function getStaticProps() {
     `${API_URL}/foods?page=0limit=${ITEMS_PER_PAGE}&createdAt=-1`
   ).then(menu => menu.json())
 
-  console.log(menuFood)
-
-  return {
-    props: {
-      menuFood
-    }
-  }
+  return { props: { menuFood } }
 }
 
 export default DashboardMenu

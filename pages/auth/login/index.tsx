@@ -217,9 +217,7 @@ const Login = () => {
                     clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}
                     buttonText='Log in with Google'
                     onSuccess={handleGoogleLogin}
-                    onFailure={(result: any) => {
-                      console.log(result)
-                    }}
+                    onFailure={(result: any) => alert(result)}
                     cookiePolicy={'single_host_origin'}
                   />
                 </div>

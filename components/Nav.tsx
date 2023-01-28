@@ -8,10 +8,20 @@ import MyLink from './MyLink'
 import useEventListener from '../hooks/useEventListener'
 import useAxios from '../hooks/useAxios'
 import NavMenu from './NavMenu'
-import { UserProps } from '../types'
 import Image from 'next/image'
+import { USER } from '../constants'
+import { UserProps } from '../types'
 
 const Nav = () => {
+  const [userData, setUserData] = useState<UserProps>({ userFullName: 'المستخدم' })
+  useEffect(() => {
+    setUserData(USER)
+
+    return () => {
+      setUserData({ userFullName: '' })
+    }
+  }, [])
+
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user')
@@ -20,9 +30,6 @@ const Nav = () => {
   }
 
   const [websiteLogoDisplayPath, setWebsiteLogoDisplayPath] = useState('')
-  const USER: UserProps = JSON.parse(
-    typeof window !== 'undefined' ? localStorage.getItem('user') || '{}' : '{}'
-  )
   const { response } = useAxios({ url: '/settings' })
 
   useEffect(() => {
@@ -132,15 +139,14 @@ const Nav = () => {
             <li>
               <MyLink to='contact'>تواصل معنا</MyLink>
             </li>
-            {'user' in {} ? (
-              // localStorage
+            {userData ? (
               <li className='flex gap-3'>
                 <NavMenu
-                  label={`مرحباً عزيزي ${USER.userFullName || ''}`}
+                  label={`مرحباً عزيزي ${userData.userFullName || ''}`}
                   isOptions={false}
                 >
-                  {(USER?.userAccountType === 'admin' ||
-                    USER?.userAccountType === 'cashier') && (
+                  {(userData?.userAccountType === 'admin' ||
+                    userData?.userAccountType === 'cashier') && (
                     <Link
                       href='/dashboard'
                       className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 xl:border-0'
