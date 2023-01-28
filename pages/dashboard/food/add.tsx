@@ -48,10 +48,9 @@ const AddFood = () => {
 
   //fetching categories
   const { response } = useAxios({ url: '/settings' })
-
   useEffect(() => {
     if (response !== null) {
-      setCategoryList(response?.CategoryList)
+      setCategoryList(response?.response[0]?.CategoryList)
     }
   }, [response])
 
@@ -70,7 +69,6 @@ const AddFood = () => {
       formData.append('foodDesc', foodDesc)
       formData.append('foodToppings', JSON.stringify(toppings))
       formData.append('foodTags', JSON.stringify(tags))
-      file.map(foodImg => formData.append('foodImg', foodImg))
 
       if (
         ImgErr.current!.textContent === '' &&
@@ -235,13 +233,13 @@ const AddFood = () => {
                     <select
                       id='category'
                       className='form__input'
-                      required
                       onChange={e =>
                         setCategory([
                           e.target.value.trim(),
                           e.target.options[e.target.selectedIndex].textContent!
                         ])
                       }
+                      required
                     >
                       <option value=''>اختر التصنيف</option>
                       {categoryList?.map((category, idx) => (

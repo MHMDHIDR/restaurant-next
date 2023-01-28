@@ -34,7 +34,7 @@ const DashboardMenu = () => {
 
   const pageNumber = !pageNum || !isNumber(pageNum) || pageNum < 1 ? 1 : parseInt(pageNum)
   const { loading, ...response } = useAxios({
-    url: `/foods?page=1&limit=${ITEMS_PER_PAGE}&createdAt=-1`
+    url: `/foods?page=${pageNumber}&limit=${ITEMS_PER_PAGE}&createdAt=-1`
   })
 
   useEffect(() => {

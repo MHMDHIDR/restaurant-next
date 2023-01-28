@@ -3,7 +3,6 @@ import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps } from '../../../types'
-import sharp from 'sharp'
 import { S3 } from 'aws-sdk'
 
 const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
@@ -34,6 +33,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = body
       const { foodImg } = files
       const toppings = foodToppings && JSON.parse(foodToppings)
+
       const tags = JSON.parse(foodTags)
       const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
       const foodImgNames = foodImgs?.map(
