@@ -59,53 +59,53 @@ const DashboardHome = ({ menu }: any) => {
           }`}
         >
           {/* Orders */}
-          {/* {(userType === 'admin' || userType === 'cashier') && ( */}
-          <Link
-            href={goTo('orders')}
-            className='inline-flex flex-col items-center justify-center p-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
-          >
-            <img
-              loading='lazy'
-              src='/assets/img/icons/orders.svg'
-              alt='menu slider img'
-              className='w-40 h-24'
-            />
-            <h3>الطلبات</h3>
-            <span className='text-lg font-bold'>عدد الطلبات {ordersCount}</span>
-          </Link>
-          {/* )} */}
+          {(userType === 'admin' || userType === 'cashier') && (
+            <Link
+              href={goTo('orders')}
+              className='inline-flex flex-col items-center justify-center p-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
+            >
+              <img
+                loading='lazy'
+                src='/assets/img/icons/orders.svg'
+                alt='menu slider img'
+                className='w-40 h-24'
+              />
+              <h3>الطلبات</h3>
+              <span className='text-lg font-bold'>عدد الطلبات {ordersCount}</span>
+            </Link>
+          )}
 
           {/* Menu  &  Add Items*/}
-          {/* {userType === 'admin' && ( */}
-          <>
-            <Link
-              href={goTo('menu')}
-              className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
-            >
-              <img
-                loading='lazy'
-                src='/assets/img/icons/menu.svg'
-                alt='menu slider img'
-                className='w-40 h-24'
-              />
-              <h3>القائمة</h3>
-              <span className='text-lg font-bold'>عدد الوجبات {menuCount}</span>
-            </Link>
+          {userType === 'admin' && (
+            <>
+              <Link
+                href={goTo('menu')}
+                className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
+              >
+                <img
+                  loading='lazy'
+                  src='/assets/img/icons/menu.svg'
+                  alt='menu slider img'
+                  className='w-40 h-24'
+                />
+                <h3>القائمة</h3>
+                <span className='text-lg font-bold'>عدد الوجبات {menuCount}</span>
+              </Link>
 
-            <Link
-              href={goTo('add-food')}
-              className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
-            >
-              <img
-                loading='lazy'
-                src='/assets/img/icons/add_food.svg'
-                alt='menu slider img'
-                className='w-40 h-24'
-              />
-              <h3>إضافة وجبة أو مشروب</h3>
-            </Link>
-          </>
-          {/* )} */}
+              <Link
+                href={goTo('food/add')}
+                className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
+              >
+                <img
+                  loading='lazy'
+                  src='/assets/img/icons/add_food.svg'
+                  alt='menu slider img'
+                  className='w-40 h-24'
+                />
+                <h3>إضافة وجبة أو مشروب</h3>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </Layout>

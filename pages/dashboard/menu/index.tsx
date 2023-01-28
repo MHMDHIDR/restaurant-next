@@ -1,33 +1,41 @@
 import { useState, useEffect } from 'react'
-// import { useParams } from 'react-router-dom'
 import Link from 'next/link'
 import Axios from 'axios'
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import useEventListener from '../../hooks/useEventListener'
-import Modal from '../../components/Modal/Modal'
-import { Success, Error, Loading } from '../../components/Icons/Status'
-import { LoadingSpinner } from '../../components/Loading'
-import Pagination from '../../components/Pagination'
-import abstractText from '../../utils/functions/abstractText'
-import { removeSlug } from '../../utils/functions/slug'
-import goTo from '../../utils/functions/goTo'
-import { createLocaleDateString } from '../../utils/functions/convertDate'
-import scrollToView from '../../utils/functions/scrollToView'
-import ModalNotFound from '../../components/Modal/ModalNotFound'
-import NavMenu from '../../components/NavMenu'
-import Layout from '../../components/dashboard/Layout'
-import { API_URL, ITEMS_PER_PAGE, USER } from '../../constants'
+import useDocumentTitle from '../../../hooks/useDocumentTitle'
+import useEventListener from '../../../hooks/useEventListener'
+import useAxios from '../../../hooks/useAxios'
+import Modal from '../../../components/Modal/Modal'
+import { Success, Error, Loading } from '../../../components/Icons/Status'
+import { LoadingPage, LoadingSpinner } from '../../../components/Loading'
+import Pagination from '../../../components/Pagination'
+import abstractText from '../../../utils/functions/abstractText'
+import { removeSlug } from '../../../utils/functions/slug'
+import goTo from '../../../utils/functions/goTo'
+import { createLocaleDateString } from '../../../utils/functions/convertDate'
+import scrollToView from '../../../utils/functions/scrollToView'
+import ModalNotFound from '../../../components/Modal/ModalNotFound'
+import NavMenu from '../../../components/NavMenu'
+import Layout from '../../../components/dashboard/Layout'
+import { API_URL, ITEMS_PER_PAGE, USER } from '../../../constants'
 
-const DashboardMenu = ({ menuFood }: any) => {
+const DashboardMenu = () => {
   useDocumentTitle('Menu')
-
-  // let { pageNum }: any = useParams()
-  // const pageNumber = !pageNum || pageNum < 1 || isNaN(pageNum) ? 1 : parseInt(pageNum)
 
   const [delFoodId, setDelFoodId] = useState('')
   const [delFoodName, setDelFoodName] = useState('')
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
   const [modalLoading, setModalLoading] = useState<boolean>(true)
+  const [menuFood, setMenuFood] = useState<any>()
+
+  const { loading, ...response } = useAxios({
+    url: `/foods?page=1&limit=${ITEMS_PER_PAGE}&createdAt=-1`
+  })
+
+  useEffect(() => {
+    if (response.response !== null) {
+      setMenuFood(response.response)
+    }
+  }, [response.response])
 
   useEffect(() => {
     scrollToView()
@@ -78,10 +86,11 @@ const DashboardMenu = ({ menuFood }: any) => {
     }
   }
 
-  // return USER?.userAccountType !== 'admin' ? (
-  //   <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
-  // ) :
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?.userAccountType !== 'admin' ? (
+    <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
+  ) : (
     <>
       {deleteFoodStatus === 1 ? (
         <Modal
@@ -195,14 +204,14 @@ const DashboardMenu = ({ menuFood }: any) => {
 
                     <tr>
                       <td colSpan={100}>
-                        {/* <Pagination
-                        routeName={`dashboard/menu`}
-                        pageNum={pageNumber}
-                        numberOfPages={menuFood?.numberOfPages}
-                        count={menuFood?.itemsCount}
-                        foodId={menuFood?.response?._id}
-                        itemsPerPage={itemsPerPage}
-                      /> */}
+                        <Pagination
+                          routeName={`dashboard/menu`}
+                          pageNum={1}
+                          numberOfPages={menuFood?.numberOfPages}
+                          count={menuFood?.itemsCount}
+                          foodId={menuFood?.response?._id}
+                          itemsPerPage={ITEMS_PER_PAGE}
+                        />
                       </td>
                     </tr>
                   </>
@@ -242,14 +251,6 @@ const DashboardMenu = ({ menuFood }: any) => {
       </Layout>
     </>
   )
-}
-
-export async function getStaticProps() {
-  const menuFood = await fetch(
-    `${API_URL}/foods?page=0limit=${ITEMS_PER_PAGE}&createdAt=-1`
-  ).then(menu => menu.json())
-
-  return { props: { menuFood } }
 }
 
 export default DashboardMenu

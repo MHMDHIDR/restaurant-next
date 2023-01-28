@@ -21,9 +21,6 @@ const index = ({ item }: any) => {
     scrollToView()
   }, [])
 
-  // const [data, setData] = useState<any>()
-
-  // const { items } = useContext(CartContext)
   const items = ['']
 
   return (
