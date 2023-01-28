@@ -80,7 +80,13 @@ const AddFood = () => {
         modalLoading!.classList.remove('hidden')
 
         try {
-          const response = await Axios.post(`${API_URL}/foods`, formData)
+          const response: any = fetch(`${API_URL}/foods`, {
+            method: 'POST',
+            body: formData
+          })
+          console.log(response)
+
+          // const response = await Axios.post(`${API_URL}/foods`, formData) //make the request with authentication using middleware
 
           const { foodAdded, message } = response.data
           setAddFoodStatus(foodAdded)
@@ -152,7 +158,7 @@ const AddFood = () => {
                   onSubmit={e => handleAddFood(e)}
                 >
                   <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
-                    <FileUpload
+                    {/* <FileUpload
                       data={{
                         defaultImg: [
                           {
@@ -162,7 +168,7 @@ const AddFood = () => {
                         ],
                         foodName: 'Food, Drink, Sweet'
                       }}
-                    />
+                    /> */}
 
                     <span
                       className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
