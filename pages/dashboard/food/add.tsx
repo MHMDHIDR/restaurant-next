@@ -62,13 +62,23 @@ const AddFood = () => {
       e.preventDefault()
 
       //using FormData to send constructed data
-      const formData = new FormData()
-      formData.append('foodName', foodName)
-      formData.append('foodPrice', foodPrice)
-      formData.append('category', category[0])
-      formData.append('foodDesc', foodDesc)
-      formData.append('foodToppings', JSON.stringify(toppings))
-      formData.append('foodTags', JSON.stringify(tags))
+      // const formData = new FormData()
+      // formData.append('foodName', foodName)
+      // formData.append('foodPrice', foodPrice)
+      // formData.append('category', category[0])
+      // formData.append('foodDesc', foodDesc)
+      // formData.append('foodToppings', JSON.stringify(toppings))
+      // formData.append('foodTags', JSON.stringify(tags))
+      // file.map(foodImg => formData.append('foodImg', foodImg))
+      const formData = {
+        foodName: foodName,
+        foodPrice: foodPrice,
+        category: category[0],
+        foodDesc: foodDesc,
+        foodToppings: JSON.stringify(toppings),
+        foodTags: JSON.stringify(tags),
+        foodImg: file.map(foodImg => foodImg)
+      }
 
       if (
         ImgErr.current!.textContent === '' &&
@@ -77,16 +87,18 @@ const AddFood = () => {
         descErr.current!.textContent === ''
       ) {
         //show waiting modal
-        modalLoading!.classList.remove('hidden')
+        // modalLoading!.classList.remove('hidden')
+        console.log('الرجاء الانتظار')
 
         try {
-          const response: any = fetch(`${API_URL}/foods`, {
+          // const response = await Axios.post(`${API_URL}/foods`, formData)
+          const response: any = await fetch(`${API_URL}/foods`, {
             method: 'POST',
-            body: formData
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
           })
-          console.log(response)
-
-          // const response = await Axios.post(`${API_URL}/foods`, formData) //make the request with authentication using middleware
 
           const { foodAdded, message } = response.data
           setAddFoodStatus(foodAdded)
@@ -94,6 +106,7 @@ const AddFood = () => {
           //Remove waiting modal
           setTimeout(() => {
             modalLoading!.classList.add('hidden')
+            console.log('تم العمل')
           }, 300)
         } catch (err) {
           formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
@@ -158,7 +171,7 @@ const AddFood = () => {
                   onSubmit={e => handleAddFood(e)}
                 >
                   <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
-                    {/* <FileUpload
+                    <FileUpload
                       data={{
                         defaultImg: [
                           {
@@ -168,7 +181,7 @@ const AddFood = () => {
                         ],
                         foodName: 'Food, Drink, Sweet'
                       }}
-                    /> */}
+                    />
 
                     <span
                       className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'

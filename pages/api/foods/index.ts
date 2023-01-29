@@ -30,57 +30,57 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
     }
 
     case 'POST': {
-      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = body
-      res.json({ foodName, foodPrice, category, foodDesc, foodToppings, foodTags })
-      // const { foodImg } = files
-      // const toppings = foodToppings && JSON.parse(foodToppings)
+      const { ...formData } = body
+      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = formData
+      const { foodImg } = files
+      const toppings = foodToppings && JSON.parse(foodToppings)
 
-      // const tags = JSON.parse(foodTags)
-      // const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
-      // const foodImgNames = foodImgs?.map(
-      //   img => crypto.randomUUID() + img.name.split('.')[0] + '.webp'
-      // )
+      const tags = JSON.parse(foodTags)
+      const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
+      const foodImgNames = foodImgs?.map(
+        img => crypto.randomUUID() + img.name.split('.')[0] + '.webp'
+      )
 
-      // const uploadToS3 = async (img: any, imgName: string) => {
-      //   const params = {
-      //     Bucket: AWS_BUCKET_NAME || '',
-      //     Key: imgName,
-      //     Body: img,
-      //     ContentType: 'image/webp'
-      //   }
-      //   const imgUpload = await s3.upload(params).promise()
-      //   return imgUpload.Location
-      // }
+      const uploadToS3 = async (img: any, imgName: string) => {
+        const params = {
+          Bucket: AWS_BUCKET_NAME || '',
+          Key: imgName,
+          Body: img,
+          ContentType: 'image/webp'
+        }
+        const imgUpload = await s3.upload(params).promise()
+        return imgUpload.Location
+      }
 
-      // const foodImgUrls = await Promise.all(
-      //   foodImgs.map(async (img, index) => {
-      //     const foodImgDisplayName = foodImgNames[index]
-      //     const foodImgDisplayPath = await uploadToS3(img.data, foodImgDisplayName)
-      //     return { foodImgDisplayName, foodImgDisplayPath }
-      //   })
-      // )
+      const foodImgUrls = await Promise.all(
+        foodImgs.map(async (img, index) => {
+          const foodImgDisplayName = foodImgNames[index]
+          const foodImgDisplayPath = await uploadToS3(img.data, foodImgDisplayName)
+          return { foodImgDisplayName, foodImgDisplayPath }
+        })
+      )
 
-      // await FoodModel.create({
-      //   foodName,
-      //   foodPrice: parseInt(foodPrice),
-      //   category,
-      //   foodDesc,
-      //   foodToppings: {
-      //     toppingName: toppings.toppingName,
-      //     toppingPrice: parseInt(toppings.toppingPrice)
-      //   },
-      //   foodTags: tags,
-      //   foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
-      //     return {
-      //       foodImgDisplayName,
-      //       foodImgDisplayPath
-      //     }
-      //   })
-      // })
-      // res.status(201).json({
-      //   foodAdded: 1,
-      //   message: 'Food added successfully'
-      // })
+      await FoodModel.create({
+        foodName,
+        foodPrice: parseInt(foodPrice),
+        category,
+        foodDesc,
+        foodToppings: {
+          toppingName: toppings.toppingName,
+          toppingPrice: parseInt(toppings.toppingPrice)
+        },
+        foodTags: tags,
+        foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
+          return {
+            foodImgDisplayName,
+            foodImgDisplayPath
+          }
+        })
+      })
+      res.status(201).json({
+        foodAdded: 1,
+        message: 'Food added successfully'
+      })
       break
     }
 
@@ -88,11 +88,5 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       res.status(405).end(`Method ${method} Not Allowed`)
       break
     }
-  }
-}
-
-export const config = {
-  api: {
-    bodyParser: false
   }
 }
