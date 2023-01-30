@@ -4,6 +4,8 @@ import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps } from '../../../types'
 import { S3 } from 'aws-sdk'
+import formHandler from '../../../utils/functions/form'
+import crypto from 'crypto'
 
 const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
 const s3 = new S3({
@@ -14,7 +16,7 @@ const s3 = new S3({
 })
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
-  const { method, body, files } = req
+  const { method } = req
   await dbConnect()
 
   switch (method) {
@@ -30,15 +32,16 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
     }
 
     case 'POST': {
-      const { ...formData } = body
-      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = formData
+      //bodybodybodybodybodybodydddddd
+      const { fields, files }: any = await formHandler(req)
+      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       const { foodImg } = files
       const toppings = foodToppings && JSON.parse(foodToppings)
 
       const tags = JSON.parse(foodTags)
       const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
       const foodImgNames = foodImgs?.map(
-        img => crypto.randomUUID() + img.name.split('.')[0] + '.webp'
+        img => crypto.randomUUID() + img.originalFilename.split('.')[0] + '.webp'
       )
 
       const uploadToS3 = async (img: any, imgName: string) => {
@@ -81,6 +84,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         foodAdded: 1,
         message: 'Food added successfully'
       })
+
       break
     }
 
@@ -88,5 +92,11 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       res.status(405).end(`Method ${method} Not Allowed`)
       break
     }
+  }
+}
+
+export const config = {
+  api: {
+    bodyParser: false
   }
 }

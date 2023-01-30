@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext, ChangeEvent } from 'react'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import { TagsContext } from '../../../contexts/TagsContext'
 import { FileUploadContext } from '../../../contexts/FileUploadContext'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
@@ -62,23 +62,23 @@ const AddFood = () => {
       e.preventDefault()
 
       //using FormData to send constructed data
-      // const formData = new FormData()
-      // formData.append('foodName', foodName)
-      // formData.append('foodPrice', foodPrice)
-      // formData.append('category', category[0])
-      // formData.append('foodDesc', foodDesc)
-      // formData.append('foodToppings', JSON.stringify(toppings))
-      // formData.append('foodTags', JSON.stringify(tags))
-      // file.map(foodImg => formData.append('foodImg', foodImg))
-      const formData = {
-        foodName: foodName,
-        foodPrice: foodPrice,
-        category: category[0],
-        foodDesc: foodDesc,
-        foodToppings: JSON.stringify(toppings),
-        foodTags: JSON.stringify(tags),
-        foodImg: file.map(foodImg => foodImg)
-      }
+      const formData = new FormData()
+      formData.append('foodName', foodName)
+      formData.append('foodPrice', foodPrice)
+      formData.append('category', category[0])
+      formData.append('foodDesc', foodDesc)
+      formData.append('foodToppings', JSON.stringify(toppings))
+      formData.append('foodTags', JSON.stringify(tags))
+      file.map(foodImg => formData.append('foodImg', foodImg))
+      // const formData = {
+      //   foodName: foodName,
+      //   foodPrice: foodPrice,
+      //   category: category[0],
+      //   foodDesc: foodDesc,
+      //   foodToppings: JSON.stringify(toppings),
+      //   foodTags: JSON.stringify(tags),
+      //   foodImg: file.map(foodImg => foodImg)
+      // }
 
       if (
         ImgErr.current!.textContent === '' &&
@@ -91,21 +91,14 @@ const AddFood = () => {
         console.log('الرجاء الانتظار')
 
         try {
-          // const response = await Axios.post(`${API_URL}/foods`, formData)
-          const response: any = await fetch(`${API_URL}/foods`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          })
+          const response = await axios.post(`${API_URL}/foods`, formData)
 
           const { foodAdded, message } = response.data
           setAddFoodStatus(foodAdded)
           setAddFoodMessage(message)
           //Remove waiting modal
           setTimeout(() => {
-            modalLoading!.classList.add('hidden')
+            // modalLoading!.classList.add('hidden')
             console.log('تم العمل')
           }, 300)
         } catch (err) {
