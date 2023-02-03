@@ -3,7 +3,7 @@ import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps } from '../../../types'
-import { S3 } from 'aws-sdk'
+import S3 from 'aws-sdk/clients/s3'
 import formHandler from '../../../utils/functions/form'
 import crypto from 'crypto'
 
@@ -32,10 +32,10 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
     }
 
     case 'POST': {
-      //bodybodybodybodybodybodydddddd
       const { fields, files }: any = await formHandler(req)
       const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       const { foodImg } = files
+
       const toppings = foodToppings && JSON.parse(foodToppings)
 
       const tags = JSON.parse(foodTags)
@@ -44,15 +44,14 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         img => crypto.randomUUID() + img.originalFilename.split('.')[0] + '.webp'
       )
 
-      const uploadToS3 = async (img: any, imgName: string) => {
+      const uploadToS3 = async (_img: any, imgName: string) => {
         const params = {
           Bucket: AWS_BUCKET_NAME || '',
           Key: imgName,
-          Body: img,
           ContentType: 'image/webp'
         }
-        const imgUpload = await s3.upload(params).promise()
-        return imgUpload.Location
+        const imgUploadLocation = await s3.getSignedUrlPromise('putObject', params)
+        return imgUploadLocation
       }
 
       const foodImgUrls = await Promise.all(

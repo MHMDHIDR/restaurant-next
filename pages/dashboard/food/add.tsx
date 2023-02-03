@@ -70,15 +70,6 @@ const AddFood = () => {
       formData.append('foodToppings', JSON.stringify(toppings))
       formData.append('foodTags', JSON.stringify(tags))
       file.map(foodImg => formData.append('foodImg', foodImg))
-      // const formData = {
-      //   foodName: foodName,
-      //   foodPrice: foodPrice,
-      //   category: category[0],
-      //   foodDesc: foodDesc,
-      //   foodToppings: JSON.stringify(toppings),
-      //   foodTags: JSON.stringify(tags),
-      //   foodImg: file.map(foodImg => foodImg)
-      // }
 
       if (
         ImgErr.current!.textContent === '' &&
@@ -87,8 +78,7 @@ const AddFood = () => {
         descErr.current!.textContent === ''
       ) {
         //show waiting modal
-        // modalLoading!.classList.remove('hidden')
-        console.log('الرجاء الانتظار')
+        modalLoading!.classList.remove('hidden')
 
         try {
           const response = await axios.post(`${API_URL}/foods`, formData)
@@ -98,8 +88,7 @@ const AddFood = () => {
           setAddFoodMessage(message)
           //Remove waiting modal
           setTimeout(() => {
-            // modalLoading!.classList.add('hidden')
-            console.log('تم العمل')
+            modalLoading!.classList.add('hidden')
           }, 300)
         } catch (err) {
           formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
@@ -134,7 +123,7 @@ const AddFood = () => {
         <Modal
           status={Success}
           msg={`تم إضافة ${category[1]} بنجاح 😄 الرجاء الانتظار ليتم تحويلك لقائمة الوجبات والمشروبات`}
-          redirectLink='menu'
+          redirectLink={goTo(`menu`)}
           redirectTime={3000}
         />
       ) : addFoodStatus === 0 ? (
