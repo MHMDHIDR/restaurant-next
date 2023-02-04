@@ -4,8 +4,8 @@ import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps } from '../../../types'
 import S3 from 'aws-sdk/clients/s3'
-import formHandler from '../../../utils/functions/form'
 import crypto from 'crypto'
+import formHandler from '../../../utils/functions/form'
 
 const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
 const s3 = new S3({
@@ -35,12 +35,9 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       const { fields, files }: any = await formHandler(req)
       const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       const { foodImg } = files
-
-      // const toppings = foodToppings && JSON.parse(foodToppings)
-
-      // const tags = JSON.parse(foodTags)
+      const toppings = foodToppings && JSON.parse(foodToppings)
+      const tags = JSON.parse(foodTags)
       const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
-      console.log('files=>>>', files)
 
       const foodImgNames = foodImgs?.map(
         img => crypto.randomUUID() + img.originalFilename.split('.')[0] + '.webp'
@@ -82,10 +79,10 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       //     }
       //   })
       // })
-      res.status(201).json({
-        foodAdded: 1,
-        message: 'Food added successfully'
-      })
+      // res.status(201).json({
+      //   foodAdded: 1,
+      //   message: 'Food added successfully'
+      // })
 
       break
     }
