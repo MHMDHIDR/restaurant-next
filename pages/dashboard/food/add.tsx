@@ -54,7 +54,11 @@ const AddFood = () => {
     }
   }, [response])
 
-  const handleAddFood = async (e: { key?: string; preventDefault: () => void }) => {
+  const handleAddFood = async (e: {
+    target: any
+    key?: string
+    preventDefault: () => void
+  }) => {
     if (e.key === 'Enter') {
       //don't submit the form if Enter is pressed
       e.preventDefault()
@@ -62,14 +66,18 @@ const AddFood = () => {
       e.preventDefault()
 
       //using FormData to send constructed data
-      const formData = new FormData()
+      const formData = new FormData(e.target)
       formData.append('foodName', foodName)
       formData.append('foodPrice', foodPrice)
       formData.append('category', category[0])
       formData.append('foodDesc', foodDesc)
       formData.append('foodToppings', JSON.stringify(toppings))
       formData.append('foodTags', JSON.stringify(tags))
-      file.map(foodImg => formData.append('foodImg', foodImg))
+      file.map(foodImg => {
+        console.log(foodImg)
+
+        formData.append('foodImg', foodImg)
+      })
 
       if (
         ImgErr.current!.textContent === '' &&

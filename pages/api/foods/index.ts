@@ -4,15 +4,15 @@ import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps } from '../../../types'
 import S3 from 'aws-sdk/clients/s3'
-import crypto from 'crypto'
+import { randomUUID } from 'crypto'
 import formHandler from '../../../utils/functions/form'
 
 const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
 const s3 = new S3({
-  credentials: {
-    accessKeyId: AWS_ACCESS_ID || '',
-    secretAccessKey: AWS_SECRET || ''
-  }
+  accessKeyId: AWS_ACCESS_ID || '',
+  secretAccessKey: AWS_SECRET || '',
+  signatureVersion: 'v4',
+  region: 'us-east-1'
 })
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
@@ -33,14 +33,14 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
 
     case 'POST': {
       const { fields, files }: any = await formHandler(req)
-      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       const { foodImg } = files
+      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       const toppings = foodToppings && JSON.parse(foodToppings)
       const tags = JSON.parse(foodTags)
       const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
 
       const foodImgNames = foodImgs?.map(
-        img => crypto.randomUUID() + img.originalFilename.split('.')[0] + '.webp'
+        img => randomUUID() + img.originalFilename.split('.')[0] + '.webp'
       )
 
       const uploadToS3 = async (img: any, imgName: string) => {
@@ -62,27 +62,27 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         })
       )
 
-      // await FoodModel.create({
-      //   foodName,
-      //   foodPrice: parseInt(foodPrice),
-      //   category,
-      //   foodDesc,
-      //   foodToppings: {
-      //     toppingName: toppings.toppingName,
-      //     toppingPrice: parseInt(toppings.toppingPrice)
-      //   },
-      //   foodTags: tags,
-      //   foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
-      //     return {
-      //       foodImgDisplayName,
-      //       foodImgDisplayPath
-      //     }
-      //   })
-      // })
-      // res.status(201).json({
-      //   foodAdded: 1,
-      //   message: 'Food added successfully'
-      // })
+      await FoodModel.create({
+        foodName,
+        foodPrice: parseInt(foodPrice),
+        category,
+        foodDesc,
+        foodToppings: {
+          toppingName: toppings.toppingName,
+          toppingPrice: parseInt(toppings.toppingPrice)
+        },
+        foodTags: tags,
+        foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
+          return {
+            foodImgDisplayName,
+            foodImgDisplayPath
+          }
+        })
+      })
+      res.status(201).json({
+        foodAdded: 1,
+        message: 'Food added successfully'
+      })
 
       break
     }

@@ -203,18 +203,18 @@ export type TagsProps = {
   removeTags: (index: number) => void
   addTag: (e: React.KeyboardEvent<HTMLInputElement>) => void
   saveSelectedTags: (id: number, tags: string[]) => void
-  removeSelectedTags: (id: number) => void
+  removeSelectedTags: (id: number) => any
   selectedTags: { id: string; tags: string[] }[]
 }
 
 export type AddTagsProps = {
   key: string
   preventDefault: () => void
-  target: { value: string }
+  target: { value: string } | any
 }
 
 export type removeSelectedTagsProps = {
-  id: string
+  id: number
 }
 
 export type ThemeProps = {

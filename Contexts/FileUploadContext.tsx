@@ -5,20 +5,20 @@ export const FileUploadContext = createContext({} as FileUploadProps)
 
 const FileUploadContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [file, setFile] = useState<File[]>([])
-  const [fileURLs, setFileURLs] = useState([])
+  const [fileURLs, setFileURLs] = useState<any>([])
 
   const onFileAdd = (e: { target: { files: any } }) =>
     setFile(file => [...file, ...e.target.files])
 
   const onFileRemove = (fileUrl: string, fileName: string) => {
-    setFileURLs(fileURLs.filter(url => url !== fileUrl))
+    setFileURLs(fileURLs.filter((url: string) => url !== fileUrl))
     setFile(file.filter(file => file.name !== fileName))
   }
 
   useEffect(() => {
     if (file.length < 1) return
 
-    const newFileUrls = []
+    const newFileUrls: string[] = []
     file.forEach(file => {
       if (Math.ceil(file.size / 1000000) < 2) {
         newFileUrls.push(URL.createObjectURL(file))
