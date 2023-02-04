@@ -47,53 +47,54 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       )
       const foodImgPathes = foodImgs?.map(({ filepath }) => filepath)
 
-      const uploadToS3 = async (imgName: string, imgPath: string) => {
-        const params = {
-          Bucket: AWS_BUCKET_NAME!,
-          Key: imgName,
-          Body: imgPath,
-          'Content-Type': 'image/webp',
-          ACL: 'public-read'
-        }
-        try {
-          return s3.putObject(params)
-        } catch (error) {
-          res.status(500).send('Error Uploading image')
+      // const uploadToS3 = async (imgName: string, imgPath: string) => {
+      const params = {
+        Bucket: AWS_BUCKET_NAME,
+        // Key: imgName,
+        // ContentType: 'image/webp'
+        Fields: {
+          Key: foodImgs,
+          'Content-Type': 'image/webp'
         }
       }
+      const post = s3.createPresignedPost(params)
+      console.log(post)
 
-      const foodImgUrls = await Promise.all(
-        foodImgs.map(async (_, index) => {
-          const foodImgDisplayName = foodImgNames[index]
-          const foodImgURL = foodImgPathes[index]
+      res.status(200).json(post)
+      // }
 
-          const foodImgDisplayPath = await uploadToS3(foodImgDisplayName, foodImgURL)
+      // const foodImgUrls = await Promise.all(
+      //   foodImgs.map(async (_, index) => {
+      //     const foodImgDisplayName = foodImgNames[index]
+      //     const foodImgURL = foodImgPathes[index]
 
-          return { foodImgDisplayName, foodImgDisplayPath }
-        })
-      )
+      //     const foodImgDisplayPath = await uploadToS3(foodImgDisplayName, foodImgURL)
 
-      await FoodModel.create({
-        foodName,
-        foodPrice: parseInt(foodPrice),
-        category,
-        foodDesc,
-        foodToppings: {
-          toppingName: toppings.toppingName,
-          toppingPrice: parseInt(toppings.toppingPrice)
-        },
-        foodTags: tags,
-        foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
-          return {
-            foodImgDisplayName,
-            foodImgDisplayPath
-          }
-        })
-      })
-      res.status(201).json({
-        foodAdded: 1,
-        message: 'Food added successfully'
-      })
+      //     return { foodImgDisplayName, foodImgDisplayPath }
+      //   })
+      // )
+
+      // await FoodModel.create({
+      //   foodName,
+      //   foodPrice: parseInt(foodPrice),
+      //   category,
+      //   foodDesc,
+      //   foodToppings: {
+      //     toppingName: toppings.toppingName,
+      //     toppingPrice: parseInt(toppings.toppingPrice)
+      //   },
+      //   foodTags: tags,
+      //   foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
+      //     return {
+      //       foodImgDisplayName,
+      //       foodImgDisplayPath
+      //     }
+      //   })
+      // })
+      // res.status(201).json({
+      //   foodAdded: 1,
+      //   message: 'Food added successfully'
+      // })
 
       break
     }
