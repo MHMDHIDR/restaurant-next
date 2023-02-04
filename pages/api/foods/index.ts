@@ -1,5 +1,4 @@
 import { NextApiResponse } from 'next'
-import fs from 'fs'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
@@ -37,42 +36,34 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       const { foodImg } = files
 
-      const toppings = foodToppings && JSON.parse(foodToppings)
+      // const toppings = foodToppings && JSON.parse(foodToppings)
 
-      const tags = JSON.parse(foodTags)
+      // const tags = JSON.parse(foodTags)
       const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
+      console.log('files=>>>', files)
 
       const foodImgNames = foodImgs?.map(
         img => crypto.randomUUID() + img.originalFilename.split('.')[0] + '.webp'
       )
-      const foodImgPathes = foodImgs?.map(({ filepath }) => filepath)
 
-      // const uploadToS3 = async (imgName: string, imgPath: string) => {
-      const params = {
-        Bucket: AWS_BUCKET_NAME,
-        // Key: imgName,
-        // ContentType: 'image/webp'
-        Fields: {
-          Key: foodImgs,
-          'Content-Type': 'image/webp'
+      const uploadToS3 = async (img: any, imgName: string) => {
+        const params = {
+          Bucket: AWS_BUCKET_NAME!,
+          Key: imgName,
+          ContentType: 'image/webp',
+          Body: img
         }
+        const imgUpload = await s3.upload(params).promise()
+        return imgUpload.Location
       }
-      const post = s3.createPresignedPost(params)
-      console.log(post)
 
-      res.status(200).json(post)
-      // }
-
-      // const foodImgUrls = await Promise.all(
-      //   foodImgs.map(async (_, index) => {
-      //     const foodImgDisplayName = foodImgNames[index]
-      //     const foodImgURL = foodImgPathes[index]
-
-      //     const foodImgDisplayPath = await uploadToS3(foodImgDisplayName, foodImgURL)
-
-      //     return { foodImgDisplayName, foodImgDisplayPath }
-      //   })
-      // )
+      const foodImgUrls = await Promise.all(
+        foodImgs.map(async (img, index) => {
+          const foodImgDisplayName: any = foodImgNames[index]
+          const foodImgDisplayPath = await uploadToS3(img.data, foodImgDisplayName)
+          return { foodImgDisplayName, foodImgDisplayPath }
+        })
+      )
 
       // await FoodModel.create({
       //   foodName,
@@ -91,10 +82,10 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       //     }
       //   })
       // })
-      // res.status(201).json({
-      //   foodAdded: 1,
-      //   message: 'Food added successfully'
-      // })
+      res.status(201).json({
+        foodAdded: 1,
+        message: 'Food added successfully'
+      })
 
       break
     }
