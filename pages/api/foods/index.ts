@@ -1,4 +1,5 @@
 import { NextApiResponse } from 'next'
+import fs from 'fs'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
@@ -40,24 +41,34 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
 
       const tags = JSON.parse(foodTags)
       const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
+
       const foodImgNames = foodImgs?.map(
         img => crypto.randomUUID() + img.originalFilename.split('.')[0] + '.webp'
       )
+      const foodImgPathes = foodImgs?.map(({ filepath }) => filepath)
 
-      const uploadToS3 = async (_img: any, imgName: string) => {
+      const uploadToS3 = async (imgName: string, imgPath: string) => {
         const params = {
-          Bucket: AWS_BUCKET_NAME || '',
+          Bucket: AWS_BUCKET_NAME!,
           Key: imgName,
-          ContentType: 'image/webp'
+          Body: imgPath,
+          'Content-Type': 'image/webp',
+          ACL: 'public-read'
         }
-        const imgUploadLocation = await s3.getSignedUrlPromise('putObject', params)
-        return imgUploadLocation
+        try {
+          return s3.putObject(params)
+        } catch (error) {
+          res.status(500).send('Error Uploading image')
+        }
       }
 
       const foodImgUrls = await Promise.all(
-        foodImgs.map(async (img, index) => {
+        foodImgs.map(async (_, index) => {
           const foodImgDisplayName = foodImgNames[index]
-          const foodImgDisplayPath = await uploadToS3(img.data, foodImgDisplayName)
+          const foodImgURL = foodImgPathes[index]
+
+          const foodImgDisplayPath = await uploadToS3(foodImgDisplayName, foodImgURL)
+
           return { foodImgDisplayName, foodImgDisplayPath }
         })
       )
@@ -95,7 +106,5 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
 }
 
 export const config = {
-  api: {
-    bodyParser: false
-  }
+  api: { bodyParser: false }
 }

@@ -77,8 +77,8 @@ const AddFood = () => {
         priceErr.current!.textContent === '' &&
         descErr.current!.textContent === ''
       ) {
-        //show waiting modal
-        modalLoading!.classList.remove('hidden')
+        // modalLoading!.classList.remove('hidden')
+        console.log('الرجاء الانتظار')
 
         try {
           const response = await axios.post(`${API_URL}/foods`, formData)
@@ -88,7 +88,8 @@ const AddFood = () => {
           setAddFoodMessage(message)
           //Remove waiting modal
           setTimeout(() => {
-            modalLoading!.classList.add('hidden')
+            //  modalLoading!.classList.add('hidden')
+            console.log('تم العمل')
           }, 300)
         } catch (err) {
           formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
