@@ -54,6 +54,16 @@ const AddFood = () => {
     }
   }, [response])
 
+  const fileData = JSON.stringify(
+    file.map((file: any) => {
+      return {
+        key: file?.name,
+        type: file?.type
+      }
+    })
+  )
+  console.log(fileData)
+
   const handleAddFood = async (e: {
     target: any
     key?: string
@@ -66,47 +76,63 @@ const AddFood = () => {
       e.preventDefault()
 
       //using FormData to send constructed data
-      const formData = new FormData(e.target)
-      formData.append('foodName', foodName)
-      formData.append('foodPrice', foodPrice)
-      formData.append('category', category[0])
-      formData.append('foodDesc', foodDesc)
-      formData.append('foodToppings', JSON.stringify(toppings))
-      formData.append('foodTags', JSON.stringify(tags))
-      file.map(foodImg => {
-        console.log(foodImg)
+      const formData = new FormData()
+      // const fileData = new FormData(e.target)
+      // formData.append('foodName', foodName)
+      // formData.append('foodPrice', foodPrice)
+      // formData.append('category', category[0])
+      // formData.append('foodDesc', foodDesc)
+      // formData.append('foodToppings', JSON.stringify(toppings))
+      // formData.append('foodTags', JSON.stringify(tags))
 
-        formData.append('foodImg', foodImg)
+      // file.map(foodImg => fileData.append('foodImg', foodImg))
+
+      // if (
+      //   ImgErr.current!.textContent === '' &&
+      //   foodNameErr.current!.textContent === '' &&
+      //   priceErr.current!.textContent === '' &&
+      //   descErr.current!.textContent === ''
+      // ) {
+      // modalLoading!.classList.remove('hidden')
+      console.log('الرجاء الانتظار')
+      const fileData = JSON.stringify(
+        file.map((file: any) => {
+          return {
+            key: file?.name,
+            type: file?.type
+          }
+        })
+      )
+
+      const { data } = await axios.get(`${API_URL}/upload-url?file=${fileData}`)
+      const { url, fields } = data
+
+      Object.entries({ ...fields, file }).forEach(([key, value]) => {
+        formData.append(key, value as string)
       })
+      const { ok }: { ok: boolean } = await axios.post(url, formData)
 
-      if (
-        ImgErr.current!.textContent === '' &&
-        foodNameErr.current!.textContent === '' &&
-        priceErr.current!.textContent === '' &&
-        descErr.current!.textContent === ''
-      ) {
-        // modalLoading!.classList.remove('hidden')
-        console.log('الرجاء الانتظار')
+      // try {
+      //   const response = await axios.post(`${API_URL}/foods`, formData)
 
-        try {
-          const response = await axios.post(`${API_URL}/foods`, formData)
+      //   const { foodAdded, message } = response.data
+      //   setAddFoodStatus(foodAdded)
+      //   setAddFoodMessage(message)
+      //   //Remove waiting modal
+      //   setTimeout(() => {
+      //     //  modalLoading!.classList.add('hidden')
+      //     console.log('تم العمل')
+      //   }, 300)
+      // } catch (err) {
+      //   console.log(err)
 
-          const { foodAdded, message } = response.data
-          setAddFoodStatus(foodAdded)
-          setAddFoodMessage(message)
-          //Remove waiting modal
-          setTimeout(() => {
-            //  modalLoading!.classList.add('hidden')
-            console.log('تم العمل')
-          }, 300)
-        } catch (err) {
-          formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
-        }
-      } else {
-        formMsg.current!.textContent =
-          'الرجاء إضافة بيانات الوجبة بصورة صحيحة لتستطيع إضافتها 😃'
-      }
-    }
+      //   // formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
+      // }
+    } // else {
+    //     formMsg.current!.textContent =
+    //       'الرجاء إضافة بيانات الوجبة بصورة صحيحة لتستطيع إضافتها 😃'
+    //   }
+    // }
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -180,7 +206,7 @@ const AddFood = () => {
                     ></span>
                   </div>
 
-                  <label htmlFor='foodName' className='form__group'>
+                  {/* <label htmlFor='foodName' className='form__group'>
                     <input
                       type='text'
                       id='foodName'
@@ -363,7 +389,7 @@ const AddFood = () => {
                   <div
                     className='my-14 inline-block md:text-2xl text-red-600 dark:text-red-400 font-[600] py-2 px-1'
                     ref={formMsg}
-                  ></div>
+                  ></div> */}
 
                   <div className='flex items-center justify-evenly'>
                     <button
