@@ -54,16 +54,6 @@ const AddFood = () => {
     }
   }, [response])
 
-  const fileData = JSON.stringify(
-    file.map((file: any) => {
-      return {
-        key: file?.name,
-        type: file?.type
-      }
-    })
-  )
-  console.log(fileData)
-
   const handleAddFood = async (e: {
     target: any
     key?: string
@@ -104,13 +94,24 @@ const AddFood = () => {
         })
       )
 
-      const { data } = await axios.get(`${API_URL}/upload-url?file=${fileData}`)
-      const { url, fields } = data
+      const { data } = await axios.get(`${API_URL}/uploadurl?file=${fileData}`)
 
-      Object.entries({ ...fields, file }).forEach(([key, value]) => {
-        formData.append(key, value as string)
+      data.forEach(({ fields }: any, idx: number) => {
+        Object.entries({ ...fields, file: file[idx] }).forEach(([key, value]) => {
+          formData.append(key, value as string)
+        })
       })
-      const { ok }: { ok: boolean } = await axios.post(url, formData)
+
+      async function uploadToS3(url: string) {
+        await axios.post(url, formData)
+      }
+      data.forEach(({ url }: any) => {
+        uploadToS3(url)
+      })
+
+      // const ok: { ok: boolean } = await axios.post(url, formData)
+
+      // console.log(ok)
 
       // try {
       //   const response = await axios.post(`${API_URL}/foods`, formData)

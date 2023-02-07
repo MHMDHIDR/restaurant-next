@@ -32,69 +32,32 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
     }
 
     case 'POST': {
-      const { fields, files }: any = await formHandler(req)
-      const { foodImg } = files
-      // const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
-      // const toppings = foodToppings && JSON.parse(foodToppings)
-      // const tags = JSON.parse(foodTags)
-      const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
+      const { fields }: any = await formHandler(req)
+      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
+      const toppings = foodToppings && JSON.parse(foodToppings)
+      const tags = JSON.parse(foodTags)
 
-      const foodImgNames = foodImgs?.map(
-        img => randomUUID() + img.originalFilename.split('.')[0] + '.webp'
-      )
-
-      // const uploadToS3 = async (img: any, imgName: string) => {
-      const params = {
-        Fields: {
-          Key: foodImgNames[0]
+      await FoodModel.create({
+        foodName,
+        foodPrice: parseInt(foodPrice),
+        category,
+        foodDesc,
+        foodToppings: {
+          toppingName: toppings.toppingName,
+          toppingPrice: parseInt(toppings.toppingPrice)
         },
-        Conditions: [['starts-with', "$Content-Type: 'image/'"]],
-        Expires: 30,
-        Bucket: AWS_BUCKET_NAME!
-        // Body: img
-      }
-      const imgUpload = new Promise((resolve, reject) => {
-        s3.createPresignedPost(params, (err, signed) => {
-          if (err) return reject(err)
-          resolve(signed)
-        })
+        foodTags: tags
+        // ,foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
+        //   return {
+        //     foodImgDisplayName,
+        //     foodImgDisplayPath
+        //   }
+        // })
       })
-      console.log(await imgUpload)
-
-      res.status(200).json(imgUpload)
-
-      //   return imgUpload.Location
-      // }
-
-      // const foodImgUrls = await Promise.all(
-      //   foodImgs.map(async (img, index) => {
-      //     const foodImgDisplayName: any = foodImgNames[index]
-      //     const foodImgDisplayPath = await uploadToS3(img.data, foodImgDisplayName)
-      //     return { foodImgDisplayName, foodImgDisplayPath }
-      //   })
-      // )
-
-      // await FoodModel.create({
-      //   foodName,
-      //   foodPrice: parseInt(foodPrice),
-      //   category,
-      //   foodDesc,
-      //   foodToppings: {
-      //     toppingName: toppings.toppingName,
-      //     toppingPrice: parseInt(toppings.toppingPrice)
-      //   },
-      //   foodTags: tags,
-      //   foodImgs: foodImgUrls.map(({ foodImgDisplayName, foodImgDisplayPath }) => {
-      //     return {
-      //       foodImgDisplayName,
-      //       foodImgDisplayPath
-      //     }
-      //   })
-      // })
-      // res.status(201).json({
-      //   foodAdded: 1,
-      //   message: 'Food added successfully'
-      // })
+      res.status(201).json({
+        foodAdded: 1,
+        message: 'Food added successfully'
+      })
 
       break
     }

@@ -303,5 +303,6 @@ export type authUserRequestProps = NextApiRequest & {
 }
 
 export type fileRequestProps = NextApiRequest & {
-  files: any
+  key: string
+  type: string
 }
