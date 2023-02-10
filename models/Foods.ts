@@ -30,13 +30,13 @@ const reqDate = {
 }
 
 const FoodSchema = new Schema({
-  foodImgs: typeArray,
   foodName: reqString,
   foodPrice: reqNumber,
   category: reqString,
   foodDesc: reqString,
   foodToppings: foodToppingsType,
   foodTags: typeArray,
+  foodImgs: typeArray,
   createdAt: reqDate,
   updatedAt: reqDate
 })

@@ -14,7 +14,7 @@ import goTo from '../../../utils/functions/goTo'
 import scrollToView from '../../../utils/functions/scrollToView'
 import { API_URL } from '../../../constants'
 import Layout from '../../../components/dashboard/Layout'
-import { selectedToppingsProps, uploadurlDataProps } from '../../../types'
+import { FoodImgsProps, selectedToppingsProps, uploadurlDataProps } from '../../../types'
 
 const AddFood = () => {
   useDocumentTitle('Add Food or Drink')
@@ -76,8 +76,6 @@ const AddFood = () => {
       formData.append('foodToppings', JSON.stringify(toppings))
       formData.append('foodTags', JSON.stringify(tags))
 
-      // file.map(foodImg => formData.append('foodImg', foodImg))
-
       if (
         ImgErr.current!.textContent === '' &&
         foodNameErr.current!.textContent === '' &&
@@ -85,7 +83,6 @@ const AddFood = () => {
         descErr.current!.textContent === ''
       ) {
         // modalLoading!.classList.remove('hidden')
-        console.log('الرجاء الانتظار')
         const fileData = JSON.stringify(
           file.map((file: { name: string; type: string }) => {
             return {
@@ -104,15 +101,25 @@ const AddFood = () => {
         }
         data.map(({ fields, url }: any, idx: number) => {
           Object.entries({ ...fields, file: file[idx] }).forEach(([key, value]) => {
-            // fileFormData.append(key, value as string)
             fileFormData.set(key, value as string)
           })
-          console.log(fileFormData)
           return uploadToS3(url)
         })
 
+        const foodImgs: FoodImgsProps[] = data.map(({ fields, url }) => {
+          const urlSplit = (n: number) => url.split('/')[n]
+          return {
+            foodImgDisplayName: fields.key,
+            foodImgDisplayPath: `${urlSplit(0)}//${fields.bucket}.${urlSplit(2)}/${
+              fields.key
+              //'https://bucket.s3.amazonaws.com/key.webp'
+            }`
+          }
+        })
+        formData.append('foodImgUrls', JSON.stringify(foodImgs))
+
         try {
-          // const response = await axios.post(`${API_URL}/uploadurl`, formData)
+          const response = await axios.post(`${API_URL}/foods`, formData)
           // const { foodAdded, message } = response.data
           // setAddFoodStatus(foodAdded)
           // setAddFoodMessage(message)
