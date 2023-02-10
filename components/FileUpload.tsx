@@ -46,7 +46,7 @@ const FileUpload = ({ data }: any) => {
                 <button
                   type='button'
                   className='px-6 py-1 text-white transition-colors bg-red-500 rounded-full hover:bg-red-700'
-                  onClick={() => onFileRemove(fileURL, file[index].name)}
+                  onClick={() => onFileRemove(fileURL, file[index]?.name)}
                 >
                   حذف
                 </button>
@@ -96,7 +96,7 @@ const FileUpload = ({ data }: any) => {
         className='p-3 text-lg text-white transition-colors bg-orange-800 cursor-pointer rounded-xl hover:bg-orange-700'
         accept='image/*'
         onChange={onFileAdd}
-        // multiple
+        multiple
         required
       />
     </>

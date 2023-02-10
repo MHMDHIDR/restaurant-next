@@ -34,6 +34,7 @@ const AddFood = () => {
   const [categoryList, setCategoryList] = useState([''])
   const [toppings, setToppings] = useState<any>([{}])
   const [modalLoading, setModalLoading] = useState<Element>()
+  const [uploadStatus, setUploadStatus] = useState(0)
 
   //Contexts
   const { tags } = useContext(TagsContext)
@@ -67,6 +68,7 @@ const AddFood = () => {
 
       //using FormData to send constructed data
       const formData = new FormData()
+      const fileFormData = new FormData()
       formData.append('foodName', foodName)
       formData.append('foodPrice', foodPrice)
       formData.append('category', category[0])
@@ -97,20 +99,23 @@ const AddFood = () => {
           `${API_URL}/uploadurl?file=${fileData}`
         )
         async function uploadToS3(url: string) {
-          return await axios.post(url, formData)
+          const { status } = await axios.post(url, fileFormData)
+          setUploadStatus(status)
         }
-        data.map(async ({ fields, url }: any, idx: number) => {
+        data.map(({ fields, url }: any, idx: number) => {
           Object.entries({ ...fields, file: file[idx] }).forEach(([key, value]) => {
-            formData.append(key, value as string)
+            // fileFormData.append(key, value as string)
+            fileFormData.set(key, value as string)
           })
+          console.log(fileFormData)
           return uploadToS3(url)
         })
 
         try {
-          const response = await axios.post(`${API_URL}/uploadurl`, formData)
-          const { foodAdded, message } = response.data
-          setAddFoodStatus(foodAdded)
-          setAddFoodMessage(message)
+          // const response = await axios.post(`${API_URL}/uploadurl`, formData)
+          // const { foodAdded, message } = response.data
+          // setAddFoodStatus(foodAdded)
+          // setAddFoodMessage(message)
           //Remove waiting modal
           setTimeout(() => {
             //  modalLoading!.classList.add('hidden')

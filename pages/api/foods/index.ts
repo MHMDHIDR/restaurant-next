@@ -36,8 +36,6 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       const toppings = foodToppings && JSON.parse(foodToppings)
       const tags = JSON.parse(foodTags)
-      console.log(tags)
-      console.log(tags)
 
       await FoodModel.create({
         foodName,
