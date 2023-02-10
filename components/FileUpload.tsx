@@ -96,7 +96,7 @@ const FileUpload = ({ data }: any) => {
         className='p-3 text-lg text-white transition-colors bg-orange-800 cursor-pointer rounded-xl hover:bg-orange-700'
         accept='image/*'
         onChange={onFileAdd}
-        multiple
+        // multiple
         required
       />
     </>

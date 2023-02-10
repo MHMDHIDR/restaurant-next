@@ -2,12 +2,12 @@ import S3 from 'aws-sdk/clients/s3'
 import { randomUUID } from 'crypto'
 import { NextApiResponse } from 'next'
 import { fileRequestProps } from '../../../types'
-const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
+const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME, AWS_REGION } = process.env
 const s3 = new S3({
-  accessKeyId: AWS_ACCESS_ID || '',
-  secretAccessKey: AWS_SECRET || '',
+  accessKeyId: AWS_ACCESS_ID,
+  secretAccessKey: AWS_SECRET,
   signatureVersion: 'v4',
-  region: 'us-east-1'
+  region: AWS_REGION
 })
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {

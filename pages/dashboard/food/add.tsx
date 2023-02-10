@@ -14,7 +14,7 @@ import goTo from '../../../utils/functions/goTo'
 import scrollToView from '../../../utils/functions/scrollToView'
 import { API_URL } from '../../../constants'
 import Layout from '../../../components/dashboard/Layout'
-import { selectedToppingsProps } from '../../../types'
+import { selectedToppingsProps, uploadurlDataProps } from '../../../types'
 
 const AddFood = () => {
   useDocumentTitle('Add Food or Drink')
@@ -67,73 +67,64 @@ const AddFood = () => {
 
       //using FormData to send constructed data
       const formData = new FormData()
-      // const fileData = new FormData(e.target)
-      // formData.append('foodName', foodName)
-      // formData.append('foodPrice', foodPrice)
-      // formData.append('category', category[0])
-      // formData.append('foodDesc', foodDesc)
-      // formData.append('foodToppings', JSON.stringify(toppings))
-      // formData.append('foodTags', JSON.stringify(tags))
+      formData.append('foodName', foodName)
+      formData.append('foodPrice', foodPrice)
+      formData.append('category', category[0])
+      formData.append('foodDesc', foodDesc)
+      formData.append('foodToppings', JSON.stringify(toppings))
+      formData.append('foodTags', JSON.stringify(tags))
 
-      // file.map(foodImg => fileData.append('foodImg', foodImg))
+      // file.map(foodImg => formData.append('foodImg', foodImg))
 
-      // if (
-      //   ImgErr.current!.textContent === '' &&
-      //   foodNameErr.current!.textContent === '' &&
-      //   priceErr.current!.textContent === '' &&
-      //   descErr.current!.textContent === ''
-      // ) {
-      // modalLoading!.classList.remove('hidden')
-      console.log('الرجاء الانتظار')
-      const fileData = JSON.stringify(
-        file.map((file: any) => {
-          return {
-            key: file?.name,
-            type: file?.type
-          }
+      if (
+        ImgErr.current!.textContent === '' &&
+        foodNameErr.current!.textContent === '' &&
+        priceErr.current!.textContent === '' &&
+        descErr.current!.textContent === ''
+      ) {
+        // modalLoading!.classList.remove('hidden')
+        console.log('الرجاء الانتظار')
+        const fileData = JSON.stringify(
+          file.map((file: { name: string; type: string }) => {
+            return {
+              key: file?.name,
+              type: file?.type
+            }
+          })
+        )
+
+        const { data }: uploadurlDataProps = await axios.get(
+          `${API_URL}/uploadurl?file=${fileData}`
+        )
+        async function uploadToS3(url: string) {
+          return await axios.post(url, formData)
+        }
+        data.map(async ({ fields, url }: any, idx: number) => {
+          Object.entries({ ...fields, file: file[idx] }).forEach(([key, value]) => {
+            formData.append(key, value as string)
+          })
+          return uploadToS3(url)
         })
-      )
 
-      const { data } = await axios.get(`${API_URL}/uploadurl?file=${fileData}`)
-
-      data.forEach(({ fields }: any, idx: number) => {
-        Object.entries({ ...fields, file: file[idx] }).forEach(([key, value]) => {
-          formData.append(key, value as string)
-        })
-      })
-
-      async function uploadToS3(url: string) {
-        await axios.post(url, formData)
+        try {
+          const response = await axios.post(`${API_URL}/uploadurl`, formData)
+          const { foodAdded, message } = response.data
+          setAddFoodStatus(foodAdded)
+          setAddFoodMessage(message)
+          //Remove waiting modal
+          setTimeout(() => {
+            //  modalLoading!.classList.add('hidden')
+            console.log('تم العمل')
+          }, 300)
+        } catch (err) {
+          formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
+        }
+      } else {
+        console.log('الرجاء إضافة بيانات الوجبة بصورة صحيحة لتستطيع إضافتها 😃')
+        // formMsg.current!.textContent =
+        //   'الرجاء إضافة بيانات الوجبة بصورة صحيحة لتستطيع إضافتها 😃'
       }
-      data.forEach(({ url }: any) => {
-        uploadToS3(url)
-      })
-
-      // const ok: { ok: boolean } = await axios.post(url, formData)
-
-      // console.log(ok)
-
-      // try {
-      //   const response = await axios.post(`${API_URL}/foods`, formData)
-
-      //   const { foodAdded, message } = response.data
-      //   setAddFoodStatus(foodAdded)
-      //   setAddFoodMessage(message)
-      //   //Remove waiting modal
-      //   setTimeout(() => {
-      //     //  modalLoading!.classList.add('hidden')
-      //     console.log('تم العمل')
-      //   }, 300)
-      // } catch (err) {
-      //   console.log(err)
-
-      //   // formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
-      // }
-    } // else {
-    //     formMsg.current!.textContent =
-    //       'الرجاء إضافة بيانات الوجبة بصورة صحيحة لتستطيع إضافتها 😃'
-    //   }
-    // }
+    }
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -207,7 +198,7 @@ const AddFood = () => {
                     ></span>
                   </div>
 
-                  {/* <label htmlFor='foodName' className='form__group'>
+                  <label htmlFor='foodName' className='form__group'>
                     <input
                       type='text'
                       id='foodName'
@@ -390,7 +381,7 @@ const AddFood = () => {
                   <div
                     className='my-14 inline-block md:text-2xl text-red-600 dark:text-red-400 font-[600] py-2 px-1'
                     ref={formMsg}
-                  ></div> */}
+                  ></div>
 
                   <div className='flex items-center justify-evenly'>
                     <button

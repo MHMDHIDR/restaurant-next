@@ -77,6 +77,21 @@ export type FileUploadProps = {
   onFileRemove(fileUrl: string, fileName: string): void
 }
 
+export type uploadurlDataProps = {
+  data: {
+    fields: {
+      'Content-Type': string
+      'PolicyX-Amz-Algorithm': string
+      'X-Amz-Credential': string
+      'X-Amz-Date': string
+      'X-Amz-Signature': string
+      bucket: string
+      key: string
+    }
+    url: string
+  }[]
+}
+
 export type cardProps = {
   cItemId: Key | ObjectId
   cHeading: any
