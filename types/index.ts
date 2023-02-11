@@ -257,6 +257,11 @@ export type selectedToppingsProps = {
   toppingName?: string
 }
 
+export type ToppingsProps = {
+  toppingName: string
+  toppingPrice: number
+}
+
 export type NoItemsProps = {
   msg?: string
   links: {

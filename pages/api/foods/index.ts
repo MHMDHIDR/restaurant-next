@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
-import { fileRequestProps } from '../../../types'
+import { fileRequestProps, ToppingsProps } from '../../../types'
 import formHandler from '../../../utils/functions/form'
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
@@ -40,10 +40,12 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         foodPrice: parseInt(foodPrice),
         category,
         foodDesc,
-        foodToppings: {
-          toppingName: toppings.toppingName,
-          toppingPrice: parseInt(toppings.toppingPrice)
-        },
+        foodToppings: toppings.map(({ toppingName, toppingPrice }: ToppingsProps) => {
+          return {
+            toppingName,
+            toppingPrice: Number(toppingPrice)
+          }
+        }),
         foodTags: tags,
         foodImgs
       })

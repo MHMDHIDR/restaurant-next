@@ -1,27 +1,24 @@
 import { useState, useEffect, useContext } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { ServerSideProps, viewFoodDataProps } from '../../../types'
+import { ServerSideProps } from '../../../types'
 import { CartContext } from '../../../contexts/CartContext'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import scrollToView from '../../../utils/functions/scrollToView'
-import abstractText from '../../../utils/functions/abstractText'
 import { removeSlug } from '../../../utils/functions/slug'
-import ModalNotFound from '../../../components/Modal/ModalNotFound'
 import Card from '../../../components/Card'
-import Pagination from '../../../components/Pagination'
-import { useRouter } from 'next/router'
 import { API_URL } from '../../../constants'
 import Layout from '../../../components/Layout'
 
 const index = ({ item }: any) => {
   useDocumentTitle('View Foods')
 
+  const { items } = useContext(CartContext)
+  const [cartItems, setCartItems] = useState<any>()
+
   useEffect(() => {
     scrollToView()
-  }, [])
-
-  const items = ['']
+    setCartItems(items)
+  }, [items])
 
   return (
     <Layout>
@@ -51,7 +48,7 @@ const index = ({ item }: any) => {
                 cImgAlt={item?.response?.foodName}
                 cCtaLabel={
                   //add to cart button, if item is already in cart then disable the button
-                  items.find(
+                  cartItems?.find(
                     (itemInCart: any) => itemInCart.cItemId === item?.response?._id
                   ) ? (
                     <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
