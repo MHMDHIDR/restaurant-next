@@ -1,10 +1,10 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
-import paginatedResults from '../../../middleware/paginatedResults'
-import { FoodImgsProps, fileRequestProps } from '../../../types'
+import { fileRequestProps, FoodImgsProps } from '../../../types'
 import sharp from 'sharp'
 import { S3 } from 'aws-sdk'
+import formHandler from '../../../utils/functions/form'
 
 const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
 const s3 = new S3({
@@ -15,12 +15,13 @@ const s3 = new S3({
 })
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
-  const { method, body, query } = req
+  const { method, query } = req
   await dbConnect()
 
   switch (method) {
     case 'PATCH': {
-      const { foodName, foodPrice, foodDesc, foodToppings, foodTags, category } = body
+      const { fields }: any = await formHandler(req)
+      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
       // const prevFoodImgPathsAndNames = JSON.parse(body.prevFoodImgPathsAndNames)
 
       const toppings = foodToppings && JSON.parse(foodToppings)
@@ -245,4 +246,8 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       break
     }
   }
+}
+
+export const config = {
+  api: { bodyParser: false }
 }

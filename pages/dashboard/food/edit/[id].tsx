@@ -62,8 +62,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useEffect(() => {
     if (categories?.response !== null) {
       setData(foodData?.response)
-      setToppings(foodData?.response?.foodToppings)
-      setCategoryList(categories?.response?.CategoryList)
+      setToppings(Array(foodData?.response?.foodToppings) || [{}])
+      setCategoryList(categories?.response?.response[0]?.CategoryList)
     }
   }, [categories?.response])
 
@@ -99,8 +99,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       const currentFoodName = data?.foodName
       const currentFoodPrice = data?.foodPrice
       const currentCategory = data?.category
+      const currentTags = tags
       const currentFoodDesc = data?.foodDesc
-      const prevFoodImgPathsAndNames: any = []
       // const prevFoodImgPathsAndNames = [
       //   ...data?.foodImgs.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
       //     return {
@@ -129,15 +129,15 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
           )
         : typeof toppings[0].toppingName === 'string' &&
           formData.append('foodToppings', JSON.stringify(toppings))
-      formData.append('foodTags', JSON.stringify(tags))
-      file.map(foodImg => formData.append('foodImg', foodImg))
-      formData.append(
-        'prevFoodImgPathsAndNames',
-        JSON.stringify(prevFoodImgPathsAndNames)
-      )
+      formData.append('foodTags', JSON.stringify(currentTags))
+      // file.map(foodImg => formData.append('foodImg', foodImg))
+      // formData.append(
+      //   'prevFoodImgPathsAndNames',
+      //   JSON.stringify(prevFoodImgPathsAndNames)
+      // )
 
       if (
-        ImgErr.current!.textContent === '' &&
+        // ImgErr.current!.textContent === '' &&
         foodNameErr.current!.textContent === '' &&
         priceErr.current!.textContent === '' &&
         descErr.current!.textContent === ''
@@ -310,20 +310,20 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
               <div className='food'>
                 {data && data !== undefined ? (
                   <form key={data?._id} className='form' encType='multipart/form-data'>
-                    <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
-                      <FileUpload
+                    {/* <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
+                       <FileUpload
                         data={{
                           foodId: data?._id,
                           defaultImg: data?.foodImgs,
                           foodName: data?.foodName
                         }}
-                      />
+                      /> 
 
                       <span
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={ImgErr}
                       ></span>
-                    </div>
+                    </div> */}
 
                     <label htmlFor='foodName' className='form__group'>
                       <input
@@ -416,10 +416,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         className='form__input'
                         minLength={10}
                         maxLength={300}
-                        onChange={e => setFoodDesc(e.target.value.trim())}
-                        onKeyUp={e => {
-                          const target =
-                            (e.target as HTMLAreaElement).textContent?.trim() ?? ''
+                        onChange={e => setFoodDesc(e.target.value?.trim())}
+                        onKeyUp={(e: any) => {
+                          const target = e.target.value?.trim()
 
                           if (target.length > 0 && target.length < 30) {
                             descErr.current!.textContent = `الوصف صغير ولا يكفي أن يصف العنصر المضاف`
