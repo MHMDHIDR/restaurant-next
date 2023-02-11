@@ -1,10 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-const PayPalButton = (window as any)?.paypal?.Buttons?.driver('react', {
-  React,
-  ReactDOM
-})
+const PayPalButton =
+  typeof window !== 'undefined' &&
+  (window as any)?.paypal?.Buttons?.driver('react', {
+    React,
+    ReactDOM
+  })
 
 const PaymentButton = ({ value, onSuccess }: any) => {
   const createOrder = (

@@ -1,18 +1,15 @@
 import { useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useRouter } from 'next/router'
+import { CartContext } from '../contexts/CartContext'
+import { ToppingsContext } from '../contexts/ToppingsContext'
+import { DashboardOrderContext } from '../contexts/DashboardOrderContext'
+import { removeSlug } from '../utils/functions/slug'
+import Divider from './Divider'
+import { selectedToppingsProps } from '../types'
 
-import { CartContext } from '../../Contexts/CartContext'
-import { ToppingsContext } from '../../Contexts/ToppingsContext'
-import { DashboardOrderContext } from '../../Contexts/DashboardOrderContext'
-
-import { removeSlug } from '../../utils/slug'
-
-import Divider from '../../components/Divider'
-import { selectedToppingsProps, UserProps } from '../../types'
-
-const CartItems: any = ({ orderItems, orderToppings }) => {
+const CartItems = ({ orderItems, orderToppings }: any) => {
   const { items } = useContext(CartContext)
-  const isDashboard = useLocation().pathname.includes('/dashboard')
+  const isDashboard = useRouter().pathname.includes('/dashboard')
 
   //if orderItems defined in dashboard
   return isDashboard ? (
@@ -98,7 +95,7 @@ const Items = ({
                     toppingName = 'إضافة',
                     toppingPrice = 1,
                     toppingQuantity
-                  }) => (
+                  }: selectedToppingsProps) => (
                     <div className='flex items-center' key={toppingId}>
                       <input
                         type='checkbox'
@@ -132,7 +129,7 @@ const Items = ({
                         htmlFor={toppingId}
                         className='px-3 py-1 mr-2 -ml-2 text-base text-green-800 bg-green-300 rounded-md cursor-pointer bg-opacity-80 min-w-fit'
                       >
-                        {toppingPrice * toppingQuantity + ' ر.ق'}
+                        {toppingPrice * toppingQuantity! + ' ر.ق'}
                       </label>
                     </div>
                   )
@@ -233,12 +230,12 @@ const Items = ({
                           item.cPrice * item.cQuantity +
                           (orderToppings
                             ? orderToppings.reduce(
-                                (acc, curr) =>
+                                (acc: number, curr: selectedToppingsProps) =>
                                   curr.toppingId.slice(0, -2) === item.cItemId
                                     ? acc +
-                                      parseInt(curr.toppingPrice) *
+                                      Number(curr.toppingPrice) *
                                         item.cToppings.reduce(
-                                          (acc, curr2) =>
+                                          (acc: number, curr2: selectedToppingsProps) =>
                                             curr2.toppingId === curr.toppingId
                                               ? curr2.toppingQuantity
                                               : acc,
@@ -248,12 +245,12 @@ const Items = ({
                                 0
                               )
                             : checkedToppings.reduce(
-                                (acc, curr) =>
+                                (acc: number, curr: selectedToppingsProps) =>
                                   curr.toppingId.slice(0, -2) === item.cItemId
                                     ? acc +
-                                      parseInt(curr.toppingPrice) *
+                                      Number(curr.toppingPrice) *
                                         item.cToppings.reduce(
-                                          (acc, curr2) =>
+                                          (acc: number, curr2: selectedToppingsProps) =>
                                             curr2.toppingId === curr.toppingId
                                               ? curr2.toppingQuantity
                                               : acc,
@@ -285,12 +282,12 @@ const Items = ({
                           //calculate all items checked toppings prices * all items checked toppings quantities
                           (orderToppings
                             ? orderToppings.reduce(
-                                (acc, curr) =>
+                                (acc: number, curr: selectedToppingsProps) =>
                                   curr.toppingId.slice(0, -2) === item.cItemId
                                     ? acc +
-                                      parseInt(curr.toppingPrice) *
+                                      Number(curr.toppingPrice) *
                                         item.cToppings.reduce(
-                                          (acc, curr2) =>
+                                          (acc: number, curr2: selectedToppingsProps) =>
                                             curr2.toppingId === curr.toppingId
                                               ? curr2.toppingQuantity
                                               : acc,
@@ -300,12 +297,12 @@ const Items = ({
                                 0
                               )
                             : checkedToppings.reduce(
-                                (acc, curr) =>
+                                (acc: number, curr: selectedToppingsProps) =>
                                   curr.toppingId.slice(0, -2) === item.cItemId
                                     ? acc +
-                                      parseInt(curr.toppingPrice) *
+                                      Number(curr.toppingPrice) *
                                         item.cToppings.reduce(
-                                          (acc, curr2) =>
+                                          (acc: number, curr2: selectedToppingsProps) =>
                                             curr2.toppingId === curr.toppingId
                                               ? curr2.toppingQuantity
                                               : acc,
@@ -351,12 +348,12 @@ const Items = ({
                       0
                     )
                   : checkedToppings.reduce(
-                      (acc, curr) =>
+                      (acc: number, curr: selectedToppingsProps) =>
                         curr.toppingId.slice(0, -2) === item.cItemId
                           ? acc +
-                            parseInt(curr.toppingPrice) *
+                            Number(curr.toppingPrice) *
                               item.cToppings.reduce(
-                                (acc, curr2) =>
+                                (acc: number, curr2: selectedToppingsProps) =>
                                   curr2.toppingId === curr.toppingId
                                     ? curr2.toppingQuantity
                                     : acc,

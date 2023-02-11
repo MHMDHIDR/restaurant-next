@@ -1,5 +1,5 @@
 import { useContext, useState, useRef, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Axios from 'axios'
 import { CartContext } from '../../contexts/CartContext'
@@ -14,19 +14,20 @@ import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { Success, Loading } from '../../components/Icons/Status'
 import { LoadingSpinner } from '../../components/Loading'
-import CartItems from './CartItems'
-import PaymentButton from './PaymentButton'
+import CartItems from '../../components/CartItems'
+import PaymentButton from '../../components/PaymentButton'
 import { selectedToppingsProps, orderMsgProps } from '../../types'
 import NoItems from '../../components/NoItems'
 
 const formDataFromLocalStorage =
-  'formDataCart' in localStorage &&
-  JSON.parse(localStorage.getItem('formDataCart') || '{}')
+  typeof window !== 'undefined'
+    ? JSON.parse(localStorage.getItem('formDataCart') || '[]')
+    : []
 
 //orderFood
 const OrderFood = () => {
   useDocumentTitle('Cart Items')
-  const { pathname } = useLocation()
+  const { pathname } = useRouter()
 
   useEffect(() => {
     scrollToView()
@@ -76,8 +77,8 @@ const OrderFood = () => {
   }, [response.response])
 
   useEffect(() => {
-    setUserId(USER?._id)
-    setUserEmail(USER?.userEmail)
+    setUserId(USER?._id!)
+    setUserEmail(USER?.userEmail!)
 
     localStorage.setItem(
       'formDataCart',
@@ -100,11 +101,11 @@ const OrderFood = () => {
     if (
       personName !== '' &&
       personPhone !== '' &&
-      personNameErr.current.textContent === '' &&
-      personPhoneErr.current.textContent === '' &&
-      personAddressErr.current.textContent === ''
+      personNameErr.current!.textContent === '' &&
+      personPhoneErr.current!.textContent === '' &&
+      personAddressErr.current!.textContent === ''
     ) {
-      formErr.current.textContent = ''
+      formErr.current!.textContent = ''
 
       //if there's No user in localStorage then show modal to login or register else collect order
       if (USER) {
@@ -114,7 +115,7 @@ const OrderFood = () => {
         setShowLoginRegisterModal(true)
       }
     } else {
-      formErr.current.textContent = 'الرجاء إدخال البيانات المطلوبة بشكل صحيح'
+      formErr.current!.textContent = 'الرجاء إدخال البيانات المطلوبة بشكل صحيح'
     }
   }
 
@@ -129,7 +130,7 @@ const OrderFood = () => {
     formData.append('personNotes', personNotes)
     formData.append('checkedToppings', JSON.stringify(checkedToppings))
     formData.append('foodItems', JSON.stringify(items))
-    formData.append('grandPrice', grandPriceRef?.current?.textContent)
+    formData.append('grandPrice', grandPriceRef?.current?.textContent || '')
     formData.append('paymentData', JSON.stringify(paymentData))
 
     try {
@@ -231,16 +232,16 @@ const OrderFood = () => {
                     type='text'
                     defaultValue={personName}
                     onChange={e => setPersonName(e.target.value.trim())}
-                    onKeyUp={e => {
+                    onKeyUp={(e: any) => {
                       const target = e.target.value.trim()
 
                       if (target.length > 0 && target.length < 4) {
-                        personNameErr.current.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
+                        personNameErr.current!.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
                       } else if (target.length > 30) {
-                        personNameErr.current.textContent =
+                        personNameErr.current!.textContent =
                           'الاسم طويل جداً، يرجى إضافة إسم لا يزيد عن 30 حرف'
                       } else {
-                        personNameErr.current.textContent = ''
+                        personNameErr.current!.textContent = ''
                       }
                     }}
                     required
@@ -262,7 +263,7 @@ const OrderFood = () => {
                     type='tel'
                     defaultValue={personPhone}
                     onChange={e => setPersonPhone(e.target.value.trim())}
-                    onKeyUp={e => {
+                    onKeyUp={(e: any) => {
                       const target = e.target.value.trim()
 
                       if (
@@ -270,10 +271,10 @@ const OrderFood = () => {
                         target.length > 8 ||
                         !validPhone(target)
                       ) {
-                        personPhoneErr.current.textContent =
+                        personPhoneErr.current!.textContent =
                           'الرجاء إدخال رقم هاتف نفس صيغة رقم الهاتف في المثال'
                       } else {
-                        personPhoneErr.current.textContent = ''
+                        personPhoneErr.current!.textContent = ''
                       }
                     }}
                     required
@@ -295,14 +296,14 @@ const OrderFood = () => {
                     type='text'
                     defaultValue={personAddress}
                     onChange={e => setPersonAddress(e.target.value.trim())}
-                    onKeyUp={e => {
+                    onKeyUp={(e: any) => {
                       const target = e.target.value.trim()
 
                       if (target.length > 0 && target.length < 4) {
-                        personAddressErr.current.textContent =
+                        personAddressErr.current!.textContent =
                           'يرجى إدخال إسم بصيغة صحيحة'
                       } else {
-                        personAddressErr.current.textContent = ''
+                        personAddressErr.current!.textContent = ''
                       }
                     }}
                     required
