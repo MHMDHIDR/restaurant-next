@@ -11,7 +11,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle'
 import abstractText from '../../utils/functions/abstractText'
 import { removeSlug } from '../../utils/functions/slug'
 import scrollToView from '../../utils/functions/scrollToView'
-import { viewFoodDataProps } from '../../types'
+import { foodDataProps } from '../../types'
 import { API_URL, ITEMS_PER_PAGE } from '../../constants'
 import { isNumber } from '../../utils/functions/isNumber'
 
@@ -59,7 +59,7 @@ const ViewFood = ({ viewFood }: any) => {
 
           {data !== undefined && data?.response?.length > 0 ? (
             <Suspense fallback={<LoadingCard />}>
-              {data?.response?.map((item: viewFoodDataProps) => (
+              {data?.response?.map((item: foodDataProps) => (
                 // View Multiple (Many) food items
                 <motion.div
                   key={String(item._id)}

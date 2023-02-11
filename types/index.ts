@@ -238,16 +238,31 @@ export type ThemeProps = {
   getLocalStorageTheme: () => boolean
 }
 
-export type viewFoodDataProps = {
-  _id: ObjectId
-  foodName: string
-  foodPrice: number
-  category: string
-  foodDesc: string
-  foodTags: string[]
-  foodToppings: string[]
-  foodImgs: string
-  length: number
+export type foodDataProps = {
+  response: {
+    _id: ObjectId
+    foodName: string
+    foodPrice: number
+    category: string
+    createdAt: string
+    updatedAt: string
+    foodDesc: string
+    foodTags: string[]
+    foodToppings: {
+      toppingName: string
+      toppingPrice: number
+    }[]
+    foodImgs: {
+      foodImgDisplayName: string
+      foodImgDisplayPath: string
+    }[]
+  }
+  itemsCount?: number
+  next: {
+    limit: number
+    page: number
+  }
+  numberOfPages?: number
 }
 
 export type selectedToppingsProps = {

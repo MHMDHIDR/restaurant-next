@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect, useContext } from 'react'
 import { motion } from 'framer-motion'
-import { viewFoodDataProps, mediaProps } from '../types'
+import { foodDataProps, mediaProps } from '../types'
 import { CartContext } from '../contexts/CartContext'
 import EmblaCarousel from '../components/EmblaCarousel'
 import Layout from '../components/Layout'
@@ -324,7 +324,7 @@ const Index = ({
               الوجبات الجديدة
             </h2>
             {newFood && newFood?.response?.length > 0 ? (
-              newFood?.response?.map((item: viewFoodDataProps, idx: number) => (
+              newFood?.response?.map((item: foodDataProps, idx: number) => (
                 <motion.div
                   className='odd:ltr'
                   key={idx}

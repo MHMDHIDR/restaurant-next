@@ -16,7 +16,7 @@ const FileUpload = ({ data }: any) => {
       >
         {
           //if there's no image in Preview (fileURLs) AND no images in the data base
-          fileURLs.length === 0 && data.defaultImg.length === 0 ? (
+          fileURLs.length === 0 && data.defaultImg?.length === 0 ? (
             <div
               className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
             >
@@ -54,7 +54,7 @@ const FileUpload = ({ data }: any) => {
             ))
           ) : (
             //if there's images in the data base
-            data.defaultImg.length > 0 &&
+            data.defaultImg?.length > 0 &&
             data.defaultImg.map(
               ({ foodImgDisplayName, foodImgDisplayPath }: FoodImgsProps, index: Key) => (
                 <div

@@ -15,143 +15,143 @@ const s3 = new S3({
 })
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
-  const { method, body, files, query } = req
+  const { method, body, query } = req
   await dbConnect()
 
   switch (method) {
     case 'PATCH': {
       const { foodName, foodPrice, foodDesc, foodToppings, foodTags, category } = body
-      const prevFoodImgPathsAndNames = JSON.parse(body.prevFoodImgPathsAndNames)
+      // const prevFoodImgPathsAndNames = JSON.parse(body.prevFoodImgPathsAndNames)
 
       const toppings = foodToppings && JSON.parse(foodToppings)
       const tags = JSON.parse(foodTags)
       const { foodId } = query
 
       //if the user has uploaded a new image
-      if (req.files) {
-        const { foodImg } = req.files
-        const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
-        const foodImgNames = foodImgs?.map(
-          img => crypto.randomUUID() + img.name.split('.')[0] + '.webp'
-        )
+      // if (req.files) {
+      //   const { foodImg } = req.files
+      //   const foodImgs = foodImg && Array.isArray(foodImg) ? foodImg : [foodImg]
+      //   const foodImgNames = foodImgs?.map(
+      //     img => crypto.randomUUID() + img.name.split('.')[0] + '.webp'
+      //   )
 
-        let foodImgDisplayPath = prevFoodImgPathsAndNames.map(
-          ({ foodImgDisplayPath }: FoodImgsProps) => foodImgDisplayPath
-        )
-        let foodImgDisplayName = prevFoodImgPathsAndNames.map(
-          ({ foodImgDisplayName }: FoodImgsProps) => foodImgDisplayName
-        )
+      //   let foodImgDisplayPath = prevFoodImgPathsAndNames.map(
+      //     ({ foodImgDisplayPath }: FoodImgsProps) => foodImgDisplayPath
+      //   )
+      //   let foodImgDisplayName = prevFoodImgPathsAndNames.map(
+      //     ({ foodImgDisplayName }: FoodImgsProps) => foodImgDisplayName
+      //   )
 
-        //delete the old images from s3 bucket using the prevFoodImgPathsAndNames
-        // const Objects = prevFoodImgPathsAndNames.map(({ foodImgDisplayName }) => ({
-        //   Key: foodImgDisplayName
-        // }))
+      //   //delete the old images from s3 bucket using the prevFoodImgPathsAndNames
+      //   // const Objects = prevFoodImgPathsAndNames.map(({ foodImgDisplayName }) => ({
+      //   //   Key: foodImgDisplayName
+      //   // }))
 
-        // s3.deleteObjects(
-        //   {
-        //     Bucket: process.env.AWS_BUCKET_NAME,
-        //     Delete: { Objects }
-        //   },
-        //   (error, data) => {
-        //     if (error) {
-        //       res.json({
-        //         message: error,
-        //         foodUpdated: 0
-        //       })
-        //       return
-        //     }
-        //   }
-        // )
+      //   // s3.deleteObjects(
+      //   //   {
+      //   //     Bucket: process.env.AWS_BUCKET_NAME,
+      //   //     Delete: { Objects }
+      //   //   },
+      //   //   (error, data) => {
+      //   //     if (error) {
+      //   //       res.json({
+      //   //         message: error,
+      //   //         foodUpdated: 0
+      //   //       })
+      //   //       return
+      //   //     }
+      //   //   }
+      //   // )
 
-        //if no error in deleting old image, then upload the new image to s3 bucket by using the new foodImgs sharp
-        foodImgs.map((img, index) => {
-          sharp(img.data)
-            .resize(600)
-            .webp({ lossless: true })
-            .toBuffer()
-            .then(newWebpImg => {
-              //changing the old jpg image buffer to new webp buffer
-              img.data = newWebpImg
+      //   //if no error in deleting old image, then upload the new image to s3 bucket by using the new foodImgs sharp
+      //   foodImgs.map((img, index) => {
+      //     sharp(img.data)
+      //       .resize(600)
+      //       .webp({ lossless: true })
+      //       .toBuffer()
+      //       .then(newWebpImg => {
+      //         //changing the old jpg image buffer to new webp buffer
+      //         img.data = newWebpImg
 
-              const params = {
-                Bucket: process.env.AWS_BUCKET_NAME || '',
-                Key: foodImgNames[index],
-                Body: newWebpImg,
-                ContentType: 'image/webp'
-              } //uploading the new webp image to s3 bucket, self executing function
-              ;(async () => {
-                try {
-                  const { Location } = await s3.upload(params).promise()
+      //         const params = {
+      //           Bucket: process.env.AWS_BUCKET_NAME || '',
+      //           Key: foodImgNames[index],
+      //           Body: newWebpImg,
+      //           ContentType: 'image/webp'
+      //         } //uploading the new webp image to s3 bucket, self executing function
+      //         ;(async () => {
+      //           try {
+      //             const { Location } = await s3.upload(params).promise()
 
-                  //saving the new image path to the database
-                  foodImgDisplayPath.push(Location)
-                  foodImgDisplayName.push(Location.split('.com/')[1])
-                  if (index === foodImgs.length - 1) {
-                    await FoodModel.findByIdAndUpdate(
-                      foodId,
-                      {
-                        foodImgs: foodImgs.map((_img, index) => ({
-                          foodImgDisplayName: foodImgDisplayName[index],
-                          foodImgDisplayPath: foodImgDisplayPath[index]
-                        })),
-                        foodName,
-                        foodPrice,
-                        category,
-                        foodDesc,
-                        foodToppings: toppings,
-                        foodTags: tags,
-                        updatedAt: Date.now()
-                      },
-                      { new: true }
-                    )
-                    res.json({
-                      message: 'Food Updated Successfully',
-                      foodUpdated: 1
-                    })
-                    return
-                  }
-                } catch (error) {
-                  res.json({
-                    message: error,
-                    foodUpdated: 0
-                  })
-                  return
-                }
-              })()
-            })
-            .catch(err => {
-              res.json({
-                message: `Sorry! Something went wrong, check the error => 😥: \n ${err}`,
-                foodUpdated: 0
-              })
-            })
+      //             //saving the new image path to the database
+      //             foodImgDisplayPath.push(Location)
+      //             foodImgDisplayName.push(Location.split('.com/')[1])
+      //             if (index === foodImgs.length - 1) {
+      //               await FoodModel.findByIdAndUpdate(
+      //                 foodId,
+      //                 {
+      //                   foodImgs: foodImgs.map((_img, index) => ({
+      //                     foodImgDisplayName: foodImgDisplayName[index],
+      //                     foodImgDisplayPath: foodImgDisplayPath[index]
+      //                   })),
+      //                   foodName,
+      //                   foodPrice,
+      //                   category,
+      //                   foodDesc,
+      //                   foodToppings: toppings,
+      //                   foodTags: tags,
+      //                   updatedAt: Date.now()
+      //                 },
+      //                 { new: true }
+      //               )
+      //               res.json({
+      //                 message: 'Food Updated Successfully',
+      //                 foodUpdated: 1
+      //               })
+      //               return
+      //             }
+      //           } catch (error) {
+      //             res.json({
+      //               message: error,
+      //               foodUpdated: 0
+      //             })
+      //             return
+      //           }
+      //         })()
+      //       })
+      //       .catch(err => {
+      //         res.json({
+      //           message: `Sorry! Something went wrong, check the error => 😥: \n ${err}`,
+      //           foodUpdated: 0
+      //         })
+      //       })
+      //   })
+      //   //==========================================================
+      // } else {
+      try {
+        await FoodModel.findByIdAndUpdate(foodId, {
+          foodName,
+          foodPrice,
+          category,
+          foodDesc,
+          foodToppings: toppings,
+          foodTags: tags,
+          updatedAt: Date.now()
         })
-        //==========================================================
-      } else {
-        try {
-          await FoodModel.findByIdAndUpdate(foodId, {
-            foodName,
-            foodPrice,
-            category,
-            foodDesc,
-            foodToppings: toppings,
-            foodTags: tags,
-            updatedAt: Date.now()
-          })
 
-          res.json({
-            message: 'Food Updated Successfully',
-            foodUpdated: 1
-          })
-          return
-        } catch (error) {
-          res.json({
-            message: `Sorry! Something went wrong, check the error => 😥: \n ${error}`,
-            foodUpdated: 0
-          })
-          return
-        }
+        res.json({
+          message: 'Food Updated Successfully',
+          foodUpdated: 1
+        })
+        return
+      } catch (error) {
+        res.json({
+          message: `Sorry! Something went wrong, check the error => 😥: \n ${error}`,
+          foodUpdated: 0
+        })
+        return
       }
+      // }
       break
     }
 

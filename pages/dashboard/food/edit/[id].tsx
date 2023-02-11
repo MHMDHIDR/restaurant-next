@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useContext, ChangeEvent } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import Axios from 'axios'
 import { TagsContext } from '../../../../contexts/TagsContext'
 import { FileUploadContext } from '../../../../contexts/FileUploadContext'
@@ -17,9 +16,9 @@ import { removeSlug, createSlug } from '../../../../utils/functions/slug'
 import goTo from '../../../../utils/functions/goTo'
 import scrollToView from '../../../../utils/functions/scrollToView'
 import { API_URL } from '../../../../constants'
-import { ToppingsProps } from '../../../../types'
+import { ToppingsProps, foodDataProps } from '../../../../types'
 
-const EditFood = () => {
+const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useDocumentTitle('Edit Food')
 
   useEffect(() => {
@@ -40,7 +39,6 @@ const EditFood = () => {
   const [foodPrice, setFoodPrice] = useState('')
   const [category, setCategory] = useState<string[]>([])
   const [foodDesc, setFoodDesc] = useState('')
-
   const [updatedFoodStatus, setUpdatedFoodStatus] = useState()
   const [loadingMsg, setLoadingMsg] = useState('')
   const [hasConfirmBtns, setHasConfirmBtn] = useState(false)
@@ -59,19 +57,15 @@ const EditFood = () => {
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
-  const { id } = useRouter().query
-  const foodData = useAxios({ url: `/foods?page=1&limit=1&itemId=${id}` })
-
-  //fetching categories
   const categories = useAxios({ url: '/settings' })
 
   useEffect(() => {
-    if (foodData?.response?.response !== null && categories?.response !== null) {
-      setData(foodData?.response?.response)
+    if (categories?.response !== null) {
+      setData(foodData?.response)
+      setToppings(foodData?.response?.foodToppings)
       setCategoryList(categories?.response?.CategoryList)
-      setToppings(foodData?.response?.response?.foodToppings)
     }
-  }, [foodData?.response?.response, categories?.response])
+  }, [categories?.response])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target
@@ -174,49 +168,49 @@ const EditFood = () => {
     }
   }
 
-  const handleDeleteFood = async (foodId, foodImgs = data?.foodImgs) => {
-    const prevFoodImgPathsAndNames = [
-      ...foodImgs.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
-        return {
-          foodImgDisplayPath,
-          foodImgDisplayName
-        }
-      })
-    ]
+  // const handleDeleteFood = async (foodId, foodImgs = data?.foodImgs) => {
+  //   const prevFoodImgPathsAndNames = [
+  //     ...foodImgs.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
+  //       return {
+  //         foodImgDisplayPath,
+  //         foodImgDisplayName
+  //       }
+  //     })
+  //   ]
 
-    //Using FormData to send constructed data
-    const formData = new FormData()
-    formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))
-    try {
-      //You need to name the body {data} so it can be recognized in (.delete) method
-      const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
-        data: formData
-      })
-      const { foodDeleted } = response.data
-      setDeleteFoodStatus(foodDeleted)
-      //Remove waiting modal
-      setTimeout(() => {
-        modalLoading!.classList.add('hidden')
-      }, 300)
-    } catch (err) {
-      console.error(err)
-    }
-  }
+  //   //Using FormData to send constructed data
+  //   const formData = new FormData()
+  //   formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))
+  //   try {
+  //     //You need to name the body {data} so it can be recognized in (.delete) method
+  //     const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
+  //       data: formData
+  //     })
+  //     const { foodDeleted } = response.data
+  //     setDeleteFoodStatus(foodDeleted)
+  //     //Remove waiting modal
+  //     setTimeout(() => {
+  //       modalLoading!.classList.add('hidden')
+  //     }, 300)
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // }
 
-  const handleDeleteImg = async (foodId, foodImg) => {
-    try {
-      //You need to name the body {data} so it can be recognized in (.delete) method
-      const response = await Axios.delete(`${API_URL}/foods/${foodId}/${foodImg}`)
-      const { ImgDeleted } = response.data
-      setDeleteImgStatus(ImgDeleted)
-      //Remove waiting modal
-      setTimeout(() => {
-        modalLoading!.classList.add('hidden')
-      }, 300)
-    } catch (err) {
-      console.error(err)
-    }
-  }
+  // const handleDeleteImg = async (foodId, foodImg) => {
+  //   try {
+  //     //You need to name the body {data} so it can be recognized in (.delete) method
+  //     const response = await Axios.delete(`${API_URL}/foods/${foodId}/${foodImg}`)
+  //     const { ImgDeleted } = response.data
+  //     setDeleteImgStatus(ImgDeleted)
+  //     //Remove waiting modal
+  //     setTimeout(() => {
+  //       modalLoading!.classList.add('hidden')
+  //     }, 300)
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // }
 
   useEventListener('click', (e: any) => {
     if (e.target.id === 'deleteImg') {
@@ -241,11 +235,11 @@ const EditFood = () => {
 
     if (e.target.id === 'cancel') {
       modalLoading!.classList.add('hidden')
-    } else if (e.target.id === 'confirm') {
-      action === 'deleteImg'
-        ? handleDeleteImg(data?._id, delFoodImg)
-        : handleDeleteFood(data?._id, data?.foodImgs)
-    }
+    } //else if (e.target.id === 'confirm') {
+    //   action === 'deleteImg'
+    //     ? handleDeleteImg(data?._id, delFoodImg)
+    //     : handleDeleteFood(data?._id, data?.foodImgs)
+    // }
   })
 
   return (
@@ -540,7 +534,7 @@ const EditFood = () => {
                       </button>
                     </div>
                   </form>
-                ) : data?.itemsCount === undefined ? (
+                ) : !foodData ? (
                   <div className='flex flex-col items-center gap-8 text-lg justify-evenly'>
                     <p className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'>
                       عفواً، لم يتم العثور على الوجبة &nbsp;&nbsp; 😕
@@ -552,7 +546,7 @@ const EditFood = () => {
                       أرجع الى للوحة التحكم
                     </Link>
                   </div>
-                ) : !data || !data === null ? (
+                ) : foodData === null || foodData?.itemsCount === 0 ? (
                   <LoadingCard />
                 ) : null}
               </div>
@@ -562,6 +556,12 @@ const EditFood = () => {
       </Layout>
     </>
   )
+}
+
+export async function getServerSideProps({ query: { id } }: any) {
+  const foodItemURL = `${API_URL}/foods?page=1&limit=1&itemId=${id}`
+  const foodData = await fetch(foodItemURL).then(food => food.json())
+  return { props: { foodData } }
 }
 
 export default EditFood
