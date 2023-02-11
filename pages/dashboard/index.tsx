@@ -17,7 +17,7 @@ const DashboardHome = ({ menu }: any) => {
   const [userStatus, setUserStatus] = useState<string>('')
   const [userType, setUserType] = useState<string>('')
   const [userID, setUserID] = useState<string>('')
-  const [menuCount, setMenuCount] = useState<number>()
+  const [menuCount, setMenuCount] = useState<number>(0)
   const [ordersCount, setOrdersCount] = useState<number>(0)
 
   //if there's food id then fetch with food id, otherwise fetch everything
@@ -33,8 +33,8 @@ const DashboardHome = ({ menu }: any) => {
       setUserStatus(currentUser?.response?.response?.userAccountStatus)
       setUserType(currentUser?.response?.response?.userAccountType)
       setUserID(currentUser?.response?.response?._id)
-      setMenuCount(menu?.response?.itemsCount)
-      setOrdersCount(orders?.response?.itemsCount || 0)
+      setMenuCount(menu?.itemsCount)
+      setOrdersCount(orders?.response?.itemsCount ?? 0)
     }
   }, [currentUser?.response, menu?.response, orders?.response])
 

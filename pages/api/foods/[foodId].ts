@@ -1,7 +1,7 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
-import { fileRequestProps, FoodImgsProps } from '../../../types'
+import { fileRequestProps, FoodImgsProps, ToppingsProps } from '../../../types'
 import sharp from 'sharp'
 import { S3 } from 'aws-sdk'
 import formHandler from '../../../utils/functions/form'
@@ -16,17 +16,23 @@ const s3 = new S3({
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
   const { method, query } = req
+  const { foodId } = query
   await dbConnect()
 
   switch (method) {
     case 'PATCH': {
       const { fields }: any = await formHandler(req)
-      const { foodName, foodPrice, category, foodDesc, foodToppings, foodTags } = fields
+      const { foodName, foodPrice, category, foodDesc, foodTags, foodToppings } = fields
       // const prevFoodImgPathsAndNames = JSON.parse(body.prevFoodImgPathsAndNames)
-
-      const toppings = foodToppings && JSON.parse(foodToppings)
       const tags = JSON.parse(foodTags)
-      const { foodId } = query
+      const toppings = JSON.parse(foodToppings).map(
+        ({ toppingName, toppingPrice }: ToppingsProps) => {
+          return {
+            toppingName,
+            toppingPrice: Number(toppingPrice)
+          }
+        }
+      )
 
       //if the user has uploaded a new image
       // if (req.files) {
@@ -144,20 +150,18 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
           message: 'Food Updated Successfully',
           foodUpdated: 1
         })
-        return
       } catch (error) {
         res.json({
           message: `Sorry! Something went wrong, check the error => 😥: \n ${error}`,
           foodUpdated: 0
         })
-        return
       }
       // }
       break
     }
 
     case 'DELETE': {
-      const { foodId, imgName }: any = query
+      const { imgName }: any = query
 
       if (imgName) {
         s3.deleteObject(

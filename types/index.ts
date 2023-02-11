@@ -341,3 +341,8 @@ export type fileRequestProps = NextApiRequest & {
   key: string
   type: string
 }
+
+export type ButtonProps = {
+  children: JSX.Element
+  color?: string
+}

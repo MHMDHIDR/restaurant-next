@@ -17,6 +17,7 @@ import scrollToView from '../../../utils/functions/scrollToView'
 import ModalNotFound from '../../../components/Modal/ModalNotFound'
 import NavMenu from '../../../components/NavMenu'
 import Layout from '../../../components/dashboard/Layout'
+import { ClickableButton } from '../../../components/Button'
 import { API_URL, ITEMS_PER_PAGE, USER } from '../../../constants'
 
 const DashboardMenu = () => {
@@ -129,10 +130,12 @@ const DashboardMenu = () => {
             </h3>
 
             <Link href='food/add'>
-              <button className='min-w-[7rem] bg-green-600 hover:bg-green-700 text-white py-1.5 px-6 mb-8 rounded-md'>
-                <Add className='inline-flex ml-4' />
-                إضافة وجبة
-              </button>
+              <ClickableButton>
+                <>
+                  <Add className='inline-flex ml-4' />
+                  <span>إضافة وجبة</span>
+                </>
+              </ClickableButton>
             </Link>
             <table className='table w-full text-center'>
               <thead className='text-white bg-orange-800'>

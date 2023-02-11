@@ -62,7 +62,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useEffect(() => {
     if (categories?.response !== null) {
       setData(foodData?.response)
-      setToppings(Array(foodData?.response?.foodToppings) || [{}])
+      setToppings(foodData?.response?.foodToppings)
       setCategoryList(categories?.response?.response[0]?.CategoryList)
     }
   }, [categories?.response])
@@ -99,8 +99,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       const currentFoodName = data?.foodName
       const currentFoodPrice = data?.foodPrice
       const currentCategory = data?.category
-      const currentTags = tags
       const currentFoodDesc = data?.foodDesc
+      const currentTags = tags
+      const currentToppings = toppings
+
       // const prevFoodImgPathsAndNames = [
       //   ...data?.foodImgs.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
       //     return {
@@ -117,19 +119,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       formData.append('foodPrice', foodPrice || currentFoodPrice)
       formData.append('category', category[0] || currentCategory)
       formData.append('foodDesc', foodDesc || currentFoodDesc)
-      toppings[0].toppingName === ''
-        ? formData.append(
-            'foodToppings',
-            JSON.stringify([
-              {
-                toppingName: {},
-                toppingPrice: {}
-              }
-            ])
-          )
-        : typeof toppings[0].toppingName === 'string' &&
-          formData.append('foodToppings', JSON.stringify(toppings))
       formData.append('foodTags', JSON.stringify(currentTags))
+      formData.append('foodToppings', JSON.stringify(currentToppings))
+
       // file.map(foodImg => formData.append('foodImg', foodImg))
       // formData.append(
       //   'prevFoodImgPathsAndNames',
@@ -152,9 +144,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
           )
 
           const { foodUpdated } = response.data
-
           setUpdatedFoodStatus(foodUpdated)
-          //Remove waiting modal
+
           setTimeout(() => {
             modalLoading!.classList.add('hidden')
           }, 300)
@@ -251,14 +242,14 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
             data?.foodName
           )} بنجاح   😄   الرجاء الانتظار ليتم تحويلك لقائمة الوجبات والمشروبات`}
           redirectLink={goTo('menu')}
-          redirectTime={3500}
+          redirectTime={4000}
         />
       ) : updatedFoodStatus === 0 ? (
         <Modal
           status={Error}
           msg='حدث خطأ ما أثناء تحديث بيانات الوجبة!'
           redirectLink={goTo(`edit-food/${data?._id}`)}
-          redirectTime={3500}
+          redirectTime={4000}
         />
       ) : deleteImgStatus === 1 ? (
         <Modal
@@ -310,7 +301,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
               <div className='food'>
                 {data && data !== undefined ? (
                   <form key={data?._id} className='form' encType='multipart/form-data'>
-                    {/* <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
+                    {/* 
+                    <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
                        <FileUpload
                         data={{
                           foodId: data?._id,
@@ -323,7 +315,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={ImgErr}
                       ></span>
-                    </div> */}
+                    </div>
+ */}
 
                     <label htmlFor='foodName' className='form__group'>
                       <input
@@ -477,9 +470,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                               className='w-2/4 p-3 text-xl text-gray-700 bg-transparent border-2 border-gray-500 border-solid rounded-lg outline-none focus-within:border-orange-500 dark:focus-within:border-gray-400 dark:text-gray-200 rtl'
                               dir='auto'
                               name='toppingPrice'
-                              defaultValue={
-                                typeof toppingPrice === 'string' ? toppingPrice : ''
-                              }
+                              defaultValue={toppingPrice}
                               onChange={e => handleInputChange(e, idx)}
                             />
                           </div>
@@ -557,7 +548,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   )
 }
 
-export async function getServerSideProps({ query: { id } }: any) {
+export async function getServerSideProps({ query: { id } }: { query: { id: string } }) {
   const foodItemURL = `${API_URL}/foods?page=1&limit=1&itemId=${id}`
   const foodData = await fetch(foodItemURL).then(food => food.json())
   return { props: { foodData } }
