@@ -183,6 +183,7 @@ const EditFood = () => {
         }
       })
     ]
+
     //Using FormData to send constructed data
     const formData = new FormData()
     formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))

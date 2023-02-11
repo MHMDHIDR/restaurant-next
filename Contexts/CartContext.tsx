@@ -19,6 +19,7 @@ const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, [items])
 
   //add items to card add the details like: cHeading, cImg, cPrice, cCategory, cDesc, cToppings, cQuantity: 1
+
   const addToCart = (
     cItemId: string,
     cHeading: string,
@@ -37,13 +38,15 @@ const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
         cPrice,
         cCategory,
         cDesc,
-        cToppings: cToppings.map((topping, toppingIndex) => {
-          return {
-            toppingId: cItemId + '-' + toppingIndex,
-            ...topping,
-            toppingQuantity: 1
-          }
-        }),
+        cToppings: cToppings.length //if it's array then map over it
+          ? cToppings.map((topping, toppingIndex) => {
+              return {
+                toppingId: cItemId + '-' + toppingIndex,
+                ...topping,
+                toppingQuantity: 1
+              }
+            })
+          : [],
         cQuantity: 1
       }
     ])
