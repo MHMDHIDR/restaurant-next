@@ -73,14 +73,14 @@ const Login = () => {
         token,
         message
       }: UserProps = data
-      setLoggedInStatus(LoggedIn)
+      setLoggedInStatus(LoggedIn ?? 0)
 
       if (LoggedIn === 0) {
-        return setLoginMsg(message)
+        return setLoginMsg(message ?? '')
       }
 
       //if user is logged in
-      setLoginMsg(message)
+      setLoginMsg(message ?? '')
       localStorage.setItem(
         'user',
         JSON.stringify({ _id, userAccountType, userFullName, userEmail, token })

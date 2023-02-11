@@ -190,7 +190,7 @@ const DashboardMenu = () => {
                         <td className='px-1 py-2'>
                           <NavMenu>
                             <Link
-                              href={goTo(`edit-food/${item._id}`)}
+                              href={goTo(`food/edit/${item._id}`)}
                               className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
                             >
                               تعديل

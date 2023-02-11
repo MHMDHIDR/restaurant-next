@@ -31,7 +31,7 @@ const AddFood = () => {
   const [foodDesc, setFoodDesc] = useState('')
   const [addFoodStatus, setAddFoodStatus] = useState()
   const [addFoodMessage, setAddFoodMessage] = useState()
-  const [categoryList, setCategoryList] = useState([''])
+  const [categoryList, setCategoryList] = useState<string[]>([])
   const [toppings, setToppings] = useState<any>([{}])
   const [modalLoading, setModalLoading] = useState<Element>()
   const [uploadStatus, setUploadStatus] = useState(0)
@@ -82,7 +82,7 @@ const AddFood = () => {
         priceErr.current!.textContent === '' &&
         descErr.current!.textContent === ''
       ) {
-        // modalLoading!.classList.remove('hidden')
+        modalLoading!.classList.remove('hidden')
         const fileData = JSON.stringify(
           file.map((file: { name: string; type: string }) => {
             return {
@@ -115,7 +115,7 @@ const AddFood = () => {
             }`
           }
         })
-        formData.append('foodImgUrls', JSON.stringify(foodImgs))
+        uploadStatus === 204 && formData.append('foodImgUrls', JSON.stringify(foodImgs))
 
         try {
           const response = await axios.post(`${API_URL}/foods`, formData)
