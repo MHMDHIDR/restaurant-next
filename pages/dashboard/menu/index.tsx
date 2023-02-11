@@ -6,6 +6,7 @@ import useEventListener from '../../../hooks/useEventListener'
 import useAxios from '../../../hooks/useAxios'
 import Modal from '../../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../../components/Icons/Status'
+import Add from '../../../components/Icons/Add'
 import { LoadingPage, LoadingSpinner } from '../../../components/Loading'
 import Pagination from '../../../components/Pagination'
 import abstractText from '../../../utils/functions/abstractText'
@@ -127,6 +128,12 @@ const DashboardMenu = () => {
               قائمة الوجبات والمشروبات
             </h3>
 
+            <Link href='food/add'>
+              <button className='min-w-[7rem] bg-green-600 hover:bg-green-700 text-white py-1.5 px-6 mb-8 rounded-md'>
+                <Add className='inline-flex ml-4' />
+                إضافة وجبة
+              </button>
+            </Link>
             <table className='table w-full text-center'>
               <thead className='text-white bg-orange-800'>
                 <tr>
