@@ -16,7 +16,11 @@ import { removeSlug, createSlug } from '../../../../utils/functions/slug'
 import goTo from '../../../../utils/functions/goTo'
 import scrollToView from '../../../../utils/functions/scrollToView'
 import { API_URL } from '../../../../constants'
-import { ToppingsProps, foodDataProps } from '../../../../types'
+import {
+  ToppingsProps,
+  foodDataProps,
+  deleteFoodEventListenerProps
+} from '../../../../types'
 
 const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useDocumentTitle('Edit Food')
@@ -27,7 +31,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
 
   const [delFoodName, setDelFoodName] = useState('')
   const [action, setAction] = useState('')
-  const [delFoodImg, setDelFoodImg] = useState()
+  const [delFoodImg, setDelFoodImg] = useState<string>('')
   const [data, setData] = useState<any>()
   const [categoryList, setCategoryList] = useState<string[]>([])
   const [toppings, setToppings] = useState<any>([{}])
@@ -159,78 +163,88 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     }
   }
 
-  // const handleDeleteFood = async (foodId, foodImgs = data?.foodImgs) => {
-  //   const prevFoodImgPathsAndNames = [
-  //     ...foodImgs.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
-  //       return {
-  //         foodImgDisplayPath,
-  //         foodImgDisplayName
-  //       }
-  //     })
-  //   ]
+  const handleDeleteFood = async (foodId, foodImgs = data?.foodImgs) => {
+    const prevFoodImgPathsAndNames = [
+      ...foodImgs.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
+        return {
+          foodImgDisplayPath,
+          foodImgDisplayName
+        }
+      })
+    ]
 
-  //   //Using FormData to send constructed data
-  //   const formData = new FormData()
-  //   formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))
-  //   try {
-  //     //You need to name the body {data} so it can be recognized in (.delete) method
-  //     const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
-  //       data: formData
-  //     })
-  //     const { foodDeleted } = response.data
-  //     setDeleteFoodStatus(foodDeleted)
-  //     //Remove waiting modal
-  //     setTimeout(() => {
-  //       modalLoading!.classList.add('hidden')
-  //     }, 300)
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // }
-
-  // const handleDeleteImg = async (foodId, foodImg) => {
-  //   try {
-  //     //You need to name the body {data} so it can be recognized in (.delete) method
-  //     const response = await Axios.delete(`${API_URL}/foods/${foodId}/${foodImg}`)
-  //     const { ImgDeleted } = response.data
-  //     setDeleteImgStatus(ImgDeleted)
-  //     //Remove waiting modal
-  //     setTimeout(() => {
-  //       modalLoading!.classList.add('hidden')
-  //     }, 300)
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // }
-
-  useEventListener('click', (e: any) => {
-    if (e.target.id === 'deleteImg') {
-      setAction('deleteImg')
-      setHasConfirmBtn(true)
-      setLoadingMsg(`هل أنت متأكد من حذف الصورة لا يمكن التراجع عن هذا القرار`)
-      setDelFoodImg(e.target.dataset.imgName)
-      modalLoading!.classList.remove('hidden')
+    //Using FormData to send constructed data
+    const formData = new FormData()
+    formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))
+    try {
+      //You need to name the body {data} so it can be recognized in (.delete) method
+      const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
+        data: formData
+      })
+      const { foodDeleted } = response.data
+      setDeleteFoodStatus(foodDeleted)
+      //Remove waiting modal
+      setTimeout(() => {
+        modalLoading!.classList.add('hidden')
+      }, 300)
+    } catch (err) {
+      console.error(err)
     }
+  }
 
-    if (e.target.id === 'deleteFood') {
-      setAction('deleteFood')
-      setDelFoodName(removeSlug(e.target.dataset.name))
-      setHasConfirmBtn(true)
-      setLoadingMsg(
-        `هل أنت متأكد من حذف المنتج ${removeSlug(
-          e.target.dataset.name
-        )} ؟ لا يمكن التراجع عن هذا القرار`
-      )
-      modalLoading!.classList.remove('hidden')
+  const handleDeleteImg = async (foodId, foodImg) => {
+    try {
+      //You need to name the body {data} so it can be recognized in (.delete) method
+      const response = await Axios.delete(`${API_URL}/foods/${foodId}/${foodImg}`)
+      const { ImgDeleted } = response.data
+      setDeleteImgStatus(ImgDeleted)
+      //Remove waiting modal
+      setTimeout(() => {
+        modalLoading!.classList.add('hidden')
+      }, 300)
+    } catch (err) {
+      console.error(err)
     }
+  }
 
-    if (e.target.id === 'cancel') {
-      modalLoading!.classList.add('hidden')
-    } //else if (e.target.id === 'confirm') {
-    //   action === 'deleteImg'
-    //     ? handleDeleteImg(data?._id, delFoodImg)
-    //     : handleDeleteFood(data?._id, data?.foodImgs)
-    // }
+  useEventListener('click', (e: deleteFoodEventListenerProps) => {
+    const {
+      id,
+      dataset: { imgName, name }
+    } = e.target
+    switch (id) {
+      case 'deleteImg': {
+        setAction('deleteImg')
+        setHasConfirmBtn(true)
+        setLoadingMsg(`هل أنت متأكد من حذف الصورة لا يمكن التراجع عن هذا القرار`)
+        setDelFoodImg(imgName)
+        modalLoading!.classList.remove('hidden')
+        break
+      }
+      case 'deleteFood': {
+        setAction('deleteFood')
+        setDelFoodName(removeSlug(name))
+        setHasConfirmBtn(true)
+        setLoadingMsg(
+          `هل أنت متأكد من حذف المنتج ${removeSlug(name)} ؟ لا يمكن التراجع عن هذا القرار`
+        )
+        modalLoading!.classList.remove('hidden')
+        break
+      }
+      case 'confirm': {
+        action === 'deleteImg'
+          ? handleDeleteImg(data?._id, delFoodImg)
+          : handleDeleteFood(data?._id, data?.foodImgs)
+        break
+      }
+      case 'cancel': {
+        modalLoading!.classList.add('hidden')
+        break
+      }
+
+      default:
+        break
+    }
   })
 
   return (
@@ -301,22 +315,20 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
               <div className='food'>
                 {data && data !== undefined ? (
                   <form key={data?._id} className='form' encType='multipart/form-data'>
-                    {/* 
                     <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
-                       <FileUpload
+                      <FileUpload
                         data={{
                           foodId: data?._id,
                           defaultImg: data?.foodImgs,
                           foodName: data?.foodName
                         }}
-                      /> 
+                      />
 
                       <span
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={ImgErr}
                       ></span>
                     </div>
- */}
 
                     <label htmlFor='foodName' className='form__group'>
                       <input

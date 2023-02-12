@@ -351,3 +351,13 @@ export type GoogleLoginOnFailureProps = {
   details: string
   error: string
 }
+
+export type deleteFoodEventListenerProps = {
+  target: {
+    id: string
+    dataset: {
+      imgName: string
+      name: string
+    }
+  }
+}
