@@ -1,4 +1,6 @@
-const paginatedResults = async (model: any, req: any, res: any) => {
+import { Model } from 'mongoose'
+
+const paginatedResults = async (model: Model<any>, req: any, res: any) => {
   const page = parseInt(req.query.page)
   const limit = parseInt(req.query.limit)
   const { itemId, category, orderDate, createdAt, updatedAt } = req.query

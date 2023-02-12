@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import dbConnect from '../../../../utils/db'
-import UsersModel from '../../../../models/User'
-import paginatedResults from '../../../../middleware/paginatedResults'
+import dbConnect from '../../../utils/db'
+import UsersModel from '../../../models/User'
+import paginatedResults from '../../../middleware/paginatedResults'
 // import protect from '../../../../middleware/authMiddleware.js'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

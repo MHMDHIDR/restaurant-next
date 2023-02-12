@@ -50,6 +50,7 @@ export default async function handler(req: authUserRequestProps, res: NextApiRes
       }
       break
     }
+
     case 'DELETE': {
       const { userId } = query
 

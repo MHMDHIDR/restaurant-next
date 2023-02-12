@@ -5,7 +5,7 @@ import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps, ToppingsProps } from '../../../types'
 import formHandler from '../../../utils/functions/form'
 
-export default async function handler(req: fileRequestProps, res: NextApiResponse) {
+const handler = async (req: fileRequestProps, res: NextApiResponse) => {
   const { method } = req
   await dbConnect()
 
@@ -68,3 +68,5 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
 export const config = {
   api: { bodyParser: false }
 }
+
+export default handler

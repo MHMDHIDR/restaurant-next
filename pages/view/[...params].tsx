@@ -59,7 +59,7 @@ const ViewFood = ({ viewFood }: any) => {
 
           {data !== undefined && data?.response?.length > 0 ? (
             <Suspense fallback={<LoadingCard />}>
-              {data?.response?.map((item: foodDataProps) => (
+              {data?.response?.map((item: foodDataProps['response']) => (
                 // View Multiple (Many) food items
                 <motion.div
                   key={String(item._id)}
@@ -88,7 +88,7 @@ const ViewFood = ({ viewFood }: any) => {
                     cCtaLabel={
                       //add to cart button, if item is already in cart then disable the button
                       items.find(itemInCart => itemInCart.cItemId === item._id) ? (
-                        <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
+                        <div className='relative rtl min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-red-800 hover:bg-red-700'>
                           <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
                             ❌
                           </span>
@@ -98,7 +98,7 @@ const ViewFood = ({ viewFood }: any) => {
                           </span>
                         </div>
                       ) : (
-                        <div className='relative rtl m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
+                        <div className='relative rtl min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'>
                           <span className='py-0.5 px-1 pr-1.5 bg-gray-100 rounded-md absolute right-1 top-1 pointer-events-none'>
                             🛒
                           </span>

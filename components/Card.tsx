@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CartContext } from '../contexts/CartContext'
 import { ToppingsContext } from '../contexts/ToppingsContext'
 import TagIcon from './Icons/TagIcon'
@@ -7,7 +7,7 @@ import EmblaCarousel from './EmblaCarousel'
 import { removeSlug } from '../utils/functions/slug'
 import Logo from './Icons/Logo'
 import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '../types'
-import { USER } from '../constants'
+import useAuth from '../hooks/useAuth'
 
 const Card = ({
   cItemId,
@@ -24,6 +24,15 @@ const Card = ({
 }: cardProps) => {
   const { items, addToCart, removeFromCart } = useContext<CartProps>(CartContext)
   const { handleToppingChecked, checkedToppings } = useContext(ToppingsContext)
+  const { isAuth, userType, loading } = useAuth()
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+  useEffect(() => {
+    isAuth && userType === 'admin' ? setIsAdmin(true) : setIsAdmin(false)
+    return () => {
+      setIsAdmin(false)
+    }
+  }, [isAuth, userType])
 
   const handleCart = () => {
     const item = items.find(item => item.cItemId === cItemId)
@@ -129,23 +138,23 @@ const Card = ({
               {cCtaLink ? (
                 <Link
                   href={cCtaLink}
-                  className='m-2 min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'
+                  className='min-w-[7.5rem] text-white py-1.5 px-6 rounded-lg bg-green-800 hover:bg-green-700'
                 >
                   {cCtaLabel}
                 </Link>
               ) : (
                 <button onClick={() => handleCart()}>{cCtaLabel}</button>
               )}
+              {!loading && isAdmin && (
+                <Link
+                  href={`/dashboard/food/edit/${cItemId}`}
+                  className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
+                >
+                  تعديل
+                </Link>
+              )}
             </div>
           ) : null}
-          {USER?.userAccountType === 'admin' && (
-            <Link
-              href={`/dashboard/food/edit/${cItemId}`}
-              className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
-            >
-              تعديل
-            </Link>
-          )}
         </div>
         <div
           title={removeSlug(cImgAlt)}
