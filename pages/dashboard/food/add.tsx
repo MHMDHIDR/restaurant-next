@@ -115,7 +115,7 @@ const AddFood = () => {
             }`
           }
         })
-        uploadStatus === 204 && formData.append('foodImgUrls', JSON.stringify(foodImgs))
+        formData.append('foodImgs', JSON.stringify(foodImgs.length > 0 ? foodImgs : []))
 
         try {
           const response = await axios.post(`${API_URL}/foods`, formData)

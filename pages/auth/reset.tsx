@@ -1,18 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Axios from 'axios'
-
-import Header from '../../../components/Header'
-import Footer from '../../../components/Footer'
-import Notification from '../../../components/Notification'
-import { LoadingSpinner, LoadingPage } from '../../../components/Loading'
-
-import useEventListener from '../../../hooks/useEventListener'
-import useDocumentTitle from '../../../hooks/useDocumentTitle'
-
-import { API_URL } from '../../../constants'
-import { validPassword } from '../../../utils/functions/validForm'
-import useAuth from '../../../hooks/useAuth'
+import Header from '../../components/Header'
+import Footer from '../../components/Footer'
+import Notification from '../../components/Notification'
+import { LoadingSpinner, LoadingPage } from '../../components/Loading'
+import useEventListener from '../../hooks/useEventListener'
+import useDocumentTitle from '../../hooks/useDocumentTitle'
+import { API_URL } from '../../constants'
+import { validPassword } from '../../utils/functions/validForm'
+import useAuth from '../../hooks/useAuth'
 
 const ResetPassword = () => {
   useDocumentTitle('Reset Password')

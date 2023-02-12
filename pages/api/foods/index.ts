@@ -29,11 +29,10 @@ const handler = async (req: fileRequestProps, res: NextApiResponse) => {
         foodDesc,
         foodToppings,
         foodTags,
-        foodImgUrls
+        foodImgs
       } = fields
       const toppings = foodToppings && JSON.parse(foodToppings)
       const tags = JSON.parse(foodTags)
-      const foodImgs = foodImgUrls ? JSON.parse(foodImgUrls) : []
 
       await FoodModel.create({
         foodName,
@@ -47,7 +46,7 @@ const handler = async (req: fileRequestProps, res: NextApiResponse) => {
           }
         }),
         foodTags: tags,
-        foodImgs
+        foodImgs: JSON.parse(foodImgs)
       })
 
       res.status(201).json({

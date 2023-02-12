@@ -3,6 +3,7 @@ import { Key, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { FileUploadContext } from '../contexts/FileUploadContext'
 import { FileUploadProps, FoodImgsProps } from '../types'
+import { FILE_UPLOAD_IMG_SIZE } from '../constants'
 
 const FileUpload = ({ data }: any) => {
   const { file, fileURLs, onFileRemove, onFileAdd } =
@@ -21,10 +22,11 @@ const FileUpload = ({ data }: any) => {
               className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
             >
               <Image
+                loading='lazy'
                 src={`https://source.unsplash.com/random?food`}
                 alt={`Delicious Food`}
-                height={122}
-                width={122}
+                height={FILE_UPLOAD_IMG_SIZE}
+                width={FILE_UPLOAD_IMG_SIZE}
                 className='object-cover p-1 border border-gray-400 w-28 min-h-fit h-28 dark:border-gray-300 rounded-xl'
               />
             </div>
@@ -39,8 +41,8 @@ const FileUpload = ({ data }: any) => {
                   loading='lazy'
                   src={fileURL}
                   alt={data?.foodName}
-                  height={122}
-                  width={122}
+                  height={FILE_UPLOAD_IMG_SIZE}
+                  width={FILE_UPLOAD_IMG_SIZE}
                   className={`object-cover p-1 border border-gray-400 max-w-[7rem] w-28 min-h-fit h-28 dark:border-gray-300 rounded-xl`}
                 />
                 <button
@@ -62,10 +64,11 @@ const FileUpload = ({ data }: any) => {
                   className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
                 >
                   <Image
-                    src={foodImgDisplayPath}
+                    loading='lazy'
+                    src={foodImgDisplayPath || `https://source.unsplash.com/random?food`}
                     alt={foodImgDisplayName}
-                    height={122}
-                    width={122}
+                    height={FILE_UPLOAD_IMG_SIZE}
+                    width={FILE_UPLOAD_IMG_SIZE}
                     className='object-cover p-1 border border-gray-400 w-28 min-h-fit h-28 dark:border-gray-300 rounded-xl'
                   />
                   <button

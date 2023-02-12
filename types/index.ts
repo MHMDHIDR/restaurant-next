@@ -238,9 +238,14 @@ export type ThemeProps = {
   getLocalStorageTheme: () => boolean
 }
 
+export type FoodImgsProps = {
+  foodImgDisplayPath: string
+  foodImgDisplayName: string
+}
+
 export type foodDataProps = {
   response: {
-    _id: ObjectId
+    _id: string
     foodName: string
     foodPrice: number
     category: string
@@ -252,10 +257,9 @@ export type foodDataProps = {
       toppingName: string
       toppingPrice: number
     }[]
-    foodImgs: {
-      foodImgDisplayName: string
-      foodImgDisplayPath: string
-    }[]
+    foodImgs: FoodImgsProps[]
+    foodImgDisplayName?: FoodImgsProps['foodImgDisplayName']
+    foodImgDisplayPath?: FoodImgsProps['foodImgDisplayPath']
   }
   itemsCount?: number
   next: {
@@ -303,11 +307,6 @@ export type mediaProps = {
   _id?: ObjectId
   foodPrice?: number
 }[]
-
-export type FoodImgsProps = {
-  foodImgDisplayPath: string
-  foodImgDisplayName: string
-}
 
 export type axiosProps = {
   url: string

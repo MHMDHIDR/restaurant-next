@@ -19,14 +19,21 @@ import NavMenu from '../../../components/NavMenu'
 import Layout from '../../../components/dashboard/Layout'
 import { ClickableButton } from '../../../components/Button'
 import { API_URL, ITEMS_PER_PAGE, USER } from '../../../constants'
+import { FoodImgsProps } from '../../../types'
 
 const DashboardMenu = () => {
   useDocumentTitle('Menu')
 
   const [delFoodId, setDelFoodId] = useState('')
   const [delFoodName, setDelFoodName] = useState('')
+  const [delFoodImg, setDelFoodImg] = useState<FoodImgsProps[]>([
+    {
+      foodImgDisplayPath: '',
+      foodImgDisplayName: ''
+    }
+  ])
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
-  const [modalLoading, setModalLoading] = useState<boolean>(true)
+  const [modalLoading, setModalLoading] = useState<boolean>(false)
   const [menuFood, setMenuFood] = useState<any>()
 
   const { loading, ...response } = useAxios({
@@ -44,31 +51,43 @@ const DashboardMenu = () => {
   }, [])
 
   useEventListener('click', (e: any) => {
-    if (e.target.id === 'deleteFood') {
-      setDelFoodId(e.target.dataset.id)
-      setDelFoodName(removeSlug(e.target.dataset.name))
-      setModalLoading(true)
-    }
+    switch (e.target.id) {
+      case 'deleteFood': {
+        setDelFoodId(e.target.dataset.id)
+        setDelFoodName(removeSlug(e.target.dataset.name))
+        setDelFoodImg(JSON.parse(e.target.dataset.imgname))
+        setModalLoading(true)
+        break
+      }
+      case 'confirm': {
+        handleDeleteFood(delFoodId)
+        break
+      }
+      case 'cancel': {
+        setModalLoading(false)
+        break
+      }
 
-    if (e.target.id === 'cancel') {
-      setModalLoading(false)
-    } else if (e.target.id === 'confirm') {
-      handleDeleteFood(delFoodId)
+      default: {
+        setModalLoading(false)
+        break
+      }
     }
   })
 
   const handleDeleteFood = async (
     foodId: string,
-    foodImgs?: { foodImgDisplayPath: string; foodImgDisplayName: string }[]
+    foodImgs: FoodImgsProps[] = delFoodImg
   ) => {
-    const prevFoodImgPathsAndNames = [
-      ...foodImgs!.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
+    const prevFoodImgPathsAndNames = foodImgs.map(
+      ({ foodImgDisplayPath, foodImgDisplayName }) => {
         return {
           foodImgDisplayPath,
           foodImgDisplayName
         }
-      })
-    ]
+      }
+    )
+
     //Using FormData to send constructed data
     const formData = new FormData()
     formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))
@@ -114,11 +133,9 @@ const DashboardMenu = () => {
         <section className='py-12 my-8 dashboard'>
           <div className='container mx-auto'>
             {/* Confirm Box */}
-
             {modalLoading && (
               <Modal
                 status={Loading}
-                modalHidden='hidden'
                 classes='text-blue-600 dark:text-blue-400 text-lg'
                 msg={`هل أنت متأكد من حذف ${delFoodName} ؟ لا يمكن التراجع عن هذا القرار`}
                 ctaConfirmBtns={['حذف', 'الغاء']}
@@ -162,7 +179,10 @@ const DashboardMenu = () => {
                         <td className='px-1 py-2 pr-3 min-w-[5rem]'>
                           <img
                             loading='lazy'
-                            src={item.foodImgs[0]?.foodImgDisplayPath}
+                            src={
+                              item.foodImgs[0]?.foodImgDisplayPath ||
+                              `https://source.unsplash.com/random?food`
+                            }
                             alt={item.foodName}
                             className='object-cover rounded-lg shadow-md h-14 w-14'
                           />

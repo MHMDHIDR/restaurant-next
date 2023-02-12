@@ -14,13 +14,13 @@ const s3 = new S3({
 })
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
-  const { method, query } = req
+  const { method, query, body } = req
   const { foodId } = query
+  const { fields }: any = await formHandler(req)
   await dbConnect()
 
   switch (method) {
     case 'PATCH': {
-      const { fields }: any = await formHandler(req)
       const { foodName, foodPrice, category, foodDesc, foodTags, foodToppings } = fields
       // const prevFoodImgPathsAndNames = JSON.parse(body.prevFoodImgPathsAndNames)
       const tags = JSON.parse(foodTags)
@@ -201,9 +201,10 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
           }
         )
       } else {
-        const prevFoodImgPathsAndNames = JSON.parse(req.body.prevFoodImgPathsAndNames)
+        const { prevFoodImgPathsAndNames } = fields
+
         //delete the old images from s3 bucket using the prevFoodImgPathsAndNames
-        const Objects = prevFoodImgPathsAndNames.map(
+        const Objects = JSON.parse(prevFoodImgPathsAndNames).map(
           ({ foodImgDisplayName }: FoodImgsProps) => ({
             Key: foodImgDisplayName
           })
@@ -214,13 +215,12 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
             Bucket: process.env.AWS_BUCKET_NAME || '',
             Delete: { Objects }
           },
-          async (error, data) => {
+          async (error, _data) => {
             if (error) {
               res.json({
                 message: error,
                 foodDeleted: 0
               })
-              return
             }
 
             try {
