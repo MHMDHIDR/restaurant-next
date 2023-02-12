@@ -7,6 +7,7 @@ import EmblaCarousel from './EmblaCarousel'
 import { removeSlug } from '../utils/functions/slug'
 import Logo from './Icons/Logo'
 import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '../types'
+import { USER } from '../constants'
 
 const Card = ({
   cItemId,
@@ -137,6 +138,14 @@ const Card = ({
               )}
             </div>
           ) : null}
+          {USER.userAccountType === 'admin' && (
+            <Link
+              href={`/dashboard/food/edit/${cItemId}`}
+              className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
+            >
+              تعديل
+            </Link>
+          )}
         </div>
         <div
           title={removeSlug(cImgAlt)}
