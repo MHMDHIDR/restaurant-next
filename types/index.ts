@@ -346,3 +346,8 @@ export type ButtonProps = {
   children: JSX.Element
   color?: string
 }
+
+export type GoogleLoginOnFailureProps = {
+  details: string
+  error: string
+}

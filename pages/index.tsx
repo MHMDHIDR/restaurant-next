@@ -324,7 +324,7 @@ const Index = ({
               الوجبات الجديدة
             </h2>
             {newFood && newFood?.response?.length > 0 ? (
-              newFood?.response?.map((item: foodDataProps, idx: number) => (
+              newFood?.response?.map((item: foodDataProps['response'], idx: number) => (
                 <motion.div
                   className='odd:ltr'
                   key={idx}

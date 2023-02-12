@@ -10,7 +10,7 @@ import useAuth from '../../../hooks/useAuth'
 import GoogleLogin from 'react-google-login'
 import { gapi } from 'gapi-script'
 import { EyeIconOpen, EyeIconClose } from '../../../components/Icons/EyeIcon'
-import { UserProps } from '../../../types'
+import { GoogleLoginOnFailureProps, UserProps } from '../../../types'
 import { API_URL } from '../../../constants'
 import Layout from '../../../components/Layout'
 
@@ -217,7 +217,9 @@ const Login = () => {
                     clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}
                     buttonText='Log in with Google'
                     onSuccess={handleGoogleLogin}
-                    onFailure={(result: any) => console.log(result)}
+                    onFailure={(res: GoogleLoginOnFailureProps) =>
+                      console.error(res.details)
+                    }
                     cookiePolicy={'single_host_origin'}
                   />
                 </div>

@@ -149,14 +149,14 @@ const Nav = () => {
                     userData?.userAccountType === 'cashier') && (
                     <Link
                       href='/dashboard'
-                      className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 xl:border-0'
+                      className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 dark:hover:bg-gray-500 xl:border-0'
                     >
                       لوحة التحكم
                     </Link>
                   )}
                   <Link
                     href='/my-orders'
-                    className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 xl:border-0'
+                    className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 dark:hover:bg-gray-500 xl:border-0'
                   >
                     طلباتي
                   </Link>
