@@ -138,7 +138,7 @@ const Card = ({
               )}
             </div>
           ) : null}
-          {USER.userAccountType === 'admin' && (
+          {USER?.userAccountType === 'admin' && (
             <Link
               href={`/dashboard/food/edit/${cItemId}`}
               className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
