@@ -8,6 +8,7 @@ import { removeSlug } from '../utils/functions/slug'
 import Logo from './Icons/Logo'
 import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '../types'
 import useAuth from '../hooks/useAuth'
+import { USER } from '../constants'
 
 const Card = ({
   cItemId,

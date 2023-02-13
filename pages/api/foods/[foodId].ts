@@ -14,7 +14,7 @@ const s3 = new S3({
 })
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
-  const { method, query, body } = req
+  const { method, query } = req
   const { foodId } = query
   const { fields }: any = await formHandler(req)
   await dbConnect()
@@ -22,7 +22,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
   switch (method) {
     case 'PATCH': {
       const { foodName, foodPrice, category, foodDesc, foodTags, foodToppings } = fields
-      // const prevFoodImgPathsAndNames = JSON.parse(body.prevFoodImgPathsAndNames)
+
       const tags = JSON.parse(foodTags)
       const toppings = JSON.parse(foodToppings).map(
         ({ toppingName, toppingPrice }: ToppingsProps) => {
@@ -160,47 +160,42 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
     }
 
     case 'DELETE': {
-      const { imgName }: any = query
+      const { imgName } = fields
 
+      /*delete only one image*/
       if (imgName) {
         s3.deleteObject(
           {
-            Bucket: process.env.AWS_BUCKET_NAME || '',
-            Key: imgName
+            Bucket: AWS_BUCKET_NAME!,
+            Key: JSON.parse(imgName)
           },
           async (error, _data) => {
-            if (error) {
-              res.json({
-                message: error,
-                ImgDeleted: 0
-              })
-              return
-            }
+            if (error) return res.json({ message: error, ImgDeleted: 0 })
 
             try {
               //find the food and delete the img by using the imgName
               const food = await FoodModel.findById(foodId)
               const foodImgs = food.foodImgs.filter(
+                //get other images and NOT the one I wanna delete
                 (img: { foodImgDisplayName: string | string[] }) =>
-                  img.foodImgDisplayName !== imgName
+                  img.foodImgDisplayName !== JSON.parse(imgName)
               )
+
               await FoodModel.findByIdAndUpdate(foodId, { foodImgs })
 
               res.json({
                 message: 'Image Deleted Successfully',
                 ImgDeleted: 1
               })
-              return
             } catch (error) {
               res.json({
                 message: `Sorry! Something went wrong while deleting Image, check the error => 😥: \n ${error}`,
                 ImgDeleted: 0
               })
-              return
             }
           }
         )
-      } else {
+      } /*delete entire food data with its images*/ else {
         const { prevFoodImgPathsAndNames } = fields
 
         //delete the old images from s3 bucket using the prevFoodImgPathsAndNames
