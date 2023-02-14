@@ -1,20 +1,25 @@
-import { useState, useEffect, useRef, ChangeEvent } from 'react'
-import useAxios from '@hooks/useAxios'
-import Axios from 'axios'
+import { useState, useEffect, useRef, ChangeEvent, useContext } from 'react'
+import axios from 'axios'
 import useDocumentTitle from '@hooks/useDocumentTitle'
-import { API_URL, USER } from '@constants'
+import useAxios from '@hooks/useAxios'
+import { FileUploadContext } from '@contexts/FileUploadContext'
+import FileUpload from '@components/FileUpload'
 import Modal from '@components/Modal/Modal'
 import { Success, Error, Loading } from '@components/Icons/Status'
 import { LoadingSpinner } from '@components/Loading'
 import ModalNotFound from '@components/Modal/ModalNotFound'
+import Layout from '@components/dashboard/Layout'
+import { API_URL, USER } from '@constants'
 import { responseTypes } from '@types'
 import goTo from '@functions/goTo'
-import Layout from '@components/dashboard/Layout'
-import Image from 'next/image'
 import { stringJson } from '@functions/jsonTools'
+import useUploadS3 from '@hooks/useUploadS3'
 
 const About = () => {
   useDocumentTitle('Settings')
+
+  //Contexts
+  const { file } = useContext(FileUploadContext)
 
   //Description Form States
   const [appName, setAppName] = useState('')
@@ -88,27 +93,6 @@ const About = () => {
     setCategoryList(list)
   }
 
-  const updateLogoImg = (e: any) => {
-    const LogoFile = e.target.files[0]
-
-    if (LogoFile) {
-      setWebsiteLogo(LogoFile)
-    }
-  }
-
-  useEffect(() => {
-    // if there's an image
-    if (websiteLogo) {
-      const reader = new FileReader()
-
-      reader.onloadend = () => setPreview(reader.result)
-
-      reader.readAsDataURL(websiteLogo)
-    } else {
-      setPreview(null)
-    }
-  }, [websiteLogo])
-
   const handleUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
 
@@ -122,13 +106,10 @@ const About = () => {
     const currentInstagramAccount = instagramAccount || data?.instagramAccount
     const currentTwitterAccount = twitterAccount || data?.twitterAccount
     const currentCategoryList = categoryList || data?.appTagline
-    const prevSettingImgPath = data?.websiteLogoDisplayPath
-    const prevSettingImgName = data?.websiteLogoDisplayName
+    const prevSettingImgPath = data?.websiteLogoDisplayPath ?? ''
+    const prevSettingImgName = data?.websiteLogoDisplayName ?? ''
 
     const formData = new FormData()
-    formData.append('prevLogoImgPath', prevSettingImgPath!)
-    formData.append('prevLogoImgName', prevSettingImgName!)
-    formData.append('websiteLogo', websiteLogo!)
     formData.append('appName', currentAppName!)
     formData.append('appDesc', currentAppDesc!)
     formData.append('appTagline', currentAppTagline!)
@@ -138,6 +119,8 @@ const About = () => {
     formData.append('instagramAccount', currentInstagramAccount!)
     formData.append('twitterAccount', currentTwitterAccount!)
     formData.append('CategoryList', stringJson(currentCategoryList))
+    formData.append('prevLogoImgPath', prevSettingImgPath)
+    formData.append('prevLogoImgName', prevSettingImgName)
 
     if (
       descErr.current!.textContent === '' ||
@@ -150,9 +133,14 @@ const About = () => {
       setModalLoading(true)
       setLoading(true)
 
+      const { foodImgs } = await useUploadS3(file)
+      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
+
       try {
-        const response = await Axios.patch(`${API_URL}/settings/${data?._id}`, formData)
+        const response = await axios.patch(`${API_URL}/settings/${data?._id}`, formData)
         const { settingsUpdated, message } = response.data
+
+        console.log(settingsUpdated, message)
 
         setSettingsUpdated(settingsUpdated)
         setSettingsUpdatedMsg(message)
@@ -215,26 +203,21 @@ const About = () => {
                 htmlFor='logoImg'
                 className='flex flex-wrap items-center justify-center gap-5 mb-10 cursor-pointer md:justify-between'
               >
-                <Image
-                  src={
-                    preview
-                      ? preview
-                      : data?.websiteLogoDisplayPath || `/assets/img/icons/logo.svg`
-                  }
-                  alt='Website Logo'
-                  width={144}
-                  height={144}
-                  className='p-1 border border-gray-400 w-36 h-36 rounded-2xl'
-                />
-                <input
-                  type='file'
-                  name='logoImg'
-                  id='logoImg'
-                  className='py-6 font-semibold text-white uppercase bg-orange-800 rounded-lg cursor-pointer hover:bg-orange-900 px-28 '
-                  accept='image/*'
-                  onChange={updateLogoImg}
+                <FileUpload
+                  data={{
+                    foodId: data!?._id,
+                    foodName: data!?.websiteLogoDisplayName,
+                    defaultImg: [
+                      {
+                        foodImgDisplayName: data!?.websiteLogoDisplayName,
+                        foodImgDisplayPath: data!?.websiteLogoDisplayPath
+                      }
+                    ]
+                  }}
+                  ignoreDelete={true}
                 />
               </label>
+
               <label htmlFor='appName' className='form__group'>
                 <input
                   name='appName'

@@ -1,123 +1,88 @@
-import { NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import dbConnect from '@utils/db'
 import SettingsModel from '@models/Settings'
-import { Types } from 'mongoose'
-import paginatedResults from '@middleware/paginatedResults'
-import { fileRequestProps } from '@types'
 import { S3 } from 'aws-sdk'
+import formHandler from '@utils/functions/form'
 import { parseJson } from '@functions/jsonTools'
 
+const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
 const s3 = new S3({
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_ID || '',
-    secretAccessKey: process.env.AWS_SECRET || ''
+    accessKeyId: AWS_ACCESS_ID ?? '',
+    secretAccessKey: AWS_SECRET ?? ''
   }
 })
 
-export default async function handler(req: fileRequestProps, res: NextApiResponse) {
-  const { method, body, query } = req
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { method, query } = req
+  const { fields }: any = await formHandler(req)
+  const {
+    appName,
+    appDesc,
+    appTagline,
+    orderMsgSuccess,
+    orderMsgFailure,
+    whatsAppNumber,
+    instagramAccount,
+    twitterAccount,
+    CategoryList,
+    foodImgs,
+    prevLogoImgName
+  } = fields
+
   await dbConnect()
 
   switch (method) {
     case 'PATCH': {
-      const _id: any = query.id
-
-      const {
-        appName,
-        appDesc,
-        appTagline,
-        orderMsgSuccess,
-        orderMsgFailure,
-        whatsAppNumber,
-        instagramAccount,
-        twitterAccount,
-        CategoryList,
-        prevLogoImgPath,
-        prevLogoImgName
-      } = body
+      const { id }: any = query
       const categories = parseJson(CategoryList)
 
-      //if not valid _id then return error message
-      if (!Types.ObjectId.isValid(_id)) {
-        return res.json({ message: `Sorry, No settings with this ID => ${_id}` })
-      }
+      s3.deleteObject(
+        {
+          Bucket: AWS_BUCKET_NAME!,
+          Key: prevLogoImgName
+        },
+        async (error, _data) => {
+          if (error) return res.json({ message: error, settingsUpdated: 0 })
 
-      const { websiteLogo } = req.files || ''
-      const websiteLogoName =
-        crypto.randomUUID() + websiteLogo?.name.split('.')[0] + '.webp' || ''
-      let websiteLogoDisplayPath = prevLogoImgPath
-      let websiteLogoDisplayName = prevLogoImgName
+          console.log({
+            websiteLogoDisplayName: parseJson(foodImgs)[0].foodImgDisplayName,
+            websiteLogoDisplayPath: parseJson(foodImgs)[0].foodImgDisplayPath,
+            id
+          })
 
-      if (websiteLogo) {
-        //delete the old image from s3 bucket
-        const params = {
-          Bucket: process.env.AWS_BUCKET_NAME || '',
-          Key: websiteLogoDisplayName
-        }
+          try {
+            await SettingsModel.findByIdAndUpdate(
+              id,
+              {
+                websiteLogoDisplayName: parseJson(foodImgs)[0].foodImgDisplayName,
+                websiteLogoDisplayPath: parseJson(foodImgs)[0].foodImgDisplayPath,
+                appName,
+                appDesc,
+                appTagline,
+                whatsAppNumber,
+                instagramAccount,
+                twitterAccount,
+                CategoryList: categories,
+                orderMsg: {
+                  Success: orderMsgSuccess,
+                  Failure: orderMsgFailure
+                }
+              },
+              { new: true }
+            )
 
-        s3.deleteObject(params, (err, _data) => {
-          if (err) {
+            res.json({ message: 'تم تحديث الإعدادات بنجاح', settingsUpdated: 1 })
+          } catch (error) {
             res.json({
-              message: err,
-              settingUpdated: 0
+              message: `Sorry! Something went wrong, check the error => 😥: \n ${error}`,
+              settingsUpdated: 0
             })
-            return
           }
-        })
-        ;(async () => {
-          const { Location } = await s3.upload(params).promise()
-
-          //saving the new image path to the database
-          websiteLogoDisplayPath = Location
-          websiteLogoDisplayName = Location.split('.com/')[1]
-
-          await SettingsModel.findByIdAndUpdate(_id, {
-            websiteLogoDisplayPath,
-            websiteLogoDisplayName,
-            appName,
-            appDesc,
-            appTagline,
-            orderMsg: {
-              Success: orderMsgSuccess,
-              Failure: orderMsgFailure
-            },
-            whatsAppNumber,
-            instagramAccount,
-            twitterAccount,
-            CategoryList: categories
-          })
-
-          res.json({
-            message: 'تم تحديث الإعدادات بنجاح',
-            settingsUpdated: 1
-          })
-          return
-        })()
-      } else {
-        //else do this
-        try {
-          await SettingsModel.findByIdAndUpdate(_id, {
-            appName,
-            appDesc,
-            appTagline,
-            orderMsg: {
-              Success: orderMsgSuccess,
-              Failure: orderMsgFailure
-            },
-            whatsAppNumber,
-            instagramAccount,
-            twitterAccount,
-            CategoryList: categories
-          })
-
-          res.json({ message: 'تم تحديث الإعدادات بنجاح', settingsUpdated: 1 })
-        } catch (error) {
-          res.json({
-            message: `Sorry! Something went wrong, check the error => 😥: \n ${error}`,
-            settingsUpdated: 0
-          })
         }
-      }
+      )
+
+      break
     }
 
     default: {
@@ -125,4 +90,8 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
       break
     }
   }
+}
+
+export const config = {
+  api: { bodyParser: false }
 }

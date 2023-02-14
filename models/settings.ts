@@ -3,9 +3,6 @@ import { model, models, Schema } from 'mongoose'
 const typeString = {
   type: String
 }
-const typeNumber = {
-  type: Number
-}
 const reqString = {
   type: String,
   required: true
@@ -25,11 +22,9 @@ const SettingsSchema = new Schema({
   appName: reqString,
   appDesc: reqString,
   appTagline: reqString,
-  itemsPerPage: typeNumber,
   whatsAppNumber: typeString,
   instagramAccount: typeString,
   twitterAccount: typeString,
-  heroBg: reqArray,
   CategoryList: reqArray,
   orderMsg
 })

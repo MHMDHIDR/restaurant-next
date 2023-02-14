@@ -1,7 +1,8 @@
 import { fileRequestProps } from '@types'
 import formidable from 'formidable'
+import { NextApiRequest } from 'next'
 
-export default async function formHandler(req: fileRequestProps) {
+export default async function formHandler(req: fileRequestProps | NextApiRequest) {
   return await new Promise((resolve, reject) => {
     const form = formidable({ multiples: true })
 
