@@ -1,10 +1,10 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
-import { fileRequestProps, FoodImgsProps, ToppingsProps } from '../../../types'
+import { fileRequestProps, FoodImgsProps, ToppingsProps } from '@types'
 import { S3 } from 'aws-sdk'
-import formHandler from '../../../utils/functions/form'
-import { parseJson } from '../../../utils/functions/jsonTools'
+import formHandler from '@functions/form'
+import { parseJson } from '@functions/jsonTools'
 
 const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME } = process.env
 const s3 = new S3({

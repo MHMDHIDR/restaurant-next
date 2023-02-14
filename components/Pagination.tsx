@@ -1,7 +1,7 @@
 import Arrow from './Icons/Arrow'
-import scrollToView from '../utils/functions/scrollToView'
+import scrollToView from '@functions/scrollToView'
 import { Key } from 'react'
-import { PaginationProps } from '../types'
+import { PaginationProps } from '@types'
 import { ITEMS_PER_PAGE } from '../constants'
 
 const Pagination = ({

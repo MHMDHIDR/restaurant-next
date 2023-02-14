@@ -1,5 +1,5 @@
-import ModalNotFound from '../../components/Modal/ModalNotFound'
-import { USER } from '../../constants'
+import ModalNotFound from '@components/Modal/ModalNotFound'
+import { USER } from '@constants'
 
 // logout user from the system deleting the token from the local storage
 const logoutUser = (userId: string) => {

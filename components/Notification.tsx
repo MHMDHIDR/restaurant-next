@@ -1,4 +1,4 @@
-import { notificationProps } from '../types'
+import { notificationProps } from '@types'
 
 const Notification = ({ sendStatus, sendStatusMsg }: notificationProps) => {
   return sendStatusMsg ? (

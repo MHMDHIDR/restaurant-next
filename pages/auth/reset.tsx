@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import Axios from 'axios'
-import Header from '../../components/Header'
-import Footer from '../../components/Footer'
-import Notification from '../../components/Notification'
-import { LoadingSpinner, LoadingPage } from '../../components/Loading'
-import useEventListener from '../../hooks/useEventListener'
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { API_URL } from '../../constants'
-import { validPassword } from '../../utils/functions/validForm'
-import useAuth from '../../hooks/useAuth'
+import Header from '@components/Header'
+import Footer from '@components/Footer'
+import Notification from '@components/Notification'
+import { LoadingSpinner, LoadingPage } from '@components/Loading'
+import useEventListener from '@hooks/useEventListener'
+import useDocumentTitle from '@hooks/useDocumentTitle'
+import useAuth from '@hooks/useAuth'
+import { API_URL } from '@constants'
+import { validPassword } from '@functions/validForm'
+import { stringJson } from '@functions/jsonTools'
 
 const ResetPassword = () => {
   useDocumentTitle('Reset Password')
@@ -25,22 +26,22 @@ const ResetPassword = () => {
 
   const modalLoading = document.querySelector('#modal')
 
-  const navigate = useNavigate()
-  const { token } = useParams()
+  const { push, query } = useRouter()
+  const { token } = query
 
   const { isAuth, userType, loading } = useAuth()
   useEffect(() => {
     isAuth && userType === 'admin'
-      ? navigate('/dashboard')
+      ? push('/dashboard')
       : isAuth && userType === 'user'
-      ? navigate('/')
+      ? push('/')
       : null
-  }, [isAuth, userType, navigate])
+  }, [isAuth, userType, push])
 
   useEventListener('click', (e: any) => {
     //confirm means cancel Modal message (hide it)
     if (e.target.id === 'confirm') {
-      modalLoading.classList.add('hidden')
+      modalLoading!.classList.add('hidden')
     }
   })
 
@@ -50,8 +51,8 @@ const ResetPassword = () => {
     if (
       newUserPass === '' ||
       newUserPassConfirm === '' ||
-      newPassErr.current.textContent !== '' ||
-      confirmNewPassErr.current.textContent !== ''
+      newPassErr.current!.textContent !== '' ||
+      confirmNewPassErr.current!.textContent !== ''
     ) {
       setNewPassStatus(0)
       setNewPassMsg('الرجاء ملء جميع الحقول بطريقة صحيحة')
@@ -63,7 +64,7 @@ const ResetPassword = () => {
     } else {
       const formData = new FormData()
       formData.append('userPassword', newUserPass.trim())
-      formData.append('userToken', token)
+      formData.append('userToken', stringJson(token ?? 'token'))
 
       // if there's no error in the form
       e.target.reset()
@@ -81,11 +82,11 @@ const ResetPassword = () => {
         if (newPassSet === 1) {
           //if user has changed his password successfully
           setTimeout(() => {
-            navigate('/auth/login')
+            push('/auth/login')
           }, 5000)
         }
-      } catch ({ response }) {
-        setNewPassMsg(response?.message)
+      } catch (error: any) {
+        setNewPassMsg(error)
       } finally {
         setIsSendingResetForm(false)
       }
@@ -117,21 +118,21 @@ const ResetPassword = () => {
                   min={8}
                   max={50}
                   onChange={e => setNewUserPass(e.target.value)}
-                  onKeyUp={e => {
+                  onKeyUp={(e: any) => {
                     const parent = e.target.parentElement
                     if (e.target.value.length > 0 && !validPassword(e.target.value)) {
-                      parent.classList.add('notvalid')
-                      newPassErr.current.textContent =
+                      parent!.classList.add('notvalid')
+                      newPassErr.current!.textContent =
                         'كلمة المرور يجب أن تتكون من حروف وأرقام بالانجليزية فقط، وطولها 8 أحرف وأرقام على الأقل و 50 أحرف وأرقام على الأكثر'
                     } else if (
                       newUserPassConfirm.length > 0 &&
                       e.target.value !== newUserPassConfirm
                     ) {
-                      parent.classList.add('notvalid')
-                      newPassErr.current.textContent = 'كلمة المرور غير متطابقة'
+                      parent!.classList.add('notvalid')
+                      newPassErr.current!.textContent = 'كلمة المرور غير متطابقة'
                     } else {
-                      parent.classList.remove('notvalid')
-                      newPassErr.current.textContent = ''
+                      parent!.classList.remove('notvalid')
+                      newPassErr.current!.textContent = ''
                     }
                   }}
                   autoFocus
@@ -153,18 +154,18 @@ const ResetPassword = () => {
                   min={8}
                   max={50}
                   onChange={e => setNewUserPassConfirm(e.target.value)}
-                  onKeyUp={e => {
+                  onKeyUp={(e: any) => {
                     const parent = e.target.parentElement
                     if (e.target.value && !validPassword(e.target.value)) {
                       parent.classList.add('notvalid')
-                      confirmNewPassErr.current.textContent =
+                      confirmNewPassErr.current!.textContent =
                         'كلمة المرور يجب أن تتكون من حروف وأرقام بالانجليزية فقط، وطولها 8 أحرف وأرقام على الأقل و 50 أحرف وأرقام على الأكثر'
                     } else if (e.target.value !== newUserPass) {
                       parent.classList.add('notvalid')
-                      confirmNewPassErr.current.textContent = 'كلمة المرور غير متطابقة'
+                      confirmNewPassErr.current!.textContent = 'كلمة المرور غير متطابقة'
                     } else {
                       parent.classList.remove('notvalid')
-                      confirmNewPassErr.current.textContent = ''
+                      confirmNewPassErr.current!.textContent = ''
                     }
                   }}
                   required

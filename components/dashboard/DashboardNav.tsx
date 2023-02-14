@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import ThemeToggler from '../ThemeToggler'
 import Logo from '../Icons/Logo'
-import menuToggler from '../../utils/functions/menuToggler'
+import menuToggler from '@functions/menuToggler'
 import Image from 'next/image'
-import useAxios from '../../hooks/useAxios'
+import useAxios from '@hooks/useAxios'
 
 const DashboardNav = () => {
   const handleLogout = () => {

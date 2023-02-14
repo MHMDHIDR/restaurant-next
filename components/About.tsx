@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import useAxios from '../hooks/useAxios'
+import useAxios from '@hooks/useAxios'
 
 const About = () => {
   const [data, setData] = useState<string | any>()

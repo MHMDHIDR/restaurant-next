@@ -1,4 +1,4 @@
-import { DividerProps } from '../types'
+import { DividerProps } from '@types'
 
 const Divider = ({ thickness = 0, style = 'dashed', marginY = 14 }: DividerProps) => (
   <hr

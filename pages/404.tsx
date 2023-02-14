@@ -1,4 +1,4 @@
-import ModalNotFound from '../components/Modal/ModalNotFound'
+import ModalNotFound from '@components/Modal/ModalNotFound'
 
 const page404 = () => <ModalNotFound />
 

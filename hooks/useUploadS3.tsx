@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { API_URL } from '../constants'
-import { FileUploadProps, FoodImgsProps, uploadurlDataProps } from '../types'
-import { stringJson } from '../utils/functions/jsonTools'
+import { FileUploadProps, FoodImgsProps, uploadurlDataProps } from '@types'
+import { stringJson } from '@functions/jsonTools'
 
 /**
  * Custom hook to upload files to S3 bucket

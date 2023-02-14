@@ -1,4 +1,4 @@
-import { fileRequestProps } from '../../types'
+import { fileRequestProps } from '@types'
 import formidable from 'formidable'
 
 export default async function formHandler(req: fileRequestProps) {

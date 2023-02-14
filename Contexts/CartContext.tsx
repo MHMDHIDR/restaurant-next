@@ -1,6 +1,6 @@
 import { useState, createContext, useContext, useEffect } from 'react'
-import { CartProps } from '../types'
-import { parseJson, stringJson } from '../utils/functions/jsonTools'
+import { CartProps } from '@types'
+import { parseJson, stringJson } from '@functions/jsonTools'
 import { ToppingsContext } from './ToppingsContext'
 
 const cartFromLocalStorage =

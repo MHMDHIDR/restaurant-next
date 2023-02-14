@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext } from 'react'
 import Link from 'next/link'
-import { ServerSideProps } from '../../../types'
-import { CartContext } from '../../../contexts/CartContext'
-import useDocumentTitle from '../../../hooks/useDocumentTitle'
-import scrollToView from '../../../utils/functions/scrollToView'
-import { removeSlug } from '../../../utils/functions/slug'
-import Card from '../../../components/Card'
-import { API_URL } from '../../../constants'
-import Layout from '../../../components/Layout'
+import { ServerSideProps } from '@types'
+import { CartContext } from '@contexts/CartContext'
+import useDocumentTitle from '@hooks/useDocumentTitle'
+import scrollToView from '@functions/scrollToView'
+import { removeSlug } from '@functions/slug'
+import Card from '@components/Card'
+import { API_URL } from '@constants'
+import Layout from '@components/Layout'
 
 const index = ({ item }: any) => {
   useDocumentTitle('View Foods')

@@ -1,4 +1,4 @@
-import { LogoProps } from '../../types'
+import { LogoProps } from '@types'
 
 const Logo = ({ width = '10', height = '10', className = '', color = '' }: LogoProps) => (
   <svg

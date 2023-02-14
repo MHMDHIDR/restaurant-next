@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Types } from 'mongoose'
 import dbConnect from '../../../utils/db'
 import OrdersModel from '../../../models/Orders'
-import email from '../../../utils/functions/email'
+import email from '@functions/email'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method, body, query } = req

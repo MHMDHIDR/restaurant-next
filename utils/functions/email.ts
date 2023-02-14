@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer'
-import { ADMIN_EMAIL } from '../../constants'
+import { ADMIN_EMAIL } from '@constants'
 
 const email = async ({ name, subject, from, to, msg }: any) => {
   /**

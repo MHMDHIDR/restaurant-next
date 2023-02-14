@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
-import { selectedToppingsProps } from '../types'
-import { parseJson, stringJson } from '../utils/functions/jsonTools'
+import { selectedToppingsProps } from '@types'
+import { parseJson, stringJson } from '@functions/jsonTools'
 
 export const ToppingsContext = createContext({
   handleToppingChecked: (_toppingId: string, _toppingPrice: number) => {},

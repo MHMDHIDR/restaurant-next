@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { CartContext } from '../contexts/CartContext'
-import { ToppingsContext } from '../contexts/ToppingsContext'
-import { DashboardOrderContext } from '../contexts/DashboardOrderContext'
-import { removeSlug } from '../utils/functions/slug'
+import { CartContext } from '@contexts/CartContext'
+import { ToppingsContext } from '@contexts/ToppingsContext'
+import { DashboardOrderContext } from '@contexts/DashboardOrderContext'
+import { removeSlug } from '@functions/slug'
 import Divider from './Divider'
-import { selectedToppingsProps } from '../types'
+import { selectedToppingsProps } from '@types'
 
 const CartItems = ({ orderItems, orderToppings }: any) => {
   const { items } = useContext(CartContext)

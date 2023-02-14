@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Notification from './Notification'
 import { LoadingSpinner } from './Loading'
-import { validEmail } from '../utils/functions/validForm'
+import { validEmail } from '@functions/validForm'
 import { API_URL } from '../constants'
 import Axios from 'axios'
 

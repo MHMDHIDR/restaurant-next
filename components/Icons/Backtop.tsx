@@ -1,4 +1,4 @@
-import { toggleCSSclasses } from '../../utils/functions/toggleCSSclasses'
+import { toggleCSSclasses } from '@functions/toggleCSSclasses'
 
 const Backtop = ({ color = 'orange' }) => {
   // const backTop = document.getElementById('back__top')

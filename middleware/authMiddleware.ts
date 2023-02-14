@@ -1,5 +1,5 @@
 import { NextApiResponse } from 'next'
-import { authUserRequestProps } from '../types/index.js'
+import { authUserRequestProps } from '@types/index.js'
 import { verify, JwtPayload } from 'jsonwebtoken'
 import UserModel from '../models/User.js'
 

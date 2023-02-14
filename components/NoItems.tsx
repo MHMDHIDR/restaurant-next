@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { NoItemsProps } from '../types'
-import goTo from '../utils/functions/goTo'
+import { NoItemsProps } from '@types'
+import goTo from '@functions/goTo'
 
 const NoItems = ({ msg, links }: NoItemsProps) => (
   <div className='flex flex-col items-center justify-center gap-6 my-10'>

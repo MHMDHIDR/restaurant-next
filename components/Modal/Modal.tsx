@@ -1,6 +1,6 @@
 import ThemeToggler from '../ThemeToggler'
 import { Loading } from '../Icons/Status'
-import { ModalProps } from '../../types'
+import { ModalProps } from '@types'
 
 const Modal = ({
   msg = ``,

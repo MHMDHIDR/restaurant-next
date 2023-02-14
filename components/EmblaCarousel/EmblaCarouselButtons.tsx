@@ -1,4 +1,6 @@
-export const DotButton = ({ selected, onClick }) => (
+import { DotButtonProps, PrevNextButtonProps } from '@types'
+
+export const DotButton = ({ selected, onClick }: DotButtonProps) => (
   <button
     aria-label='Dotted Navigation'
     title='Dotted Navigation'
@@ -10,7 +12,7 @@ export const DotButton = ({ selected, onClick }) => (
   />
 )
 
-export const PrevButton = ({ enabled, onClick }) => (
+export const PrevButton = ({ enabled, onClick }: PrevNextButtonProps) => (
   <button
     aria-label='Previous slide'
     title='Previous slide'
@@ -29,7 +31,7 @@ export const PrevButton = ({ enabled, onClick }) => (
   </button>
 )
 
-export const NextButton = ({ enabled, onClick }) => (
+export const NextButton = ({ enabled, onClick }: PrevNextButtonProps) => (
   <button
     aria-label='Next slide'
     title='Next slide'

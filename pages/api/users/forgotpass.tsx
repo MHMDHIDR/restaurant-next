@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import UsersModel from '../../../models/User'
 import { sign } from 'jsonwebtoken'
-import { APP_URL } from '../../../constants'
-import email from '../../../utils/functions/email'
+import { APP_URL } from '@constants'
+import email from '@functions/email'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method, body } = req

@@ -2,9 +2,9 @@ import { useContext, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { SearchContext } from '../contexts/SearchContext'
-import useEventListener from '../hooks/useEventListener'
-import { removeSlug } from '../utils/functions/slug'
+import { SearchContext } from '@contexts/SearchContext'
+import useEventListener from '@hooks/useEventListener'
+import { removeSlug } from '@functions/slug'
 
 const Search = () => {
   const searchWrapperRef = useRef<HTMLDivElement>(null)

@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext } from 'react'
-import { FileUploadProps } from '../types'
+import { FileUploadProps } from '@types'
 
 export const FileUploadContext = createContext({} as FileUploadProps)
 

@@ -2,9 +2,9 @@ import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
-import { fileRequestProps, ToppingsProps } from '../../../types'
-import formHandler from '../../../utils/functions/form'
-import { parseJson } from '../../../utils/functions/jsonTools'
+import { fileRequestProps, ToppingsProps } from '@types'
+import formHandler from '@functions/form'
+import { parseJson } from '@functions/jsonTools'
 
 const handler = async (req: fileRequestProps, res: NextApiResponse) => {
   const { method } = req

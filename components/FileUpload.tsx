@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import { Key, useContext } from 'react'
 import { useRouter } from 'next/router'
-import { FileUploadContext } from '../contexts/FileUploadContext'
-import { FileUploadProps, FoodImgsProps } from '../types'
+import { FileUploadContext } from '@contexts/FileUploadContext'
+import { FileUploadProps, FoodImgsProps } from '@types'
 import { FILE_UPLOAD_IMG_SIZE } from '../constants'
 
 const FileUpload = ({ data }: any) => {

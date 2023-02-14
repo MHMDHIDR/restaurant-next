@@ -3,9 +3,9 @@ import Link from 'next/link'
 import { DotButton, PrevButton, NextButton } from './EmblaCarouselButtons'
 import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react'
 import { Thumb } from './EmblaCarouselThumb'
-import { removeSlug } from '../../utils/functions/slug'
+import { removeSlug } from '@functions/slug'
 import Image from 'next/image'
-import { HEADER_BG_IMG } from '../../constants'
+import { HEADER_BG_IMG } from '@constants'
 
 const EmblaCarousel = ({ slides, media, smallView = false }: any) => {
   const [selectedIndex, setSelectedIndex] = useState(0)

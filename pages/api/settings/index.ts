@@ -3,7 +3,7 @@ import dbConnect from '../../../utils/db'
 import SettingsModel from '../../../models/Settings'
 import { Types } from 'mongoose'
 import paginatedResults from '../../../middleware/paginatedResults'
-import { fileRequestProps } from '../../../types'
+import { fileRequestProps } from '@types'
 import sharp from 'sharp'
 import { S3 } from 'aws-sdk'
 

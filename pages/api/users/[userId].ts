@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
 import UsersModel from '../../../models/User'
 import { Types } from 'mongoose'
-import { authUserRequestProps } from '../../../types'
+import { authUserRequestProps } from '@types'
 
 export default async function handler(req: authUserRequestProps, res: NextApiResponse) {
   const { method, body, query } = req

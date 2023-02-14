@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
-import { CartContext } from '../contexts/CartContext'
-import { ToppingsContext } from '../contexts/ToppingsContext'
+import { CartContext } from '@contexts/CartContext'
+import { ToppingsContext } from '@contexts/ToppingsContext'
 import TagIcon from './Icons/TagIcon'
 import EmblaCarousel from './EmblaCarousel'
-import { removeSlug } from '../utils/functions/slug'
+import { removeSlug } from '@functions/slug'
 import Logo from './Icons/Logo'
-import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '../types'
-import useAuth from '../hooks/useAuth'
+import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '@types'
+import useAuth from '@hooks/useAuth'
 import { USER } from '../constants'
 
 const Card = ({

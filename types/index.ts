@@ -26,6 +26,21 @@ export type ModalProps = {
   ctaSpecialBtns?: string[]
 }
 
+export type DotButtonProps = {
+  selected: boolean
+  onClick: MouseEventHandler<HTMLButtonElement>
+}
+
+export type PrevNextButtonProps = {
+  enabled: boolean
+  onClick: DotButtonProps['onClick']
+}
+
+export type EmblaThumbProps = DotButtonProps & {
+  imgSrc: string
+  alt: string
+}
+
 export type CartProps = {
   items: any[]
   setItems: any
@@ -319,13 +334,6 @@ export type ServerSideProps = {
   params: {
     id: ObjectId
   }
-}
-
-export type EmblaThumbProps = {
-  selected: boolean
-  onClick: MouseEventHandler<HTMLButtonElement>
-  imgSrc: string
-  alt: string
 }
 
 export type authUserRequestProps = NextApiRequest & {

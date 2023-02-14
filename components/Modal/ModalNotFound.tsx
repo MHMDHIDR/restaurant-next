@@ -1,6 +1,6 @@
 import Modal from './Modal'
 import { Error } from '../Icons/Status'
-import { ModalProps } from '../../types'
+import { ModalProps } from '@types'
 
 const ModalNotFound = ({
   // status prop type react element

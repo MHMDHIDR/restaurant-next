@@ -1,5 +1,5 @@
 import { useState, createContext, useContext } from 'react'
-import { orderProps } from '../types'
+import { orderProps } from '@types'
 import { ToppingsContext } from './ToppingsContext'
 
 export const DashboardOrderContext = createContext({} as orderProps)

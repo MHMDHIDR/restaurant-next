@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { USER } from '../constants'
-import { stringJson } from '../utils/functions/jsonTools'
+import { stringJson } from '@functions/jsonTools'
 import useAxios from './useAxios'
 
 /**

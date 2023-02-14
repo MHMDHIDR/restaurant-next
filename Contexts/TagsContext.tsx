@@ -1,5 +1,5 @@
 import { useState, createContext } from 'react'
-import { AddTagsProps, TagsProps } from '../types'
+import { AddTagsProps, TagsProps } from '@types'
 
 export const TagsContext = createContext({} as TagsProps)
 

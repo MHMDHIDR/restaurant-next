@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { EmblaThumbProps } from '../../types'
+import { EmblaThumbProps } from '@types'
 
 export const Thumb = ({ selected, onClick, imgSrc, alt }: EmblaThumbProps) => (
   <div

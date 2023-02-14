@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-// import { USER } from '../../constants'
+// import { USER } from '@constants'
 
-import goTo from '../../utils/functions/goTo'
-import menuToggler from '../../utils/functions/menuToggler'
+import goTo from '@functions/goTo'
+import menuToggler from '@functions/menuToggler'
 
 const DashboardSidebar = () => {
   const menuTogglerRef = useRef<any>()

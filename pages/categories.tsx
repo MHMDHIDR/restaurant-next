@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import useDocumentTitle from '../hooks/useDocumentTitle'
-import Layout from '../components/Layout'
-import { API_URL } from '../constants'
+import useDocumentTitle from '@hooks/useDocumentTitle'
+import Layout from '@components/Layout'
+import { API_URL } from '@constants'
 
 const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any) => {
   useDocumentTitle('Categories')

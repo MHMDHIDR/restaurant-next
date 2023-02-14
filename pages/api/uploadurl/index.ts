@@ -1,8 +1,8 @@
 import S3 from 'aws-sdk/clients/s3'
 import { randomUUID } from 'crypto'
 import { NextApiResponse } from 'next'
-import { fileRequestProps } from '../../../types'
-import { parseJson } from '../../../utils/functions/jsonTools'
+import { fileRequestProps } from '@types'
+import { parseJson } from '@functions/jsonTools'
 const { AWS_ACCESS_ID, AWS_SECRET, AWS_BUCKET_NAME, AWS_REGION } = process.env
 const s3 = new S3({
   accessKeyId: AWS_ACCESS_ID,

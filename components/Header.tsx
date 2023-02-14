@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import useAxios from '../hooks/useAxios'
+import useAxios from '@hooks/useAxios'
 import Search from './Search'
 import Nav from './Nav'
 import ScrollDown from './ScrollDown'
 import Typewriter from 'typewriter-effect'
-import { headerProps } from '../types'
+import { headerProps } from '@types'
 import Image from 'next/image'
 
 const Header = () => {
