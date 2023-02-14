@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
-import UsersModel from '../../../models/User'
+import UsersModel from '@models/User'
 import { authUserRequestProps } from '@types'
 
 export default async function handler(req: authUserRequestProps, res: NextApiResponse) {

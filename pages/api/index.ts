@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import SettingsModel from '../../models/Settings'
+import SettingsModel from '@models/Settings'
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const logo = await SettingsModel.find().select('websiteLogoDisplayPath -_id')

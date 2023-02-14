@@ -1,7 +1,7 @@
 import { useContext, useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import { CartContext } from '@contexts/CartContext'
 import { ToppingsContext } from '@contexts/ToppingsContext'
 import useDocumentTitle from '@hooks/useDocumentTitle'
@@ -135,7 +135,7 @@ const OrderFood = () => {
     formData.append('paymentData', stringJson(paymentData))
 
     try {
-      const response = await Axios.post(`${API_URL}/orders`, formData)
+      const response = await axios.post(`${API_URL}/orders`, formData)
       const { orderAdded, message } = response.data
       setIsLoading(false)
 

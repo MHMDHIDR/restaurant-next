@@ -1,18 +1,8 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
-import SettingsModel from '../../../models/Settings'
-import { Types } from 'mongoose'
-import paginatedResults from '../../../middleware/paginatedResults'
+import SettingsModel from '@models/Settings'
+import paginatedResults from '@middleware/paginatedResults'
 import { fileRequestProps } from '@types'
-import sharp from 'sharp'
-import { S3 } from 'aws-sdk'
-
-const s3 = new S3({
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_ID || '',
-    secretAccessKey: process.env.AWS_SECRET || ''
-  }
-})
 
 export default async function handler(req: fileRequestProps, res: NextApiResponse) {
   const { method } = req

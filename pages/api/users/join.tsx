@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
-import UsersModel from '../../../models/User'
+import UsersModel from '@models/User'
 import { sign } from 'jsonwebtoken'
 import { genSalt, hash } from 'bcryptjs'
 

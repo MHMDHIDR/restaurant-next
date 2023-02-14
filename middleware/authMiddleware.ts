@@ -1,7 +1,7 @@
 import { NextApiResponse } from 'next'
 import { authUserRequestProps } from '@types/index.js'
 import { verify, JwtPayload } from 'jsonwebtoken'
-import UserModel from '../models/User.js'
+import UserModel from '@models/User.js'
 
 const protect = (handler: any) => {
   return async (req: authUserRequestProps, res: NextApiResponse) => {

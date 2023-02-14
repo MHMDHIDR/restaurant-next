@@ -1,11 +1,11 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
-import SettingsModel from '../../../models/Settings'
+import SettingsModel from '@models/Settings'
 import { Types } from 'mongoose'
-import paginatedResults from '../../../middleware/paginatedResults'
+import paginatedResults from '@middleware/paginatedResults'
 import { fileRequestProps } from '@types'
-import sharp from 'sharp'
 import { S3 } from 'aws-sdk'
+import { parseJson } from '@functions/jsonTools'
 
 const s3 = new S3({
   credentials: {
@@ -64,60 +64,35 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
             return
           }
         })
+        ;(async () => {
+          const { Location } = await s3.upload(params).promise()
 
-        //upload the new image to s3 bucket
-        sharp(websiteLogo.data)
-          .rotate()
-          .resize(600)
-          .webp({ lossless: true })
-          .toBuffer()
-          .then(newWebpImg => {
-            //changing the old jpg image buffer to new webp buffer
-            websiteLogo.data = newWebpImg
+          //saving the new image path to the database
+          websiteLogoDisplayPath = Location
+          websiteLogoDisplayName = Location.split('.com/')[1]
 
-            const params = {
-              Bucket: process.env.AWS_BUCKET_NAME || '',
-              Key: websiteLogoName,
-              Body: newWebpImg,
-              ContentType: 'image/webp'
-            } //uploading the new webp image to s3 bucket, self executing function
-            ;(async () => {
-              const { Location } = await s3.upload(params).promise()
-
-              //saving the new image path to the database
-              websiteLogoDisplayPath = Location
-              websiteLogoDisplayName = Location.split('.com/')[1]
-
-              await SettingsModel.findByIdAndUpdate(_id, {
-                websiteLogoDisplayPath,
-                websiteLogoDisplayName,
-                appName,
-                appDesc,
-                appTagline,
-                orderMsg: {
-                  Success: orderMsgSuccess,
-                  Failure: orderMsgFailure
-                },
-                whatsAppNumber,
-                instagramAccount,
-                twitterAccount,
-                CategoryList: categories
-              })
-
-              res.json({
-                message: 'تم تحديث الإعدادات بنجاح',
-                settingsUpdated: 1
-              })
-              return
-            })()
+          await SettingsModel.findByIdAndUpdate(_id, {
+            websiteLogoDisplayPath,
+            websiteLogoDisplayName,
+            appName,
+            appDesc,
+            appTagline,
+            orderMsg: {
+              Success: orderMsgSuccess,
+              Failure: orderMsgFailure
+            },
+            whatsAppNumber,
+            instagramAccount,
+            twitterAccount,
+            CategoryList: categories
           })
-          .catch(({ message }) => {
-            res.json({
-              message,
-              settingsUpdated: 0
-            })
-            return
+
+          res.json({
+            message: 'تم تحديث الإعدادات بنجاح',
+            settingsUpdated: 1
           })
+          return
+        })()
       } else {
         //else do this
         try {

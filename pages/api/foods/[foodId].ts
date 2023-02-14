@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next'
 import dbConnect from '../../../utils/db'
-import FoodModel from '../../../models/Foods'
+import FoodModel from '@models/Foods'
 import { fileRequestProps, FoodImgsProps, ToppingsProps } from '@types'
 import { S3 } from 'aws-sdk'
 import formHandler from '@functions/form'
