@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 import { selectedToppingsProps } from '../types'
+import { parseJson, stringJson } from '../utils/functions/jsonTools'
 
 export const ToppingsContext = createContext({
   handleToppingChecked: (_toppingId: string, _toppingPrice: number) => {},
@@ -14,7 +15,7 @@ export const ToppingsContext = createContext({
 
 const checkedToppingsFromLocalStorage =
   typeof window !== 'undefined'
-    ? JSON.parse(localStorage.getItem('restCheckedToppings') || '[]')
+    ? parseJson(localStorage.getItem('restCheckedToppings') || '[]')
     : []
 
 const ToppingsContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -22,7 +23,7 @@ const ToppingsContextProvider = ({ children }: { children: React.ReactNode }) =>
   const [orderItemToppings, setOrderItemToppings] = useState<any>([])
 
   useEffect(() => {
-    localStorage.setItem('restCheckedToppings', JSON.stringify(checkedToppings))
+    localStorage.setItem('restCheckedToppings', stringJson(checkedToppings))
   }, [checkedToppings])
 
   const handleToppingChecked = (

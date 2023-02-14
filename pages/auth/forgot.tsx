@@ -12,7 +12,7 @@ import { API_URL } from '../../constants'
 import useAuth from '../../hooks/useAuth'
 
 const ForgotDataFromLocalStorage =
-  typeof window !== 'undefined' && JSON.parse(localStorage.getItem('ForgotData') || '{}')
+  typeof window !== 'undefined' && parseJson(localStorage.getItem('ForgotData') || '{}')
 
 const ForgotPassword = () => {
   useDocumentTitle('Forgot Password')

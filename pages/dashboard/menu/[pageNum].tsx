@@ -19,6 +19,7 @@ import { isNumber } from '../../../utils/functions/isNumber'
 import { createLocaleDateString } from '../../../utils/functions/convertDate'
 import scrollToView from '../../../utils/functions/scrollToView'
 import { API_URL, ITEMS_PER_PAGE, USER } from '../../../constants'
+import { stringJson } from '../../../utils/functions/jsonTools'
 
 const DashboardMenu = () => {
   useDocumentTitle('Menu')
@@ -75,7 +76,7 @@ const DashboardMenu = () => {
     ]
     //Using FormData to send constructed data
     const formData = new FormData()
-    formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))
+    formData.append('prevFoodImgPathsAndNames', stringJson(prevFoodImgPathsAndNames))
     try {
       //You need to name the body {data} so it can be recognized in (.delete) method
       const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
@@ -198,7 +199,7 @@ const DashboardMenu = () => {
                               id='deleteFood'
                               data-id={item._id}
                               data-name={item.foodName}
-                              data-imgname={JSON.stringify(item.foodImgs)}
+                              data-imgname={stringJson(item.foodImgs)}
                               className='px-4 py-1 mx-2 text-white bg-red-600 rounded-md hover:bg-red-700'
                             >
                               حذف

@@ -5,6 +5,7 @@ import { TagsContext } from '../../../contexts/TagsContext'
 import { FileUploadContext } from '../../../contexts/FileUploadContext'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import useAxios from '../../../hooks/useAxios'
+import useUploadS3 from '../../../hooks/useUploadS3'
 import Modal from '../../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../../components/Icons/Status'
 import AddTags from '../../../components/AddTags'
@@ -14,7 +15,8 @@ import goTo from '../../../utils/functions/goTo'
 import scrollToView from '../../../utils/functions/scrollToView'
 import { API_URL } from '../../../constants'
 import Layout from '../../../components/dashboard/Layout'
-import { FoodImgsProps, selectedToppingsProps, uploadurlDataProps } from '../../../types'
+import { selectedToppingsProps } from '../../../types'
+import { stringJson } from '../../../utils/functions/jsonTools'
 
 const AddFood = () => {
   useDocumentTitle('Add Food or Drink')
@@ -34,7 +36,6 @@ const AddFood = () => {
   const [categoryList, setCategoryList] = useState<string[]>([])
   const [toppings, setToppings] = useState<any>([{}])
   const [modalLoading, setModalLoading] = useState<Element>()
-  const [uploadStatus, setUploadStatus] = useState(0)
 
   //Contexts
   const { tags } = useContext(TagsContext)
@@ -60,79 +61,43 @@ const AddFood = () => {
     key?: string
     preventDefault: () => void
   }) => {
-    if (e.key === 'Enter') {
-      //don't submit the form if Enter is pressed
-      e.preventDefault()
-    } else {
-      e.preventDefault()
+    e.preventDefault()
 
-      //using FormData to send constructed data
-      const formData = new FormData()
-      const fileFormData = new FormData()
-      formData.append('foodName', foodName)
-      formData.append('foodPrice', foodPrice)
-      formData.append('category', category[0])
-      formData.append('foodDesc', foodDesc)
-      formData.append('foodToppings', JSON.stringify(toppings))
-      formData.append('foodTags', JSON.stringify(tags))
+    //using FormData to send constructed data
+    const formData = new FormData()
+    formData.append('foodName', foodName)
+    formData.append('foodPrice', foodPrice)
+    formData.append('category', category[0])
+    formData.append('foodDesc', foodDesc)
+    formData.append('foodToppings', stringJson(toppings))
+    formData.append('foodTags', stringJson(tags))
 
-      if (
-        ImgErr.current!.textContent === '' &&
-        foodNameErr.current!.textContent === '' &&
-        priceErr.current!.textContent === '' &&
-        descErr.current!.textContent === ''
-      ) {
-        modalLoading!.classList.remove('hidden')
-        const fileData = JSON.stringify(
-          file.map((file: { name: string; type: string }) => {
-            return {
-              key: file?.name,
-              type: file?.type
-            }
-          })
-        )
+    if (
+      ImgErr.current!.textContent === '' &&
+      foodNameErr.current!.textContent === '' &&
+      priceErr.current!.textContent === '' &&
+      descErr.current!.textContent === ''
+    ) {
+      modalLoading!.classList.remove('hidden')
 
-        const { data }: uploadurlDataProps = await axios.get(
-          `${API_URL}/uploadurl?file=${fileData}`
-        )
-        async function uploadToS3(url: string) {
-          const { status } = await axios.post(url, fileFormData)
-          setUploadStatus(status)
-        }
-        data.map(({ fields, url }: any, idx: number) => {
-          Object.entries({ ...fields, file: file[idx] }).forEach(([key, value]) => {
-            fileFormData.set(key, value as string)
-          })
-          return uploadToS3(url)
-        })
+      const { foodImgs } = await useUploadS3(file)
+      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
 
-        const foodImgs: FoodImgsProps[] = data.map(({ fields, url }) => {
-          const urlSplit = (n: number) => url.split('/')[n]
-          return {
-            foodImgDisplayName: fields.key,
-            foodImgDisplayPath: `${urlSplit(0)}//${fields.bucket}.${urlSplit(2)}/${
-              fields.key
-            }`
-          }
-        })
-        formData.append('foodImgs', JSON.stringify(foodImgs.length > 0 ? foodImgs : []))
+      try {
+        const response = await axios.post(`${API_URL}/foods`, formData)
+        const { foodAdded, message } = response.data
+        setAddFoodStatus(foodAdded)
+        setAddFoodMessage(message)
 
-        try {
-          const response = await axios.post(`${API_URL}/foods`, formData)
-          const { foodAdded, message } = response.data
-          setAddFoodStatus(foodAdded)
-          setAddFoodMessage(message)
-
-          setTimeout(() => {
-            modalLoading!.classList.add('hidden')
-          }, 300)
-        } catch (err) {
-          formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
-        }
-      } else {
-        formMsg.current!.textContent =
-          'الرجاء إضافة بيانات الوجبة بصورة صحيحة لتستطيع إضافتها 😃'
+        setTimeout(() => {
+          modalLoading!.classList.add('hidden')
+        }, 300)
+      } catch (err) {
+        formMsg.current!.textContent = `عفواً حدث خطأ ما 😥 ${err}`
       }
+    } else {
+      formMsg.current!.textContent =
+        'الرجاء إضافة بيانات الوجبة بصورة صحيحة لتستطيع إضافتها 😃'
     }
   }
 

@@ -1,5 +1,6 @@
 import { UserProps } from '../types'
 import { Types } from 'mongoose'
+import { parseJson } from '../utils/functions/jsonTools'
 const { ObjectId } = Types
 
 export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
@@ -15,7 +16,7 @@ export const FILE_UPLOAD_IMG_SIZE = 122
 export const USER: UserProps =
   typeof window !== 'undefined' &&
   'user' in localStorage &&
-  JSON.parse(localStorage.getItem('user') || '{}')
+  parseJson(localStorage.getItem('user') || '{}')
 
 export const APP_URL =
   process.env.NODE_ENV === 'development'
@@ -24,7 +25,7 @@ export const APP_URL =
 
 export const API_URL = APP_URL + '/api'
 
-export const DEFAULT_DATA_VALUES = {
+export const DEFAULT_FOOD_DATA = {
   _id: '',
   foodName: '',
   foodPrice: 1,

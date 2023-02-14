@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useContext, ChangeEvent } from 'react'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import { TagsContext } from '../../../../contexts/TagsContext'
 import { FileUploadContext } from '../../../../contexts/FileUploadContext'
 import useDocumentTitle from '../../../../hooks/useDocumentTitle'
 import useEventListener from '../../../../hooks/useEventListener'
 import useAxios from '../../../../hooks/useAxios'
+import useUploadS3 from '../../../../hooks/useUploadS3'
 import Modal from '../../../../components/Modal/Modal'
 import { Success, Error, Loading } from '../../../../components/Icons/Status'
 import AddTags from '../../../../components/AddTags'
@@ -15,8 +16,9 @@ import Layout from '../../../../components/dashboard/Layout'
 import { removeSlug, createSlug } from '../../../../utils/functions/slug'
 import goTo from '../../../../utils/functions/goTo'
 import scrollToView from '../../../../utils/functions/scrollToView'
-import { API_URL, DEFAULT_DATA_VALUES } from '../../../../constants'
+import { API_URL, DEFAULT_FOOD_DATA } from '../../../../constants'
 import { ToppingsProps, foodDataProps, FoodImgsProps } from '../../../../types'
+import { stringJson } from '../../../../utils/functions/jsonTools'
 
 const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useDocumentTitle('Edit Food')
@@ -28,9 +30,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   const [delFoodName, setDelFoodName] = useState('')
   const [action, setAction] = useState('')
   const [delFoodImg, setDelFoodImg] = useState<FoodImgsProps['foodImgDisplayName']>(
-    DEFAULT_DATA_VALUES.foodImgDisplayName
+    DEFAULT_FOOD_DATA.foodImgDisplayName
   )
-  const [data, setData] = useState<foodDataProps['response']>(DEFAULT_DATA_VALUES)
+  const [data, setData] = useState<foodDataProps['response']>(DEFAULT_FOOD_DATA)
   const [categoryList, setCategoryList] = useState<string[]>([])
   const [toppings, setToppings] = useState<any>([{}])
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
@@ -91,73 +93,62 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   }, [data, setTags])
 
   const handleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
-    if (e.key === 'Enter') {
-      //don't submit the form if Enter is pressed
-      e.preventDefault()
-    } else {
-      e.preventDefault()
-      //initial form values if no value was updated taking it from [0] index
-      const currentFoodId = data?._id
-      const currentFoodName = data?.foodName
-      const currentFoodPrice = data?.foodPrice
-      const currentCategory = data?.category
-      const currentFoodDesc = data?.foodDesc
-      const currentTags = tags
-      const currentToppings = toppings
-
-      // const prevFoodImgPathsAndNames = [
-      //   ...data?.foodImgs.map(({ foodImgDisplayPath, foodImgDisplayName }) => {
-      //     return {
-      //       foodImgDisplayPath,
-      //       foodImgDisplayName
-      //     }
-      //   })
-      // ]
-
-      //using FormData to send constructed data
-      const formData = new FormData()
-      formData.append('foodId', String(currentFoodId))
-      formData.append('foodName', foodName || currentFoodName)
-      formData.append('foodPrice', foodPrice || String(currentFoodPrice))
-      formData.append('category', category[0] || currentCategory)
-      formData.append('foodDesc', foodDesc || currentFoodDesc)
-      formData.append('foodTags', JSON.stringify(currentTags))
-      formData.append('foodToppings', JSON.stringify(currentToppings))
-
-      // file.map(foodImg => formData.append('foodImg', foodImg))
-      // formData.append(
-      //   'prevFoodImgPathsAndNames',
-      //   JSON.stringify(prevFoodImgPathsAndNames)
-      // )
-
-      if (
-        // ImgErr.current!.textContent === '' &&
-        foodNameErr.current!.textContent === '' &&
-        priceErr.current!.textContent === '' &&
-        descErr.current!.textContent === ''
-      ) {
-        try {
-          setLoadingMsg(`جار تحديث ${foodName}`)
-          modalLoading!.classList.remove('hidden')
-
-          const response = await Axios.patch(
-            `${API_URL}/foods/${currentFoodId}`,
-            formData
-          )
-
-          const { foodUpdated } = response.data
-          setUpdatedFoodStatus(foodUpdated)
-
-          setTimeout(() => {
-            modalLoading!.classList.add('hidden')
-          }, 300)
-        } catch (err) {
-          console.error(err)
+    e.preventDefault()
+    //initial form values if no value was updated taking it from [0] index
+    const currentFoodId = data?._id
+    const currentFoodName = data?.foodName
+    const currentFoodPrice = data?.foodPrice
+    const currentCategory = data?.category
+    const currentFoodDesc = data?.foodDesc
+    const currentTags = tags
+    const currentToppings = toppings
+    const prevFoodImgPathsAndNames = data?.foodImgs.map(
+      ({ foodImgDisplayName, foodImgDisplayPath }) => {
+        return {
+          foodImgDisplayName,
+          foodImgDisplayPath
         }
-      } else {
-        formMsg.current!.textContent =
-          'الرجاء إضافة البيانات بشكل صحيح لتستطيع تحديث البيانات 😃'
       }
+    )
+
+    //using FormData to send constructed data
+    const formData = new FormData()
+    formData.append('foodId', String(currentFoodId))
+    formData.append('foodName', foodName || currentFoodName)
+    formData.append('foodPrice', foodPrice || String(currentFoodPrice))
+    formData.append('category', category[0] || currentCategory)
+    formData.append('foodDesc', foodDesc || currentFoodDesc)
+    formData.append('foodTags', stringJson(currentTags))
+    formData.append('foodToppings', stringJson(currentToppings))
+    formData.append('prevFoodImgPathsAndNames', stringJson(prevFoodImgPathsAndNames))
+
+    if (
+      ImgErr.current!.textContent === '' &&
+      foodNameErr.current!.textContent === '' &&
+      priceErr.current!.textContent === '' &&
+      descErr.current!.textContent === ''
+    ) {
+      setLoadingMsg(`جار تحديث ${foodName}`)
+      modalLoading!.classList.remove('hidden')
+
+      const { foodImgs } = await useUploadS3(file) //upload new imgs to s3
+      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
+
+      try {
+        const response = await axios.patch(`${API_URL}/foods/${currentFoodId}`, formData)
+
+        const { foodUpdated } = response.data
+        setUpdatedFoodStatus(foodUpdated)
+
+        setTimeout(() => {
+          modalLoading!.classList.add('hidden')
+        }, 300)
+      } catch (err) {
+        console.error(err)
+      }
+    } else {
+      formMsg.current!.textContent =
+        'الرجاء إضافة البيانات بشكل صحيح لتستطيع تحديث البيانات 😃'
     }
   }
 
@@ -173,10 +164,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
 
     //Using FormData to send constructed data
     const formData = new FormData()
-    formData.append('prevFoodImgPathsAndNames', JSON.stringify(prevFoodImgPathsAndNames))
+    formData.append('prevFoodImgPathsAndNames', stringJson(prevFoodImgPathsAndNames))
     try {
       //You need to name the body {data} so it can be recognized in (.delete) method
-      const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
+      const response = await axios.delete(`${API_URL}/foods/${foodId}`, {
         data: formData
       })
       const { foodDeleted } = response.data
@@ -195,10 +186,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     foodImg: FoodImgsProps['foodImgDisplayName']
   ) => {
     const formData = new FormData()
-    formData.append('imgName', JSON.stringify(foodImg))
+    formData.append('imgName', foodImg)
     try {
       //You need to name the body {data} so it can be recognized in (.delete) method
-      const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
+      const response = await axios.delete(`${API_URL}/foods/${foodId}`, {
         data: formData
       })
       const { ImgDeleted } = response.data
@@ -213,6 +204,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   }
 
   useEventListener('click', (e: any) => {
+    console.log('id==>', e.target.id)
+    console.log('file name==>', fileName[0]?.name)
+
     switch (e.target.id) {
       case 'deleteFood': {
         setAction('deleteFood')

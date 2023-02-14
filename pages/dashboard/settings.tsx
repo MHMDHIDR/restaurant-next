@@ -11,6 +11,7 @@ import { responseTypes } from '../../types'
 import goTo from '../../utils/functions/goTo'
 import Layout from '../../components/dashboard/Layout'
 import Image from 'next/image'
+import { stringJson } from '../../utils/functions/jsonTools'
 
 const About = () => {
   useDocumentTitle('Settings')
@@ -136,7 +137,7 @@ const About = () => {
     formData.append('whatsAppNumber', currentWhatsAppNumber!)
     formData.append('instagramAccount', currentInstagramAccount!)
     formData.append('twitterAccount', currentTwitterAccount!)
-    formData.append('CategoryList', JSON.stringify(currentCategoryList))
+    formData.append('CategoryList', stringJson(currentCategoryList))
 
     if (
       descErr.current!.textContent === '' ||

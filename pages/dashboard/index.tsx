@@ -10,6 +10,7 @@ import ModalNotFound from '../../components/Modal/ModalNotFound'
 import { LoadingPage } from '../../components/Loading'
 import { API_URL, USER } from '../../constants'
 import Layout from '../../components/dashboard/Layout'
+import { stringJson } from '../../utils/functions/jsonTools'
 
 const DashboardHome = ({ menu }: any) => {
   useDocumentTitle('Home')
@@ -25,7 +26,7 @@ const DashboardHome = ({ menu }: any) => {
   const { loading } = currentUser
   const orders = useAxios({
     url: `/orders?page=0&limit=0`,
-    headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : '{}'
+    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : '{}'
   })
 
   useEffect(() => {

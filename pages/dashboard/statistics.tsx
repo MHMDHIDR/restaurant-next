@@ -12,6 +12,7 @@ import { LoadingPage } from '../../components/Loading'
 import { cCategory } from '../../types'
 import { USER } from '../../constants'
 import Layout from '../../components/dashboard/Layout'
+import { stringJson } from '../../utils/functions/jsonTools'
 
 const DashboardStatistics = () => {
   useDocumentTitle('Home')
@@ -27,7 +28,7 @@ const DashboardStatistics = () => {
   const menu = useAxios({ url: `/foods?page=0&limit=0` })
   const orders = useAxios({
     url: `/orders?page=0&limit=0`,
-    headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
+    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
   })
 
   useEffect(() => {

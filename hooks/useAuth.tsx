@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { USER } from '../constants'
+import { stringJson } from '../utils/functions/jsonTools'
 import useAxios from './useAxios'
 
 /**
@@ -13,7 +14,7 @@ const useAuth = () => {
   //get user data using token if the user is logged-in and token is saved in localStorage then I'll get the current user data from the database
   const { loading, ...response } = useAxios({
     url: `/users/all`,
-    headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
+    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
   })
 
   useEffect(() => {

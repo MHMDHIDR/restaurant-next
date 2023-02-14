@@ -35,7 +35,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         prevLogoImgPath,
         prevLogoImgName
       } = body
-      const categories = JSON.parse(CategoryList)
+      const categories = parseJson(CategoryList)
 
       //if not valid _id then return error message
       if (!Types.ObjectId.isValid(_id)) {

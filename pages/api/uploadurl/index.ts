@@ -16,7 +16,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
 
   switch (method) {
     case 'GET': {
-      const filesKeyType: fileRequestProps[] = JSON.parse(file || '[]')
+      const filesKeyType: fileRequestProps[] = parseJson(file || '[]')
 
       const uploadToS3 = async (key: string, type: string) => {
         const params = {

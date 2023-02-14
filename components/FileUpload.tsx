@@ -8,7 +8,7 @@ import { FILE_UPLOAD_IMG_SIZE } from '../constants'
 const FileUpload = ({ data }: any) => {
   const { file, fileURLs, onFileRemove, onFileAdd } =
     useContext<FileUploadProps>(FileUploadContext)
-  let { pathname } = useRouter()
+  let { id } = useRouter().query
 
   return (
     <>
@@ -86,7 +86,7 @@ const FileUpload = ({ data }: any) => {
         }
       </div>
 
-      {pathname.split('/')[2].includes('edit-food') && (
+      {id && (
         <p className='text-center text-green-700 dark:text-green-400'>
           لا تنسى الضغط على زر تحديث أسفل الصفحة لتحميل الصور
         </p>

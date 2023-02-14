@@ -41,10 +41,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           personPhone,
           personAddress,
           personNotes,
-          orderItems: JSON.parse(foodItems),
-          orderToppings: JSON.parse(checkedToppings),
+          orderItems: parseJson(foodItems),
+          orderToppings: parseJson(checkedToppings),
           grandPrice,
-          paymentData: JSON.parse(paymentData)
+          paymentData: parseJson(paymentData)
         })
 
         await orders.save()

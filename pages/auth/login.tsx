@@ -15,7 +15,7 @@ import { API_URL } from '../../constants'
 import Layout from '../../components/Layout'
 
 const LoginDataFromLocalStorage =
-  typeof window !== 'undefined' && JSON.parse(localStorage.getItem('LoginData') || '{}')
+  typeof window !== 'undefined' && parseJson(localStorage.getItem('LoginData') || '{}')
 
 const Login = () => {
   useDocumentTitle('Login')
@@ -83,7 +83,7 @@ const Login = () => {
       setLoginMsg(message ?? '')
       localStorage.setItem(
         'user',
-        JSON.stringify({ _id, userAccountType, userFullName, userEmail, token })
+        stringJson({ _id, userAccountType, userFullName, userEmail, token })
       )
 
       redirect
@@ -127,7 +127,7 @@ const Login = () => {
       setLoginMsg(message)
       localStorage.setItem(
         'user',
-        JSON.stringify({ _id, userAccountType, userFullName, userEmail, token })
+        stringJson({ _id, userAccountType, userFullName, userEmail, token })
       )
 
       redirect

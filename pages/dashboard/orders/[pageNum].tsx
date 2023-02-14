@@ -1,5 +1,4 @@
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
-
 import OrdersTable from '../../../components/dashboard/OrdersTable'
 import Layout from '../../../components/dashboard/Layout'
 

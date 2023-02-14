@@ -18,10 +18,11 @@ import CartItems from '../../components/CartItems'
 import PaymentButton from '../../components/PaymentButton'
 import { selectedToppingsProps, orderMsgProps } from '../../types'
 import NoItems from '../../components/NoItems'
+import { parseJson, stringJson } from '../../utils/functions/jsonTools'
 
 const formDataFromLocalStorage =
   typeof window !== 'undefined'
-    ? JSON.parse(localStorage.getItem('formDataCart') || '[]')
+    ? parseJson(localStorage.getItem('formDataCart') || '[]')
     : []
 
 //orderFood
@@ -82,7 +83,7 @@ const OrderFood = () => {
 
     localStorage.setItem(
       'formDataCart',
-      JSON.stringify({
+      stringJson({
         personName,
         personPhone,
         personAddress,
@@ -128,10 +129,10 @@ const OrderFood = () => {
     formData.append('personPhone', personPhone)
     formData.append('personAddress', personAddress)
     formData.append('personNotes', personNotes)
-    formData.append('checkedToppings', JSON.stringify(checkedToppings))
-    formData.append('foodItems', JSON.stringify(items))
+    formData.append('checkedToppings', stringJson(checkedToppings))
+    formData.append('foodItems', stringJson(items))
     formData.append('grandPrice', grandPriceRef?.current?.textContent || '')
-    formData.append('paymentData', JSON.stringify(paymentData))
+    formData.append('paymentData', stringJson(paymentData))
 
     try {
       const response = await Axios.post(`${API_URL}/orders`, formData)

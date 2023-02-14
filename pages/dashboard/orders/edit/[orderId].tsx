@@ -1,5 +1,5 @@
 import { useContext, useState, useRef, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Axios from 'axios'
 import { ToppingsContext } from '../../../../contexts/ToppingsContext'
@@ -16,6 +16,7 @@ import { selectedToppingsProps } from '../../../../types'
 import goTo from '../../../../utils/functions/goTo'
 import abstractText from '../../../../utils/functions/abstractText'
 import NoItems from '../../../../components/NoItems'
+import { stringJson } from '../../../../utils/functions/jsonTools'
 
 const DashboardOrdersEdit = () => {
   const { orderItemToppings, setOrderItemToppings } = useContext(ToppingsContext)
@@ -24,7 +25,7 @@ const DashboardOrdersEdit = () => {
 
   //global variables
   const MAX_CHARACTERS = 100
-  const ORDER_ID = useParams().orderId
+  const { orderId } = useRouter().query
 
   //Form States
   const [personName, setPersonName] = useState(ordersData?.personName)
@@ -50,8 +51,8 @@ const DashboardOrdersEdit = () => {
   )
 
   const { ...response } = useAxios({
-    url: `/orders/1/1/${ORDER_ID}`,
-    headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
+    url: `/orders/1/1/${orderId}`,
+    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
   })
 
   useEffect(() => {
@@ -71,16 +72,16 @@ const DashboardOrdersEdit = () => {
     if (
       personName !== '' &&
       personPhone !== '' &&
-      personNameErr.current.textContent === '' &&
-      personPhoneErr.current.textContent === '' &&
-      personAddressErr.current.textContent === ''
+      personNameErr.current!.textContent === '' &&
+      personPhoneErr.current!.textContent === '' &&
+      personAddressErr.current!.textContent === ''
     ) {
       //show modal
       modalLoading?.classList.remove('hidden')
       handleSaveOrder()
-      formErr.current.textContent = ''
+      formErr.current!.textContent = ''
     } else {
-      formErr.current.textContent = 'الرجاء إدخال البيانات المطلوبة بشكل صحيح'
+      formErr.current!.textContent = 'الرجاء إدخال البيانات المطلوبة بشكل صحيح'
     }
   }
 
@@ -91,13 +92,13 @@ const DashboardOrdersEdit = () => {
     formData.append('personPhone', personPhone || ordersData?.personPhone)
     formData.append('personAddress', personAddress || ordersData?.personAddress)
     formData.append('personNotes', personNotes || ordersData?.personNotes)
-    formData.append('checkedToppings', JSON.stringify(orderItemToppings))
-    formData.append('foodItems', JSON.stringify(ordersData?.orderItems))
-    formData.append('grandPrice', grandPriceRef?.current?.textContent)
+    formData.append('checkedToppings', stringJson(orderItemToppings))
+    formData.append('foodItems', stringJson(ordersData?.orderItems))
+    formData.append('grandPrice', grandPriceRef?.current?.textContent!)
 
     try {
       setIsLoading(true)
-      const response = await Axios.patch(`${API_URL}/orders/${ORDER_ID}`, formData)
+      const response = await Axios.patch(`${API_URL}/orders/${orderId}`, formData)
       const { OrderStatusUpdated } = response.data
 
       setOrderUpdated(OrderStatusUpdated)
@@ -175,16 +176,16 @@ const DashboardOrdersEdit = () => {
                   type='text'
                   defaultValue={personName || ordersData.personName}
                   onChange={e => setPersonName(e.target.value.trim())}
-                  onKeyUp={e => {
+                  onKeyUp={(e: any) => {
                     const target = e.target.value.trim()
 
                     if (target.length > 0 && target.length < 4) {
-                      personNameErr.current.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
+                      personNameErr.current!.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
                     } else if (target.length > 30) {
-                      personNameErr.current.textContent =
+                      personNameErr.current!.textContent =
                         'الاسم طويل جداً، يرجى إضافة إسم لا يزيد عن 30 حرف'
                     } else {
-                      personNameErr.current.textContent = ''
+                      personNameErr.current!.textContent = ''
                     }
                   }}
                   required
@@ -206,7 +207,7 @@ const DashboardOrdersEdit = () => {
                   type='tel'
                   defaultValue={personPhone || ordersData.personPhone}
                   onChange={e => setPersonPhone(e.target.value.trim())}
-                  onKeyUp={e => {
+                  onKeyUp={(e: any) => {
                     const target = e.target.value.trim()
 
                     if (
@@ -214,10 +215,10 @@ const DashboardOrdersEdit = () => {
                       target.length > 8 ||
                       !validPhone(target)
                     ) {
-                      personPhoneErr.current.textContent =
+                      personPhoneErr.current!.textContent =
                         'الرجاء إدخال رقم هاتف نفس صيغة رقم الهاتف في المثال'
                     } else {
-                      personPhoneErr.current.textContent = ''
+                      personPhoneErr.current!.textContent = ''
                     }
                   }}
                   required
@@ -239,13 +240,13 @@ const DashboardOrdersEdit = () => {
                   type='text'
                   defaultValue={personAddress || ordersData.personAddress}
                   onChange={e => setPersonAddress(e.target.value.trim())}
-                  onKeyUp={e => {
+                  onKeyUp={(e: any) => {
                     const target = e.target.value.trim()
 
                     if (target.length > 0 && target.length < 4) {
-                      personAddressErr.current.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
+                      personAddressErr.current!.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
                     } else {
-                      personAddressErr.current.textContent = ''
+                      personAddressErr.current!.textContent = ''
                     }
                   }}
                   required

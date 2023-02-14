@@ -56,7 +56,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
 
   const { ...response } = useAxios({
     url: `/orders?page=${pageNumber}&limit=${ITEMS_PER_PAGE}?orderDate=-1`,
-    headers: USER ? JSON.stringify({ Authorization: `Bearer ${USER.token}` }) : null
+    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
   })
 
   useEffect(() => {
@@ -250,7 +250,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
           {(ordersData ?? ordersData !== undefined) &&
           ordersData?.response?.length > 0 ? (
             <>
-              {/* filter by email ordersByUserEmail === JSON.parse(localStorage.getItem('user')).userEmail */}
+              {/* filter by email ordersByUserEmail === parseJson(localStorage.getItem('user')).userEmail */}
               {ordersByUserEmail ? (
                 //show only orders by user email ==> FILTER by email
                 ordersData?.response?.filter(

@@ -4,6 +4,7 @@ import FoodModel from '../../../models/Foods'
 import paginatedResults from '../../../middleware/paginatedResults'
 import { fileRequestProps, ToppingsProps } from '../../../types'
 import formHandler from '../../../utils/functions/form'
+import { parseJson } from '../../../utils/functions/jsonTools'
 
 const handler = async (req: fileRequestProps, res: NextApiResponse) => {
   const { method } = req
@@ -31,8 +32,8 @@ const handler = async (req: fileRequestProps, res: NextApiResponse) => {
         foodTags,
         foodImgs
       } = fields
-      const toppings = foodToppings && JSON.parse(foodToppings)
-      const tags = JSON.parse(foodTags)
+      const toppings = foodToppings && parseJson(foodToppings)
+      const tags = parseJson(foodTags)
 
       await FoodModel.create({
         foodName,
@@ -46,7 +47,7 @@ const handler = async (req: fileRequestProps, res: NextApiResponse) => {
           }
         }),
         foodTags: tags,
-        foodImgs: JSON.parse(foodImgs)
+        foodImgs: parseJson(foodImgs)
       })
 
       res.status(201).json({

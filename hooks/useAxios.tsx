@@ -22,7 +22,7 @@ const useAxios = ({ url, method = 'get', body = null, headers = null }: axiosPro
           data: body,
           headers:
             headers !== null
-              ? JSON.parse(headers)
+              ? parseJson(headers)
               : {
                   'Content-Type': 'application/json'
                 }

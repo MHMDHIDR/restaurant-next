@@ -1,10 +1,11 @@
 import { useState, createContext, useContext, useEffect } from 'react'
 import { CartProps } from '../types'
+import { parseJson, stringJson } from '../utils/functions/jsonTools'
 import { ToppingsContext } from './ToppingsContext'
 
 const cartFromLocalStorage =
   typeof window !== 'undefined'
-    ? JSON.parse(localStorage.getItem('restCartItems') || '[]')
+    ? parseJson(localStorage.getItem('restCartItems') || '[]')
     : []
 
 export const CartContext = createContext({} as CartProps)
@@ -15,7 +16,7 @@ const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { checkedToppings, setCheckedToppings } = useContext(ToppingsContext)
 
   useEffect(() => {
-    localStorage.setItem('restCartItems', JSON.stringify(items))
+    localStorage.setItem('restCartItems', stringJson(items))
   }, [items])
 
   //add items to card add the details like: cHeading, cImg, cPrice, cCategory, cDesc, cToppings, cQuantity: 1
