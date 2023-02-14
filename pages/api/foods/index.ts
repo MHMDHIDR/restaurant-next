@@ -1,5 +1,5 @@
 import { NextApiResponse } from 'next'
-import dbConnect from '../../../utils/db'
+import dbConnect from '@utils/db'
 import FoodModel from '@models/Foods'
 import paginatedResults from '@middleware/paginatedResults'
 import { fileRequestProps, ToppingsProps } from '@types'

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import dbConnect from '../../../utils/db'
+import dbConnect from '@utils/db'
 import UsersModel from '@models/User'
 import { APP_URL } from '@constants'
 import email from '@functions/email'

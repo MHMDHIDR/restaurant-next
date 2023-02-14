@@ -13,7 +13,7 @@ export default function Document() {
       <body className='flex flex-col justify-between h-screen overflow-x-hidden transition-all bg-gray-200'>
         <Main />
         <NextScript />
-        <script src='https://www.paypal.com/sdk/js?client-id=AVHjwQ-58XYH3WXHbZTF8JOcnCIFdHVAA-XpasumZ72E_g7nQy4ppsOBi33IQiLArVrsmMIk58zxyvFh' />
+        <script src='https://www.paypal.com/sdk/js?client-id=AYJHPBtF1WJl8Hh6hDGouvXVcyO6e2sBrAIfp3ghvIX6EZJMAci75L_gB2kCGLhZWIU3pw8KeaHiipc1' />
       </body>
     </Html>
   )

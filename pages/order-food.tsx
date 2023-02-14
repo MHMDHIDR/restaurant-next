@@ -73,7 +73,7 @@ const OrderFood = () => {
 
   useEffect(() => {
     if (response.response !== null) {
-      setResponseMsg(response.response?.orderMsg)
+      setResponseMsg(response.response.response[0].orderMsg)
     }
   }, [response.response])
 
@@ -83,12 +83,7 @@ const OrderFood = () => {
 
     localStorage.setItem(
       'formDataCart',
-      stringJson({
-        personName,
-        personPhone,
-        personAddress,
-        personNotes
-      })
+      stringJson({ personName, personPhone, personAddress, personNotes })
     )
   }, [personName, personPhone, personAddress, personNotes])
 
@@ -137,8 +132,8 @@ const OrderFood = () => {
     try {
       const response = await axios.post(`${API_URL}/orders`, formData)
       const { orderAdded, message } = response.data
-      setIsLoading(false)
 
+      setIsLoading(false)
       setOrderFoodStatus(orderAdded)
       orderAdded === 0 &&
         setResponseMsg(msg => {
@@ -176,36 +171,33 @@ const OrderFood = () => {
             btnName='تسجيل دخول'
             btnLink={`/auth/login${pathname}`}
           />
-        ) : (
-          showPaymentModal === true && (
-            <Modal
-              status={Loading}
-              msg={`سيتم الدفع بالعملة (دولار أمريكي) وذلك بعد تحويل الإجمالي: ${grandPrice} ر.ق، سيتم دفع = ${(
-                grandPrice / 3.65
-              ).toFixed(2)} دولار أمريكي لدفع بأحد الوسائل التالية:`}
-              extraComponents={
-                PaymentButton ? (
-                  <PaymentButton
-                    value={(grandPrice / 3.65).toFixed(2)}
-                    onSuccess={(paymentData: any) => {
-                      setShowPaymentModal(false)
-                      handleSaveOrder(paymentData)
-                    }}
-                    // onError={() => {
-                    //   setShowPaymentModal(false)
-                    //   setOrderFoodStatus(0)
-                    //   setResponseMsg('حدث خطأ أثناء الدفع')
-                    // }}
-                  />
-                ) : (
-                  <LoadingSpinner />
-                )
-              }
-              btnName='رجوع'
-              btnLink={`order-food`}
-            />
-          )
-        )}
+        ) : showPaymentModal === true ? (
+          <Modal
+            status={Loading}
+            msg={`سيتم الدفع بالعملة (دولار أمريكي) وذلك بعد تحويل الإجمالي: ${grandPrice} ر.ق، سيتم دفع = ${(
+              grandPrice / 3.65
+            ).toFixed(2)} دولار أمريكي لدفع بأحد الوسائل التالية:`}
+            extraComponents={
+              <PaymentButton
+                value={(grandPrice / 3.65).toFixed(2)}
+                onSuccess={(paymentData: any) => {
+                  setShowPaymentModal(false)
+                  handleSaveOrder(paymentData)
+                }}
+                /*
+                 <LoadingSpinner />
+                */
+                // onError={() => {
+                //   setShowPaymentModal(false)
+                //   setOrderFoodStatus(0)
+                //   setResponseMsg('حدث خطأ أثناء الدفع')
+                // }}
+              />
+            }
+            btnName='رجوع'
+            btnLink={`order-food`}
+          />
+        ) : null}
 
         <div className='container mx-auto text-center'>
           {items.length > 0 ? (

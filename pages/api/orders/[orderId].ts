@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Types } from 'mongoose'
-import dbConnect from '../../../utils/db'
+import dbConnect from '@utils/db'
 import OrdersModel from '@models/Orders'
 import email from '@functions/email'
 import { parseJson } from '@functions/jsonTools'

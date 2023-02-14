@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import dbConnect from '../../../utils/db'
+import dbConnect from '@utils/db'
 import UsersModel from '@models/User'
 import { sign } from 'jsonwebtoken'
 import { OAuth2Client } from 'google-auth-library'

@@ -1,11 +1,14 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import dbConnect from '../../../utils/db'
+import { NextApiResponse } from 'next'
+import { fileRequestProps } from '@types'
+import dbConnect from '@utils/db'
 import OrdersModel from '@models/Orders'
 import paginatedResults from '@middleware/paginatedResults'
 import { parseJson } from '@functions/jsonTools'
+import formHandler from '@functions/form'
+import { randomUUID } from 'crypto'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method, body } = req
+export default async function handler(req: fileRequestProps, res: NextApiResponse) {
+  const { method } = req
   await dbConnect()
 
   switch (method) {
@@ -20,6 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     case 'POST': {
+      const { fields }: any = await formHandler(req)
       const {
         userId,
         userEmail,
@@ -31,11 +35,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         checkedToppings,
         grandPrice,
         paymentData
-      } = body
+      } = fields
 
       try {
         const orders = new OrdersModel({
-          orderId: crypto.randomUUID(),
+          orderId: randomUUID(),
           userId,
           userEmail,
           personName,
@@ -73,4 +77,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // export const fetchPdf = async (_req, res) => {
   //   res.sendFile(`../result.pdf`)
   // }
+}
+
+export const config = {
+  api: { bodyParser: false }
 }
