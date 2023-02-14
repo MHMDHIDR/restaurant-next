@@ -20,6 +20,8 @@ import { createLocaleDateString } from '../../../utils/functions/convertDate'
 import scrollToView from '../../../utils/functions/scrollToView'
 import { API_URL, ITEMS_PER_PAGE, USER } from '../../../constants'
 import { stringJson } from '../../../utils/functions/jsonTools'
+import { ClickableButton } from '../../../components/Button'
+import Add from '../../../components/Icons/Add'
 
 const DashboardMenu = () => {
   useDocumentTitle('Menu')
@@ -134,6 +136,14 @@ const DashboardMenu = () => {
               قائمة الوجبات والمشروبات
             </h3>
 
+            <Link href='food/add'>
+              <ClickableButton>
+                <>
+                  <Add className='inline-flex ml-4' />
+                  <span>إضافة وجبة</span>
+                </>
+              </ClickableButton>
+            </Link>
             <table className='table w-full text-center'>
               <thead className='text-white bg-orange-800'>
                 <tr>
