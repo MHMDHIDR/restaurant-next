@@ -4,10 +4,11 @@ import { CartContext } from '@contexts/CartContext'
 import { ToppingsContext } from '@contexts/ToppingsContext'
 import { DashboardOrderContext } from '@contexts/DashboardOrderContext'
 import { removeSlug } from '@functions/slug'
-import Divider from './Divider'
+import Divider from '@components/Divider'
 import { selectedToppingsProps } from '@types'
+import { MAX_CART_QUANTITY } from '@constants'
 
-const CartItems = ({ orderItems, orderToppings }: any) => {
+const CartItems: any = ({ orderItems, orderToppings }: any) => {
   const { items } = useContext(CartContext)
   const isDashboard = useRouter().pathname.includes('/dashboard')
 
@@ -44,8 +45,6 @@ const Items = ({
   const { items, setItems, removeFromCart, setGrandPrice } = useContext(CartContext)
   const { removeOrderFromItems } = useContext(DashboardOrderContext)
   const [orderItemQuantity, setOrderItemQuantity] = useState(0)
-
-  const MAX_QUANTITY = 100
 
   return orderItems?.map((item: any) => {
     const hasToppings = typeof item?.cToppings[0]?.toppingName === 'string'
@@ -94,7 +93,7 @@ const Items = ({
                     toppingId,
                     toppingName = 'إضافة',
                     toppingPrice = 1,
-                    toppingQuantity
+                    toppingQuantity = 1
                   }: selectedToppingsProps) => (
                     <div className='flex items-center' key={toppingId}>
                       <input
@@ -129,7 +128,7 @@ const Items = ({
                         htmlFor={toppingId}
                         className='px-3 py-1 mr-2 -ml-2 text-base text-green-800 bg-green-300 rounded-md cursor-pointer bg-opacity-80 min-w-fit'
                       >
-                        {toppingPrice * toppingQuantity! + ' ر.ق'}
+                        {toppingPrice * toppingQuantity + ' ر.ق'}
                       </label>
                     </div>
                   )
@@ -146,25 +145,27 @@ const Items = ({
                       <button
                         className='quantity-btn number-hover'
                         onClick={() => {
-                          topping.toppingQuantity > MAX_QUANTITY
-                            ? setItems(
-                                items.map((item: any) => {
-                                  if (item.cItemId === toppingId.slice(0, -1)) {
-                                    topping.toppingQuantity++
-                                  }
-                                  return item
-                                })
-                              )
-                            : orderItems.map((item: any) => {
-                                if (
-                                  topping.toppingQuantity < MAX_QUANTITY &&
-                                  item.cItemId === toppingId.slice(0, -1)
-                                ) {
+                          if (orderToppings) {
+                            orderItems.map((item: any) => {
+                              if (
+                                topping.toppingQuantity < MAX_CART_QUANTITY &&
+                                item.cItemId === toppingId.slice(0, -1)
+                              ) {
+                                topping.toppingQuantity++
+                                setOrderItemQuantity(topping.toppingQuantity)
+                              }
+                              return item
+                            })
+                          } else if (topping.toppingQuantity < MAX_CART_QUANTITY) {
+                            setItems(
+                              items.map((item: any) => {
+                                if (item.cItemId === toppingId.slice(0, -1)) {
                                   topping.toppingQuantity++
-                                  setOrderItemQuantity(topping.toppingQuantity)
                                 }
                                 return item
                               })
+                            )
+                          }
                         }}
                       >
                         +
@@ -220,7 +221,7 @@ const Items = ({
               <button
                 className='quantity-btn number-hover'
                 onClick={() => {
-                  if (item.cQuantity < MAX_QUANTITY) {
+                  if (item.cQuantity < MAX_CART_QUANTITY) {
                     item.cQuantity++
                     setItems([...items])
                     setGrandPrice(
