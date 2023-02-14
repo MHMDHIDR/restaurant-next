@@ -106,7 +106,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         s3.deleteObject(
           {
             Bucket: AWS_BUCKET_NAME!,
-            Key: parseJson(imgName)
+            Key: imgName
           },
           async (error, _data) => {
             if (error) return res.json({ message: error, ImgDeleted: 0 })
@@ -117,7 +117,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
               const foodImgs = food.foodImgs.filter(
                 //get other images and NOT the one I wanna delete
                 (img: { foodImgDisplayName: string | string[] }) =>
-                  img.foodImgDisplayName !== parseJson(imgName)
+                  img.foodImgDisplayName !== imgName
               )
 
               await FoodModel.findByIdAndUpdate(foodId, { foodImgs })

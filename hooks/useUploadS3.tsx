@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { API_URL } from '../constants'
 import { FileUploadProps, FoodImgsProps, uploadurlDataProps } from '../types'
+import { stringJson } from '../utils/functions/jsonTools'
 
 /**
  * Custom hook to upload files to S3 bucket
@@ -8,6 +9,8 @@ import { FileUploadProps, FoodImgsProps, uploadurlDataProps } from '../types'
  */
 
 const useUploadS3 = async (file: FileUploadProps['file']) => {
+  if (file.length === 0) return { foodImgs: [] }
+
   const fileFormData = new FormData()
 
   const fileData = stringJson(

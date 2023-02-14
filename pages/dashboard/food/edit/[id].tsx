@@ -131,7 +131,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       setLoadingMsg(`جار تحديث ${foodName}`)
       modalLoading!.classList.remove('hidden')
 
-      const { foodImgs } = await useUploadS3(file) //upload new imgs to s3
+      const { foodImgs } = await useUploadS3(file)
       formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
 
       try {
@@ -204,9 +204,6 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   }
 
   useEventListener('click', (e: any) => {
-    console.log('id==>', e.target.id)
-    console.log('file name==>', fileName[0]?.name)
-
     switch (e.target.id) {
       case 'deleteFood': {
         setAction('deleteFood')

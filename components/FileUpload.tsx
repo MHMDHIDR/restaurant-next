@@ -9,6 +9,7 @@ const FileUpload = ({ data }: any) => {
   const { file, fileURLs, onFileRemove, onFileAdd } =
     useContext<FileUploadProps>(FileUploadContext)
   let { id } = useRouter().query
+  const hasImgs = data.defaultImg[0]?.foodImgDisplayName.length > 0
 
   return (
     <>
@@ -55,14 +56,9 @@ const FileUpload = ({ data }: any) => {
               </div>
             ))
           ) : (
-            //if there's images in the data base
-            data.defaultImg?.length > 0 &&
             data.defaultImg.map(
-              ({ foodImgDisplayName, foodImgDisplayPath }: FoodImgsProps, index: Key) => (
-                <div
-                  key={index}
-                  className={`flex items-center flex-col gap-y-3 max-h-44 h-44 place-content-center`}
-                >
+              ({ foodImgDisplayName, foodImgDisplayPath }: FoodImgsProps) => (
+                <div className='flex flex-col items-center gap-y-3 max-h-44 h-44 place-content-center'>
                   <Image
                     loading='lazy'
                     src={foodImgDisplayPath || `https://source.unsplash.com/random?food`}
@@ -71,14 +67,16 @@ const FileUpload = ({ data }: any) => {
                     width={FILE_UPLOAD_IMG_SIZE}
                     className='object-cover p-1 border border-gray-400 w-28 min-h-fit h-28 dark:border-gray-300 rounded-xl'
                   />
-                  <button
-                    type='button'
-                    id='deleteImg'
-                    className='px-6 py-1 text-white transition-colors bg-red-500 rounded-full hover:bg-red-700'
-                    data-img-name={foodImgDisplayName}
-                  >
-                    حذف
-                  </button>
+                  {hasImgs && (
+                    <button
+                      type='button'
+                      id='deleteImg'
+                      className='px-6 py-1 text-white transition-colors bg-red-500 rounded-full hover:bg-red-700'
+                      data-img-name={foodImgDisplayName}
+                    >
+                      حذف
+                    </button>
+                  )}
                 </div>
               )
             )
