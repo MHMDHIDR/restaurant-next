@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import useEventListener from '@hooks/useEventListener'
 import useAxios from '@hooks/useAxios'
@@ -70,7 +70,7 @@ const DashboardUsers = () => {
     if (userAccountAction === 'delete') {
       try {
         //You need to name the body {data} so it can be recognized in (.delete) method
-        const response = await Axios.delete(`${API_URL}/users/${userId}`, { data })
+        const response = await axios.delete(`${API_URL}/users/${userId}`, { data })
 
         const { userDeleted } = response.data
 
@@ -89,7 +89,7 @@ const DashboardUsers = () => {
       formData.append('userAccountAction', userAccountAction)
 
       try {
-        const response = await Axios.patch(`${API_URL}/users/${userId}`, formData)
+        const response = await axios.patch(`${API_URL}/users/${userId}`, formData)
 
         const { userUpdated } = response.data
         setUserUpdated(userUpdated)

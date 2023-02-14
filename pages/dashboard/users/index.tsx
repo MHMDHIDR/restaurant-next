@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import useEventListener from '@hooks/useEventListener'
 import useAxios from '@hooks/useAxios'
@@ -43,25 +43,34 @@ const DashboardUsers = () => {
   }, [response.response])
 
   useEventListener('click', (e: any) => {
-    if (
-      e.target.id === 'deleteUser' ||
-      e.target.id === 'blockUser' ||
-      e.target.id === 'activateUser' ||
-      e.target.id === 'admin' ||
-      e.target.id === 'cashier' ||
-      e.target.id === 'user'
-    ) {
-      setUserId(e.target.dataset.id)
-      setUserName(e.target.dataset.name)
-      setUserAccountAction(e.target.dataset.action)
-      //show modal
-      setModalLoading(true)
-    }
+    switch (e.target.id) {
+      case 'deleteUser':
+      case 'blockUser':
+      case 'activateUser':
+      case 'admin':
+      case 'cashier':
+      case 'user': {
+        setUserId(e.target.dataset.id)
+        setUserName(e.target.dataset.name)
+        setUserAccountAction(e.target.dataset.action)
+        //show modal
+        setModalLoading(true)
+        break
+      }
 
-    if (e.target.id === 'cancel') {
-      setModalLoading(false)
-    } else if (e.target.id === 'confirm') {
-      handleUser(userId, userAccountAction)
+      case 'confirm': {
+        handleUser(userId, userAccountAction)
+        break
+      }
+      case 'cancel': {
+        setModalLoading(false)
+        break
+      }
+
+      default: {
+        setModalLoading(false)
+        break
+      }
     }
   })
 
@@ -69,12 +78,12 @@ const DashboardUsers = () => {
     if (userAccountAction === 'delete') {
       try {
         //You need to name the body {data} so it can be recognized in (.delete) method
-        const response = await Axios.delete(`${API_URL}/users/${userId}`, { data: '' })
-
+        //I passed empty data value because delete method needs data object with any
+        //value and in this case we don't have any value
+        const response = await axios.delete(`${API_URL}/users/${userId}`, { data: '' })
         const { userDeleted } = response.data
-
         setDeleteUserStatus(userDeleted)
-        //Remove waiting modal
+
         setTimeout(() => {
           setModalLoading(false)
         }, 300)
@@ -88,11 +97,10 @@ const DashboardUsers = () => {
       formData.append('userAccountAction', userAccountAction)
 
       try {
-        const response = await Axios.patch(`${API_URL}/users/${userId}`, formData)
-
+        const response = await axios.patch(`${API_URL}/users/${userId}`, formData)
         const { userUpdated } = response.data
         setUserUpdated(userUpdated)
-        //Remove waiting modal
+
         setTimeout(() => {
           setModalLoading(false)
         }, 300)
@@ -154,7 +162,6 @@ const DashboardUsers = () => {
       {modalLoading && (
         <Modal
           status={Loading}
-          modalHidden='hidden'
           classes='txt-blue text-center'
           msg={`هل أنت متأكد من ${
             userAccountAction === 'block'
@@ -167,7 +174,7 @@ const DashboardUsers = () => {
               ? `تحويل ${userName} الى كاشير`
               : userAccountAction === 'user'
               ? `تحويل ${userName} الى مستخدم`
-              : 'الغاء'
+              : 'الحذف'
           } لا يمكن التراجع عن هذا القرار`}
           ctaConfirmBtns={[
             userAccountAction === 'block'

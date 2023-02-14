@@ -1,11 +1,15 @@
 import { NextApiResponse } from 'next'
+import { Types } from 'mongoose'
 import dbConnect from '@utils/db'
 import UsersModel from '@models/User'
-import { Types } from 'mongoose'
 import { authUserRequestProps } from '@types'
+import formHandler from '@utils/functions/form'
 
 export default async function handler(req: authUserRequestProps, res: NextApiResponse) {
-  const { method, body, query } = req
+  const { method, query } = req
+  const { userId }: any = query
+  const { fields }: any = await formHandler(req)
+  const { userAccountAction } = fields
 
   dbConnect()
 
@@ -22,9 +26,6 @@ export default async function handler(req: authUserRequestProps, res: NextApiRes
     }
 
     case 'PATCH': {
-      const { userId }: any = query
-      const { userAccountAction } = body
-
       //if not valid id then return error message
       if (!Types.ObjectId.isValid(userId)) {
         return res.json({ message: `Sorry, No User with this ID => ${userId}` })
@@ -52,8 +53,6 @@ export default async function handler(req: authUserRequestProps, res: NextApiRes
     }
 
     case 'DELETE': {
-      const { userId } = query
-
       try {
         await UsersModel.findByIdAndDelete(userId)
 
@@ -75,4 +74,8 @@ export default async function handler(req: authUserRequestProps, res: NextApiRes
       break
     }
   }
+}
+
+export const config = {
+  api: { bodyParser: false }
 }
