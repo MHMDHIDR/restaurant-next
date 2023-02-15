@@ -10,7 +10,7 @@
 
 #### Tailwindcss
 
-#### Express
+#### NextJS
 
 #### Mongodb
 
@@ -18,25 +18,11 @@
 
 ### Deployed on:
 
-#### Heroku
-
-#### Netlify
+#### Vercel
 
 ### How to Install:
 
 #### 1. Go to Root folder (Restaurant) then apply the command:
-
-```
-yarn or npm install
-```
-
-#### 2. Go to client folder then apply the command:
-
-```
-yarn or npm install
-```
-
-#### 3. Go to server folder then apply the command:
 
 ```
 yarn or npm install

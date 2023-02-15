@@ -62,6 +62,7 @@ const DashboardUsers = () => {
         handleUser(userId, userAccountAction)
         break
       }
+
       case 'cancel': {
         setModalLoading(false)
         break

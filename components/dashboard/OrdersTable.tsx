@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import Axios from 'axios'
+import axios from 'axios'
 import goTo from '@functions/goTo'
 import { toggleCSSclasses } from '@functions/toggleCSSclasses'
 import { createLocaleDateString } from '@functions/convertDate'
@@ -87,28 +87,40 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   )
 
   useEventListener('click', (e: any) => {
-    if (
-      e.target.id === 'acceptOrder' ||
-      e.target.id === 'rejectOrder' ||
-      e.target.id === 'editOrder' ||
-      e.target.id === 'invoice' ||
-      e.target.id === 'deleteOrder'
-    ) {
-      setOrderInfo({
-        id: e?.target?.dataset?.id,
-        status: e?.target?.dataset?.status,
-        email: e?.target?.dataset?.email
-      })
-      //show modal
-      modalLoading!.classList.remove('hidden')
+    const {
+      id,
+      dataset: { orderContentArrow }
+    } = e.target
+
+    switch (id) {
+      case 'acceptOrder':
+      case 'rejectOrder':
+      case 'editOrder':
+      case 'invoice':
+      case 'deleteOrder': {
+        setOrderInfo({
+          id: e?.target?.dataset?.id,
+          status: e?.target?.dataset?.status,
+          email: e?.target?.dataset?.email
+        })
+        //show modal
+        modalLoading!.classList.remove('hidden')
+        break
+      }
+
+      case 'confirm': {
+        orderInfo.status === 'invoice' ? console.log(orderInfo) : handleOrder(orderInfo)
+        break
+      }
+
+      case 'cancel': {
+        modalLoading!.classList.add('hidden')
+        break
+      }
     }
 
-    if (e.target.id === 'cancel') {
-      modalLoading!.classList.add('hidden')
-    } else if (e.target.id === 'confirm') {
-      orderInfo.status === 'invoice' ? console.log(orderInfo) : handleOrder(orderInfo)
-    } else if (e.target.dataset.orderContentArrow) {
-      //showing and hiding order details
+    //showing and hiding order details
+    if (orderContentArrow) {
       toggleCSSclasses(
         [e.target.parentElement.nextElementSibling.classList.contains('ordered-items')],
         e.target.parentElement.nextElementSibling,
@@ -129,11 +141,10 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     if (orderInfo.status === 'delete') {
       try {
         //You need to name the body {data} so it can be recognized in (.delete) method
-        const response = await Axios.delete(`${API_URL}/orders/${orderInfo.id}`)
+        const response = await axios.delete(`${API_URL}/orders/${orderInfo.id}`)
         const { orderDeleted } = response.data
-
         setDeleteOrderStatus(orderDeleted)
-        //Remove waiting modal
+
         setTimeout(() => {
           modalLoading!.classList.add('hidden')
         }, 300)
@@ -151,11 +162,10 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
 
     try {
       setIsLoading(true)
-      const response = await Axios.patch(`${API_URL}/orders/${orderInfo.id}`, formData)
+      const response = await axios.patch(`${API_URL}/orders/${orderInfo.id}`, formData)
       const { OrderStatusUpdated } = response.data
-
       setOrderUpdated(OrderStatusUpdated)
-      //Remove waiting modal
+
       setTimeout(() => {
         modalLoading!.classList.add('hidden')
       }, 300)
