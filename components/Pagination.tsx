@@ -13,7 +13,7 @@ const Pagination = ({
   itemsPerPage = ITEMS_PER_PAGE,
   category
 }: PaginationProps) => {
-  numberOfPages = [...Array(numberOfPages).keys()]
+  const numOfPages = [...Array(numberOfPages).keys()]
 
   return !foodId && count > itemsPerPage ? (
     <div
@@ -38,7 +38,7 @@ const Pagination = ({
 
       {/* Current Link Number */}
       <div>
-        {numberOfPages.map((page: number, index: Key) => (
+        {numOfPages.map((page: number, index: Key) => (
           <a
             key={index}
             href={`/${routeName}${
@@ -66,9 +66,7 @@ const Pagination = ({
           category ? '/' + category + '/' + (pageNum + 1) : '/' + (pageNum + 1)
         }`}
         className={`${
-          pageNum < numberOfPages.length
-            ? 'opacity-100'
-            : 'opacity-50 pointer-events-none'
+          pageNum < numOfPages.length ? 'opacity-100' : 'opacity-50 pointer-events-none'
         } ml-3`}
       >
         <Arrow toLeft css='p-1.5' height='36' width='36' />

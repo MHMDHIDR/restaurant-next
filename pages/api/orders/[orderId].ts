@@ -86,7 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           })
         }
 
-        return res
+        res
           .status(200)
           .json({ message: 'Error: Order Did NOT Update', OrderStatusUpdated: 0 })
       } catch (error) {

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export const AcceptBtn = ({ id, email }) => (
+export const AcceptBtn = ({ id, email }: any) => (
   <button
     id='acceptOrder'
     data-id={id}
@@ -16,9 +16,9 @@ export const AcceptBtn = ({ id, email }) => (
   </button>
 )
 
-export const EditBtn = ({ id }) => (
+export const EditBtn = ({ id }: any) => (
   <Link
-    href={`/dashboard/edit-order/${id}`}
+    href={`/dashboard/orders/edit/${id}`}
     id='editOrder'
     className='m-1 px-2 py-2 text-sm text-white bg-gray-600 rounded-md hover:bg-gray-700 min-w-[7rem] relative text-center overflow-hidden border'
     data-tooltip='تعديل الطلب'
@@ -30,7 +30,7 @@ export const EditBtn = ({ id }) => (
   </Link>
 )
 
-export const RejectBtn = ({ id, email }) => (
+export const RejectBtn = ({ id, email }: any) => (
   <button
     id='rejectOrder'
     data-id={id}
@@ -46,7 +46,7 @@ export const RejectBtn = ({ id, email }) => (
   </button>
 )
 
-export const DeleteBtn = ({ id, email }) => (
+export const DeleteBtn = ({ id, email }: any) => (
   <button
     id='deleteOrder'
     data-id={id}
@@ -62,7 +62,7 @@ export const DeleteBtn = ({ id, email }) => (
   </button>
 )
 
-export const InvoiceBtn = ({ id, email }) => (
+export const InvoiceBtn = ({ id, email }: any) => (
   <button
     id='invoice'
     data-id={id}

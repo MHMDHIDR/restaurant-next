@@ -74,14 +74,21 @@ export type orderProps = {
     personName: string
     personNotes: string
     personPhone: string
-    userEmail: string
+    userEmail: any
     userId: string
     _id: string
   }
   setOrdersData: any
+  orderToppings: orderProps['ordersData']['orderToppings']
   removeOrderFromItems: any
   orderItemsGrandPrice: number
   setOrderItemsGrandPrice: any
+}
+
+export type orderDataProps = {
+  itemsCount: number
+  numberOfPages: number
+  response: orderProps
 }
 
 export type FileUploadProps = {
@@ -146,6 +153,7 @@ export type responseTypes = {
   userAccountType: string
   response: Array<any> | null | any
   itemsCount: number
+  numberOfPages: number
   CategoryList: string[]
   _id: string
   websiteLogoDisplayPath: string
@@ -207,7 +215,7 @@ export type orderInfoProps = {
 export type PaginationProps = {
   routeName: string
   pageNum: number
-  numberOfPages: number[]
+  numberOfPages: number
   count: number
   foodId?: string
   itemsPerPage?: number

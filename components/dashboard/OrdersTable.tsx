@@ -95,7 +95,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     switch (id) {
       case 'acceptOrder':
       case 'rejectOrder':
-      case 'editOrder':
+      // case 'editOrder':
       case 'invoice':
       case 'deleteOrder': {
         setOrderInfo({
@@ -256,21 +256,17 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
             {/* )} */}
           </tr>
         </thead>
-
         <tbody>
-          {(ordersData ?? ordersData !== undefined) &&
-          ordersData?.response?.length > 0 ? (
+          {ordersData !== undefined && ordersData?.response?.length > 0 ? (
             <>
               {/* filter by email ordersByUserEmail === parseJson(localStorage.getItem('user')).userEmail */}
               {ordersByUserEmail ? (
                 //show only orders by user email ==> FILTER by email
                 ordersData?.response?.filter(
-                  (order: { userEmail: any }) => order.userEmail === USER.userEmail
+                  (order: any) => order.userEmail === USER.userEmail
                 ).length > 0 ? ( //means there is at least one order by the current user email
                   ordersData?.response
-                    ?.filter(
-                      (order: { userEmail: string }) => order.userEmail === USER.userEmail
-                    )
+                    ?.filter((order: any) => order.userEmail === USER.userEmail)
                     .map((order: any, idx: number) => (
                       <tr
                         key={order._id}
@@ -640,7 +636,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                     pageNum={pageNumber}
                     numberOfPages={ordersData?.numberOfPages}
                     count={ordersData?.itemsCount}
-                    foodId={ordersData?.response?._id}
                     itemsPerPage={ITEMS_PER_PAGE}
                   />
                 </td>
@@ -653,7 +648,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
               <td />
               <td />
               <td />
-              <td>
+              <td className='p-10'>
                 <LoadingSpinner />
               </td>
               <td />
@@ -670,7 +665,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                   className='my-2 md:text-2xl text-red-600 font-[600] py-2 px-1'
                   data-form-msg
                 >
-                  {ordersByUserEmail
+                  {ordersByUserEmail // if this is the user interface, then show the first msg
                     ? 'لم يتم العثور على طلبات بعد، يمكنك إنشاء طلب جديد'
                     : 'لم يتم العثور على طلبات بعد، يمكنك العودة للوحة التحكم بالضغط على'}
                 </p>

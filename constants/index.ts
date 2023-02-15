@@ -11,7 +11,7 @@ export const SUGGESTED_FOOTER_ITEMS_COUNT = 2
 
 export const ITEMS_PER_PAGE = 10
 
-export const MAX_CART_QUANTITY = 100
+export const MAX_QUANTITY = 100
 
 export const FILE_UPLOAD_IMG_SIZE = 122
 

@@ -6,7 +6,7 @@ import { DashboardOrderContext } from '@contexts/DashboardOrderContext'
 import { removeSlug } from '@functions/slug'
 import Divider from '@components/Divider'
 import { selectedToppingsProps } from '@types'
-import { MAX_CART_QUANTITY } from '@constants'
+import { MAX_QUANTITY } from '@constants'
 
 const CartItems: any = ({ orderItems, orderToppings }: any) => {
   const { items } = useContext(CartContext)
@@ -47,6 +47,7 @@ const Items = ({
   const [orderItemQuantity, setOrderItemQuantity] = useState(0)
 
   return orderItems?.map((item: any) => {
+    //if has topping in original item (food) object
     const hasToppings = typeof item?.cToppings[0]?.toppingName === 'string'
 
     return (
@@ -90,7 +91,7 @@ const Items = ({
                 <h2 className='text-center ltr'>الإضافات</h2>
                 {item?.cToppings?.map(
                   ({
-                    toppingId,
+                    toppingId = '123id',
                     toppingName = 'إضافة',
                     toppingPrice = 1,
                     toppingQuantity = 1
@@ -148,7 +149,7 @@ const Items = ({
                           if (orderToppings) {
                             orderItems.map((item: any) => {
                               if (
-                                topping.toppingQuantity < MAX_CART_QUANTITY &&
+                                topping.toppingQuantity < MAX_QUANTITY &&
                                 item.cItemId === toppingId.slice(0, -1)
                               ) {
                                 topping.toppingQuantity++
@@ -156,11 +157,12 @@ const Items = ({
                               }
                               return item
                             })
-                          } else if (topping.toppingQuantity < MAX_CART_QUANTITY) {
+                          } else if (topping.toppingQuantity < MAX_QUANTITY) {
                             setItems(
                               items.map((item: any) => {
                                 if (item.cItemId === toppingId.slice(0, -1)) {
                                   topping.toppingQuantity++
+                                  setOrderItemQuantity(topping.toppingQuantity)
                                 }
                                 return item
                               })
@@ -192,6 +194,7 @@ const Items = ({
                               items.map(item => {
                                 if (item.cItemId === toppingId.slice(0, -1)) {
                                   topping.toppingQuantity--
+                                  setOrderItemQuantity(topping.toppingQuantity)
                                 }
                                 return item
                               })
@@ -221,7 +224,7 @@ const Items = ({
               <button
                 className='quantity-btn number-hover'
                 onClick={() => {
-                  if (item.cQuantity < MAX_CART_QUANTITY) {
+                  if (item.cQuantity < MAX_QUANTITY) {
                     item.cQuantity++
                     setItems([...items])
                     setGrandPrice(

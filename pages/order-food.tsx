@@ -332,7 +332,7 @@ const OrderFood = () => {
                   السعر الاجمالي:&nbsp;
                   <strong ref={grandPriceRef}>
                     {items.reduce(
-                      (acc, item) =>
+                      (acc: number, item: any) =>
                         acc +
                         item.cPrice * item.cQuantity +
                         checkedToppings.reduce(
