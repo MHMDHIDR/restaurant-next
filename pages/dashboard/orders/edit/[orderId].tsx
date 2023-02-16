@@ -30,7 +30,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
   useEffect(() => {
     setOrdersData(OrdersData?.response)
     setOrderItemToppings(OrdersData.response?.orderToppings)
-  }, [OrdersData])
+  }, [OrdersData, setOrderItemToppings, setOrdersData])
 
   //Form States
   const [personName, setPersonName] = useState(ordersData?.personName)
@@ -58,7 +58,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
 
   useEffect(() => {
     setOrderItemsGrandPrice(grandPriceRef?.current?.textContent || orderItemsGrandPrice)
-  }, [grandPriceRef?.current?.textContent, orderItemsGrandPrice])
+  }, [grandPriceRef?.current?.textContent, orderItemsGrandPrice, setOrderItemsGrandPrice])
 
   const handleCollectOrder = async (e: { preventDefault: () => void }) => {
     e.preventDefault()

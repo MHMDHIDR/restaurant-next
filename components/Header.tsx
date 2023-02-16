@@ -18,7 +18,7 @@ const Header = () => {
           websiteLogoDisplayPath: ''
         })
       : setData(response?.response[0])
-  }, [response])
+  }, [response, loading])
 
   return (
     <header

@@ -29,7 +29,7 @@ const ViewFood = ({ viewFood }: any) => {
 
   useEffect(() => {
     setData(viewFood)
-  }, [])
+  }, [viewFood])
 
   const { items } = useContext(CartContext)
 

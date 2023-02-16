@@ -32,7 +32,7 @@ const Nav = () => {
     return () => {
       setUserData(DEFAULT_USER_DATA)
     }
-  }, [])
+  }, [items.length])
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {

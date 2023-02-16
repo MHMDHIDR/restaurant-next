@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy } from 'react'
+import { useState, useEffect } from 'react'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -19,6 +19,7 @@ const DashboardStatistics = () => {
 
   const [userStatus, setUserStatus] = useState<string>('')
   const [userType, setUserType] = useState<string>('')
+  const [userID, setUserID] = useState<string>('')
   const [categories, setCategories] = useState<string[]>([''])
   const [ordersBycCategory, setOrdersBycCategory] = useState<cCategory>()
 
@@ -27,14 +28,16 @@ const DashboardStatistics = () => {
   const getCategories = useAxios({ url: `/settings` })
   const menu = useAxios({ url: `/foods?page=0&limit=0` })
   const orders = useAxios({
-    url: `/orders?page=0&limit=0`,
+    url: `/orders?page=1&limit=0`,
     headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
   })
+  const { loading } = orders
 
   useEffect(() => {
     if (currentUser?.response !== null || menu.response !== null) {
       setUserStatus(currentUser?.response?.response?.userAccountStatus)
       setUserType(currentUser?.response?.response?.userAccountType)
+      setUserID(currentUser?.response?.response?._id)
       //Statistics
       setCategories(getCategories?.response?.CategoryList || [])
       setOrdersBycCategory(
@@ -56,14 +59,13 @@ const DashboardStatistics = () => {
   useEventListener('keydown', (e: any) => e.key === 'Escape' && menuToggler())
 
   //check if userStatus is active and the userType is admin
-  // return !USER?._id ? (
-  //   <ModalNotFound />
-  // ) : !USER?._id || userStatus === 'block' || userType === 'user' ? (
-  //   logoutUser(USER?._id)
-  // ) : !userStatus || !userType ? (
-  //   <LoadingPage />
-  // ) :
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?._id !== userID ? (
+    <ModalNotFound />
+  ) : userStatus === 'block' || userType === 'user' ? (
+    logoutUser(USER?._id)
+  ) : (
     <Layout>
       <div className='container mx-auto'>
         <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>عدد الطلبات حسب التصنيف</h1>

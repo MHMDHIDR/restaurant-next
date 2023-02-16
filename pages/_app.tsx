@@ -7,23 +7,32 @@ import CartContextProvider from '@contexts/CartContext'
 import TagsContextProvider from '@contexts/TagsContext'
 import SearchContextProvider from '@contexts/SearchContext'
 import DashboardOrderContextProvider from '@contexts/DashboardOrderContext'
+import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 export default function App({ Component, pageProps }: AppProps) {
+  const { PAYPAL_CLIENT_ID } = process.env
   return (
     <ThemeProvider attribute='class'>
-      <FileUploadContextProvider>
-        <ToppingsContextProvider>
-          <CartContextProvider>
-            <TagsContextProvider>
-              <SearchContextProvider>
-                <DashboardOrderContextProvider>
-                  <Component {...pageProps} />
-                </DashboardOrderContextProvider>
-              </SearchContextProvider>
-            </TagsContextProvider>
-          </CartContextProvider>
-        </ToppingsContextProvider>
-      </FileUploadContextProvider>
+      <PayPalScriptProvider
+        options={{
+          'client-id':
+            'AYJHPBtF1WJl8Hh6hDGouvXVcyO6e2sBrAIfp3ghvIX6EZJMAci75L_gB2kCGLhZWIU3pw8KeaHiipc1'
+        }}
+      >
+        <FileUploadContextProvider>
+          <ToppingsContextProvider>
+            <CartContextProvider>
+              <TagsContextProvider>
+                <SearchContextProvider>
+                  <DashboardOrderContextProvider>
+                    <Component {...pageProps} />
+                  </DashboardOrderContextProvider>
+                </SearchContextProvider>
+              </TagsContextProvider>
+            </CartContextProvider>
+          </ToppingsContextProvider>
+        </FileUploadContextProvider>
+      </PayPalScriptProvider>
     </ThemeProvider>
   )
 }

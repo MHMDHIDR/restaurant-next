@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-const join = () => {
+const Join = () => {
   const { push } = useRouter()
   useEffect(() => {
     push('/auth/join')
@@ -8,9 +8,9 @@ const join = () => {
     return () => {
       push('')
     }
-  }, [])
+  }, [push])
 
   return null
 }
 
-export default join
+export default Join

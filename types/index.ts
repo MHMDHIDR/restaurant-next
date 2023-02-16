@@ -108,7 +108,7 @@ export type FileUploadComponentProps = {
       websiteLogoDisplayName?: string
     }[]
   }
-  ignoreDelete: boolean
+  ignoreDelete?: boolean
 }
 
 export type uploadurlDataProps = {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Axios from 'axios'
 import useDocumentTitle from '@hooks/useDocumentTitle'
@@ -167,8 +168,10 @@ const DashboardMenu = () => {
                       >
                         <td className='px-1 py-2 font-bold'>{idx + 1}</td>
                         <td className='px-1 py-2 pr-3 min-w-[5rem]'>
-                          <img
+                          <Image
                             loading='lazy'
+                            height={56}
+                            width={56}
                             src={item.foodImgs[0]?.foodImgDisplayPath}
                             alt={item.foodName}
                             className='object-cover rounded-lg shadow-md h-14 w-14'

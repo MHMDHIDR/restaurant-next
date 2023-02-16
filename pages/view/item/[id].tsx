@@ -9,7 +9,7 @@ import Card from '@components/Card'
 import { API_URL } from '@constants'
 import Layout from '@components/Layout'
 
-const index = ({ item }: any) => {
+const IndexId = ({ item }: any) => {
   useDocumentTitle('View Foods')
 
   const { items } = useContext(CartContext)
@@ -107,4 +107,4 @@ export async function getServerSideProps(props: ServerSideProps) {
 
   return { props: { item } }
 }
-export default index
+export default IndexId

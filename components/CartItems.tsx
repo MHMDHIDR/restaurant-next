@@ -7,6 +7,7 @@ import { removeSlug } from '@functions/slug'
 import Divider from '@components/Divider'
 import { selectedToppingsProps } from '@types'
 import { MAX_QUANTITY } from '@constants'
+import Image from 'next/image'
 
 const CartItems: any = ({ orderItems, orderToppings }: any) => {
   const { items } = useContext(CartContext)
@@ -40,7 +41,10 @@ const Items = ({
     orderItemToppings,
     setOrderItemToppings
   } = useContext(ToppingsContext)
-  useEffect(() => setOrderItemToppings(orderToppings), [])
+  useEffect(
+    () => setOrderItemToppings(orderToppings),
+    [orderToppings, setOrderItemToppings]
+  )
 
   const { items, setItems, removeFromCart, setGrandPrice } = useContext(CartContext)
   const { removeOrderFromItems } = useContext(DashboardOrderContext)
@@ -63,7 +67,7 @@ const Items = ({
           `}
         >
           {/* Product Image */}
-          <img
+          <Image
             loading='lazy'
             src={item?.cImg[0].foodImgDisplayPath}
             alt={removeSlug(item?.cHeading)}

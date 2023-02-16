@@ -1198,6 +1198,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@paypal/paypal-js@npm:^5.1.4":
+  version: 5.1.4
+  resolution: "@paypal/paypal-js@npm:5.1.4"
+  dependencies:
+    promise-polyfill: ^8.2.3
+  checksum: 8b86ca48c875011730957ea56b3a6847737ba270c448e151e03a8bfc4b8e51ae61bd5181ced7f17522b1efd38550584d40a1bcd71e06495b7aa2fb1026af3ec0
+  languageName: node
+  linkType: hard
+
+"@paypal/react-paypal-js@npm:^7.8.2":
+  version: 7.8.2
+  resolution: "@paypal/react-paypal-js@npm:7.8.2"
+  dependencies:
+    "@paypal/paypal-js": ^5.1.4
+    "@paypal/sdk-constants": ^1.0.122
+  peerDependencies:
+    react: ">=16.3.0"
+    react-dom: ">=16.3.0"
+  checksum: 8cf91a4cbf94bbe9ac96367a25cd9d496180f92fd418d15130e8b11aee223f2f15b83369afa8dd4c3b829e13d5e61e3727ffca936974024906535c98858a7222
+  languageName: node
+  linkType: hard
+
+"@paypal/sdk-constants@npm:^1.0.122":
+  version: 1.0.129
+  resolution: "@paypal/sdk-constants@npm:1.0.129"
+  dependencies:
+    hi-base32: ^0.5.0
+  checksum: e401d55b13670abeab86ee48e608c4a8517126180ccfb34a2241cabe920e4e4758d0f09e9b61161f4972dd7e0a3631f3f1e766343c4634b1d98877ee62686f14
+  languageName: node
+  linkType: hard
+
 "@pkgr/utils@npm:^2.3.1":
   version: 2.3.1
   resolution: "@pkgr/utils@npm:2.3.1"
@@ -3186,6 +3217,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hi-base32@npm:^0.5.0":
+  version: 0.5.1
+  resolution: "hi-base32@npm:0.5.1"
+  checksum: 6655682b5796d75ed3068071e61d05a490e2086c4908af3b94a730059147b8a4a5e8870e656b828d0550dcc9988d8748bda54a53e428cbce28e0d7a785b2ffde
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:^4.1.0":
   version: 4.1.0
   resolution: "http-cache-semantics@npm:4.1.0"
@@ -4542,6 +4580,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"promise-polyfill@npm:^8.2.3":
+  version: 8.3.0
+  resolution: "promise-polyfill@npm:8.3.0"
+  checksum: 206373802076c77def0805758d0a8ece64120dfa6603f092404a1004211f8f2f67f33cadbc35953fc2a8ed0b0d38c774e88bdf01e20ce7a920723a60df84b7a5
+  languageName: node
+  linkType: hard
+
 "promise-retry@npm:^2.0.1":
   version: 2.0.1
   resolution: "promise-retry@npm:2.0.1"
@@ -4791,6 +4836,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "restaurant-next@workspace:."
   dependencies:
+    "@paypal/react-paypal-js": ^7.8.2
     "@types/bcryptjs": ^2.4.2
     "@types/formidable": ^2.0.5
     "@types/jsonwebtoken": ^9.0.0

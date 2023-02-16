@@ -47,7 +47,7 @@ const Index = ({
     setSweetsImgs(catDrinkResponse?.response)
     setDrinkImgs(catSweetResponse?.response)
     setNewFood(newFoodItems)
-  }, [])
+  })
 
   const getRandomFoodImg = () => {
     const randomIndex = Math.floor(Math.random() * foodImgs?.length)

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 
 // funciton that returns the subpath and give a go to path
 const goTo = (subpath: string) => {
-  const { pathname } = window.location || useRouter()
+  const { pathname } = typeof window !== 'undefined' ? window.location : useRouter()
   const subpathRoot = pathname.split('/')[1] // subpath root (/dashboard)
 
   return subpath === subpathRoot ? `/${subpathRoot}` : `/${subpathRoot}/` + subpath

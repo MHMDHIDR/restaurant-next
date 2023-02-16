@@ -15,7 +15,7 @@ import goTo from '@functions/goTo'
 import { stringJson } from '@functions/jsonTools'
 import useUploadS3 from '@hooks/useUploadS3'
 
-const About = () => {
+const Settings = () => {
   useDocumentTitle('Settings')
 
   //Contexts
@@ -551,4 +551,4 @@ const About = () => {
   )
 }
 
-export default About
+export default Settings

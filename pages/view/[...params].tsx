@@ -40,7 +40,7 @@ const ViewFood = ({ viewFood }: any) => {
   useEffect(() => {
     scrollToView()
     setData(viewFood)
-  }, [])
+  }, [viewFood])
 
   return (
     <Layout>

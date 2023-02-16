@@ -88,7 +88,7 @@ const OrderFood = () => {
 
   useEffect(() => {
     setGrandPrice(grandPriceRef?.current?.textContent || grandPrice)
-  }, [grandPriceRef?.current?.textContent, grandPrice])
+  }, [grandPriceRef?.current?.textContent, grandPrice, setGrandPrice])
 
   const handleCollectOrder = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
@@ -166,7 +166,7 @@ const OrderFood = () => {
             status={Loading}
             msg={`يجب عليك تسجيل الدخول أو عمل حساب جديد أولا وذلك للطلب`}
             btnName='تسجيل دخول'
-            btnLink={`/auth/login${pathname}`}
+            btnLink={`/auth/login?redirect=${pathname}`}
           />
         ) : showPaymentModal === true ? (
           <Modal

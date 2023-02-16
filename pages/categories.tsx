@@ -4,7 +4,7 @@ import useDocumentTitle from '@hooks/useDocumentTitle'
 import Layout from '@components/Layout'
 import { API_URL } from '@constants'
 
-const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any) => {
+const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any) => {
   useDocumentTitle('Categories')
 
   const [foodImgs, setFoodImgs] = useState<any>()
@@ -14,7 +14,7 @@ const categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
     setFoodImgs(catFoodResponse?.response)
     setDrinkImgs(catDrinkResponse?.response)
     setSweetsImgs(catSweetResponse?.response)
-  }, [])
+  })
 
   const getRandomFoodImg = () => {
     const randomIndex = Math.floor(Math.random() * foodImgs?.length)
@@ -125,4 +125,4 @@ export const getServerSideProps = async () => {
   }
 }
 
-export default categories
+export default Categories

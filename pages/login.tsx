@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-const login = () => {
+const Login = () => {
   const { push } = useRouter()
   useEffect(() => {
     push('/auth/login')
@@ -8,9 +8,9 @@ const login = () => {
     return () => {
       push('')
     }
-  }, [])
+  }, [push])
 
   return null
 }
 
-export default login
+export default Login

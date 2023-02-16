@@ -69,7 +69,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       setToppings(foodData?.response?.foodToppings)
       setCategoryList(categories?.response?.response[0]?.CategoryList)
     }
-  }, [categories?.response])
+  }, [categories?.response, foodData?.response])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target
