@@ -102,9 +102,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       }
     }
     uploadToS3()
-  }, [formSubmitted])
+  }, [formSubmitted, file])
 
-  const handleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
+  const HandleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
     e.preventDefault()
     //initial form values if no value was updated taking it from [0] index
     const currentFoodId = data?._id
@@ -528,7 +528,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                       <button
                         id='updateFood'
                         className='min-w-[7rem] bg-green-600 hover:bg-green-700 text-white py-1.5 px-6 rounded-md'
-                        onClick={(e: any) => handleUpdateFood(e)}
+                        onClick={(e: any) => HandleUpdateFood(e)}
                       >
                         تحديث
                       </button>

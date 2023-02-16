@@ -101,9 +101,9 @@ const Settings = () => {
       }
     }
     uploadToS3()
-  }, [formSubmitted])
+  }, [formSubmitted, file])
 
-  const handleUpdate = async (e: { preventDefault: () => void }) => {
+  const HandleUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
 
     //initial form values if no value was updated taking it from [0] index
@@ -202,7 +202,7 @@ const Settings = () => {
             )}
 
             {/* Description Form */}
-            <form id='descForm' onSubmit={handleUpdate}>
+            <form id='descForm' onSubmit={HandleUpdate}>
               <h2 className='mx-0 mt-4 mb-8 mr-5 text-xl text-center'>
                 العلامة التجارية
               </h2>

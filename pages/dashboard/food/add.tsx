@@ -66,9 +66,9 @@ const AddFood = () => {
       }
     }
     uploadToS3()
-  }, [formSubmitted])
+  }, [formSubmitted, file])
 
-  const handleAddFood = async (e: {
+  const HandleAddFood = async (e: {
     target: any
     key?: string
     preventDefault: () => void
@@ -162,7 +162,7 @@ const AddFood = () => {
                 method='POST'
                 className='form'
                 encType='multipart/form-data'
-                onSubmit={e => handleAddFood(e)}
+                onSubmit={e => HandleAddFood(e)}
               >
                 <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
                   <FileUpload
