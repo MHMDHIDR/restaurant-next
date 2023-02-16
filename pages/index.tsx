@@ -18,7 +18,7 @@ const Index = ({
   catFoodResponse,
   catDrinkResponse,
   catSweetResponse,
-  newFood
+  newFoodItems
 }: any) => {
   const { items } = useContext(CartContext)
 
@@ -28,7 +28,6 @@ const Index = ({
   let media: mediaProps = []
 
   //push food images to media array
-
   menuFood &&
     menuFood?.response.map(({ _id, foodImgs, foodName, foodPrice }: any) =>
       media.push({
@@ -42,10 +41,12 @@ const Index = ({
   const [foodImgs, setFoodImgs] = useState<any>('')
   const [drinkImgs, setDrinkImgs] = useState<any>('')
   const [sweetsImgs, setSweetsImgs] = useState<any>('')
+  const [newFood, setNewFood] = useState<any>('')
   useEffect(() => {
     setFoodImgs(catFoodResponse?.response)
     setSweetsImgs(catDrinkResponse?.response)
     setDrinkImgs(catSweetResponse?.response)
+    setNewFood(newFoodItems)
   }, [])
 
   const getRandomFoodImg = () => {
@@ -237,7 +238,6 @@ const Index = ({
         <title>Resaturant</title>
       </Head>
       <Layout>
-        {/* Menu */}
         <section id='menu' className='py-12 my-8 menu'>
           <div className='container relative mx-auto'>
             <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>القائمة</h2>
@@ -254,8 +254,7 @@ const Index = ({
             </div>
           </div>
         </section>
-        {/* Categories */}
-        <section className='container mx-auto'>
+        <section id='Categories' className='container mx-auto'>
           <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
             الوجبات والتصنيفات
           </h3>
@@ -317,7 +316,6 @@ const Index = ({
             </Link>
           </div>
         </section>
-        {/* New Food */}
         <section id='new' className='py-12 my-8 overflow-x-hidden new'>
           <div className='container mx-auto text-center'>
             <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
@@ -414,7 +412,9 @@ export async function getServerSideProps() {
     catSweet.json()
   )
   const menuFood = await fetch(fetchURLs.menu).then(menu => menu.json())
-  const newFood = await fetch(fetchURLs.new).then(newFood => newFood.json())
+  const newFoodItems = await fetch(fetchURLs.new).then(newFoodItems =>
+    newFoodItems.json()
+  )
 
   return {
     props: {
@@ -422,7 +422,7 @@ export async function getServerSideProps() {
       catFoodResponse,
       catDrinkResponse,
       catSweetResponse,
-      newFood
+      newFoodItems
     }
   }
 }

@@ -9,16 +9,28 @@ import useEventListener from '@hooks/useEventListener'
 import useAxios from '@hooks/useAxios'
 import NavMenu from './NavMenu'
 import Image from 'next/image'
-import { USER } from '../constants'
+import { DEFAULT_USER_DATA, USER } from '../constants'
 import { UserProps } from '@types'
 
 const Nav = () => {
-  const [userData, setUserData] = useState<UserProps>({ userFullName: 'المستخدم' })
+  const { items } = useContext(CartContext)
+  const [userData, setUserData] = useState<UserProps>(DEFAULT_USER_DATA)
+  const [cartItemsLength, setCartItemsLength] = useState(0)
+
   useEffect(() => {
-    setUserData(USER)
+    setCartItemsLength(items.length)
 
     return () => {
-      setUserData({ userFullName: '' })
+      setCartItemsLength(0)
+    }
+  }, [items])
+
+  useEffect(() => {
+    setUserData(USER)
+    setCartItemsLength(items.length)
+
+    return () => {
+      setUserData(DEFAULT_USER_DATA)
     }
   }, [])
 
@@ -50,8 +62,6 @@ const Nav = () => {
     lastScrollY = window.scrollY
   })
 
-  const { items } = useContext(CartContext)
-
   return (
     <div className='fixed inset-0 bottom-auto z-[9999] w-full transition-transform duration-300 nav ltr'>
       <nav
@@ -82,7 +92,7 @@ const Nav = () => {
 
         <Link href='/order-food' className='underline-hover'>
           <span className='hidden sm:inline'>سلة الطلبات: </span>
-          <span>{items?.length || 0}&nbsp;&nbsp;🛒</span>
+          <span>{cartItemsLength}&nbsp;&nbsp;🛒</span>
         </Link>
 
         {/* Nav toggler */}

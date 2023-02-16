@@ -19,9 +19,9 @@ const CartItems: any = ({ orderItems, orderToppings }: any) => {
       orderToppings={orderToppings}
       isDashboard={isDashboard}
     />
-  ) : !isDashboard ? (
-    <Items orderItems={items} isDashboard={isDashboard} />
-  ) : null
+  ) : (
+    !isDashboard && <Items orderItems={items} isDashboard={isDashboard} />
+  )
 }
 
 const Items = ({

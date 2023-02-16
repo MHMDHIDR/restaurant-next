@@ -6,18 +6,17 @@ import { CartContext } from '@contexts/CartContext'
 import { ToppingsContext } from '@contexts/ToppingsContext'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import useAxios from '@hooks/useAxios'
-import { validPhone } from '@functions/validForm'
-import scrollToView from '@functions/scrollToView'
 import { API_URL, USER } from '@constants'
 import Modal from '@components/Modal/Modal'
-import Header from '@components/Header'
-import Footer from '@components/Footer'
 import { Success, Loading } from '@components/Icons/Status'
-import { LoadingSpinner } from '@components/Loading'
+import { LoadingPage, LoadingSpinner } from '@components/Loading'
 import CartItems from '@components/CartItems'
 import PaymentButton from '@components/PaymentButton'
-import { selectedToppingsProps, orderMsgProps } from '@types'
 import NoItems from '@components/NoItems'
+import Layout from '@components/Layout'
+import { selectedToppingsProps, orderMsgProps } from '@types'
+import { validPhone } from '@functions/validForm'
+import scrollToView from '@functions/scrollToView'
 import { parseJson, stringJson } from '@functions/jsonTools'
 
 const formDataFromLocalStorage =
@@ -69,7 +68,7 @@ const OrderFood = () => {
   const formErr = useRef<HTMLParagraphElement>(null)
   const grandPriceRef = useRef<HTMLElement>(null)
 
-  const { ...response } = useAxios({ url: '/settings' })
+  const { loading, ...response } = useAxios({ url: '/settings' })
 
   useEffect(() => {
     if (response.response !== null) {
@@ -151,9 +150,7 @@ const OrderFood = () => {
   }
 
   return (
-    <>
-      <Header />
-
+    <Layout>
       <section id='orderFood' className='py-12 my-8'>
         {orderFoodStatus === 1 ? (
           <Modal
@@ -200,7 +197,9 @@ const OrderFood = () => {
         ) : null}
 
         <div className='container mx-auto text-center'>
-          {items.length > 0 ? (
+          {loading ? (
+            <LoadingPage />
+          ) : items.length > 0 ? (
             <>
               <h2 className='inline-block mb-20 text-3xl font-bold'>سلة الطلبات</h2>
               <CartItems />
@@ -384,9 +383,7 @@ const OrderFood = () => {
           )}
         </div>
       </section>
-
-      <Footer />
-    </>
+    </Layout>
   )
 }
 

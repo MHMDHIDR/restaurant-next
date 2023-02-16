@@ -1,5 +1,5 @@
 export const LoadingPage = () => (
-  <div className='fixed inset-0 flex items-center justify-center w-screen h-screen bg-orange-100 dark:bg-orange-900'>
+  <div className='fixed inset-0 flex items-center justify-center w-screen h-screen bg-orange-100 dark:bg-orange-900 z-[999999]'>
     <div className='absolute w-6 h-6 bg-orange-700 rounded-full dark:bg-orange-300 animate-fly-in' />
     <div className='absolute w-6 h-6 bg-orange-700 rounded-full dark:bg-orange-300 animate-fly-in animate-delay-100' />
     <div className='absolute w-6 h-6 bg-orange-700 rounded-full dark:bg-orange-300 animate-fly-in animate-delay-200' />

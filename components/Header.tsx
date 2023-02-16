@@ -9,15 +9,15 @@ import Image from 'next/image'
 
 const Header = () => {
   const [data, setData] = useState<headerProps>()
-  const { response } = useAxios({ url: '/settings' })
+  const { response, loading } = useAxios({ url: '/settings' })
 
   useEffect(() => {
-    response
-      ? setData(response?.response[0])
-      : setData({
+    loading
+      ? setData({
           appTagline: '',
           websiteLogoDisplayPath: ''
         })
+      : setData(response?.response[0])
   }, [response])
 
   return (

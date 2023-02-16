@@ -3,41 +3,34 @@ import Link from 'next/link'
 import useAxios from '@hooks/useAxios'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import useEventListener from '@hooks/useEventListener'
+import ModalNotFound from '@components/Modal/ModalNotFound'
+import { LoadingPage } from '@components/Loading'
+import Layout from '@components/dashboard/Layout'
+import { API_URL, USER } from '@constants'
+import { DashboardHomeProps } from '@types'
 import goTo from '@functions/goTo'
 import logoutUser from '@functions/logoutUser'
 import menuToggler from '@functions/menuToggler'
-import ModalNotFound from '@components/Modal/ModalNotFound'
-import { LoadingPage } from '@components/Loading'
-import { API_URL, USER } from '@constants'
-import Layout from '@components/dashboard/Layout'
-import { stringJson } from '@functions/jsonTools'
+import { toJson } from '@utils/functions/jsonTools'
+import Image from 'next/image'
 
-const DashboardHome = ({ menu }: any) => {
+const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) => {
   useDocumentTitle('Home')
-
   const [userStatus, setUserStatus] = useState<string>('')
   const [userType, setUserType] = useState<string>('')
   const [userID, setUserID] = useState<string>('')
-  const [menuCount, setMenuCount] = useState<number>(0)
-  const [ordersCount, setOrdersCount] = useState<number>(0)
 
-  //if there's food id then fetch with food id, otherwise fetch everything
-  const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId=${USER?._id}` })
-  const { loading } = currentUser
-  const orders = useAxios({
-    url: `/orders?page=0&limit=0`,
-    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : '{}'
+  const { loading, response } = useAxios({
+    url: `/users/all?page=1&limit=1&itemId=${USER?._id}`
   })
 
   useEffect(() => {
-    if (currentUser?.response !== null || menu.response !== null) {
-      setUserStatus(currentUser?.response?.response?.userAccountStatus)
-      setUserType(currentUser?.response?.response?.userAccountType)
-      setUserID(currentUser?.response?.response?._id)
-      setMenuCount(menu?.itemsCount)
-      setOrdersCount(orders?.response?.itemsCount ?? 0)
+    if (response) {
+      setUserStatus(response?.response?.userAccountStatus)
+      setUserType(response?.response?.userAccountType)
+      setUserID(response?.response?._id)
     }
-  }, [currentUser?.response, menu?.response, orders?.response])
+  }, [response])
 
   typeof window !== 'undefined' && document.body.classList.add('dashboard')
 
@@ -59,46 +52,50 @@ const DashboardHome = ({ menu }: any) => {
             userType === 'cashier' ? ' md:justify-center' : ' md:justify-between'
           }`}
         >
-          {/* Orders */}
           {(userType === 'admin' || userType === 'cashier') && (
             <Link
               href={goTo('orders')}
               className='inline-flex flex-col items-center justify-center p-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
             >
-              <img
+              <Image
                 loading='lazy'
+                width={160}
+                height={96}
                 src='/assets/img/icons/orders.svg'
                 alt='menu slider img'
                 className='w-40 h-24'
               />
               <h3>الطلبات</h3>
-              <span className='text-lg font-bold'>عدد الطلبات {ordersCount}</span>
+              <span className='text-lg font-bold'>عدد الطلبات {orderItemsCount}</span>
             </Link>
           )}
 
-          {/* Menu  &  Add Items*/}
           {userType === 'admin' && (
             <>
               <Link
                 href={goTo('menu')}
                 className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
               >
-                <img
+                <Image
                   loading='lazy'
+                  width={160}
+                  height={96}
                   src='/assets/img/icons/menu.svg'
                   alt='menu slider img'
                   className='w-40 h-24'
                 />
                 <h3>القائمة</h3>
-                <span className='text-lg font-bold'>عدد الوجبات {menuCount}</span>
+                <span className='text-lg font-bold'>عدد الوجبات {menuItemsCount}</span>
               </Link>
 
               <Link
                 href={goTo('food/add')}
                 className='inline-flex flex-col items-center justify-center px-2 py-4 space-y-4 text-white bg-orange-800 hover:bg-orange-700 rounded-xl'
               >
-                <img
+                <Image
                   loading='lazy'
+                  width={160}
+                  height={96}
                   src='/assets/img/icons/add_food.svg'
                   alt='menu slider img'
                   className='w-40 h-24'
@@ -114,11 +111,17 @@ const DashboardHome = ({ menu }: any) => {
 }
 
 export async function getServerSideProps() {
-  const menu = await fetch(`${API_URL}/foods?page=0&limit=0`).then(menu => menu.json())
+  const fetchOrdersCount = `${API_URL}/orders?page=1&limit=0`
+  const fetchMenuCount = `${API_URL}/foods?page=1&limit=0`
 
-  return {
-    props: { menu }
-  }
+  const orderItemsCount = await fetch(fetchOrdersCount)
+    .then(item => toJson(item))
+    .then(({ itemsCount }) => itemsCount)
+  const menuItemsCount = await fetch(fetchMenuCount)
+    .then(item => toJson(item))
+    .then(({ itemsCount }) => itemsCount)
+
+  return { props: { orderItemsCount, menuItemsCount } }
 }
 
 export default DashboardHome

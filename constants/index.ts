@@ -1,7 +1,6 @@
 import { UserProps } from '@types'
 import { Types } from 'mongoose'
 import { parseJson } from '@functions/jsonTools'
-const { ObjectId } = Types
 
 export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
 
@@ -26,6 +25,11 @@ export const APP_URL =
     : process.env.NEXT_PUBLIC_APP_PUBLIC_URL
 
 export const API_URL = APP_URL + '/api'
+
+export const DEFAULT_USER_DATA = {
+  userFullName: 'المستخدم',
+  userAccountType: 'user'
+}
 
 export const DEFAULT_FOOD_DATA = {
   _id: '',

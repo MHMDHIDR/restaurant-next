@@ -388,3 +388,8 @@ export type deleteFoodEventListenerProps = {
     }
   }
 }
+
+export type DashboardHomeProps = {
+  orderItemsCount: number
+  menuItemsCount: number
+}
