@@ -100,7 +100,7 @@ export type FileUploadProps = {
 }
 export type FileUploadComponentProps = {
   data: {
-    foodId: string
+    foodId?: string
     foodName: string
     defaultImg: {
       foodImgDisplayName: string
