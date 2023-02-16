@@ -5,11 +5,11 @@ import { stringJson } from '@functions/jsonTools'
 
 /**
  * Custom hook to upload files to S3 bucket
- * and returns foodImgs object (array)
+ * and returns foodImgsResponse object (array)
  */
 
 const useUploadS3 = async (file: FileUploadProps['file']) => {
-  if (file.length === 0) return { foodImgs: [] }
+  if (file.length === 0) return { foodImgsResponse: [] }
 
   const fileFormData = new FormData()
 
@@ -37,7 +37,7 @@ const useUploadS3 = async (file: FileUploadProps['file']) => {
     return uploadToS3(url)
   })
 
-  const foodImgs: FoodImgsProps[] = data.map(({ fields, url }) => {
+  const foodImgsResponse: FoodImgsProps[] = data.map(({ fields, url }) => {
     const urlSplit = (n: number) => url.split('/')[n]
     return {
       foodImgDisplayName: fields.key,
@@ -45,7 +45,7 @@ const useUploadS3 = async (file: FileUploadProps['file']) => {
     }
   })
 
-  return { foodImgs }
+  return { foodImgsResponse }
 }
 
 export default useUploadS3

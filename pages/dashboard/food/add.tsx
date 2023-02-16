@@ -15,7 +15,7 @@ import { createSlug } from '@functions/slug'
 import goTo from '@functions/goTo'
 import scrollToView from '@functions/scrollToView'
 import { API_URL } from '@constants'
-import { selectedToppingsProps } from '@types'
+import { FoodImgsProps, selectedToppingsProps } from '@types'
 import { stringJson } from '@functions/jsonTools'
 
 const AddFood = () => {
@@ -36,6 +36,8 @@ const AddFood = () => {
   const [categoryList, setCategoryList] = useState<string[]>([])
   const [toppings, setToppings] = useState<any>([{}])
   const [modalLoading, setModalLoading] = useState<Element>()
+  const [formSubmitted, setFormSumbitted] = useState(false)
+  const [foodImgs, setFoodImgs] = useState<FoodImgsProps[]>()
 
   //Contexts
   const { tags } = useContext(TagsContext)
@@ -56,7 +58,17 @@ const AddFood = () => {
     }
   }, [response])
 
-  const HandleAddFood = async (e: {
+  useEffect(() => {
+    const uploadToS3 = async () => {
+      if (formSubmitted === true) {
+        const { foodImgsResponse } = await useUploadS3(file)
+        setFoodImgs(foodImgsResponse)
+      }
+    }
+    uploadToS3()
+  }, [formSubmitted])
+
+  const handleAddFood = async (e: {
     target: any
     key?: string
     preventDefault: () => void
@@ -78,10 +90,10 @@ const AddFood = () => {
       priceErr.current!.textContent === '' &&
       descErr.current!.textContent === ''
     ) {
+      setFormSumbitted(true)
       modalLoading!.classList.remove('hidden')
 
-      const { foodImgs } = await useUploadS3(file)
-      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
+      formData.append('foodImgs', stringJson(foodImgs!.length > 0 ? foodImgs! : []))
 
       try {
         const response = await axios.post(`${API_URL}/foods`, formData)
@@ -150,7 +162,7 @@ const AddFood = () => {
                 method='POST'
                 className='form'
                 encType='multipart/form-data'
-                onSubmit={e => HandleAddFood(e)}
+                onSubmit={e => handleAddFood(e)}
               >
                 <div className='flex flex-col items-center justify-center gap-4 mb-8 sm:justify-between'>
                   <FileUpload

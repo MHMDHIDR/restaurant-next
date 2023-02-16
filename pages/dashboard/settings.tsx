@@ -10,7 +10,7 @@ import { LoadingPage, LoadingSpinner } from '@components/Loading'
 import ModalNotFound from '@components/Modal/ModalNotFound'
 import Layout from '@components/dashboard/Layout'
 import { API_URL, USER } from '@constants'
-import { responseTypes } from '@types'
+import { FoodImgsProps, responseTypes } from '@types'
 import goTo from '@functions/goTo'
 import { stringJson } from '@functions/jsonTools'
 import useUploadS3 from '@hooks/useUploadS3'
@@ -39,9 +39,9 @@ const Settings = () => {
   const [data, setData] = useState<responseTypes>()
   const [categoryList, setCategoryList] = useState<any>(['', ''])
   const [isUpdating, setIsUpdating] = useState(false)
-  const [websiteLogo, setWebsiteLogo] = useState<any>('')
-  const [preview, setPreview] = useState<any>()
   const [modalLoading, setModalLoading] = useState(false)
+  const [formSubmitted, setFormSumbitted] = useState(false)
+  const [foodImgs, setFoodImgs] = useState<FoodImgsProps[]>()
 
   //fetching description data
   const { response, loading } = useAxios({ url: '/settings' })
@@ -93,7 +93,17 @@ const Settings = () => {
     setCategoryList(list)
   }
 
-  const HandleUpdate = async (e: { preventDefault: () => void }) => {
+  useEffect(() => {
+    const uploadToS3 = async () => {
+      if (formSubmitted === true) {
+        const { foodImgsResponse } = await useUploadS3(file)
+        setFoodImgs(foodImgsResponse)
+      }
+    }
+    uploadToS3()
+  }, [formSubmitted])
+
+  const handleUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
 
     //initial form values if no value was updated taking it from [0] index
@@ -129,12 +139,11 @@ const Settings = () => {
       instagramAccountErr.current!.textContent === '' ||
       twitterAccountErr.current!.textContent === ''
     ) {
-      //show waiting modal
+      setFormSumbitted(true)
       setModalLoading(true)
       setIsUpdating(true)
 
-      const { foodImgs } = await useUploadS3(file)
-      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
+      formData.append('foodImgs', stringJson(foodImgs!.length > 0 ? foodImgs! : []))
 
       try {
         const response = await axios.patch(`${API_URL}/settings/${data?._id}`, formData)
@@ -193,7 +202,7 @@ const Settings = () => {
             )}
 
             {/* Description Form */}
-            <form id='descForm' onSubmit={HandleUpdate}>
+            <form id='descForm' onSubmit={handleUpdate}>
               <h2 className='mx-0 mt-4 mb-8 mr-5 text-xl text-center'>
                 العلامة التجارية
               </h2>

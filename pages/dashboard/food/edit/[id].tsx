@@ -46,6 +46,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   const [updatedFoodStatus, setUpdatedFoodStatus] = useState()
   const [loadingMsg, setLoadingMsg] = useState('')
   const [hasConfirmBtns, setHasConfirmBtn] = useState(false)
+  const [formSubmitted, setFormSumbitted] = useState(false)
+  const [foodImgs, setFoodImgs] = useState<FoodImgsProps[]>()
 
   //Contexts
   const { tags, setTags } = useContext(TagsContext)
@@ -92,7 +94,17 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     data && setTags(data?.foodTags)
   }, [data, setTags])
 
-  const HandleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
+  useEffect(() => {
+    const uploadToS3 = async () => {
+      if (formSubmitted === true) {
+        const { foodImgsResponse } = await useUploadS3(file)
+        setFoodImgs(foodImgsResponse)
+      }
+    }
+    uploadToS3()
+  }, [formSubmitted])
+
+  const handleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
     e.preventDefault()
     //initial form values if no value was updated taking it from [0] index
     const currentFoodId = data?._id
@@ -129,10 +141,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       descErr.current!.textContent === ''
     ) {
       setLoadingMsg(`جار تحديث ${foodName}`)
+      setFormSumbitted(true)
       modalLoading!.classList.remove('hidden')
 
-      const { foodImgs } = await useUploadS3(file)
-      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
+      formData.append('foodImgs', stringJson(foodImgs!.length > 0 ? foodImgs! : []))
 
       try {
         const response = await axios.patch(`${API_URL}/foods/${currentFoodId}`, formData)
@@ -516,7 +528,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                       <button
                         id='updateFood'
                         className='min-w-[7rem] bg-green-600 hover:bg-green-700 text-white py-1.5 px-6 rounded-md'
-                        onClick={(e: any) => HandleUpdateFood(e)}
+                        onClick={(e: any) => handleUpdateFood(e)}
                       >
                         تحديث
                       </button>
