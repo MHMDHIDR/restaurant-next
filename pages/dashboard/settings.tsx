@@ -6,7 +6,7 @@ import { FileUploadContext } from '@contexts/FileUploadContext'
 import FileUpload from '@components/FileUpload'
 import Modal from '@components/Modal/Modal'
 import { Success, Error, Loading } from '@components/Icons/Status'
-import { LoadingSpinner } from '@components/Loading'
+import { LoadingPage, LoadingSpinner } from '@components/Loading'
 import ModalNotFound from '@components/Modal/ModalNotFound'
 import Layout from '@components/dashboard/Layout'
 import { API_URL, USER } from '@constants'
@@ -38,13 +38,13 @@ const Settings = () => {
   //TagLine Form States
   const [data, setData] = useState<responseTypes>()
   const [categoryList, setCategoryList] = useState<any>(['', ''])
-  const [loading, setLoading] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
   const [websiteLogo, setWebsiteLogo] = useState<any>('')
   const [preview, setPreview] = useState<any>()
   const [modalLoading, setModalLoading] = useState(false)
 
   //fetching description data
-  const { response } = useAxios({ url: '/settings' })
+  const { response, loading } = useAxios({ url: '/settings' })
 
   useEffect(() => {
     if (response !== null) {
@@ -131,7 +131,7 @@ const Settings = () => {
     ) {
       //show waiting modal
       setModalLoading(true)
-      setLoading(true)
+      setIsUpdating(true)
 
       const { foodImgs } = await useUploadS3(file)
       formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
@@ -150,7 +150,7 @@ const Settings = () => {
       } catch (err) {
         console.error(err)
       } finally {
-        setLoading(false)
+        setIsUpdating(false)
       }
     } else {
       formMsg.current!.textContent =
@@ -158,11 +158,11 @@ const Settings = () => {
     }
   }
 
-  // return USER?.userAccountType !== 'admin' ? (
-  //   <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
-  // ) :
-
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?.userAccountType !== 'admin' ? (
+    <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
+  ) : (
     <>
       {settingsUpdated === 1 ? (
         <Modal
@@ -531,7 +531,7 @@ const Settings = () => {
                   type='submit'
                   className='m-2 min-w-[7rem] bg-green-600 hover:bg-green-700 text-white py-1.5 px-6 rounded-md'
                 >
-                  {loading && loading ? (
+                  {isUpdating && isUpdating ? (
                     <>
                       <LoadingSpinner />
                       تحديث البيانات...
