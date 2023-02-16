@@ -14,7 +14,7 @@ const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
     setFoodImgs(catFoodResponse?.response)
     setDrinkImgs(catDrinkResponse?.response)
     setSweetsImgs(catSweetResponse?.response)
-  })
+  }, [catFoodResponse.response, catDrinkResponse.response, catSweetResponse.response])
 
   const getRandomFoodImg = () => {
     const randomIndex = Math.floor(Math.random() * foodImgs?.length)

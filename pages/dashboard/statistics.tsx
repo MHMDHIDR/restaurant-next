@@ -53,7 +53,8 @@ const DashboardStatistics = () => {
     currentUser?.response,
     menu?.response,
     orders?.response,
-    orders?.response?.response
+    orders?.response?.response,
+    getCategories?.response?.CategoryList
   ])
 
   useEventListener('keydown', (e: any) => e.key === 'Escape' && menuToggler())
