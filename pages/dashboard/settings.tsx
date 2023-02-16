@@ -41,7 +41,7 @@ const Settings = () => {
   const [isUpdating, setIsUpdating] = useState(false)
   const [modalLoading, setModalLoading] = useState(false)
   const [formSubmitted, setFormSumbitted] = useState(false)
-  const [foodImgs, setFoodImgs] = useState<FoodImgsProps[]>()
+  const [foodImgs, setFoodImgs] = useState<any>()
 
   //fetching description data
   const { response, loading } = useAxios({ url: '/settings' })
@@ -94,13 +94,13 @@ const Settings = () => {
   }
 
   useEffect(() => {
-    const uploadToS3 = async () => {
-      if (formSubmitted === true) {
-        const { foodImgsResponse } = await useUploadS3(file)
-        setFoodImgs(foodImgsResponse)
-      }
+    // const uploadToS3 = async () => {
+    if (formSubmitted === true) {
+      const foodImgsResponse = useUploadS3(file)
+      setFoodImgs(foodImgsResponse)
     }
-    uploadToS3()
+    // }
+    // uploadToS3()
   }, [formSubmitted, file])
 
   const HandleUpdate = async (e: { preventDefault: () => void }) => {
@@ -143,7 +143,10 @@ const Settings = () => {
       setModalLoading(true)
       setIsUpdating(true)
 
-      formData.append('foodImgs', stringJson(foodImgs!.length > 0 ? foodImgs! : []))
+      formData.append(
+        'foodImgs',
+        stringJson((await foodImgs!.length) > 0 ? await foodImgs! : [])
+      )
 
       try {
         const response = await axios.patch(`${API_URL}/settings/${data?._id}`, formData)

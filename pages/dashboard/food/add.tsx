@@ -37,7 +37,7 @@ const AddFood = () => {
   const [toppings, setToppings] = useState<any>([{}])
   const [modalLoading, setModalLoading] = useState<Element>()
   const [formSubmitted, setFormSumbitted] = useState(false)
-  const [foodImgs, setFoodImgs] = useState<FoodImgsProps[]>()
+  const [foodImgs, setFoodImgs] = useState<any>()
 
   //Contexts
   const { tags } = useContext(TagsContext)
@@ -59,13 +59,13 @@ const AddFood = () => {
   }, [response])
 
   useEffect(() => {
-    const uploadToS3 = async () => {
-      if (formSubmitted === true) {
-        const { foodImgsResponse } = await useUploadS3(file)
-        setFoodImgs(foodImgsResponse)
-      }
+    // const uploadToS3 = async () => {
+    if (formSubmitted === true) {
+      const foodImgsResponse = useUploadS3(file)
+      setFoodImgs(foodImgsResponse)
     }
-    uploadToS3()
+    // }
+    // uploadToS3()
   }, [formSubmitted, file])
 
   const HandleAddFood = async (e: {
@@ -93,7 +93,10 @@ const AddFood = () => {
       setFormSumbitted(true)
       modalLoading!.classList.remove('hidden')
 
-      formData.append('foodImgs', stringJson(foodImgs!.length > 0 ? foodImgs! : []))
+      formData.append(
+        'foodImgs',
+        stringJson((await foodImgs!.length) > 0 ? await foodImgs! : [])
+      )
 
       try {
         const response = await axios.post(`${API_URL}/foods`, formData)

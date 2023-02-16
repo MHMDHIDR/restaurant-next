@@ -47,7 +47,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   const [loadingMsg, setLoadingMsg] = useState('')
   const [hasConfirmBtns, setHasConfirmBtn] = useState(false)
   const [formSubmitted, setFormSumbitted] = useState(false)
-  const [foodImgs, setFoodImgs] = useState<FoodImgsProps[]>()
+  const [foodImgs, setFoodImgs] = useState<any>()
 
   //Contexts
   const { tags, setTags } = useContext(TagsContext)
@@ -95,13 +95,13 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   }, [data, setTags])
 
   useEffect(() => {
-    const uploadToS3 = async () => {
-      if (formSubmitted === true) {
-        const { foodImgsResponse } = await useUploadS3(file)
-        setFoodImgs(foodImgsResponse)
-      }
+    // const uploadToS3 = async () => {
+    if (formSubmitted === true) {
+      const foodImgsResponse = useUploadS3(file)
+      setFoodImgs(foodImgsResponse)
     }
-    uploadToS3()
+    // }
+    // uploadToS3()
   }, [formSubmitted, file])
 
   const HandleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
@@ -144,7 +144,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       setFormSumbitted(true)
       modalLoading!.classList.remove('hidden')
 
-      formData.append('foodImgs', stringJson(foodImgs!.length > 0 ? foodImgs! : []))
+      formData.append(
+        'foodImgs',
+        stringJson((await foodImgs!.length) > 0 ? await foodImgs! : [])
+      )
 
       try {
         const response = await axios.patch(`${API_URL}/foods/${currentFoodId}`, formData)
