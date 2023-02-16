@@ -140,8 +140,6 @@ const Settings = () => {
         const response = await axios.patch(`${API_URL}/settings/${data?._id}`, formData)
         const { settingsUpdated, message } = response.data
 
-        console.log(settingsUpdated, message)
-
         setSettingsUpdated(settingsUpdated)
         setSettingsUpdatedMsg(message)
 

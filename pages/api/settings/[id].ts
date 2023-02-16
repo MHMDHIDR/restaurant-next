@@ -45,12 +45,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         async (error, _data) => {
           if (error) return res.json({ message: error, settingsUpdated: 0 })
 
-          console.log({
-            websiteLogoDisplayName: parseJson(foodImgs)[0].foodImgDisplayName,
-            websiteLogoDisplayPath: parseJson(foodImgs)[0].foodImgDisplayPath,
-            id
-          })
-
           try {
             await SettingsModel.findByIdAndUpdate(
               id,
