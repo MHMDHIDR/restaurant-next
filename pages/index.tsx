@@ -48,12 +48,10 @@ const Index = ({
     setDrinkImgs(catSweetResponse?.response)
     setNewFood(newFoodItems)
   }, [
-    [
-      catFoodResponse.response,
-      catDrinkResponse.response,
-      catSweetResponse.response,
-      newFoodItems
-    ]
+    catFoodResponse.response,
+    catDrinkResponse.response,
+    catSweetResponse.response,
+    newFoodItems
   ])
 
   const getRandomFoodImg = () => {
