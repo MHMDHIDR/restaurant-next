@@ -1,5 +1,5 @@
 import { NextApiResponse } from 'next'
-import { authUserRequestProps } from '@types/index.js'
+import { authUserRequestProps } from 'types'
 import { verify, JwtPayload } from 'jsonwebtoken'
 import UserModel from 'models/User.js'
 
@@ -17,7 +17,7 @@ const protect = (handler: any) => {
         )
 
         // Get user from the token and put it in the request object to be used in the next middleware
-        req.user = await UserModel.findById(decoded._id).select('-userPassword')
+        req.user = await UserModel.findById(decoded /*._id*/).select('-userPassword')
       } catch (error) {
         res.status(401).json({ message: 'Please authenticate.' })
         throw new Error('Not authorized')

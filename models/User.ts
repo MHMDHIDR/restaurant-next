@@ -1,19 +1,10 @@
 import { Schema, models, model } from 'mongoose'
 
-const reqString = {
-  type: String,
-  required: true
-}
+const reqString = { type: String, required: true }
 
-const typeString = {
-  type: String
-}
+const typeString = { type: String }
 
-const userAccountStatus = {
-  ...reqString,
-  enum: ['active', 'block'],
-  default: 'active'
-}
+const userAccountStatus = { ...reqString, enum: ['active', 'block'], default: 'active' }
 
 const userAccountType = {
   ...reqString,

@@ -1,19 +1,10 @@
 import { Schema, models, model } from 'mongoose'
 
-const reqNumber = {
-  type: Number,
-  required: true
-}
+const reqNumber = { type: Number, required: true }
 
-const reqString = {
-  type: String,
-  required: true
-}
+const reqString = { type: String, required: true }
 
-const reqObject = {
-  type: Object,
-  required: true
-}
+const reqObject = { type: Object, required: true }
 
 const orderStatus = {
   ...reqString,
@@ -21,11 +12,7 @@ const orderStatus = {
   default: 'pending'
 }
 
-const reqDate = {
-  type: Date,
-  default: Date.now,
-  required: true
-}
+const reqDate = { type: Date, default: Date.now, required: true }
 
 const OrderSchema = new Schema({
   orderId: reqString,
@@ -34,9 +21,7 @@ const OrderSchema = new Schema({
   personName: reqString,
   personPhone: reqString,
   personAddress: reqString,
-  personNotes: {
-    type: String
-  },
+  personNotes: { type: String },
   orderItems: reqObject,
   orderToppings: reqObject,
   grandPrice: reqNumber,

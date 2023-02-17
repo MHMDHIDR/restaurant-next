@@ -3,15 +3,9 @@ import { Schema, models, model } from 'mongoose'
 const typeString = { type: String }
 const typeArray = { type: Array }
 
-const reqString = {
-  type: String,
-  required: true
-}
+const reqString = { type: String, required: true }
 
-const reqNumber = {
-  type: Number,
-  required: true
-}
+const reqNumber = { type: Number, required: true }
 
 const foodToppingsType = {
   type: Object,
@@ -23,11 +17,7 @@ const foodToppingsType = {
   ]
 }
 
-const reqDate = {
-  type: Date,
-  default: Date.now,
-  required: true
-}
+const reqDate = { type: Date, default: Date.now, required: true }
 
 const FoodSchema = new Schema({
   foodName: reqString,
