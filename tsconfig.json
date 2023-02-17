@@ -23,7 +23,7 @@
     "paths": {
       "@constants": ["constants"], //index files
       "@types": ["types"], //index files
-      "@contexts/*": ["contexts/*"],
+      "@/contexts/*": ["contexts/*"],
       "@utils/*": ["utils/*"],
       "@functions/*": ["utils/functions/*"],
       "@components/*": ["components/*"],
