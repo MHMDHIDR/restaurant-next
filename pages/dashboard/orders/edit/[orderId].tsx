@@ -29,7 +29,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
 
   useEffect(() => {
     setOrdersData(OrdersData?.response)
-    setOrderItemToppings(OrdersData.response?.orderToppings)
+    setOrderItemToppings(OrdersData.response?.orderToppings!)
   }, [OrdersData, setOrderItemToppings, setOrdersData])
 
   //Form States
