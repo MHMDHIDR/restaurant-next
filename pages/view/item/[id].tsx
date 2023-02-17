@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import Link from 'next/link'
 import { ServerSideProps } from '@types'
-import { CartContext } from '@contexts/CartContext'
+import { CartContext } from 'contexts/CartContext'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import scrollToView from '@functions/scrollToView'
 import { removeSlug } from '@functions/slug'

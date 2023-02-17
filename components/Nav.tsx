@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { CartContext } from '@contexts/CartContext'
+import { CartContext } from 'contexts/CartContext'
 import ThemeToggler from './ThemeToggler'
 import Logo from './Icons/Logo'
 import menuToggler from '@functions/menuToggler'

@@ -21,9 +21,9 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@constants": ["constants"], //index files
-      "@types": ["types"], //index files
-      "@contexts/*": ["contexts/*"],
+      "@constants": ["constants"],
+      "@types": ["types"],
+      "contexts/*": ["./contexts/*", "./contexts"],
       "@utils/*": ["utils/*"],
       "@functions/*": ["utils/functions/*"],
       "@components/*": ["components/*"],
