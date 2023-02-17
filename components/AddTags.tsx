@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { TagsContext } from '@contexts/TagsContext'
+import { TagsContext } from '../contexts/TagsContext'
 import { TagsProps } from '@types'
 import TagIcon from './Icons/TagIcon'
 
