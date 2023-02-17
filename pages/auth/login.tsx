@@ -2,17 +2,17 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Axios from 'axios'
-import Notification from '@components/Notification'
-import { LoadingSpinner, LoadingPage } from '@components/Loading'
 import useEventListener from '@hooks/useEventListener'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import useAuth from '@hooks/useAuth'
-import GoogleLogin from 'react-google-login'
-import { gapi } from 'gapi-script'
-import { EyeIconOpen, EyeIconClose } from '@components/Icons/EyeIcon'
-import { GoogleLoginOnFailureProps, UserProps } from '@types'
-import { API_URL } from '@constants'
+// import GoogleLogin from 'react-google-login'
+// import { gapi } from 'gapi-script'
+import Notification from '@components/Notification'
+import { LoadingSpinner, LoadingPage } from '@components/Loading'
 import Layout from '@components/Layout'
+import { EyeIconOpen, EyeIconClose } from '@components/Icons/EyeIcon'
+import { UserProps /*,GoogleLoginOnFailureProps*/ } from '@types'
+import { API_URL } from '@constants'
 import { parseJson, stringJson } from '@functions/jsonTools'
 
 const LoginDataFromLocalStorage =
@@ -100,49 +100,52 @@ const Login = () => {
   }
 
   //this useEffect is for google login
-  useEffect(() => {
-    function start() {
-      // gapi.client?.init({
-      //   clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      //   scope: 'profile email'
-      // })
-    }
-    start()
-    // gapi.load('client:auth2', start)
-  }, [])
+  // useEffect(() => {
+  //   function start() {
+  //     gapi.client?.init({
+  //       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  //       scope: 'profile email'
+  //     })
+  //   }
+  //   start()
+  //   gapi.load('client:auth2', start)
+  // }, [])
 
-  const handleGoogleLogin = async (googleData: any) => {
-    try {
-      const loginUser = await Axios.post(`${API_URL}/users/googleLogin`, {
-        tokenId: googleData.tokenId
-      })
-      const { data } = loginUser
-      const { LoggedIn, _id, userAccountType, userFullName, userEmail, token, message } =
-        data
-      setLoggedInStatus(LoggedIn)
+  // const handleGoogleLogin = async (googleData: any) => {
+  //   try {
+  //     const loginUser = await Axios.post(`${API_URL}/users/googleLogin`, {
+  //       tokenId: googleData.tokenId
+  //     })
+  //     const { data } = loginUser
+  //     const { LoggedIn, _id, userAccountType, userFullName, userEmail, token, message } =
+  //       data
+  //     setLoggedInStatus(LoggedIn)
 
-      if (LoggedIn === 0) {
-        return setLoginMsg(message)
-      }
-      //else if user is logged in
-      setLoginMsg(message)
-      localStorage.setItem(
-        'user',
-        stringJson({ _id, userAccountType, userFullName, userEmail, token })
-      )
+  //     if (LoggedIn === 0) {
+  //       return setLoginMsg(message)
+  //     }
+  //     //else if user is logged in
+  //     setLoginMsg(message)
+  //     localStorage.setItem(
+  //       'user',
+  //       stringJson({ _id, userAccountType, userFullName, userEmail, token })
+  //     )
 
-      redirect
-        ? router.push(`/${redirect}`)
-        : userAccountType === 'admin'
-        ? router.push('/dashboard')
-        : router.push('/')
-    } catch (response: any) {
-      setLoginMsg(response?.response.message)
-    }
-  }
+  //     redirect
+  //       ? router.push(`/${redirect}`)
+  //       : userAccountType === 'admin'
+  //       ? router.push('/dashboard')
+  //       : router.push('/')
+  //   } catch (response: any) {
+  //     setLoginMsg(response?.response.message)
+  //   }
+  // }
 
   // if done loading (NOT Loading) then show the login form
-  return !loading ? (
+
+  return loading ? (
+    <LoadingPage />
+  ) : (
     <Layout>
       <section className='py-12 my-8'>
         <div className='container mx-auto'>
@@ -210,6 +213,7 @@ const Login = () => {
                   )}
                 </button>
 
+                {/* 
                 <div>
                   <strong className='block mx-auto my-8 text-orange-800 dark:text-orange-600 w-fit'>
                     أو تسجيل الدخول عن طريق حسابك في جوجل
@@ -223,7 +227,7 @@ const Login = () => {
                     }
                     cookiePolicy={'single_host_origin'}
                   />
-                </div>
+                </div> */}
 
                 <strong className='block mx-auto my-8 text-orange-800 dark:text-orange-600 w-fit'>
                   أو
@@ -250,8 +254,6 @@ const Login = () => {
         </div>
       </section>
     </Layout>
-  ) : (
-    <LoadingPage />
   )
 }
 export default Login

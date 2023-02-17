@@ -26,7 +26,7 @@ const DashboardStatistics = () => {
   //if there's food id then fetch with food id, otherwise fetch everything
   const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId${USER?._id}` })
   const getCategories = useAxios({ url: `/settings` })
-  const menu = useAxios({ url: `/foods?page=0&limit=0` })
+  const menu = useAxios({ url: `/foods?page=1&limit=0` })
   const orders = useAxios({
     url: `/orders?page=1&limit=0`,
     headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
@@ -37,7 +37,7 @@ const DashboardStatistics = () => {
     if (currentUser?.response !== null || menu.response !== null) {
       setUserStatus(currentUser?.response?.response?.userAccountStatus)
       setUserType(currentUser?.response?.response?.userAccountType)
-      setUserID(currentUser?.response?.response?._id)
+      setUserID(currentUser?.response?.response[0]?._id)
       //Statistics
       setCategories(getCategories?.response?.CategoryList || [])
       setOrdersBycCategory(
