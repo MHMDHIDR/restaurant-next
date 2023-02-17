@@ -10,7 +10,6 @@ import DashboardOrderContextProvider from '@contexts/DashboardOrderContext'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { PAYPAL_CLIENT_ID } = process.env
   return (
     <ThemeProvider attribute='class'>
       <PayPalScriptProvider
