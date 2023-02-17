@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import Axios from 'axios'
-import Header from 'components/Header'
-import Footer from 'components/Footer'
+import axios from 'axios'
 import Notification from 'components/Notification'
 import { LoadingSpinner, LoadingPage } from 'components/Loading'
+import Layout from 'components/Layout'
 import useEventListener from 'hooks/useEventListener'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
@@ -28,9 +27,10 @@ const ResetPassword = () => {
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
   const { push, query } = useRouter()
-  const { token } = query
+  const { t } = query
 
   const { isAuth, userType, loading } = useAuth()
+
   useEffect(() => {
     isAuth && userType === 'admin'
       ? push('/dashboard')
@@ -65,7 +65,7 @@ const ResetPassword = () => {
     } else {
       const formData = new FormData()
       formData.append('userPassword', newUserPass.trim())
-      formData.append('userToken', stringJson(token ?? 'token'))
+      formData.append('userToken', stringJson(t ?? 't'))
 
       // if there's no error in the form
       e.target.reset()
@@ -73,7 +73,7 @@ const ResetPassword = () => {
       setIsSendingResetForm(true)
 
       try {
-        const { data } = await Axios.post(`${API_URL}/users/resetpass`, formData)
+        const { data } = await axios.post(`${API_URL}/users/resetpass`, formData)
         //destructering response from backend
         const { newPassSet, message } = data
 
@@ -96,8 +96,7 @@ const ResetPassword = () => {
 
   // if done loading (NOT Loading) then show the login form
   return !loading ? (
-    <>
-      <Header />
+    <Layout>
       <section className='py-12 my-8'>
         <div className='container mx-auto'>
           <Notification sendStatus={resetLinkSentStatus} sendStatusMsg={resetLinkMsg} />
@@ -124,7 +123,7 @@ const ResetPassword = () => {
                     if (e.target.value.length > 0 && !validPassword(e.target.value)) {
                       parent!.classList.add('notvalid')
                       newPassErr.current!.textContent =
-                        'كلمة المرور يجب أن تتكون من حروف وأرقام بالانجليزية فقط، وطولها 8 أحرف وأرقام على الأقل و 50 أحرف وأرقام على الأكثر'
+                        'كلمة المرور يجب أن تتكون من حروف وأرقام بالانجليزية فقط، وطولها من 8 أحرف وأرقام على الأقل إلى 50 أحرف وأرقام على الأكثر'
                     } else if (
                       newUserPassConfirm.length > 0 &&
                       e.target.value !== newUserPassConfirm
@@ -209,8 +208,7 @@ const ResetPassword = () => {
           </div>
         </div>
       </section>
-      <Footer />
-    </>
+    </Layout>
   ) : (
     <LoadingPage />
   )

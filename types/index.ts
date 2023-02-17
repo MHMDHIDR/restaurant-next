@@ -375,11 +375,6 @@ export type ButtonProps = {
   color?: string
 }
 
-// export type GoogleLoginOnFailureProps = {
-//   details: string
-//   error: string
-// }
-
 export type deleteFoodEventListenerProps = {
   target: {
     id: string

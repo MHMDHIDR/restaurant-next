@@ -4,19 +4,21 @@ import UsersModel from 'models/User'
 import { sign } from 'jsonwebtoken'
 import { genSalt, hash } from 'bcryptjs'
 import email from 'functions/email'
+import formHandler from 'utils/functions/form'
+import { parseJson } from 'utils/functions/jsonTools'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method, body } = req
+  const { method } = req
+  const { fields }: any = await formHandler(req)
 
   dbConnect()
 
   switch (method) {
     case 'POST': {
-      const { userPassword, userToken } = body
+      const { userPassword, userToken } = fields
       // Check for user by using his/her email or telephone number
       const user = await UsersModel.findOne({
-        // $or: [{ userPassword}, { userToken }]
-        userResetPasswordToken: userToken
+        userResetPasswordToken: parseJson(userToken)
       })
 
       if (user && user.userAccountStatus === 'block') {
@@ -31,16 +33,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const salt = await genSalt(10)
             const hashedPassword = await hash(userPassword, salt)
 
-            await UsersModel.findByIdAndUpdate(user._id, {
-              userPassword: hashedPassword,
-              userResetPasswordToken: null,
-              userResetPasswordExpires: null
-            })
+            try {
+              await UsersModel.findByIdAndUpdate(user._id, {
+                userPassword: hashedPassword,
+                userResetPasswordToken: null,
+                userResetPasswordExpires: null
+              })
 
-            res.json({
-              message: 'تم تغيير كلمة المرور بنجاح، سيتم تحويلك لتسجيل الدخول',
-              newPassSet: 1
-            })
+              res.json({
+                message: 'تم تغيير كلمة المرور بنجاح، سيتم تحويلك لتسجيل الدخول',
+                newPassSet: 1
+              })
+            } catch (error) {
+              res.json({
+                message: `عفواً، لقد حدث خطأ اثناء تغيير كلمة المرور الخاص بك: ${error}`,
+                newPassSet: 1
+              })
+            }
           } else {
             res.json({
               newPassSet: 0,
@@ -83,10 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           res.json({ message: `Ooops!, something went wrong!: ${error} `, mailSent: 0 })
         }
       } else if (!user) {
-        res.json({
-          newPassSet: 0,
-          message: 'عفواً، ليس لديك حساب مسجل معنا'
-        })
+        res.json({ newPassSet: 0, message: 'عفواً، ليس لديك حساب مسجل معنا' })
       }
       break
     }
@@ -100,3 +106,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 const generateToken = (id: any) =>
   sign({ id }, process.env.JWT_SECRET || '', { expiresIn: '30d' })
+
+export const config = {
+  api: { bodyParser: false }
+}

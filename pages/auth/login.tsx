@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import useEventListener from 'hooks/useEventListener'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
-// import GoogleLogin from 'react-google-login'
-// import { gapi } from 'gapi-script'
 import Notification from 'components/Notification'
 import { LoadingSpinner, LoadingPage } from 'components/Loading'
 import Layout from 'components/Layout'
 import { EyeIconOpen, EyeIconClose } from 'components/Icons/EyeIcon'
-import { UserProps /*,GoogleLoginOnFailureProps*/ } from '@types'
-import { API_URL } from '@constants'
+import { UserProps } from '@types'
+import { API_URL, USER } from '@constants'
 import { parseJson, stringJson } from 'functions/jsonTools'
 
 const LoginDataFromLocalStorage =
@@ -20,6 +18,9 @@ const LoginDataFromLocalStorage =
 
 const Login = () => {
   useDocumentTitle('Login')
+  useEffect(() => {
+    USER && router.push('/')
+  }, [])
 
   const [userEmailOrTel, setEmailOrTel] = useState(
     LoginDataFromLocalStorage.userEmailOrTel || ''
@@ -36,15 +37,7 @@ const Login = () => {
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
-  const { isAuth, userType, loading } = useAuth()
-
-  useEffect(() => {
-    isAuth && userType === 'admin'
-      ? router.push('/dashboard')
-      : isAuth && userType === 'user'
-      ? router.push('/')
-      : null
-  }, [isAuth, userType, router])
+  const { loading } = useAuth()
 
   useEventListener('click', (e: any) => {
     //confirm means cancel Modal message (hide it)
@@ -58,7 +51,7 @@ const Login = () => {
     setIsSendingLoginForm(true)
 
     try {
-      const loginUser = await Axios.post(`${API_URL}/users/login`, {
+      const loginUser = await axios.post(`${API_URL}/users/login`, {
         userPassword,
         userEmail: userEmailOrTel.trim().toLowerCase(),
         userTel: userEmailOrTel.trim().toLowerCase()
@@ -89,9 +82,11 @@ const Login = () => {
 
       redirect
         ? router.push(`/${redirect}`)
+        : userAccountType === 'user'
+        ? window.location.replace('/')
         : userAccountType === 'admin'
-        ? router.push('/dashboard')
-        : router.push('/')
+        ? window.location.replace('/dashboard')
+        : null
     } catch (response: any) {
       setLoginMsg(response?.response.message)
     } finally {
@@ -99,51 +94,7 @@ const Login = () => {
     }
   }
 
-  //this useEffect is for google login
-  // useEffect(() => {
-  //   function start() {
-  //     gapi.client?.init({
-  //       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-  //       scope: 'profile email'
-  //     })
-  //   }
-  //   start()
-  //   gapi.load('client:auth2', start)
-  // }, [])
-
-  // const handleGoogleLogin = async (googleData: any) => {
-  //   try {
-  //     const loginUser = await Axios.post(`${API_URL}/users/googleLogin`, {
-  //       tokenId: googleData.tokenId
-  //     })
-  //     const { data } = loginUser
-  //     const { LoggedIn, _id, userAccountType, userFullName, userEmail, token, message } =
-  //       data
-  //     setLoggedInStatus(LoggedIn)
-
-  //     if (LoggedIn === 0) {
-  //       return setLoginMsg(message)
-  //     }
-  //     //else if user is logged in
-  //     setLoginMsg(message)
-  //     localStorage.setItem(
-  //       'user',
-  //       stringJson({ _id, userAccountType, userFullName, userEmail, token })
-  //     )
-
-  //     redirect
-  //       ? router.push(`/${redirect}`)
-  //       : userAccountType === 'admin'
-  //       ? router.push('/dashboard')
-  //       : router.push('/')
-  //   } catch (response: any) {
-  //     setLoginMsg(response?.response.message)
-  //   }
-  // }
-
-  // if done loading (NOT Loading) then show the login form
-
-  return loading ? (
+  return USER || loading ? (
     <LoadingPage />
   ) : (
     <Layout>
@@ -212,22 +163,6 @@ const Login = () => {
                     'تسجيل الدخول'
                   )}
                 </button>
-
-                {/* 
-                <div>
-                  <strong className='block mx-auto my-8 text-orange-800 dark:text-orange-600 w-fit'>
-                    أو تسجيل الدخول عن طريق حسابك في جوجل
-                  </strong>
-                  <GoogleLogin
-                    clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}
-                    buttonText='Log in with Google'
-                    onSuccess={handleGoogleLogin}
-                    onFailure={(res: GoogleLoginOnFailureProps) =>
-                      console.error(res.details)
-                    }
-                    cookiePolicy={'single_host_origin'}
-                  />
-                </div> */}
 
                 <strong className='block mx-auto my-8 text-orange-800 dark:text-orange-600 w-fit'>
                   أو

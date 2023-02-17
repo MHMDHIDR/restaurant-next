@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Axios from 'axios'
-import Header from 'components/Header'
-import Footer from 'components/Footer'
 import Notification from 'components/Notification'
 import { LoadingPage, LoadingSpinner } from 'components/Loading'
+import Layout from 'components/Layout'
 import useEventListener from 'hooks/useEventListener'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
@@ -87,8 +86,8 @@ const ForgotPassword = () => {
 
   // if done loading (NOT Loading) then show the login form
   return !loading ? (
-    <>
-      <Header />
+    <Layout>
+      {' '}
       <section className='py-12 my-8'>
         <div className='container mx-auto'>
           <Notification sendStatus={forgotLinkSentStatus} sendStatusMsg={forgotLinkMsg} />
@@ -163,8 +162,7 @@ const ForgotPassword = () => {
           </div>
         </div>
       </section>
-      <Footer />
-    </>
+    </Layout>
   ) : (
     <LoadingPage />
   )

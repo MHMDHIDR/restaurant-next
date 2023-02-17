@@ -9,10 +9,13 @@ import { LoadingSpinner, LoadingPage } from 'components/Loading'
 import { EyeIconClose, EyeIconOpen } from 'components/Icons/EyeIcon'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
-import { API_URL } from '@constants'
+import { API_URL, USER } from '@constants'
 
 const Join = () => {
   useDocumentTitle('Join')
+  useEffect(() => {
+    USER && router.push('/')
+  }, [])
 
   const [userFullName, setFullName] = useState('')
   const [userEmail, setEmail] = useState('')
@@ -25,14 +28,7 @@ const Join = () => {
 
   const router = useRouter()
 
-  const { isAuth, userType, loading } = useAuth()
-  useEffect(() => {
-    isAuth && userType === 'admin'
-      ? router.push('/dashboard')
-      : isAuth && userType === 'user'
-      ? router.push('/')
-      : null
-  }, [isAuth, userType, router])
+  const { loading } = useAuth()
 
   const handleJoin = async (e: { preventDefault: () => void }) => {
     e.preventDefault()

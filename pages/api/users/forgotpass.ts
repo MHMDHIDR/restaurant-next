@@ -1,21 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { randomUUID } from 'crypto'
 import dbConnect from 'utils/db'
 import UsersModel from 'models/User'
 import { APP_URL } from '@constants'
 import email from 'functions/email'
+import formHandler from 'functions/form'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method, body } = req
+  const { method } = req
+  const { fields }: any = await formHandler(req)
 
   dbConnect()
 
   switch (method) {
     case 'POST': {
-      const { userEmail, userTel } = body
+      const { userEmail, userTel } = fields
       // Check for user by using his/her email or telephone number
-      const user = await UsersModel.findOne({
-        $or: [{ userEmail }, { userTel }]
-      })
+      const user = await UsersModel.findOne({ $or: [{ userEmail }, { userTel }] })
 
       if (user && user.userAccountStatus === 'block') {
         res.json({
@@ -32,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             'لقد تم إرسال رابط تغيير كلمة المرور بالفعل، الرجاء رؤية بريدك الالكتروني'
         })
       } else if (user && user.userAccountStatus === 'active') {
-        const userResetPasswordToken = crypto.randomUUID()
+        const userResetPasswordToken = randomUUID()
         const userResetPasswordExpires = Date.now() + 3600000 // 1 hour
 
         await UsersModel.findByIdAndUpdate(user._id, {
@@ -41,8 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
 
         //send the user an email with a link to reset his/her password
-        const resetLink =
-          APP_URL + `:${process.env.PORT || 3000}/auth/reset/${userResetPasswordToken}`
+        const resetLink = APP_URL + `/auth/reset?t=${userResetPasswordToken}`
 
         const emailData = {
           from: 'mr.hamood277@gmail.com',
@@ -92,4 +92,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       break
     }
   }
+}
+
+export const config = {
+  api: { bodyParser: false }
 }
