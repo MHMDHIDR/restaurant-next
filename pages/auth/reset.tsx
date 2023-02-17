@@ -24,7 +24,8 @@ const ResetPassword = () => {
   const newPassErr = useRef<HTMLSpanElement>(null)
   const confirmNewPassErr = useRef<HTMLSpanElement>(null)
 
-  const modalLoading = document.querySelector('#modal')
+  const modalLoading =
+    typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
   const { push, query } = useRouter()
   const { token } = query
