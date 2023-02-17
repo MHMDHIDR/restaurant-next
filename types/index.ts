@@ -79,7 +79,7 @@ export type orderProps = {
     _id: string
   }
   setOrdersData: any
-  orderToppings: orderProps['ordersData']['orderToppings']
+  orderToppings?: orderProps['ordersData']['orderToppings']
   removeOrderFromItems: any
   orderItemsGrandPrice: number
   setOrderItemsGrandPrice: any
