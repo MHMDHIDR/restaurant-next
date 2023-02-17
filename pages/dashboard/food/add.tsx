@@ -58,15 +58,15 @@ const AddFood = () => {
     }
   }, [response])
 
-  useEffect(() => {
-    // const uploadToS3 = async () => {
-    if (formSubmitted === true) {
-      const foodImgsResponse = useUploadS3(file)
-      setFoodImgs(foodImgsResponse)
-    }
-    // }
-    // uploadToS3()
-  }, [formSubmitted, file])
+  // useEffect(() => {
+  // const uploadToS3 = async () => {
+  if (formSubmitted === true) {
+    const foodImgsResponse = useUploadS3(file)
+    setFoodImgs(foodImgsResponse)
+  }
+  // }
+  // uploadToS3()
+  // }, [formSubmitted, file])
 
   const HandleAddFood = async (e: {
     target: any

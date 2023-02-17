@@ -94,15 +94,15 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     data && setTags(data?.foodTags)
   }, [data, setTags])
 
-  useEffect(() => {
-    // const uploadToS3 = async () => {
-    if (formSubmitted === true) {
-      const foodImgsResponse = useUploadS3(file)
-      setFoodImgs(foodImgsResponse)
-    }
-    // }
-    // uploadToS3()
-  }, [formSubmitted, file])
+  // useEffect(() => {
+  // const uploadToS3 = async () => {
+  if (formSubmitted === true) {
+    const foodImgsResponse = useUploadS3(file)
+    setFoodImgs(foodImgsResponse)
+  }
+  // }
+  // uploadToS3()
+  // }, [formSubmitted, file])
 
   const HandleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
     e.preventDefault()

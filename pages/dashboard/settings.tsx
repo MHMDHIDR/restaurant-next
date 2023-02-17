@@ -93,15 +93,15 @@ const Settings = () => {
     setCategoryList(list)
   }
 
-  useEffect(() => {
-    // const uploadToS3 = async () => {
-    if (formSubmitted === true) {
-      const foodImgsResponse = useUploadS3(file)
-      setFoodImgs(foodImgsResponse)
-    }
-    // }
-    // uploadToS3()
-  }, [formSubmitted, file])
+  // useEffect(() => {
+  // const uploadToS3 = async () => {
+  if (formSubmitted === true) {
+    const foodImgsResponse = useUploadS3(file)
+    setFoodImgs(foodImgsResponse)
+  }
+  // }
+  // uploadToS3()
+  // }, [formSubmitted, file])
 
   const HandleUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
