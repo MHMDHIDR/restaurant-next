@@ -98,6 +98,7 @@ export type FileUploadProps = {
   onFileAdd: (e: { target: { files: any } }) => void
   onFileRemove(fileUrl: string, fileName: string): void
 }
+
 export type FileUploadComponentProps = {
   data: {
     foodId?: string

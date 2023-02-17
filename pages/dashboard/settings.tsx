@@ -10,10 +10,10 @@ import { LoadingPage, LoadingSpinner } from '@components/Loading'
 import ModalNotFound from '@components/Modal/ModalNotFound'
 import Layout from '@components/dashboard/Layout'
 import { API_URL, USER } from '@constants'
-import { FoodImgsProps, responseTypes } from '@types'
+import { responseTypes } from '@types'
 import goTo from '@functions/goTo'
 import { stringJson } from '@functions/jsonTools'
-import useUploadS3 from '@hooks/useUploadS3'
+import uploadS3 from '@utils/functions/uploadS3'
 
 const Settings = () => {
   useDocumentTitle('Settings')
@@ -40,8 +40,6 @@ const Settings = () => {
   const [categoryList, setCategoryList] = useState<any>(['', ''])
   const [isUpdating, setIsUpdating] = useState(false)
   const [modalLoading, setModalLoading] = useState(false)
-  const [formSubmitted, setFormSumbitted] = useState(false)
-  const [foodImgs, setFoodImgs] = useState<any>()
 
   //fetching description data
   const { response, loading } = useAxios({ url: '/settings' })
@@ -93,16 +91,6 @@ const Settings = () => {
     setCategoryList(list)
   }
 
-  // useEffect(() => {
-  // const uploadToS3 = async () => {
-  if (formSubmitted === true) {
-    const foodImgsResponse = useUploadS3(file)
-    setFoodImgs(foodImgsResponse)
-  }
-  // }
-  // uploadToS3()
-  // }, [formSubmitted, file])
-
   const HandleUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
 
@@ -139,14 +127,11 @@ const Settings = () => {
       instagramAccountErr.current!.textContent === '' ||
       twitterAccountErr.current!.textContent === ''
     ) {
-      setFormSumbitted(true)
       setModalLoading(true)
       setIsUpdating(true)
 
-      formData.append(
-        'foodImgs',
-        stringJson((await foodImgs!.length) > 0 ? await foodImgs! : [])
-      )
+      const { foodImgs } = await uploadS3(file)
+      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
 
       try {
         const response = await axios.patch(`${API_URL}/settings/${data?._id}`, formData)

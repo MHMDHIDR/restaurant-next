@@ -1,15 +1,15 @@
 import axios from 'axios'
-import { API_URL } from '../constants'
+import { API_URL } from '@constants'
 import { FileUploadProps, FoodImgsProps, uploadurlDataProps } from '@types'
 import { stringJson } from '@functions/jsonTools'
 
 /**
- * Custom hook to upload files to S3 bucket
- * and returns foodImgsResponse object (array)
+ * a function to upload files to S3 bucket
+ * and returns foodImgs object (array)
  */
 
-const useUploadS3 = async (file: FileUploadProps['file']) => {
-  if (file.length === 0) return { foodImgsResponse: [] }
+const uploadS3 = async (file: FileUploadProps['file']) => {
+  if (file.length === 0) return { foodImgs: [] }
 
   const fileFormData = new FormData()
 
@@ -37,7 +37,7 @@ const useUploadS3 = async (file: FileUploadProps['file']) => {
     return uploadToS3(url)
   })
 
-  const foodImgsResponse: FoodImgsProps[] = data.map(({ fields, url }) => {
+  const foodImgs: FoodImgsProps[] = data.map(({ fields, url }) => {
     const urlSplit = (n: number) => url.split('/')[n]
     return {
       foodImgDisplayName: fields.key,
@@ -45,7 +45,7 @@ const useUploadS3 = async (file: FileUploadProps['file']) => {
     }
   })
 
-  return { foodImgsResponse }
+  return { foodImgs }
 }
 
-export default useUploadS3
+export default uploadS3

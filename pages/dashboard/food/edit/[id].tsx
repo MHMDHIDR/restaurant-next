@@ -6,7 +6,6 @@ import { FileUploadContext } from '@contexts/FileUploadContext'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import useEventListener from '@hooks/useEventListener'
 import useAxios from '@hooks/useAxios'
-import useUploadS3 from '@hooks/useUploadS3'
 import Modal from '@components/Modal/Modal'
 import { Success, Error, Loading } from '@components/Icons/Status'
 import AddTags from '@components/AddTags'
@@ -19,6 +18,7 @@ import scrollToView from '@functions/scrollToView'
 import { API_URL, DEFAULT_FOOD_DATA } from '@constants'
 import { ToppingsProps, foodDataProps, FoodImgsProps } from '@types'
 import { stringJson } from '@functions/jsonTools'
+import uploadS3 from '@utils/functions/uploadS3'
 
 const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useDocumentTitle('Edit Food')
@@ -46,8 +46,6 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   const [updatedFoodStatus, setUpdatedFoodStatus] = useState()
   const [loadingMsg, setLoadingMsg] = useState('')
   const [hasConfirmBtns, setHasConfirmBtn] = useState(false)
-  const [formSubmitted, setFormSumbitted] = useState(false)
-  const [foodImgs, setFoodImgs] = useState<any>()
 
   //Contexts
   const { tags, setTags } = useContext(TagsContext)
@@ -94,16 +92,6 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     data && setTags(data?.foodTags)
   }, [data, setTags])
 
-  // useEffect(() => {
-  // const uploadToS3 = async () => {
-  if (formSubmitted === true) {
-    const foodImgsResponse = useUploadS3(file)
-    setFoodImgs(foodImgsResponse)
-  }
-  // }
-  // uploadToS3()
-  // }, [formSubmitted, file])
-
   const HandleUpdateFood = async (e: { key: string; preventDefault: () => void }) => {
     e.preventDefault()
     //initial form values if no value was updated taking it from [0] index
@@ -141,13 +129,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
       descErr.current!.textContent === ''
     ) {
       setLoadingMsg(`جار تحديث ${foodName}`)
-      setFormSumbitted(true)
       modalLoading!.classList.remove('hidden')
 
-      formData.append(
-        'foodImgs',
-        stringJson((await foodImgs!.length) > 0 ? await foodImgs! : [])
-      )
+      const { foodImgs } = await uploadS3(file)
+      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
 
       try {
         const response = await axios.patch(`${API_URL}/foods/${currentFoodId}`, formData)

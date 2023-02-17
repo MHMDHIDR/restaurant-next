@@ -5,7 +5,7 @@ import { TagsContext } from '@contexts/TagsContext'
 import { FileUploadContext } from '@contexts/FileUploadContext'
 import useDocumentTitle from '@hooks/useDocumentTitle'
 import useAxios from '@hooks/useAxios'
-import useUploadS3 from '@hooks/useUploadS3'
+import uploadS3 from '@utils/functions/uploadS3'
 import Modal from '@components/Modal/Modal'
 import { Success, Error, Loading } from '@components/Icons/Status'
 import AddTags from '@components/AddTags'
@@ -36,8 +36,6 @@ const AddFood = () => {
   const [categoryList, setCategoryList] = useState<string[]>([])
   const [toppings, setToppings] = useState<any>([{}])
   const [modalLoading, setModalLoading] = useState<Element>()
-  const [formSubmitted, setFormSumbitted] = useState(false)
-  const [foodImgs, setFoodImgs] = useState<any>()
 
   //Contexts
   const { tags } = useContext(TagsContext)
@@ -57,16 +55,6 @@ const AddFood = () => {
       setCategoryList(response?.response[0]?.CategoryList)
     }
   }, [response])
-
-  // useEffect(() => {
-  // const uploadToS3 = async () => {
-  if (formSubmitted === true) {
-    const foodImgsResponse = useUploadS3(file)
-    setFoodImgs(foodImgsResponse)
-  }
-  // }
-  // uploadToS3()
-  // }, [formSubmitted, file])
 
   const HandleAddFood = async (e: {
     target: any
@@ -90,13 +78,10 @@ const AddFood = () => {
       priceErr.current!.textContent === '' &&
       descErr.current!.textContent === ''
     ) {
-      setFormSumbitted(true)
       modalLoading!.classList.remove('hidden')
 
-      formData.append(
-        'foodImgs',
-        stringJson((await foodImgs!.length) > 0 ? await foodImgs! : [])
-      )
+      const { foodImgs } = await uploadS3(file)
+      formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
 
       try {
         const response = await axios.post(`${API_URL}/foods`, formData)
