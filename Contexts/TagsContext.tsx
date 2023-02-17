@@ -1,6 +1,8 @@
 import { useState, createContext, KeyboardEvent } from 'react'
 import { AddTagsProps, TagsProps } from '@types'
 
+console.log('hi')
+
 export const TagsContext = createContext<TagsProps>({
   tags: [],
   setTags: function (_tags: string[]): void {
