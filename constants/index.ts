@@ -1,5 +1,4 @@
 import { UserProps } from '@types'
-import { Types } from 'mongoose'
 import { parseJson } from 'functions/jsonTools'
 
 export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
