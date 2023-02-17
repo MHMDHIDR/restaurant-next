@@ -398,11 +398,11 @@ const Index = ({
 
 export async function getServerSideProps() {
   const fetchURLs = {
-    menu: `${API_URL}/foods?page=0&limit=0&category=foods&createdAt=1`,
+    menu: `${API_URL}/foods?page=1&limit=0&category=foods&createdAt=1`,
     categories: {
-      foods: `${API_URL}/foods?page=0&limit=0&category=foods`,
-      drinks: `${API_URL}/foods?page=0&limit=0&category=drinks`,
-      sweets: `${API_URL}/foods?page=0&limit=0&category=sweets`
+      foods: `${API_URL}/foods?page=1&limit=0&category=foods`,
+      drinks: `${API_URL}/foods?page=1&limit=0&category=drinks`,
+      sweets: `${API_URL}/foods?page=1&limit=0&category=sweets`
     },
     new: `${API_URL}/foods?page=1&limit=7&category=foods`
   }

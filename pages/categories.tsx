@@ -100,9 +100,9 @@ const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
 export const getServerSideProps = async () => {
   const fetchURLs = {
     categories: {
-      foods: `${API_URL}/foods?page=0&limit=0&category=foods`,
-      drinks: `${API_URL}/foods?page=0&limit=0&category=drinks`,
-      sweets: `${API_URL}/foods?page=0&limit=0&category=sweets`
+      foods: `${API_URL}/foods?page=1&limit=0&category=foods`,
+      drinks: `${API_URL}/foods?page=1&limit=0&category=drinks`,
+      sweets: `${API_URL}/foods?page=1&limit=0&category=sweets`
     }
   }
 
