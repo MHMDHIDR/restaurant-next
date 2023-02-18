@@ -13,9 +13,11 @@ import { API_URL, USER } from '@constants'
 
 const Join = () => {
   useDocumentTitle('Join')
+  const router = useRouter()
+
   useEffect(() => {
     USER && router.push('/')
-  }, [])
+  }, [router])
 
   const [userFullName, setFullName] = useState('')
   const [userEmail, setEmail] = useState('')
@@ -25,8 +27,6 @@ const Join = () => {
   const [regStatus, setRegStatus] = useState()
   const [isSendingJoinForm, setIsSendingJoinForm] = useState(false)
   const [errMsg, setErrMsg] = useState('')
-
-  const router = useRouter()
 
   const { loading } = useAuth()
 

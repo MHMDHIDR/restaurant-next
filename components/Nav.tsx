@@ -27,7 +27,7 @@ const Nav = () => {
     return () => {
       setUserData(DEFAULT_USER_DATA)
     }
-  })
+  }, [])
 
   useEffect(() => {
     setCartItemsLength(items.length)

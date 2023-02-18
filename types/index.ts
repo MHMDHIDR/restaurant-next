@@ -356,9 +356,11 @@ export type ServerSideProps = {
 }
 
 export type authUserRequestProps = NextApiRequest & {
-  _id: ObjectId
-  userEmail: string
-  userAccountType: string
+  user: {
+    _id: ObjectId
+    userEmail: string
+    userAccountType: string
+  }
 }
 
 export type fileRequestProps = NextApiRequest & {

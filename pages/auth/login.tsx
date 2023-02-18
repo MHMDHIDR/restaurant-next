@@ -20,11 +20,13 @@ const LoginDataFromLocalStorage =
 
 const Login = () => {
   useDocumentTitle('Login')
+  const router = useRouter()
+  const { redirect } = router.query
   const { data: session } = useSession()
 
   useEffect(() => {
     USER || session!?.user ? router.push('/') : null
-  }, [session])
+  }, [router, session])
 
   const [userEmailOrTel, setEmailOrTel] = useState(
     LoginDataFromLocalStorage.userEmailOrTel || ''
@@ -34,9 +36,6 @@ const Login = () => {
   const [loggedInStatus, setLoggedInStatus] = useState(0)
   const [isSendingLoginForm, setIsSendingLoginForm] = useState(false)
   const [loginMsg, setLoginMsg] = useState('')
-  const router = useRouter()
-
-  const { redirect } = router.query
 
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
