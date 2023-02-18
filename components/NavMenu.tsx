@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { NavMenuPros } from '@types'
 import abstractText from 'functions/abstractText'
+import Image from 'next/image'
 
 const NavMenu: React.FC<NavMenuPros> = ({
   children,
   isOptions = true,
   label = 'الاجراء',
-  className
+  className,
+  src
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -22,7 +24,7 @@ const NavMenu: React.FC<NavMenuPros> = ({
       <div className='flex items-center justify-center'>
         {isOptions && (
           <svg
-            className='w-4 h-4 text-gray-500 dark:text-white fill-current'
+            className='w-4 h-4 text-gray-500 fill-current dark:text-white'
             viewBox='0 0 20 20'
             aria-hidden='true'
           >
@@ -30,11 +32,14 @@ const NavMenu: React.FC<NavMenuPros> = ({
           </svg>
         )}
 
-        <span className='px-2 text-gray-800 dark:text-white select-none text-center'>
+        <span className='px-2 text-center text-gray-800 select-none dark:text-white'>
           {abstractText(label, 30)}
         </span>
+
+        {src && <Image src={src} alt={label} height={30} width={30} />}
+
         <svg
-          className='w-4 h-4 text-gray-500 dark:text-white fill-current'
+          className='w-4 h-4 text-gray-500 fill-current dark:text-white'
           viewBox='0 0 20 20'
           aria-hidden='true'
         >

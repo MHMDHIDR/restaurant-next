@@ -204,6 +204,7 @@ export type NavMenuPros = {
   isOptions?: boolean
   label?: string
   className?: string
+  src?: string
 }
 
 export type orderInfoProps = {

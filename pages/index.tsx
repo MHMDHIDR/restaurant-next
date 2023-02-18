@@ -240,7 +240,7 @@ const Index = ({
         <meta name='twitter:title' content='{{pageTitle}}' />
         <meta name='twitter:description' content='{{description}}' />
         <meta name='twitter:image' content='{{imageUrl}}' />
-        <title>Resaturant</title>
+        <title>Restaurant</title>
       </Head>
       <Layout>
         <section id='menu' className='py-12 my-8 menu'>

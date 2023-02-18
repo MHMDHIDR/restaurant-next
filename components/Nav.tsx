@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { CartContext } from 'contexts/CartContext'
 import ThemeToggler from './ThemeToggler'
@@ -14,8 +15,17 @@ import { UserProps } from '@types'
 
 const Nav = () => {
   const { items } = useContext(CartContext)
-  const [userData, setUserData] = useState<UserProps>(DEFAULT_USER_DATA)
+  const [userData, setUserData] = useState<UserProps>()
   const [cartItemsLength, setCartItemsLength] = useState(0)
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    setUserData(USER)
+
+    return () => {
+      setUserData(DEFAULT_USER_DATA)
+    }
+  })
 
   useEffect(() => {
     setCartItemsLength(items.length)
@@ -24,15 +34,6 @@ const Nav = () => {
       setCartItemsLength(0)
     }
   }, [items])
-
-  useEffect(() => {
-    setUserData(USER)
-    setCartItemsLength(items.length)
-
-    return () => {
-      setUserData(DEFAULT_USER_DATA)
-    }
-  }, [items.length])
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
@@ -149,11 +150,14 @@ const Nav = () => {
             <li>
               <MyLink to='contact'>تواصل معنا</MyLink>
             </li>
-            {userData ? (
-              <li className='flex gap-3'>
+            <li className='flex gap-3'>
+              {userData || session ? (
                 <NavMenu
-                  label={`مرحباً عزيزي ${userData.userFullName || ''}`}
+                  label={`مرحباً عزيزي ${
+                    userData ? userData.userFullName : session ? session!.user!.name : ''
+                  }`}
                   isOptions={false}
+                  src={session ? session!.user!.image! : ''}
                 >
                   {(userData?.userAccountType === 'admin' ||
                     userData?.userAccountType === 'cashier') && (
@@ -170,25 +174,22 @@ const Nav = () => {
                   >
                     طلباتي
                   </Link>
-                  <Link
-                    href='/#'
+                  <button
                     className='px-3 py-1 text-sm text-center text-white transition-colors bg-red-700 border-2 rounded-lg select-none hover:bg-red-600 xl:border-0'
-                    onClick={handleLogout}
+                    onClick={() => (userData ? handleLogout() : signOut())}
                   >
                     تسجيل الخروج
-                  </Link>
+                  </button>
                 </NavMenu>
-              </li>
-            ) : (
-              <li>
+              ) : session === null && !userData ? (
                 <Link
                   href='/auth/login'
                   className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 xl:border-0'
                 >
                   تسجيل الدخول
                 </Link>
-              </li>
-            )}
+              ) : null}
+            </li>
           </ul>
         </div>
       </nav>

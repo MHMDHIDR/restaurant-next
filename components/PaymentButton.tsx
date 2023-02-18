@@ -25,8 +25,8 @@ const PaymentButton = ({ value, onSuccess }: any) => {
       application_context: {
         return_url:
           process.env.NODE_ENV === 'development'
-            ? 'http://dev.com:3000'
-            : 'https://mhmdhidr-restaurant.netlify.app'
+            ? 'http://localhost:3000'
+            : 'https://mhmdhidr-restaurant-next.vercel.app'
       }
     })
 

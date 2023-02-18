@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import Image from 'next/image'
 import axios from 'axios'
+import { useSession, signIn } from 'next-auth/react'
 import useEventListener from 'hooks/useEventListener'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
@@ -18,9 +20,11 @@ const LoginDataFromLocalStorage =
 
 const Login = () => {
   useDocumentTitle('Login')
+  const { data: session } = useSession()
+
   useEffect(() => {
-    USER && router.push('/')
-  }, [])
+    USER || session!?.user ? router.push('/') : null
+  }, [session])
 
   const [userEmailOrTel, setEmailOrTel] = useState(
     LoginDataFromLocalStorage.userEmailOrTel || ''
@@ -94,7 +98,7 @@ const Login = () => {
     }
   }
 
-  return USER || loading ? (
+  return USER || loading || session!?.user ? (
     <LoadingPage />
   ) : (
     <Layout>
@@ -149,26 +153,41 @@ const Login = () => {
               </label>
 
               <div className='flex flex-col gap-6 text-center border-none form__group ltr'>
-                <button
-                  className={`w-fit mx-auto px-12 py-3 text-white uppercase bg-orange-700 rounded-lg hover:bg-orange-800 scale-100 transition-all rtl`}
-                  type='submit'
-                  id='submitBtn'
-                >
-                  {isSendingLoginForm ? (
-                    <>
-                      <LoadingSpinner />
-                      &nbsp; جارِ تسجيل الدخول...
-                    </>
-                  ) : (
-                    'تسجيل الدخول'
-                  )}
-                </button>
+                <div className='flex flex-wrap items-center justify-around gap-y-4 rtl'>
+                  <button
+                    className={`w-fit px-12 py-3 text-white uppercase bg-orange-700 rounded-lg hover:bg-orange-800 scale-100 transition-all`}
+                    type='submit'
+                    id='submitBtn'
+                  >
+                    {isSendingLoginForm ? (
+                      <>
+                        <LoadingSpinner />
+                        &nbsp; جارِ تسجيل الدخول...
+                      </>
+                    ) : (
+                      'تسجيل الدخول'
+                    )}
+                  </button>
+                  <button
+                    className={`w-fit flex items-center gap-4 px-8 py-2 text-gray-700 dark:text-white uppercase rounded-lg outline outline-1 focus:outline-2 outline-orange-500 hover:outline-orange-500 scale-100 transition-all`}
+                    onClick={() => signIn()}
+                  >
+                    تسجيل الدخول عبر جوجل
+                    <Image
+                      src={`/assets/img/icons/google.svg`}
+                      className='w-8 h-8'
+                      width='28'
+                      height='28'
+                      alt='Google Login'
+                    />
+                  </button>
+                </div>
 
                 <strong className='block mx-auto my-8 text-orange-800 dark:text-orange-600 w-fit'>
                   أو
                 </strong>
 
-                <div className='flex items-center sm:gap-y-12 gap-x-6 justify-evenly'>
+                <div className='flex flex-wrap items-center justify-evenly gap-y-6'>
                   <Link
                     href='/auth/join'
                     className='mx-auto text-center text-orange-700 underline-hover dark:text-orange-800 sm:dark:text-orange-500 w-fit'

@@ -20,25 +20,25 @@
   ],
   "icons": [
     {
-      "src": "https://mhmdhidr-restaurant.netlify.app/assets/img/icons/mobile/manifest-icon-192.maskable.png",
+      "src": "https://mhmdhidr-restaurant-next.vercel.app/assets/img/icons/mobile/manifest-icon-192.maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://mhmdhidr-restaurant.netlify.app/assets/img/icons/mobile/manifest-icon-192.maskable.png",
+      "src": "https://mhmdhidr-restaurant-next.vercel.app/assets/img/icons/mobile/manifest-icon-192.maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "https://mhmdhidr-restaurant.netlify.app/assets/img/icons/mobile/manifest-icon-512.maskable.png",
+      "src": "https://mhmdhidr-restaurant-next.vercel.app/assets/img/icons/mobile/manifest-icon-512.maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://mhmdhidr-restaurant.netlify.app/assets/img/icons/mobile/manifest-icon-512.maskable.png",
+      "src": "https://mhmdhidr-restaurant-next.vercel.app/assets/img/icons/mobile/manifest-icon-512.maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
