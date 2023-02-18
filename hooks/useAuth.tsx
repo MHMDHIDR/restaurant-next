@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { USER } from '@constants'
 import { stringJson } from 'functions/jsonTools'
 import useAxios from './useAxios'
@@ -8,13 +9,18 @@ import useAxios from './useAxios'
  */
 
 const useAuth = () => {
-  const [isAuth, setIsAuth] = useState(false)
-  const [userType, setUserType] = useState('')
+  const [isAuth, setIsAuth] = useState<boolean>(false)
+  const [userType, setUserType] = useState<string>('')
+  const [userStatus, setUserStatus] = useState<string>('')
+  const [userId, setUserId] = useState<string>('')
+  const { data: session } = useSession()
 
   //get user data using token if the user is logged-in and token is saved in localStorage then I'll get the current user data from the database
-  const { loading, ...response } = useAxios({
-    url: `/users/all`,
-    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
+  const { loading, ...response }: any = useAxios({
+    url: `/users`,
+    headers: stringJson({
+      user: USER ? stringJson(USER) : stringJson(session!?.user!)
+    })
   })
 
   useEffect(() => {
@@ -23,26 +29,31 @@ const useAuth = () => {
       setUserType('')
     }
 
-    if (response.response !== null && response.response._id === USER._id) {
-      if (response.response.userAccountType === 'admin') {
-        setIsAuth(true)
-        setUserType(response.response.userAccountType)
-      } else if (response.response.userAccountType === 'cashier') {
-        setIsAuth(true)
-        setUserType(response.response.userAccountType)
-      } else if (response.response.userAccountType === 'user') {
-        setIsAuth(true)
-        setUserType(response.response.userAccountType)
-      }
+    if (
+      !loading &&
+      ['admin', 'cashier', 'user'].includes(response.response?.userAccountType)
+    ) {
+      setIsAuth(true)
+      setUserType(response.response?.userAccountType)
+      setUserStatus(response.response?.userAccountStatus)
+      setUserId(response.response?._id)
     }
 
     return (): void => {
       setIsAuth(false)
       setUserType('')
+      setUserStatus('')
+      setUserId('')
     }
   }, [response.response])
 
-  return { isAuth, userType, loading }
+  return {
+    isAuth,
+    userType,
+    userStatus,
+    userId,
+    loading
+  }
 }
 
 export default useAuth

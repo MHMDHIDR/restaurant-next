@@ -290,10 +290,7 @@ export type foodDataProps = {
     updatedAt: string
     foodDesc: string
     foodTags: string[]
-    foodToppings: {
-      toppingName: string
-      toppingPrice: number
-    }[]
+    foodToppings: ToppingsProps[]
     foodImgs: FoodImgsProps[]
     foodImgDisplayName?: FoodImgsProps['foodImgDisplayName']
     foodImgDisplayPath?: FoodImgsProps['foodImgDisplayPath']
@@ -359,11 +356,9 @@ export type ServerSideProps = {
 }
 
 export type authUserRequestProps = NextApiRequest & {
-  user: {
-    _id: ObjectId
-    userEmail: string
-    userAccountType: string
-  }
+  _id: ObjectId
+  userEmail: string
+  userAccountType: string
 }
 
 export type fileRequestProps = NextApiRequest & {

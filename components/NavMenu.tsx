@@ -36,7 +36,15 @@ const NavMenu: React.FC<NavMenuPros> = ({
           {abstractText(label, 30)}
         </span>
 
-        {src && <Image src={src} alt={label} height={30} width={30} />}
+        {src && (
+          <Image
+            src={src}
+            alt={label}
+            height={30}
+            width={30}
+            className={`rounded-full mx-1 border border-gray-300`}
+          />
+        )}
 
         <svg
           className='w-4 h-4 text-gray-500 fill-current dark:text-white'

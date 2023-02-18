@@ -8,7 +8,6 @@ import { removeSlug } from 'functions/slug'
 import Logo from './Icons/Logo'
 import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '@types'
 import useAuth from 'hooks/useAuth'
-import { USER } from '@constants'
 
 const Card = ({
   cItemId,
@@ -26,14 +25,6 @@ const Card = ({
   const { items, addToCart, removeFromCart } = useContext<CartProps>(CartContext)
   const { handleToppingChecked, checkedToppings } = useContext(ToppingsContext)
   const { isAuth, userType, loading } = useAuth()
-  const [isAdmin, setIsAdmin] = useState<boolean>(false)
-
-  useEffect(() => {
-    isAuth && userType === 'admin' ? setIsAdmin(true) : setIsAdmin(false)
-    return () => {
-      setIsAdmin(false)
-    }
-  }, [isAuth, userType])
 
   const handleCart = () => {
     const item = items.find(item => item.cItemId === cItemId)
@@ -146,7 +137,7 @@ const Card = ({
               ) : (
                 <button onClick={() => handleCart()}>{cCtaLabel}</button>
               )}
-              {!loading && isAdmin && (
+              {!loading && isAuth && userType === 'admin' && (
                 <Link
                   href={`/dashboard/food/edit/${cItemId}`}
                   className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'

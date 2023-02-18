@@ -12,12 +12,14 @@ import NavMenu from './NavMenu'
 import Image from 'next/image'
 import { DEFAULT_USER_DATA, USER } from '@constants'
 import { UserProps } from '@types'
+import useAuth from 'hooks/useAuth'
 
 const Nav = () => {
   const { items } = useContext(CartContext)
   const [userData, setUserData] = useState<UserProps>()
   const [cartItemsLength, setCartItemsLength] = useState(0)
   const { data: session } = useSession()
+  const { userType } = useAuth()
 
   useEffect(() => {
     setUserData(USER)
@@ -157,10 +159,9 @@ const Nav = () => {
                     userData ? userData.userFullName : session ? session!.user!.name : ''
                   }`}
                   isOptions={false}
-                  src={session ? session!.user!.image! : ''}
+                  src={session ? session!.user!.image! : '/assets/img/icons/logo.svg'}
                 >
-                  {(userData?.userAccountType === 'admin' ||
-                    userData?.userAccountType === 'cashier') && (
+                  {(userType === 'admin' || userType === 'cashier') && (
                     <Link
                       href='/dashboard'
                       className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 dark:hover:bg-gray-500 xl:border-0'

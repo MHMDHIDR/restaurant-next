@@ -12,7 +12,7 @@ import { LoadingSpinner, LoadingPage } from 'components/Loading'
 import Layout from 'components/Layout'
 import { EyeIconOpen, EyeIconClose } from 'components/Icons/EyeIcon'
 import { UserProps } from '@types'
-import { API_URL, USER } from '@constants'
+import { API_URL, APP_URL, USER } from '@constants'
 import { parseJson, stringJson } from 'functions/jsonTools'
 
 const LoginDataFromLocalStorage =
@@ -169,8 +169,9 @@ const Login = () => {
                     )}
                   </button>
                   <button
+                    type='button'
                     className={`w-fit flex items-center gap-4 px-8 py-2 text-gray-700 dark:text-white uppercase rounded-lg outline outline-1 focus:outline-2 outline-orange-500 hover:outline-orange-500 scale-100 transition-all`}
-                    onClick={() => signIn()}
+                    onClick={() => signIn('google', { callbackUrl: APP_URL })}
                   >
                     تسجيل الدخول عبر جوجل
                     <Image

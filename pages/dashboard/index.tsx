@@ -1,36 +1,22 @@
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import useAxios from 'hooks/useAxios'
+import Image from 'next/image'
+import useAuth from 'hooks/useAuth'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useEventListener from 'hooks/useEventListener'
 import ModalNotFound from 'components/Modal/ModalNotFound'
 import { LoadingPage } from 'components/Loading'
 import Layout from 'components/dashboard/Layout'
-import { API_URL, USER } from '@constants'
+import { API_URL } from '@constants'
 import { DashboardHomeProps } from '@types'
 import goTo from 'functions/goTo'
 import logoutUser from 'functions/logoutUser'
 import menuToggler from 'functions/menuToggler'
 import { toJson } from 'utils/functions/jsonTools'
-import Image from 'next/image'
 
 const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) => {
   useDocumentTitle('Home')
-  const [userStatus, setUserStatus] = useState<string>('')
-  const [userType, setUserType] = useState<string>('')
-  const [userID, setUserID] = useState<string>('')
 
-  const { loading, response } = useAxios({
-    url: `/users/all?page=1&limit=1&itemId=${USER?._id}`
-  })
-
-  useEffect(() => {
-    if (response) {
-      setUserStatus(response?.response?.userAccountStatus)
-      setUserType(response?.response?.userAccountType)
-      setUserID(response?.response?._id)
-    }
-  }, [response])
+  const { isAuth, userType, userStatus, userId, loading } = useAuth()
 
   typeof window !== 'undefined' && document.body.classList.add('dashboard')
 
@@ -39,10 +25,10 @@ const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) 
   //check if userStatus is active and the userType is admin
   return loading ? (
     <LoadingPage />
-  ) : USER?._id !== userID ? (
+  ) : userType === 'user' ? (
     <ModalNotFound />
-  ) : userStatus === 'block' || userType === 'user' ? (
-    logoutUser(USER?._id)
+  ) : userStatus === 'block' ? (
+    logoutUser(userId)
   ) : (
     <Layout>
       <div className='container mx-auto'>

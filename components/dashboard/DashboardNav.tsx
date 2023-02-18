@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { signOut } from 'next-auth/react'
 import ThemeToggler from '../ThemeToggler'
 import Logo from '../Icons/Logo'
 import menuToggler from 'functions/menuToggler'
 import Image from 'next/image'
 import useAxios from 'hooks/useAxios'
+import { USER } from '@constants'
 
 const DashboardNav = () => {
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('user')
-      window.location.href = '/'
+    if (USER) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user')
+        window.location.href = '/'
+      }
+    } else {
+      signOut()
     }
   }
 

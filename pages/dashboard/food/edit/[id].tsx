@@ -66,7 +66,11 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useEffect(() => {
     if (categories?.response !== null) {
       setData(foodData?.response)
-      setToppings(foodData?.response?.foodToppings)
+      setToppings(
+        !foodData?.response?.foodToppings.length
+          ? [foodData?.response?.foodToppings]
+          : foodData?.response?.foodToppings
+      )
       setCategoryList(categories?.response?.response[0]?.CategoryList)
     }
   }, [categories?.response, foodData?.response])
