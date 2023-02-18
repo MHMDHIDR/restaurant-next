@@ -1,0 +1,249 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    @apply w-1 h-1.5;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-orange-600;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-lg;
+  }
+
+  ::-webkit-scrollbar-thumb,
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-track:hover,
+  ::-webkit-scrollbar-track:active {
+    @apply bg-neutral-700;
+  }
+}
+
+/* CUSTOM CSS */
+@layer components {
+  .underline-hover {
+    @apply relative before:h-0.5 before:w-0 before:absolute bg-gray-100 bg-opacity-30 dark:bg-opacity-80 py-2 px-6 rounded-lg 
+    text-sm xl:text-base
+    hover:bg-opacity-50 outline-offset-8 before:bottom-0 before:right-0 before:transition-all hover:before:w-full
+    md:bg-transparent md:bg-opacity-0 md:py-0 md:px-0 md:rounded-none md:hover:bg-opacity-0 text-gray-800 md:dark:text-gray-200 md:before:bg-orange-500;
+  }
+
+  .form__group {
+    @apply relative block w-full px-4 py-2 mx-auto mb-8 transition-all border-2 border-gray-400 border-solid rounded-lg last:border-none focus-within:border-orange-500 dark:focus-within:border-orange-400;
+  }
+
+  .form__input {
+    @apply w-full text-xl text-gray-700 bg-transparent border-none outline-none dark:text-gray-200 rtl px-6;
+  }
+
+  .form__label {
+    @apply absolute px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none right-1 sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60;
+  }
+
+  /*.form__group.notvalid > .form__label,*/
+  .form__input:focus ~ .form__label,
+  .form__input:valid ~ .form__label,
+  .focused ~ .form__label,
+  .form__input ~ .form__label.active {
+    @apply text-sm opacity-100 sm:text-base md:text-xl -translate-y-7 md:-translate-y-8;
+  }
+
+  .form__input.tags:valid ~ .form__label {
+    @apply top-4;
+  }
+
+  .quantity-btn {
+    @apply px-5 py-1 bg-gray-300 rounded-lg dark:text-white dark:bg-gray-600;
+  }
+
+  .quantity-btn.number-hover {
+    @apply hover:bg-gray-400 dark:hover:bg-gray-700;
+  }
+
+  /* Dashboard Styles */
+  .dashboard__nav {
+    --padding: 1rem;
+    @apply block p-[var(--padding)] text-white transition-all duration-300 pr-7 hover:pr-[calc(var(--padding)*2.35)];
+  }
+  .dashboard__nav.isActive {
+    @apply font-bold bg-orange-700;
+  }
+
+  .rtl {
+    direction: rtl;
+  }
+
+  .ltr {
+    direction: ltr;
+  }
+}
+
+/* GENERAL CSS */
+*,
+*::before,
+*::after {
+  font-family: 'Cairo', sans-serif;
+}
+:root {
+  --drkModeToggleSize: clamp(4.7em, 7vw, 6em);
+}
+
+[data-tooltip] {
+  @apply relative inline-block align-middle;
+}
+
+[data-tooltip]::before {
+  --bottom: 1.75rem;
+  --duration: 300ms;
+  @apply content-[attr(data-tooltip)] absolute right-0 bottom-[calc(var(--bottom)*1.65)] z-50
+  transition-all ease-in-out scale-50 opacity-0 pointer-events-none
+  w-min max-w-min min-w-[calc(100%+5rem)] text-center p-2 duration-[var(--duration)]
+  text-sm text-white font-thin bg-gray-800 dark:bg-gray-300 dark:text-black dark:border-2
+  dark:border-gray-800 shadow-lg rounded-2xl rounded-br-none;
+}
+
+[data-tooltip]:hover::before {
+  @apply scale-100 opacity-100;
+}
+
+html.dark body {
+  @apply text-gray-100 bg-gray-800;
+}
+textarea {
+  @apply resize-y min-h-[10rem] max-h-96 pt-2;
+}
+/* clear search default styles */
+input[type='search']::-ms-clear,
+input[type='search']::-ms-reveal {
+  @apply hidden w-0 h-0;
+}
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
+  @apply hidden;
+}
+
+/* Loading Component */
+.animate-fly-in {
+  left: -10%;
+  top: 40%;
+  animation: fly-in 3s cubic-bezier(0.25, 0.75, 0.75, 0.25) infinite;
+}
+/* Loading component animation */
+@keyframes fly-in {
+  0% {
+    left: -10%;
+    top: 45%;
+  }
+  30% {
+    top: 50%;
+  }
+  75%,
+  100% {
+    left: 110%;
+  }
+}
+.animate-delay-100 {
+  animation-delay: 0.5s;
+}
+.animate-delay-200 {
+  animation-delay: 1s;
+}
+
+/* Status Icon with Anitmation */
+.status__icon--success-circle {
+  stroke-dasharray: 260.752190248px, 260.752190248px;
+  stroke-dashoffset: 260.752190248px;
+  animation: status-icon-circle 1.2s linear both;
+}
+.status__icon--success-path {
+  stroke-dasharray: 60px 64px;
+  stroke-dashoffset: 62px;
+  stroke-linecap: round;
+  animation: status-icon-path 0.4s 1s ease-in both;
+}
+.status__icon--error-circle {
+  stroke-width: 0.2352941176rem;
+}
+.status__icon--error-circle-1 {
+  stroke: rgba(223, 64, 64, 0.5);
+}
+.status__icon--error-circle-2 {
+  stroke: #df4040;
+  stroke-dasharray: 260.752190248px, 260.752190248px;
+  stroke-dashoffset: 260.752190248px;
+  animation: status-icon-circle 1.2s linear forwards;
+}
+.status__icon--error-line {
+  stroke: #df4040;
+  stroke-width: 0.2352941176rem;
+  stroke-dasharray: 54px 55px;
+  stroke-dashoffset: 55px;
+  stroke-linecap: round;
+}
+.status__icon--error-line-1 {
+  animation: ani-error-line 0.15s 1.2s linear both;
+}
+.status__icon--error-line-2 {
+  animation: ani-error-line 0.2s 0.9s linear both;
+}
+.status__icon--loading-circle {
+  stroke-width: 0.2352941176rem;
+}
+.status__icon--loading-circle-1 {
+  stroke: rgba(64, 137, 223, 0.5);
+}
+.status__icon--loading-circle-2 {
+  stroke: #4089df;
+  stroke-dasharray: 260.752190248px, 260.752190248px;
+  stroke-dashoffset: 260.752190248px;
+  animation: status-icon-circle 2s linear both infinite;
+}
+
+@keyframes status-icon-circle {
+  0% {
+    stroke-dasharray: 0, 260.752190248px;
+    stroke-dashoffset: 0;
+  }
+  35% {
+    stroke-dasharray: 120px, 120px;
+    stroke-dashoffset: -120px;
+  }
+  70% {
+    stroke-dasharray: 0, 260.752190248px;
+    stroke-dashoffset: -260.752190248px;
+  }
+  100% {
+    stroke-dasharray: 260.752190248px, 0;
+    stroke-dashoffset: -260.752190248px;
+  }
+}
+
+@keyframes ani-error-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes status-icon-path {
+  0% {
+    stroke-dashoffset: 62px;
+  }
+  65% {
+    stroke-dashoffset: -5px;
+  }
+  84% {
+    stroke-dashoffset: 4px;
+  }
+  100% {
+    stroke-dashoffset: -2px;
+  }
+}
