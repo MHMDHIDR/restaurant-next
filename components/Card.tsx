@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { CartContext } from 'contexts/CartContext'
 import { ToppingsContext } from 'contexts/ToppingsContext'
 import TagIcon from './Icons/TagIcon'
