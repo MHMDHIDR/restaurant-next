@@ -159,7 +159,11 @@ const Nav = () => {
                     userData ? userData.userFullName : session ? session!.user!.name : ''
                   }`}
                   isOptions={false}
-                  src={session ? session!.user!.image! : '/assets/img/icons/logo.svg'}
+                  src={
+                    session
+                      ? session!.user!.image!
+                      : '/assets/img/icons/mobile/apple-icon-180.png'
+                  }
                 >
                   {(userType === 'admin' || userType === 'cashier') && (
                     <Link

@@ -5,6 +5,7 @@ import Axios from 'axios'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useEventListener from 'hooks/useEventListener'
 import useAxios from 'hooks/useAxios'
+import useAuth from 'hooks/useAuth'
 import Modal from 'components/Modal/Modal'
 import { Success, Error, Loading } from 'components/Icons/Status'
 import Add from 'components/Icons/Add'
@@ -37,6 +38,7 @@ const DashboardMenu = () => {
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
   const [modalLoading, setModalLoading] = useState<boolean>(false)
   const [menuFood, setMenuFood] = useState<any>()
+  const { userType } = useAuth()
 
   const { loading, ...response } = useAxios({
     url: `/foods?page=1&limit=${ITEMS_PER_PAGE}&createdAt=-1`
@@ -109,9 +111,9 @@ const DashboardMenu = () => {
     }
   }
 
-  return loading ? (
+  return loading || !userType ? (
     <LoadingPage />
-  ) : USER?.userAccountType !== 'admin' ? (
+  ) : userType !== 'admin' ? (
     <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
   ) : (
     <>

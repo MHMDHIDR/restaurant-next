@@ -38,11 +38,11 @@ const NavMenu: React.FC<NavMenuPros> = ({
 
         {src && (
           <Image
-            src={src}
+            src={src || '/assets/img/icons/mobile/apple-icon-180.png'}
             alt={label}
             height={30}
             width={30}
-            className={`rounded-full mx-1 border border-gray-300`}
+            className={`rounded-full mx-1 border border-gray-300 w-8 h-8`}
           />
         )}
 

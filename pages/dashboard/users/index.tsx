@@ -5,10 +5,11 @@ import axios from 'axios'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useEventListener from 'hooks/useEventListener'
 import useAxios from 'hooks/useAxios'
+import useAuth from 'hooks/useAuth'
 import goTo from 'functions/goTo'
 import logoutUser from 'functions/logoutUser'
 import { isNumber } from 'functions/isNumber'
-import { API_URL, USER, ITEMS_PER_PAGE } from '@constants'
+import { API_URL, ITEMS_PER_PAGE } from '@constants'
 import Modal from 'components/Modal/Modal'
 import { Success, Error, Loading } from 'components/Icons/Status'
 import { LoadingPage } from 'components/Loading'
@@ -31,6 +32,7 @@ const DashboardUsers = () => {
   const [userUpdated, setUserUpdated] = useState()
   const [users, setUsers] = useState<any>('')
   const [modalLoading, setModalLoading] = useState(false)
+  const { userType } = useAuth()
 
   const { loading, ...response } = useAxios({
     url: `/users/all?page=${pageNumber}&limit=${ITEMS_PER_PAGE}`
@@ -111,9 +113,9 @@ const DashboardUsers = () => {
     }
   }
 
-  return loading ? (
+  return loading || !userType ? (
     <LoadingPage />
-  ) : USER?.userAccountType !== 'admin' ? (
+  ) : userType !== 'admin' ? (
     <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
   ) : (
     <>

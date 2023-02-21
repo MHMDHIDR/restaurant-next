@@ -2,11 +2,10 @@ import { NextApiResponse } from 'next'
 import dbConnect from 'utils/db'
 import UsersModel from 'models/User'
 import { authUserRequestProps } from '@types'
-import { parseJson } from 'utils/functions/jsonTools'
 
 export default async function handler(req: authUserRequestProps, res: NextApiResponse) {
   const { method, headers } = req
-  const userEmail = parseJson(headers.user as string).email
+  const userEmail = headers.useremail || headers.email
 
   await dbConnect()
 

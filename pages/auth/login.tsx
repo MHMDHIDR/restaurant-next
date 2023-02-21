@@ -91,7 +91,7 @@ const Login = () => {
         ? window.location.replace('/dashboard')
         : null
     } catch (response: any) {
-      setLoginMsg(response?.response.message)
+      setLoginMsg(response?.response?.message)
     } finally {
       setIsSendingLoginForm(false)
     }

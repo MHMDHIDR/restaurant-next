@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import Axios from 'axios'
-import { API_URL } from '@constants'
 import { axiosProps, responseTypes } from '@types'
 import { parseJson } from 'functions/jsonTools'
 
-Axios.defaults.baseURL = API_URL
+const { origin }: any = typeof window !== 'undefined' && window.location
+
+Axios.defaults.baseURL = `${origin}/api`
 
 const useAxios = ({ url, method = 'get', body = null, headers = null }: axiosProps) => {
   const [response, setResponse] = useState<responseTypes | null>(null)

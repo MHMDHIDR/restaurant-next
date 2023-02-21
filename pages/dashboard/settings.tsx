@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, ChangeEvent, useContext } from 'react'
 import axios from 'axios'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAxios from 'hooks/useAxios'
+import useAuth from 'hooks/useAuth'
 import { FileUploadContext } from 'contexts/FileUploadContext'
 import FileUpload from 'components/FileUpload'
 import Modal from 'components/Modal/Modal'
@@ -9,7 +10,7 @@ import { Success, Error, Loading } from 'components/Icons/Status'
 import { LoadingPage, LoadingSpinner } from 'components/Loading'
 import ModalNotFound from 'components/Modal/ModalNotFound'
 import Layout from 'components/dashboard/Layout'
-import { API_URL, USER } from '@constants'
+import { API_URL } from '@constants'
 import { responseTypes } from '@types'
 import goTo from 'functions/goTo'
 import { stringJson } from 'functions/jsonTools'
@@ -40,6 +41,7 @@ const Settings = () => {
   const [categoryList, setCategoryList] = useState<any>(['', ''])
   const [isUpdating, setIsUpdating] = useState(false)
   const [modalLoading, setModalLoading] = useState(false)
+  const { userType } = useAuth()
 
   //fetching description data
   const { response, loading } = useAxios({ url: '/settings' })
@@ -155,9 +157,9 @@ const Settings = () => {
     }
   }
 
-  return loading ? (
+  return loading || !userType ? (
     <LoadingPage />
-  ) : USER?.userAccountType !== 'admin' ? (
+  ) : userType !== 'admin' ? (
     <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
   ) : (
     <>

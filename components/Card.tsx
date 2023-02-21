@@ -2,12 +2,12 @@ import Link from 'next/link'
 import { useContext } from 'react'
 import { CartContext } from 'contexts/CartContext'
 import { ToppingsContext } from 'contexts/ToppingsContext'
+import useAuth from 'hooks/useAuth'
 import TagIcon from './Icons/TagIcon'
 import EmblaCarousel from './EmblaCarousel'
 import { removeSlug } from 'functions/slug'
 import Logo from './Icons/Logo'
 import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '@types'
-import useAuth from 'hooks/useAuth'
 
 const Card = ({
   cItemId,
@@ -137,7 +137,7 @@ const Card = ({
               ) : (
                 <button onClick={() => handleCart()}>{cCtaLabel}</button>
               )}
-              {!loading && isAuth && userType === 'admin' && (
+              {!loading && userType === 'admin' && (
                 <Link
                   href={`/dashboard/food/edit/${cItemId}`}
                   className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'

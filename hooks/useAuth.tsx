@@ -16,7 +16,12 @@ const useAuth = () => {
   const { data: session } = useSession()
 
   //get user data using token if the user is logged-in and token is saved in localStorage then I'll get the current user data from the database
-  const headers = stringJson(USER ?? session!?.user!)
+  const headers = USER
+    ? typeof window !== 'undefined'
+      ? localStorage.getItem('user')
+      : ''
+    : stringJson(session!?.user!)
+
   const { loading, ...response }: any = useAxios({
     url: `/users`,
     headers

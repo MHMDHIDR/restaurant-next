@@ -1,7 +1,7 @@
 import { UserProps } from '@types'
 import { parseJson } from 'functions/jsonTools'
 
-const { origin, protocol }: any = typeof window !== 'undefined' && window.location
+const { origin }: any = typeof window !== 'undefined' && window.location
 
 export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
 
@@ -21,15 +21,15 @@ export const USER: UserProps =
   parseJson(localStorage.getItem('user') || '{}')
 
 const url = {
-  local: `http://localhost`,
-  dev: `http://dev.com`
+  local: `localhost`,
+  dev: `dev.com`
 }
 
 export const APP_URL =
   process.env.NODE_ENV === 'development'
     ? origin?.includes(url.dev)
-      ? url.local + `:3001`
-      : url.dev + `:3001`
+      ? `http://${url.dev}:3001`
+      : `http://${url.local}:3001`
     : process.env.NEXT_PUBLIC_APP_PUBLIC_URL
 
 export const API_URL = APP_URL + '/api'
