@@ -16,7 +16,7 @@ import { toJson } from 'utils/functions/jsonTools'
 const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) => {
   useDocumentTitle('Home')
 
-  const { isAuth, userType, userStatus, userId, loading } = useAuth()
+  const { userType, userStatus, userId, loading } = useAuth()
 
   typeof window !== 'undefined' && document.body.classList.add('dashboard')
 

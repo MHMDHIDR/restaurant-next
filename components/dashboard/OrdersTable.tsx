@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
 import axios from 'axios'
-import goTo from 'functions/goTo'
-import { toggleCSSclasses } from 'functions/toggleCSSclasses'
-import { createLocaleDateString } from 'functions/convertDate'
-import scrollToView from 'functions/scrollToView'
+import useAxios from 'hooks/useAxios'
+import useAuth from 'hooks/useAuth'
+import useEventListener from 'hooks/useEventListener'
 import Modal from '../Modal/Modal'
 import { Success, Error, Loading } from '../Icons/Status'
 import { PayPal } from '../Icons/Payments'
@@ -21,12 +22,12 @@ import {
   RejectBtn
 } from './OrdersTableActions'
 import { cardProps, orderInfoProps, orderProps, selectedToppingsProps } from '@types'
-import Image from 'next/image'
 import { API_URL, ITEMS_PER_PAGE, USER } from '@constants'
-import useAxios from 'hooks/useAxios'
-import useEventListener from 'hooks/useEventListener'
+import goTo from 'functions/goTo'
+import { toggleCSSclasses } from 'functions/toggleCSSclasses'
+import { createLocaleDateString } from 'functions/convertDate'
+import scrollToView from 'functions/scrollToView'
 import { isNumber } from 'functions/isNumber'
-import { stringJson } from 'functions/jsonTools'
 // import Invoice from './Invoice'
 
 const OrdersTable = ({ ordersByUserEmail = false }) => {
@@ -45,7 +46,10 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const [orderItemsIds, setOrderItemsIds] = useState([])
   const [orderToppingsId, setOrderToppingsId] = useState<string[]>([''])
   const [isLoading, setIsLoading] = useState(false)
+  const { data: session } = useSession()
   // const [invoiceBase64, setInvoiceBase64] = useState<any>('')
+
+  const { userType } = useAuth()
 
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
@@ -56,8 +60,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const pageNumber = !pageNum || !isNumber(pageNum) || pageNum < 1 ? 1 : parseInt(pageNum)
 
   const { ...response } = useAxios({
-    url: `/orders?page=${pageNumber}&limit=${ITEMS_PER_PAGE}?orderDate=-1`,
-    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
+    url: `/orders?page=${pageNumber}&limit=${ITEMS_PER_PAGE}?orderDate=-1`
   })
 
   useEffect(() => {
@@ -251,9 +254,10 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
             <th className='px-1 py-2'>رقم الطلب</th>
             <th className='px-1 py-2 min-w-[6rem]'>وسلة الدفع</th>
             <th className='px-1 py-2'>حالة الطلب</th>
-            {/* {(USER.userAccountType === 'admin' || USER.userAccountType === 'cashier') && ( */}
-            <th className='px-1 py-2'>الاجراء</th>
-            {/* )} */}
+            {(USER.userAccountType === 'admin' ||
+              USER.userAccountType === 'cashier' ||
+              userType === 'admin' ||
+              userType === 'cashier') && <th className='px-1 py-2'>الاجراء</th>}
           </tr>
         </thead>
         <tbody>
@@ -263,10 +267,14 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
               {ordersByUserEmail ? (
                 //show only orders by user email ==> FILTER by email
                 ordersData?.response?.filter(
-                  (order: any) => order.userEmail === USER.userEmail
+                  (order: any) =>
+                    order.userEmail === (USER.userEmail ?? session!?.user!?.email)
                 ).length > 0 ? ( //means there is at least one order by the current user email
                   ordersData?.response
-                    ?.filter((order: any) => order.userEmail === USER.userEmail)
+                    ?.filter(
+                      (order: any) =>
+                        order.userEmail === (USER.userEmail ?? session!?.user!?.email)
+                    )
                     .map((order: any, idx: number) => (
                       <tr
                         key={order._id}
@@ -405,7 +413,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                             : 'تم الرفض'}
                         </td>
                         {(USER.userAccountType === 'admin' ||
-                          USER.userAccountType === 'cashier') && (
+                          USER.userAccountType === 'cashier' ||
+                          userType === 'admin' ||
+                          userType === 'cashier') && (
                           <td>
                             <NavMenu>
                               {order.orderStatus === 'pending' ? (

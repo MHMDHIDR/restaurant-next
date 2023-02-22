@@ -1,34 +1,22 @@
-import { useState, useEffect } from 'react'
-import useAxios from 'hooks/useAxios'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import logoutUser from 'functions/logoutUser'
 import { LoadingPage } from 'components/Loading'
 import OrdersTable from 'components/dashboard/OrdersTable'
 import ModalNotFound from 'components/Modal/ModalNotFound'
 import Layout from 'components/Layout'
-import { USER } from '@constants'
+import useAuth from 'hooks/useAuth'
 
 const MyOrders = () => {
   useDocumentTitle('My Orders')
 
-  //getting user id from local storage
-  const USER_ID = USER._id || ''
-  const [userStatus, setUserStatus] = useState<any>('')
+  const { userStatus, userId, loading } = useAuth()
 
-  const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId=${USER_ID}` })
-
-  useEffect(() => {
-    if (currentUser?.response !== null) {
-      setUserStatus(currentUser?.response?.response)
-    }
-  }, [currentUser?.response])
-
-  return !userStatus.userAccountStatus ? (
+  return loading ? (
     <LoadingPage />
-  ) : !USER_ID ? (
+  ) : userStatus === 'block' ? (
     <ModalNotFound />
-  ) : !USER_ID || userStatus.userAccountStatus === 'block' ? (
-    logoutUser(USER_ID)
+  ) : !userStatus || userStatus === 'block' ? (
+    logoutUser(userId)
   ) : (
     <Layout>
       <section className='container py-12 mx-auto my-8 xl:max-w-full'>
