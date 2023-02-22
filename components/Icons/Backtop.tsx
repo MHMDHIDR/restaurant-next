@@ -6,16 +6,15 @@ import { SCROLL_LIMIT } from '@constants'
 const Backtop = ({ color = 'orange' }) => {
   const backTopRef = useRef(null)
 
-  if (backTopRef !== null) {
-    useEventListener('scroll', () => {
-      toggleCSSclasses(
-        [window.scrollY > SCROLL_LIMIT],
-        backTopRef.current!,
-        ['opacity-100', 'bottom-[10%]', 'pointer-events-auto'],
-        ['opacity-0', 'bottom-1/2', 'pointer-events-none']
-      )
-    })
-  }
+  useEventListener('scroll', () => {
+    if (backTopRef === null) return
+    toggleCSSclasses(
+      [window.scrollY > SCROLL_LIMIT],
+      backTopRef.current!,
+      ['opacity-100', 'bottom-[10%]', 'pointer-events-auto'],
+      ['opacity-0', 'bottom-1/2', 'pointer-events-none']
+    )
+  })
 
   return (
     <button
