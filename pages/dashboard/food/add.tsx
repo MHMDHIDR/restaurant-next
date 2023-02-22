@@ -14,9 +14,10 @@ import Layout from 'components/dashboard/Layout'
 import { createSlug } from 'functions/slug'
 import goTo from 'functions/goTo'
 import scrollToView from 'functions/scrollToView'
-import { API_URL } from '@constants'
-import { FoodImgsProps, selectedToppingsProps } from '@types'
+import { selectedToppingsProps } from '@types'
+import { origin } from '@constants'
 import { stringJson } from 'functions/jsonTools'
+import { focus } from 'utils/functions/focus'
 
 const AddFood = () => {
   useDocumentTitle('Add Food or Drink')
@@ -84,7 +85,7 @@ const AddFood = () => {
       formData.append('foodImgs', stringJson(foodImgs.length > 0 ? foodImgs : []))
 
       try {
-        const response = await axios.post(`${API_URL}/foods`, formData)
+        const response = await axios.post(`${origin}/api/foods`, formData)
         const { foodAdded, message } = response.data
         setAddFoodStatus(foodAdded)
         setAddFoodMessage(message)
@@ -307,6 +308,9 @@ const AddFood = () => {
                           name='toppingName'
                           defaultValue={toppingName}
                           onChange={e => handleInputChange(e, idx)}
+                          onKeyDown={(e: any) => {
+                            if (e.key === `Enter`) e.preventDefault()
+                          }}
                         />
                         <input
                           type='number'
@@ -318,6 +322,14 @@ const AddFood = () => {
                           name='toppingPrice'
                           defaultValue={toppingPrice}
                           onChange={e => handleInputChange(e, idx)}
+                          onKeyDown={(e: any) => {
+                            if (e.key === `Enter`) {
+                              e.preventDefault()
+                              if (!e.target.value.trim()) return
+                              handleAddClick()
+                              setTimeout(() => focus(e), 10)
+                            }
+                          }}
                         />
                       </div>
                       <div className='flex gap-4 pb-6'>

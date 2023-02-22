@@ -96,7 +96,7 @@
 }
 
 [data-tooltip] {
-  @apply relative inline-block align-middle;
+  @apply relative inline-block align-middle outline-none;
 }
 
 [data-tooltip]::before {

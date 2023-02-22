@@ -1,29 +1,29 @@
+import { useRef } from 'react'
+import useEventListener from 'hooks/useEventListener'
 import { toggleCSSclasses } from 'functions/toggleCSSclasses'
+import { SCROLL_LIMIT } from '@constants'
 
 const Backtop = ({ color = 'orange' }) => {
-  // const backTop = document.getElementById('back__top')
-  const ScrollLimit = 400
+  const backTopRef = useRef(null)
 
-  // if (backTop !== null) {
-  //   window.addEventListener('scroll', () => {
-  //     toggleCSSclasses(
-  //       [window.scrollY > ScrollLimit],
-  //       backTop,
-  //       ['opacity-100', 'bottom-[10%]', 'pointer-events-auto'],
-  //       ['opacity-0', 'bottom-1/2', 'pointer-events-none']
-  //     )
-  //   })
-
-  //   backTop.addEventListener('click', () => {
-  //     window.scrollTo({ top: 0, behavior: 'smooth' })
-  //   })
-  // }
+  if (backTopRef !== null) {
+    useEventListener('scroll', () => {
+      toggleCSSclasses(
+        [window.scrollY > SCROLL_LIMIT],
+        backTopRef.current!,
+        ['opacity-100', 'bottom-[10%]', 'pointer-events-auto'],
+        ['opacity-0', 'bottom-1/2', 'pointer-events-none']
+      )
+    })
+  }
 
   return (
     <button
       id='back__top'
       type='button'
       className={`group fixed right-[3%] dark:shadow-orange-600 p-3 bg-${color}-600 hover:bg-${color}-700 text-white rounded-full transition-all shadow-md hover:shadow-lg focus:bg-${color}-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-orange-800 active:shadow-lg opacity-0 pointer-events-none`}
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      ref={backTopRef}
     >
       <svg
         aria-hidden='true'

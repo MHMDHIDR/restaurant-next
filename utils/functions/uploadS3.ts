@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL } from '@constants'
+import { origin } from '@constants'
 import { FileUploadProps, FoodImgsProps, uploadurlDataProps } from '@types'
 import { stringJson } from 'functions/jsonTools'
 
@@ -23,7 +23,7 @@ const uploadS3 = async (file: FileUploadProps['file']) => {
   )
 
   const { data }: uploadurlDataProps = await axios.get(
-    `${API_URL}/uploadurl?file=${fileData}`
+    `${origin}/api/uploadurl?file=${fileData}`
   )
 
   async function uploadToS3(url: string) {

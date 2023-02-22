@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import Axios from 'axios'
 import { axiosProps, responseTypes } from '@types'
+import { origin } from '@constants'
 import { parseJson } from 'functions/jsonTools'
-
-const { origin }: any = typeof window !== 'undefined' && window.location
 
 Axios.defaults.baseURL = `${origin}/api`
 

@@ -1,7 +1,7 @@
 import { UserProps } from '@types'
 import { parseJson } from 'functions/jsonTools'
 
-const { origin }: any = typeof window !== 'undefined' && window.location
+export const { origin }: any = typeof window !== 'undefined' && window.location
 
 export const HEADER_BG_IMG = '/assets/img/header-bg-1.webp'
 
@@ -14,6 +14,8 @@ export const ITEMS_PER_PAGE = 10
 export const MAX_QUANTITY = 100
 
 export const FILE_UPLOAD_IMG_SIZE = 122
+
+export const SCROLL_LIMIT = 400
 
 export const USER: UserProps =
   typeof window !== 'undefined' &&
