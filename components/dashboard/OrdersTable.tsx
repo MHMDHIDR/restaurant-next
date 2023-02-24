@@ -22,7 +22,7 @@ import {
   RejectBtn
 } from './OrdersTableActions'
 import { cardProps, orderInfoProps, orderProps, selectedToppingsProps } from '@types'
-import { API_URL, ITEMS_PER_PAGE, USER } from '@constants'
+import { origin, API_URL, ITEMS_PER_PAGE, USER } from '@constants'
 import goTo from 'functions/goTo'
 import { toggleCSSclasses } from 'functions/toggleCSSclasses'
 import { createLocaleDateString } from 'functions/convertDate'
@@ -144,7 +144,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     if (orderInfo.status === 'delete') {
       try {
         //You need to name the body {data} so it can be recognized in (.delete) method
-        const response = await axios.delete(`${API_URL}/orders/${orderInfo.id}`)
+        const response = await axios.delete(`${origin}/api/orders/${orderInfo.id}`)
         const { orderDeleted } = response.data
         setDeleteOrderStatus(orderDeleted)
 
@@ -165,7 +165,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
 
     try {
       setIsLoading(true)
-      const response = await axios.patch(`${API_URL}/orders/${orderInfo.id}`, formData)
+      const response = await axios.patch(`${origin}/api/orders/${orderInfo.id}`, formData)
       const { OrderStatusUpdated } = response.data
       setOrderUpdated(OrderStatusUpdated)
 

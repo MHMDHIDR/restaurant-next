@@ -10,8 +10,8 @@ const FileUpload = ({ data, ignoreDelete }: FileUploadComponentProps) => {
     useContext<FileUploadProps>(FileUploadContext)
   let { id } = useRouter().query
   const hasImgs =
-    data.defaultImg[0].foodImgDisplayName!?.length > 0 ||
-    data.defaultImg[0].websiteLogoDisplayName!?.length > 0
+    data.defaultImg[0]?.foodImgDisplayName!?.length > 0 ||
+    data.defaultImg[0]?.websiteLogoDisplayName!?.length > 0
 
   return (
     <>

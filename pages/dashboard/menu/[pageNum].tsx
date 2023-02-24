@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import Axios from 'axios'
+import axios from 'axios'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useEventListener from 'hooks/useEventListener'
-import useAxios from 'hooks/useAxios'
+import useAuth from 'hooks/useAuth'
 import Modal from 'components/Modal/Modal'
 import { Success, Error, Loading } from 'components/Icons/Status'
 import { LoadingPage, LoadingSpinner } from 'components/Loading'
@@ -19,7 +19,7 @@ import goTo from 'functions/goTo'
 import { isNumber } from 'functions/isNumber'
 import { createLocaleDateString } from 'functions/convertDate'
 import scrollToView from 'functions/scrollToView'
-import { API_URL, ITEMS_PER_PAGE, USER } from '@constants'
+import { origin, ITEMS_PER_PAGE, USER } from '@constants'
 import { stringJson } from 'functions/jsonTools'
 import { ClickableButton } from 'components/Button'
 import Add from 'components/Icons/Add'
@@ -32,22 +32,25 @@ const DashboardMenu = () => {
   const [deleteFoodStatus, setDeleteFoodStatus] = useState()
   const [modalLoading, setModalLoading] = useState<boolean>(true)
   const [menuFood, setMenuFood] = useState<any>()
-
+  const { loading, userType } = useAuth()
   const { query } = useRouter()
   const { pageNum }: any = query
 
-  const pageNumber = !pageNum || !isNumber(pageNum) || pageNum < 1 ? 1 : parseInt(pageNum)
-  const { loading, ...response } = useAxios({
-    url: `/foods?page=${pageNumber}&limit=${ITEMS_PER_PAGE}&createdAt=-1`
-  })
+  const pageNumber =
+    !pageNum || !isNumber(pageNum) || pageNum < 1
+      ? typeof window !== 'undefined'
+        ? parseInt(
+            window.location.pathname.split('/')[
+              window.location.pathname.split('/').length - 1
+            ]
+          )
+        : 1
+      : parseInt(pageNum)
 
   useEffect(() => {
-    if (response.response !== null) {
-      setMenuFood(response.response)
-    }
-  }, [response.response])
-
-  useEffect(() => {
+    axios
+      .get(`foods?page=${pageNumber}&limit=${ITEMS_PER_PAGE}&createdAt=-1`)
+      .then(({ data }) => setMenuFood(data))
     scrollToView()
   }, [])
 
@@ -82,7 +85,7 @@ const DashboardMenu = () => {
     formData.append('prevFoodImgPathsAndNames', stringJson(prevFoodImgPathsAndNames))
     try {
       //You need to name the body {data} so it can be recognized in (.delete) method
-      const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
+      const response = await axios.delete(`${origin}/api/foods/${foodId}`, {
         data: formData
       })
       const { foodDeleted } = response.data
@@ -96,9 +99,9 @@ const DashboardMenu = () => {
     }
   }
 
-  return loading ? (
+  return loading || !userType ? (
     <LoadingPage />
-  ) : USER?.userAccountType !== 'admin' ? (
+  ) : userType !== 'admin' || (USER && USER?.userAccountType !== 'admin') ? (
     <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
   ) : (
     <>
@@ -137,7 +140,7 @@ const DashboardMenu = () => {
               قائمة الوجبات والمشروبات
             </h3>
 
-            <Link href='food/add'>
+            <Link href={goTo('food/add')}>
               <ClickableButton>
                 <>
                   <Add className='inline-flex ml-4' />
@@ -203,7 +206,7 @@ const DashboardMenu = () => {
                         <td className='px-1 py-2'>
                           <NavMenu>
                             <Link
-                              href={goTo(`edit-food/${item._id}`)}
+                              href={goTo(`food/edit/${item._id}`)}
                               className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
                             >
                               تعديل
@@ -255,12 +258,20 @@ const DashboardMenu = () => {
                       <p className='my-2 md:text-2xl text-red-600 dark:text-red-400 font-[600] py-2 px-1'>
                         عفواً، لم يتم العثور على أي وجبات
                       </p>
-                      <Link
-                        href={goTo('add-food')}
-                        className='min-w-[7rem] bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-6 rounded-md'
-                      >
-                        إضافة وجبة
-                      </Link>
+                      <div className='flex justify-center gap-4'>
+                        <Link
+                          href={goTo('food/add')}
+                          className='min-w-[7rem] bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-6 rounded-md'
+                        >
+                          إضافة وجبة
+                        </Link>
+                        <Link
+                          href={goTo('dashboard')}
+                          className='min-w-[7rem] bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-6 rounded-md'
+                        >
+                          لوحة التحكم
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 )}

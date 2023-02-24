@@ -24,13 +24,13 @@ const Pagination = ({
       <a
         href={`/${routeName}${
           category
-            ? '/' + category + '/' + (pageNum - 1 === 1 ? '' : pageNum - 1)
-            : pageNum - 1 === 1
+            ? '/' + category + '/' + (pageNum! - 1 === 1 ? '' : pageNum! - 1)
+            : pageNum! - 1 === 1
             ? ''
-            : '/' + (pageNum - 1)
+            : '/' + (pageNum! - 1)
         }`}
         className={`${
-          pageNum > 1 ? 'opacity-100' : 'opacity-50 pointer-events-none'
+          pageNum! > 1 ? 'opacity-100' : 'opacity-50 pointer-events-none'
         } mr-3`}
       >
         <Arrow css='p-1.5' height='36' width='36' />
@@ -50,7 +50,7 @@ const Pagination = ({
             }`}
             className={`
                   ${
-                    pageNum === page + 1
+                    pageNum! === page + 1
                       ? 'text-orange-600 bg-orange-300'
                       : 'text-gray-800 transition-colors bg-orange-200 hover:bg-orange-300 dark:bg-orange-100 dark:hover:bg-orange-200'
                   } px-4 py-0.5 last:rounded-r-md first:rounded-l-md`}
@@ -63,10 +63,10 @@ const Pagination = ({
       {/* Next Link Arrow */}
       <a
         href={`/${routeName}${
-          category ? '/' + category + '/' + (pageNum + 1) : '/' + (pageNum + 1)
+          category ? '/' + category + '/' + (pageNum! + 1) : '/' + (pageNum! + 1)
         }`}
         className={`${
-          pageNum < numOfPages.length ? 'opacity-100' : 'opacity-50 pointer-events-none'
+          pageNum! < numOfPages.length ? 'opacity-100' : 'opacity-50 pointer-events-none'
         } ml-3`}
       >
         <Arrow toLeft css='p-1.5' height='36' width='36' />

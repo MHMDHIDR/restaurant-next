@@ -22,10 +22,7 @@ const useAuth = () => {
       : ''
     : stringJson(session!?.user!)
 
-  const { loading, ...response }: any = useAxios({
-    url: `/users`,
-    headers
-  })
+  const { loading, ...response }: any = useAxios({ url: `/users`, headers })
 
   useEffect(() => {
     if (!USER) {

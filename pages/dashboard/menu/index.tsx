@@ -20,7 +20,7 @@ import ModalNotFound from 'components/Modal/ModalNotFound'
 import NavMenu from 'components/NavMenu'
 import Layout from 'components/dashboard/Layout'
 import { ClickableButton } from 'components/Button'
-import { API_URL, ITEMS_PER_PAGE, USER } from '@constants'
+import { origin, ITEMS_PER_PAGE, USER } from '@constants'
 import { FoodImgsProps } from '@types'
 import { parseJson, stringJson } from 'functions/jsonTools'
 
@@ -97,7 +97,7 @@ const DashboardMenu = () => {
     formData.append('prevFoodImgPathsAndNames', stringJson(prevFoodImgPathsAndNames))
     try {
       //You need to name the body {data} so it can be recognized in (.delete) method
-      const response = await Axios.delete(`${API_URL}/foods/${foodId}`, {
+      const response = await Axios.delete(`${origin}/api/foods/${foodId}`, {
         data: formData
       })
       const { foodDeleted } = response.data
@@ -113,7 +113,7 @@ const DashboardMenu = () => {
 
   return loading || !userType ? (
     <LoadingPage />
-  ) : userType !== 'admin' ? (
+  ) : userType !== 'admin' || (USER && USER?.userAccountType !== 'admin') ? (
     <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
   ) : (
     <>
