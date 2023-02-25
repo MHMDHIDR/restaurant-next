@@ -1,9 +1,11 @@
 const ICON_SIZE_CLASS =
   'w-[calc(var(--drkModeToggleSize)/2.5)] h-[calc(var(--drkModeToggleSize)/2.5)]'
 
-export const PayPal = ({ fill = 'gray' }) => (
+export const PayPal = ({ fill = 'gray', className }: any) => (
   <svg
-    className={`${ICON_SIZE_CLASS} opacity-60 hover:opacity-100 transition-opacity mx-auto`}
+    className={`${ICON_SIZE_CLASS} opacity-60 hover:opacity-100 transition-opacity mx-auto${
+      className ? ` ${className}` : ''
+    }`}
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 512 512'
     fill={fill}

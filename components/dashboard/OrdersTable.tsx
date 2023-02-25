@@ -181,19 +181,11 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
 
   const componentRef = useRef(null)
   const onBeforeGetContentResolve = useRef<any>(null)
-  const handleAfterPrint = useCallback(() => {
-    console.log('`onAfterPrint` called') // tslint:disable-line no-console
-  }, [])
-  const handleBeforePrint = useCallback(() => {
-    console.log('`onBeforePrint` called') // tslint:disable-line no-console
-  }, [])
   const handleOnBeforeGetContent = useCallback(() => {
-    console.log('`onBeforeGetContent` called') // tslint:disable-line no-console
     setIsLoading(true)
 
     return new Promise<void>(resolve => {
       onBeforeGetContentResolve.current = resolve
-
       setTimeout(() => {
         setIsLoading(false)
         resolve()
@@ -208,8 +200,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     content: reactToPrintContent,
     documentTitle: 'AwesomeFileName',
     onBeforeGetContent: handleOnBeforeGetContent,
-    onBeforePrint: handleBeforePrint,
-    onAfterPrint: handleAfterPrint,
     removeAfterPrint: true
   })
   useEffect(() => {
@@ -279,14 +269,16 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
         />
       )}
 
-      <Invoice
-        ordersData={ordersData?.response?.filter(
-          (order: any) => order._id === orderInfo.id
-        )}
-        orderItemsIds={orderItemsIds}
-        orderToppingsId={orderToppingsId}
-        forwardedRef={componentRef}
-      />
+      {isLoading && (
+        <Invoice
+          ordersData={
+            ordersData?.response?.filter((order: any) => order._id === orderInfo.id)[0]
+          }
+          orderItemsIds={orderItemsIds}
+          orderToppingsId={orderToppingsId}
+          forwardedRef={componentRef}
+        />
+      )}
 
       <table className='table w-full text-center border-collapse table-auto'>
         <thead className='text-white bg-orange-800 rtl'>
@@ -601,7 +593,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                             الكمية المطلوبة {toppingQuantity}
                                           </span>
                                           <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
-                                            السعر حسب الكمية:{' '}
+                                            السعر حسب الكمية:
                                             {toppingPrice * toppingQuantity!} ر.ق
                                           </span>
                                           <hr />

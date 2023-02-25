@@ -1,9 +1,10 @@
 import { createLocaleDateString } from 'functions/convertDate'
 import Divider from 'components/Divider'
+import Image from 'next/image'
+import { PayPal } from 'components/Icons/Payments'
+import { selectedToppingsProps } from '@types'
 
 const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: any) => {
-  console.log(ordersData)
-
   const inSeletedToppings = orderToppingsId?.map((selected: any) =>
     //if there is no toppings in order then selected will be empty array
     (selected || []).filter((element: any) =>
@@ -11,134 +12,179 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
     )
   )
 
-  return (
-    <table
-      ref={forwardedRef}
-      className='w-full text-center border-collapse table-auto rtl'
-    >
-      <thead className='text-white bg-orange-800'>
-        <tr className='rtl'>
-          <th className='px-1 py-2 min-w-[10rem]'>الاسم</th>
-          <th className='px-1 py-2 min-w-[7rem]'>البريد الالكتروني</th>
-          <th className='px-1 py-2'>رقم الطلب</th>
-          <th className='px-1 py-2'>تاريخ الطلب</th>
-          <th className='px-1 py-2'>الهاتف</th>
-          <th className='px-1 py-2 min-w-[20rem]'>التفاصيل</th>
-          <th className='px-1 py-2'>الملاحظات</th>
-          <th className='px-1 py-2'>السعر الاجمالي</th>
-        </tr>
-      </thead>
+  const {
+    personName,
+    personPhone,
+    personAddress,
+    userEmail,
+    orderId,
+    orderDate,
+    orderItems,
+    orderToppings,
+    paymentData,
+    grandPrice
+  } = ordersData || ''
 
-      <tbody>
-        {ordersData?.response?.map((order: any) => (
-          <tr className='transition-colors even:bg-neutral-300 odd:bg-neutral-200 dark:even:bg-neutral-700 dark:odd:bg-neutral-600 rtl'>
-            <td className='px-1 py-2 min-w-[10rem]'>{order.personName}</td>
-            <td className='px-1 py-2 min-w-[6rem]'>{order.userEmail}</td>
-            <td className='px-1 py-2'>{order.orderId}</td>
-            <td className='text-center min-w-[13rem] px-1 py-2'>
-              <p>{createLocaleDateString(order.orderDate)}</p>
-            </td>
-            <td className='px-1 py-2'>{order.personPhone}</td>
-            <td className='px-1 py-2 min-w-[30rem]'>
-              <span
-                data-tooltip={`عرض ${order.orderItems.length} ${
-                  order.orderItems.length > 1 ? 'طلبات' : 'طلب'
-                }`}
-              >
-                <span
-                  data-order-content-arrow
-                  className={`inline-block text-xl font-bold transition-transform duration-300 cursor-pointer hover:translate-y-1`}
-                >
-                  &#8679;
-                </span>
-              </span>
-              <div className='max-h-screen overflow-hidden transition-all duration-300 ordered-items'>
-                {order?.orderItems.length === 0 ? (
-                  <p className='max-w-lg mx-auto my-2 text-lg font-bold leading-10 tracking-wider text-red-500'>
-                    لا يوجد تفاصيل خاصة بهذا الطلب
-                  </p>
-                ) : (
-                  order?.orderItems?.map((item: any) => (
-                    <div key={item.cItemId}>
-                      <div className='flex flex-col gap-4'>
-                        <div className='flex flex-col items-start gap-2'>
-                          <div className='flex items-center w-full gap-4'>
-                            <img
-                              loading='lazy'
-                              src={item.cImg[0].foodImgDisplayPath}
-                              alt={item.cHeading}
-                              width='50'
-                              height='50'
-                              className='object-cover rounded-lg shadow-md w-14 h-14'
-                            />
-                            <div className='flex flex-col items-start'>
-                              <span>اسم الطلب: {item.cHeading}</span>
-                              <span>الكمية: {item.cQuantity}</span>
-                            </div>
-                          </div>
-                          <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
-                            السعر على حسب الكميات: &nbsp;
-                            <strong>{item.cPrice * item.cQuantity}</strong> ر.ق
-                          </span>
-                        </div>
-                        <div className='flex flex-col gap-6'>
-                          {inSeletedToppings
-                            .map((id: any) => id.slice(0, -2))
-                            ?.includes(item.cItemId) && <h3>الاضافات</h3>}
-                          {item?.cToppings?.map(
-                            (
-                              {
-                                toppingId,
-                                toppingName,
-                                toppingPrice,
-                                toppingQuantity
-                              }: any,
-                              idx: any
-                            ) =>
-                              inSeletedToppings[idx]?.includes(toppingId) && (
-                                <div key={toppingId} className='flex gap-4'>
-                                  <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                    ✅ &nbsp; {toppingName}
-                                  </span>
-                                  <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                    سعر الوحدة {toppingPrice}
-                                  </span>
-                                  <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                    الكمية المطلوبة {toppingQuantity}
-                                  </span>
-                                  <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
-                                    السعر حسب الكمية: {toppingPrice * toppingQuantity} ر.ق
-                                  </span>
-                                  <hr />
-                                </div>
-                              )
-                          )}
-                        </div>
-                      </div>
-                      <Divider marginY={2} thickness={0.5} />
+  return (
+    <div className='hidden'>
+      <div
+        ref={forwardedRef}
+        className='flex flex-col justify-between h-screen px-10 py-6 bg-white min-w-min ltr rounded-xl'
+      >
+        <header className='flex flex-col gap-y-8'>
+          <nav className='flex flex-col items-center justify-center gap-y-2'>
+            <img
+              src={`/assets/img/icons/mobile/apple-icon-180.png`}
+              className='rounded-lg'
+              width='50'
+              height='50'
+              alt='Invoice Logo'
+            />
+            <h1 className='text-2xl text-orange-700'>Invoice</h1>
+          </nav>
+          <div className='flex items-center justify-between'>
+            <p className='w-1/2'>
+              Hello, {personName}. Thank you for shopping from our store and for your
+              order.
+            </p>
+            <div className='flex flex-col'>
+              <span>ORDER Number: {orderId}</span>
+              <span>ORDER Date:{createLocaleDateString(orderDate)}</span>
+            </div>
+          </div>
+        </header>
+        <table className='table w-full text-center border-collapse table-auto'>
+          <thead className='text-white bg-orange-700'>
+            <tr>
+              <th className='pl-3'>No</th>
+              <th className='px-2 min-w-[20rem]'>Items</th>
+              <th className='px-2'>Quantity</th>
+              <th className='pr-3'>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orderItems?.map((item: any, idx: number) => (
+              <tr key={item.cItemId}>
+                <td className='px-1 py-2 max-w-[0.25rem]'>{idx + 1}</td>
+                <td>
+                  <div className='flex flex-col gap-4'>
+                    <div className='flex items-center w-full gap-4'>
+                      <Image
+                        loading='lazy'
+                        src={
+                          item.cImg[0].foodImgDisplayPath ||
+                          `/assets/img/icons/mobile/apple-icon-180.png`
+                        }
+                        alt={item.cImg[0].foodImgDisplayName || `order view`}
+                        width={56}
+                        height={56}
+                        className='object-cover rounded-lg shadow-md w-14 h-14'
+                      />
+                      <span>{item.cHeading || 'اســـم الطلب'}</span>
                     </div>
-                  ))
-                )}
-              </div>
-            </td>
-            <td className='px-1 py-2'>
-              {!order.personNotes ? (
-                <span className='font-bold text-red-600 dark:text-red-400'>
-                  لا يوجد ملاحظات في الطلب
-                </span>
-              ) : (
-                order.personNotes
+                    <div className='flex flex-col gap-2'>
+                      {inSeletedToppings
+                        .map((id: string) => id.slice(0, -2))
+                        ?.includes(item.cItemId) && (
+                        <h3 className='font-bold'>الاضافات</h3>
+                      )}
+                      {item.cToppings.map(
+                        ({
+                          toppingId,
+                          toppingName,
+                          toppingPrice,
+                          toppingQuantity
+                        }: selectedToppingsProps) =>
+                          inSeletedToppings[idx]?.includes(toppingId) && (
+                            <div key={toppingId} className='flex gap-2.5'>
+                              <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
+                                {toppingName}
+                              </span>
+                              <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
+                                Price: {toppingPrice}
+                              </span>
+                              <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
+                                Quantity: {toppingQuantity}
+                              </span>
+                              <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
+                                Subtotal: {toppingPrice * toppingQuantity!} ر.ق
+                              </span>
+                              <hr />
+                            </div>
+                          )
+                      )}
+                    </div>
+                  </div>
+                  <Divider marginY={2} thickness={0.5} />
+                </td>
+                <td>{item.cQuantity || 'الكمــــية'}</td>
+                <td>
+                  <span className='flex flex-col px-2 gap-y-2'>
+                    <strong className='inline-block text-green-800 bg-green-300 rounded-lg bg-opacity-70'>
+                      سعر الوجبة {item.cPrice || 1} ر.ق
+                    </strong>
+
+                    {orderToppings?.length > 0 && (
+                      <strong className='inline-block text-green-800 bg-green-300 rounded-lg bg-opacity-70'>
+                        سعر الاضافات&nbsp;
+                        {item.cToppings.reduce(
+                          (acc: number, curr: selectedToppingsProps) =>
+                            acc +
+                            Number(curr.toppingPrice) *
+                              item.cToppings.reduce(
+                                (acc: number, curr2: selectedToppingsProps) =>
+                                  curr2.toppingId === curr.toppingId
+                                    ? curr2.toppingQuantity
+                                    : acc,
+                                0
+                              ),
+                          0
+                        )}
+                        ر.ق
+                      </strong>
+                    )}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className='flex items-center justify-between'>
+          <h3 className='font-bold'>
+            الســـــــــــــعر
+            الاجمــــــــــــــــــــــــــــــــــــــــــــــــــــــــالي
+          </h3>
+          <h3 className='inline-block px-10 py-1 font-bold text-green-800 bg-green-300 rounded-lg bg-opacity-70 rtl'>
+            {grandPrice} ر.ق
+          </h3>
+        </div>
+        <div className='flex items-center justify-between'>
+          <div className='flex flex-col items-start justify-between w-1/2'>
+            <h3 className='text-xs'>BILLING INFORMATION</h3>
+            <span>Name: {personName}</span>
+            <span>Address: {personAddress}</span>
+            <span>Tel: {personPhone}</span>
+            <span>Email: {userEmail}</span>
+          </div>
+          <div className='flex flex-col items-end justify-between w-1/2'>
+            <h3 className='text-xs'>BILLING INFORMATION</h3>
+            <span className='flex'>
+              Payment Type:
+              {paymentData?.paymentSource === 'paypal' && (
+                <PayPal className='w-[22px] h-[22px]' />
               )}
-            </td>
-            <td>
-              <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
-                <strong>{order.grandPrice}</strong> ر.ق
-              </span>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              {paymentData?.paymentSource}
+            </span>
+            <span>Transaction ID: {paymentData?.paymentID || paymentData?.orderID}</span>
+          </div>
+        </div>
+        <div className='text-center'>
+          <p>{createLocaleDateString(new Date().toString())}</p>
+          <p>Restaurant App - &copy; 2021 - {new Date().getFullYear()}</p>
+          <p>Have a nice day</p>
+        </div>
+      </div>
+    </div>
   )
 }
 
