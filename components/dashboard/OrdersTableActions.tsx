@@ -62,7 +62,7 @@ export const DeleteBtn = ({ id, email }: any) => (
   </button>
 )
 
-export const InvoiceBtn = ({ id, email }: any) => (
+export const InvoiceBtn = ({ id, email, onClick }: any) => (
   <button
     id='invoice'
     data-id={id}
@@ -70,6 +70,7 @@ export const InvoiceBtn = ({ id, email }: any) => (
     data-email={email}
     className='m-1 px-1.5 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 min-w-[5rem] text-center overflow-hidden'
     data-tooltip='إنشاء فاتورة للطلب'
+    onClick={onClick}
   >
     <span className='py-0.5 px-1 bg-blue-200 rounded-md top-1.5 pointer-events-none'>
       &#128424;

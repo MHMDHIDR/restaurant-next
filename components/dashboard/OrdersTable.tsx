@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useReactToPrint } from 'react-to-print'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -18,17 +19,17 @@ import {
   AcceptBtn,
   DeleteBtn,
   EditBtn,
-  // InvoiceBtn,
+  InvoiceBtn,
   RejectBtn
 } from './OrdersTableActions'
 import { cardProps, orderInfoProps, orderProps, selectedToppingsProps } from '@types'
-import { origin, API_URL, ITEMS_PER_PAGE, USER } from '@constants'
+import { origin, ITEMS_PER_PAGE, USER } from '@constants'
 import goTo from 'functions/goTo'
 import { toggleCSSclasses } from 'functions/toggleCSSclasses'
 import { createLocaleDateString } from 'functions/convertDate'
 import scrollToView from 'functions/scrollToView'
 import { isNumber } from 'functions/isNumber'
-// import Invoice from './Invoice'
+import Invoice from './Invoice'
 
 const OrdersTable = ({ ordersByUserEmail = false }) => {
   useEffect(() => {
@@ -47,7 +48,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const [orderToppingsId, setOrderToppingsId] = useState<string[]>([''])
   const [isLoading, setIsLoading] = useState(false)
   const { data: session } = useSession()
-  // const [invoiceBase64, setInvoiceBase64] = useState<any>('')
 
   const { userType } = useAuth()
 
@@ -98,7 +98,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     switch (id) {
       case 'acceptOrder':
       case 'rejectOrder':
-      // case 'editOrder':
+      case 'editOrder':
       case 'invoice':
       case 'deleteOrder': {
         setOrderInfo({
@@ -112,7 +112,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       }
 
       case 'confirm': {
-        orderInfo.status === 'invoice' ? console.log(orderInfo) : handleOrder(orderInfo)
+        orderInfo.status === 'invoice' ? handlePrint() : handleOrder(orderInfo)
         break
       }
 
@@ -179,6 +179,45 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     }
   }
 
+  const componentRef = useRef(null)
+  const onBeforeGetContentResolve = useRef<any>(null)
+  const handleAfterPrint = useCallback(() => {
+    console.log('`onAfterPrint` called') // tslint:disable-line no-console
+  }, [])
+  const handleBeforePrint = useCallback(() => {
+    console.log('`onBeforePrint` called') // tslint:disable-line no-console
+  }, [])
+  const handleOnBeforeGetContent = useCallback(() => {
+    console.log('`onBeforeGetContent` called') // tslint:disable-line no-console
+    setIsLoading(true)
+
+    return new Promise<void>(resolve => {
+      onBeforeGetContentResolve.current = resolve
+
+      setTimeout(() => {
+        setIsLoading(false)
+        resolve()
+      }, 2000)
+    })
+  }, [])
+  const reactToPrintContent = useCallback(
+    () => componentRef.current,
+    [componentRef.current]
+  )
+  const handlePrint = useReactToPrint({
+    content: reactToPrintContent,
+    documentTitle: 'AwesomeFileName',
+    onBeforeGetContent: handleOnBeforeGetContent,
+    onBeforePrint: handleBeforePrint,
+    onAfterPrint: handleAfterPrint,
+    removeAfterPrint: true
+  })
+  useEffect(() => {
+    if (typeof onBeforeGetContentResolve.current === 'function') {
+      onBeforeGetContentResolve.current()
+    }
+  }, [setIsLoading, onBeforeGetContentResolve.current])
+
   return (
     <>
       {orderUpdated === 1 || deleteOrderStatus === 1 ? (
@@ -239,6 +278,15 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
           ]}
         />
       )}
+
+      <Invoice
+        ordersData={ordersData?.response?.filter(
+          (order: any) => order._id === orderInfo.id
+        )}
+        orderItemsIds={orderItemsIds}
+        orderToppingsId={orderToppingsId}
+        forwardedRef={componentRef}
+      />
 
       <table className='table w-full text-center border-collapse table-auto'>
         <thead className='text-white bg-orange-800 rtl'>
@@ -423,21 +471,21 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                   <AcceptBtn id={order._id} email={order.userEmail} />
                                   <RejectBtn id={order._id} email={order.userEmail} />
                                   <EditBtn id={order._id} />
-                                  {/* <InvoiceBtn id={order._id} email={order.userEmail} /> */}
+                                  <InvoiceBtn id={order._id} email={order.userEmail} />
                                   <DeleteBtn id={order._id} email={order.userEmail} />
                                 </>
                               ) : order.orderStatus === 'accept' ? (
                                 <>
                                   <RejectBtn id={order._id} email={order.userEmail} />
                                   <EditBtn id={order._id} />
-                                  {/* <InvoiceBtn id={order._id} email={order.userEmail} /> */}
+                                  <InvoiceBtn id={order._id} email={order.userEmail} />
                                   <DeleteBtn id={order._id} email={order.userEmail} />
                                 </>
                               ) : order.orderStatus === 'reject' ? (
                                 <>
                                   <AcceptBtn id={order._id} email={order.userEmail} />
                                   <EditBtn id={order._id} />
-                                  {/* <InvoiceBtn id={order._id} email={order.userEmail} /> */}
+                                  <InvoiceBtn id={order._id} email={order.userEmail} />
                                   <DeleteBtn id={order._id} email={order.userEmail} />
                                 </>
                               ) : (
@@ -620,14 +668,14 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                           <>
                             <RejectBtn id={order._id} email={order.userEmail} />
                             <EditBtn id={order._id} />
-                            {/* <InvoiceBtn id={order._id} email={order.userEmail} /> */}
+                            <InvoiceBtn id={order._id} email={order.userEmail} />
                             <DeleteBtn id={order._id} email={order.userEmail} />
                           </>
                         ) : order.orderStatus === 'reject' ? (
                           <>
                             <AcceptBtn id={order._id} email={order.userEmail} />
                             <EditBtn id={order._id} />
-                            {/* <InvoiceBtn id={order._id} email={order.userEmail} /> */}
+                            <InvoiceBtn id={order._id} email={order.userEmail} />
                             <DeleteBtn id={order._id} email={order.userEmail} />
                           </>
                         ) : (

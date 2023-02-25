@@ -4659,6 +4659,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-to-print@npm:^2.14.12":
+  version: 2.14.12
+  resolution: "react-to-print@npm:2.14.12"
+  dependencies:
+    prop-types: ^15.8.1
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: d88e93121fc95ae95ca3ad9a8b2bc1b305d6270d1330f0222d4843527a7925182d6f1e96b7a1df0403d2d6820d116c85f4a7c122956fe2dbc81dbbb09970efe2
+  languageName: node
+  linkType: hard
+
 "react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
@@ -4814,6 +4826,7 @@ __metadata:
     react-chartjs-2: ^5.2.0
     react-dom: ^18.2.0
     react-google-login: ^5.2.2
+    react-to-print: ^2.14.12
     tailwindcss: ^3.2.4
     typescript: ^4.9.5
     typewriter-effect: ^2.19.0
