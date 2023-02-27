@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { useSession, signIn, signOut } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { CartContext } from 'contexts/CartContext'
 import ThemeToggler from './ThemeToggler'
@@ -13,6 +13,7 @@ import Image from 'next/image'
 import { DEFAULT_USER_DATA, USER } from '@constants'
 import { UserProps } from '@types'
 import useAuth from 'hooks/useAuth'
+import { useRouter } from 'next/router'
 
 const Nav = () => {
   const { items } = useContext(CartContext)
@@ -38,9 +39,11 @@ const Nav = () => {
   }, [items])
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
+    if (userData) {
       localStorage.removeItem('user')
       window.location.href = '/'
+    } else {
+      signOut({ redirect: true, callbackUrl: '/' })
     }
   }
 
@@ -181,7 +184,7 @@ const Nav = () => {
                   </Link>
                   <button
                     className='px-3 py-1 text-sm text-center text-white transition-colors bg-red-700 border-2 rounded-lg select-none hover:bg-red-600 xl:border-0'
-                    onClick={() => (userData ? handleLogout() : signOut())}
+                    onClick={handleLogout}
                   >
                     تسجيل الخروج
                   </button>

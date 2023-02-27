@@ -11,12 +11,10 @@ import { USER } from '@constants'
 const DashboardNav = () => {
   const handleLogout = () => {
     if (USER) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user')
-        window.location.href = '/'
-      }
+      localStorage.removeItem('user')
+      window.location.href = '/'
     } else {
-      signOut()
+      signOut({ redirect: true, callbackUrl: '/' })
     }
   }
 
