@@ -189,18 +189,18 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       setTimeout(() => {
         setIsLoading(false)
         resolve()
-      }, 7000)
+      }, 2000)
     })
-  }, [])
+  }, [setIsLoading])
   const reactToPrintContent = useCallback(
     () => componentRef.current,
     [componentRef.current]
   )
   const handlePrint = useReactToPrint({
     content: reactToPrintContent,
-    documentTitle: 'AwesomeFileName',
-    onBeforeGetContent: handleOnBeforeGetContent,
-    removeAfterPrint: true
+    documentTitle: 'Invoice',
+    onBeforeGetContent: handleOnBeforeGetContent
+    //,removeAfterPrint: true
   })
   useEffect(() => {
     if (typeof onBeforeGetContentResolve.current === 'function') {
