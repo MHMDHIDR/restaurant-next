@@ -189,7 +189,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       setTimeout(() => {
         setIsLoading(false)
         resolve()
-      }, 2000)
+      }, 4000)
     })
   }, [])
   const reactToPrintContent = useCallback(
