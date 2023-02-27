@@ -200,7 +200,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     content: reactToPrintContent,
     documentTitle: 'Invoice',
     onBeforeGetContent: handleOnBeforeGetContent
-    //,removeAfterPrint: true
   })
   useEffect(() => {
     if (typeof onBeforeGetContentResolve.current === 'function') {
