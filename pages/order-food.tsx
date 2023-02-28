@@ -6,7 +6,7 @@ import { CartContext } from 'contexts/CartContext'
 import { ToppingsContext } from 'contexts/ToppingsContext'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAxios from 'hooks/useAxios'
-import { origin, USER } from '@constants'
+import { MAX_QUANTITY, origin, USER } from '@constants'
 import Modal from 'components/Modal/Modal'
 import { Success, Loading } from 'components/Icons/Status'
 import { LoadingPage, LoadingSpinner } from 'components/Loading'
@@ -33,9 +33,6 @@ const OrderFood = () => {
   useEffect(() => {
     scrollToView()
   }, [])
-
-  //global variables
-  const MAX_CHARACTERS = 100
 
   const { items, grandPrice, setGrandPrice } = useContext(CartContext)
   const { checkedToppings } = useContext(ToppingsContext)
@@ -80,7 +77,7 @@ const OrderFood = () => {
 
   useEffect(() => {
     setUserId(USER?._id!)
-    setUserEmail(USER?.userEmail!)
+    setUserEmail(USER?.userEmail || session!?.user?.email!)
 
     localStorage.setItem(
       'formDataCart',
@@ -133,14 +130,12 @@ const OrderFood = () => {
     try {
       const response = await axios.post(`${origin}/api/orders`, formData)
       const { orderAdded, message } = response.data
-
       setIsLoading(false)
       setOrderFoodStatus(orderAdded)
       orderAdded === 0 &&
         setResponseMsg(msg => {
           return { ...msg, Failure: msg.Failure + message }
         })
-
       //remove all items from cart
       if (orderAdded) {
         const cartItems = ['restCartItems', 'restCheckedToppings', 'formDataCart']
@@ -183,14 +178,6 @@ const OrderFood = () => {
                   setShowPaymentModal(false)
                   handleSaveOrder(paymentData)
                 }}
-                /*
-                 <LoadingSpinner />
-                */
-                // onError={() => {
-                //   setShowPaymentModal(false)
-                //   setOrderFoodStatus(0)
-                //   setResponseMsg('حدث خطأ أثناء الدفع')
-                // }}
               />
             }
             btnName='رجوع'
@@ -317,7 +304,7 @@ const OrderFood = () => {
                     id='message'
                     name='message'
                     defaultValue={personNotes}
-                    maxLength={MAX_CHARACTERS * 2}
+                    maxLength={MAX_QUANTITY * 2}
                     onChange={e => setPersonNotes(e.target.value.trim())}
                   ></textarea>
 

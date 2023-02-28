@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { origin as return_url } from '@constants'
 
 const PayPalButton =
   typeof window !== 'undefined' &&
@@ -22,12 +23,7 @@ const PaymentButton = ({ value, onSuccess }: any) => {
   ) =>
     actions.order.create({
       purchase_units: [{ amount: { value } }],
-      application_context: {
-        return_url:
-          process.env.NODE_ENV === 'development'
-            ? 'http://localhost:3000'
-            : 'https://mhmdhidr-restaurant-next.vercel.app'
-      }
+      application_context: { return_url }
     })
 
   const onApprove = async (data: any, actions: { order: { capture: () => any } }) => {
@@ -38,7 +34,7 @@ const PaymentButton = ({ value, onSuccess }: any) => {
 
   const onCancel = () => alert('تم الغاء الدفع')
 
-  const onError: any = (error: any) => console.error('some error happened=> ', error)
+  const onError = (error: any) => console.error('some error happened=> ', error)
 
   return (
     <PayPalButton
@@ -54,7 +50,6 @@ const PaymentButton = ({ value, onSuccess }: any) => {
         onApprove(data, actions)
       }
       onCancel={onCancel}
-      onError={(err: any) => onError(err)}
     />
   )
 }
