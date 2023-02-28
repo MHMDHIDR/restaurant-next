@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           })
         } else if (rejected.length > 0) {
           res.status(400).json({
-            message: `Sorry, rejected! ==> ${rejected[0] /*.message*/}`,
+            message: `Sorry, rejected! ==> ${rejected[0]}`,
             mailSent: 0
           })
         }

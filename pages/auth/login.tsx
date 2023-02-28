@@ -12,7 +12,7 @@ import { LoadingSpinner, LoadingPage } from 'components/Loading'
 import Layout from 'components/Layout'
 import { EyeIconOpen, EyeIconClose } from 'components/Icons/EyeIcon'
 import { UserProps } from '@types'
-import { API_URL, APP_URL, USER } from '@constants'
+import { origin, APP_URL, USER } from '@constants'
 import { parseJson, stringJson } from 'functions/jsonTools'
 
 const LoginDataFromLocalStorage =
@@ -54,7 +54,7 @@ const Login = () => {
     setIsSendingLoginForm(true)
 
     try {
-      const loginUser = await axios.post(`${API_URL}/users/login`, {
+      const loginUser = await axios.post(`${origin}/api/users/login`, {
         userPassword,
         userEmail: userEmailOrTel.trim().toLowerCase(),
         userTel: userEmailOrTel.trim().toLowerCase()

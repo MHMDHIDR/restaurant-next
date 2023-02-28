@@ -7,7 +7,7 @@ import Layout from 'components/Layout'
 import useEventListener from 'hooks/useEventListener'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
-import { API_URL } from '@constants'
+import { origin } from '@constants'
 import { validPassword } from 'functions/validForm'
 import { stringJson } from 'functions/jsonTools'
 
@@ -73,7 +73,7 @@ const ResetPassword = () => {
       setIsSendingResetForm(true)
 
       try {
-        const { data } = await axios.post(`${API_URL}/users/resetpass`, formData)
+        const { data } = await axios.post(`${origin}/api/users/resetpass`, formData)
         //destructering response from backend
         const { newPassSet, message } = data
 

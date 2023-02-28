@@ -6,7 +6,7 @@ import { CartContext } from 'contexts/CartContext'
 import { ToppingsContext } from 'contexts/ToppingsContext'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAxios from 'hooks/useAxios'
-import { API_URL, USER } from '@constants'
+import { origin, USER } from '@constants'
 import Modal from 'components/Modal/Modal'
 import { Success, Loading } from 'components/Icons/Status'
 import { LoadingPage, LoadingSpinner } from 'components/Loading'
@@ -18,6 +18,7 @@ import { selectedToppingsProps, orderMsgProps } from '@types'
 import { validPhone } from 'functions/validForm'
 import scrollToView from 'functions/scrollToView'
 import { parseJson, stringJson } from 'functions/jsonTools'
+import { useSession } from 'next-auth/react'
 
 const formDataFromLocalStorage =
   typeof window !== 'undefined'
@@ -40,6 +41,7 @@ const OrderFood = () => {
   const { checkedToppings } = useContext(ToppingsContext)
 
   //Form States
+  const { data: session } = useSession()
   const [userId, setUserId] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [personName, setPersonName] = useState(formDataFromLocalStorage.personName || '')
@@ -103,7 +105,7 @@ const OrderFood = () => {
       formErr.current!.textContent = ''
 
       //if there's No user in localStorage then show modal to login or register else collect order
-      if (USER) {
+      if (USER || session!.user) {
         setShowLoginRegisterModal(false)
         setShowPaymentModal(true)
       } else {
@@ -129,7 +131,7 @@ const OrderFood = () => {
     formData.append('paymentData', stringJson(paymentData))
 
     try {
-      const response = await axios.post(`${API_URL}/orders`, formData)
+      const response = await axios.post(`${origin}/api/orders`, formData)
       const { orderAdded, message } = response.data
 
       setIsLoading(false)

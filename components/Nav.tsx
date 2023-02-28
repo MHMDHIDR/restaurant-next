@@ -13,7 +13,6 @@ import Image from 'next/image'
 import { DEFAULT_USER_DATA, USER } from '@constants'
 import { UserProps } from '@types'
 import useAuth from 'hooks/useAuth'
-import { useRouter } from 'next/router'
 
 const Nav = () => {
   const { items } = useContext(CartContext)

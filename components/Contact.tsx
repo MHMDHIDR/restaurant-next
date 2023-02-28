@@ -2,8 +2,8 @@ import { useState } from 'react'
 import Notification from './Notification'
 import { LoadingSpinner } from './Loading'
 import { validEmail } from 'functions/validForm'
-import { API_URL } from '@constants'
-import Axios from 'axios'
+import { origin } from '@constants'
+import axios from 'axios'
 
 const Contact = () => {
   const [theName, setName] = useState('')
@@ -42,8 +42,7 @@ const Contact = () => {
     setLoading(true)
 
     try {
-      const { data } = await Axios.post(`${API_URL}/contact`, formData)
-
+      const { data } = await axios.post(`${origin}/api/contact`, formData)
       setSendStatus(data.mailSent)
       setSendStatusMsg(
         data?.message === 'Email Sent Successfully'
@@ -56,6 +55,8 @@ const Contact = () => {
       setLoading(false)
     }
   }
+
+  sendStatusMsg && console.log(sendStatusMsg)
 
   return (
     <>

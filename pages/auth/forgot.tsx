@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import Notification from 'components/Notification'
 import { LoadingPage, LoadingSpinner } from 'components/Loading'
 import Layout from 'components/Layout'
 import useEventListener from 'hooks/useEventListener'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
-import { API_URL } from '@constants'
+import { origin } from '@constants'
 import { parseJson } from 'functions/jsonTools'
 
 const ForgotDataFromLocalStorage =
@@ -65,7 +65,7 @@ const ForgotPassword = () => {
     setSendingForgotForm(true)
 
     try {
-      const { data } = await Axios.post(`${API_URL}/users/forgotpass`, formData)
+      const { data } = await axios.post(`${origin}/api/users/forgotpass`, formData)
       //destructering response from backend
       const { forgotPassSent, message } = data
 

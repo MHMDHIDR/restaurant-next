@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Axios from 'axios'
+import axios from 'axios'
 import Header from 'components/Header'
 import Footer from 'components/Footer'
 import Notification from 'components/Notification'
@@ -9,7 +9,7 @@ import { LoadingSpinner, LoadingPage } from 'components/Loading'
 import { EyeIconClose, EyeIconOpen } from 'components/Icons/EyeIcon'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
-import { API_URL, USER } from '@constants'
+import { origin, USER } from '@constants'
 
 const Join = () => {
   useDocumentTitle('Join')
@@ -36,7 +36,7 @@ const Join = () => {
     setIsSendingJoinForm(true)
 
     try {
-      const joinUser = await Axios.post(`${API_URL}/users/join`, {
+      const joinUser = await axios.post(`${origin}/api/users/join`, {
         userFullName,
         userEmail,
         userTel,

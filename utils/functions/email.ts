@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import { createTransport } from 'nodemailer'
 import { ADMIN_EMAIL } from '@constants'
 
 const email = async ({ name, subject, from, to, msg }: any) => {
@@ -11,7 +11,7 @@ const email = async ({ name, subject, from, to, msg }: any) => {
   name = name || to
 
   // create reusable transporter object using the default SMTP transport
-  const transporter = nodemailer.createTransport({
+  const transporter = createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true, // true for 465, false for other ports
