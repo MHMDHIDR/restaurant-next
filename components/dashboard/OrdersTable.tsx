@@ -321,7 +321,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                       >
                         <td className='min-w-[0.5rem] px-1 py-2'>{idx + 1}</td>
                         <td className='px-1 py-2 min-w-[10rem]'>{order.personName}</td>
-                        <td className='px-1 py-2 min-w-[6rem]'>{order.userEmail}</td>
+                        <td className='px-1 py-2 min-w-[6rem]'>
+                          {!order.userEmail ? order.userEmail : session!?.user!?.email}
+                        </td>
                         <td className='text-center min-w-[13rem] px-1 py-2'>
                           <p>{createLocaleDateString(order.orderDate)}</p>
                         </td>
@@ -459,25 +461,95 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                             <NavMenu>
                               {order.orderStatus === 'pending' ? (
                                 <>
-                                  <AcceptBtn id={order._id} email={order.userEmail} />
-                                  <RejectBtn id={order._id} email={order.userEmail} />
+                                  <AcceptBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
+                                  <RejectBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
                                   <EditBtn id={order._id} />
-                                  <InvoiceBtn id={order._id} email={order.userEmail} />
-                                  <DeleteBtn id={order._id} email={order.userEmail} />
+                                  <InvoiceBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
+                                  <DeleteBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
                                 </>
                               ) : order.orderStatus === 'accept' ? (
                                 <>
-                                  <RejectBtn id={order._id} email={order.userEmail} />
+                                  <RejectBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
                                   <EditBtn id={order._id} />
-                                  <InvoiceBtn id={order._id} email={order.userEmail} />
-                                  <DeleteBtn id={order._id} email={order.userEmail} />
+                                  <InvoiceBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
+                                  <DeleteBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
                                 </>
                               ) : order.orderStatus === 'reject' ? (
                                 <>
-                                  <AcceptBtn id={order._id} email={order.userEmail} />
+                                  <AcceptBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
                                   <EditBtn id={order._id} />
-                                  <InvoiceBtn id={order._id} email={order.userEmail} />
-                                  <DeleteBtn id={order._id} email={order.userEmail} />
+                                  <InvoiceBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
+                                  <DeleteBtn
+                                    id={order._id}
+                                    email={
+                                      !order.userEmail
+                                        ? order.userEmail
+                                        : session!?.user!?.email
+                                    }
+                                  />
                                 </>
                               ) : (
                                 <span>لا يوجد إجراء</span>
@@ -520,7 +592,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                   >
                     <td className='px-1 py-2 max-w-[0.25rem]'>{idx + 1}</td>
                     <td className='px-1 py-2 min-w-[10rem]'>{order.personName}</td>
-                    <td className='px-1 py-2 min-w-[6rem]'>{order.userEmail}</td>
+                    <td className='px-1 py-2 min-w-[6rem]'>
+                      {!order.userEmail ? order.userEmail : session!?.user!?.email}
+                    </td>
                     <td className='text-center min-w-[13rem] px-1 py-2'>
                       <p>{createLocaleDateString(order.orderDate)}</p>
                     </td>
@@ -650,24 +724,87 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                       <NavMenu>
                         {order.orderStatus === 'pending' ? (
                           <>
-                            <AcceptBtn id={order._id} email={order.userEmail} />
-                            <RejectBtn id={order._id} email={order.userEmail} />
+                            <AcceptBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
+                            <RejectBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
                             <EditBtn id={order._id} />
-                            <DeleteBtn id={order._id} email={order.userEmail} />
+                            <DeleteBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
                           </>
                         ) : order.orderStatus === 'accept' ? (
                           <>
-                            <RejectBtn id={order._id} email={order.userEmail} />
+                            <RejectBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
                             <EditBtn id={order._id} />
-                            <InvoiceBtn id={order._id} email={order.userEmail} />
-                            <DeleteBtn id={order._id} email={order.userEmail} />
+                            <InvoiceBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
+                            <DeleteBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
                           </>
                         ) : order.orderStatus === 'reject' ? (
                           <>
-                            <AcceptBtn id={order._id} email={order.userEmail} />
+                            <AcceptBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
                             <EditBtn id={order._id} />
-                            <InvoiceBtn id={order._id} email={order.userEmail} />
-                            <DeleteBtn id={order._id} email={order.userEmail} />
+                            <InvoiceBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
+                            <DeleteBtn
+                              id={order._id}
+                              email={
+                                !order.userEmail
+                                  ? order.userEmail
+                                  : session!?.user!?.email
+                              }
+                            />
                           </>
                         ) : (
                           <span>لا يوجد إجراء</span>
