@@ -279,6 +279,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
         />
       )}
 
+      {/* {console.log(ordersData?.response[0]?.orderItems?.map(item => item))} */}
+      {console.log(ordersData?.response[0]?.orderToppings)}
+
       <table className='table w-full text-center border-collapse table-auto'>
         <thead className='text-white bg-orange-800 rtl'>
           <tr>
