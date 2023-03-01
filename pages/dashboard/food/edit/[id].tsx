@@ -6,16 +6,19 @@ import { FileUploadContext } from 'contexts/FileUploadContext'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useEventListener from 'hooks/useEventListener'
 import useAxios from 'hooks/useAxios'
+import useAuth from 'hooks/useAuth'
 import Modal from 'components/Modal/Modal'
 import { Success, Error, Loading } from 'components/Icons/Status'
 import AddTags from 'components/AddTags'
 import { LoadingCard } from 'components/Loading'
 import FileUpload from 'components/FileUpload'
 import Layout from 'components/dashboard/Layout'
+import { LoadingPage } from 'components/Loading'
+import ModalNotFound from 'components/Modal/ModalNotFound'
 import { removeSlug, createSlug } from 'functions/slug'
 import goTo from 'functions/goTo'
 import scrollToView from 'functions/scrollToView'
-import { origin, API_URL, DEFAULT_FOOD_DATA } from '@constants'
+import { origin, API_URL, DEFAULT_FOOD_DATA, USER } from '@constants'
 import { ToppingsProps, foodDataProps, FoodImgsProps } from '@types'
 import { stringJson } from 'functions/jsonTools'
 import uploadS3 from 'utils/functions/uploadS3'
@@ -46,6 +49,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   const [updatedFoodStatus, setUpdatedFoodStatus] = useState()
   const [loadingMsg, setLoadingMsg] = useState('')
   const [hasConfirmBtns, setHasConfirmBtn] = useState(false)
+  const { loading, userType } = useAuth()
 
   //Contexts
   const { tags, setTags } = useContext(TagsContext)
@@ -245,7 +249,11 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     }
   })
 
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?.userAccountType !== 'admin' || userType !== 'admin' ? (
+    <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
+  ) : (
     <>
       {updatedFoodStatus === 1 ? (
         <Modal
@@ -284,15 +292,16 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
           redirectLink={goTo('menu')}
           redirectTime={3500}
         />
-      ) : deleteFoodStatus === 0 ? (
-        <Modal
-          status={Error}
-          msg={`حدث خطأ ما أثناء حذف ${delFoodName}!`}
-          redirectLink={goTo(`food/edit/${data?._id}`)}
-          redirectTime={3500}
-        />
-      ) : null}
-
+      ) : (
+        deleteFoodStatus === 0 && (
+          <Modal
+            status={Error}
+            msg={`حدث خطأ ما أثناء حذف ${delFoodName}!`}
+            redirectLink={goTo(`food/edit/${data?._id}`)}
+            redirectTime={3500}
+          />
+        )
+      )}
       <Layout>
         <section className='py-12 my-8 dashboard'>
           <div className='container mx-auto'>

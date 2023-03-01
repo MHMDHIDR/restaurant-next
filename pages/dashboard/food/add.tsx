@@ -5,17 +5,20 @@ import { TagsContext } from 'contexts/TagsContext'
 import { FileUploadContext } from 'contexts/FileUploadContext'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAxios from 'hooks/useAxios'
+import useAuth from 'hooks/useAuth'
 import uploadS3 from 'utils/functions/uploadS3'
 import Modal from 'components/Modal/Modal'
 import { Success, Error, Loading } from 'components/Icons/Status'
 import AddTags from 'components/AddTags'
 import FileUpload from 'components/FileUpload'
 import Layout from 'components/dashboard/Layout'
+import { LoadingPage } from 'components/Loading'
+import ModalNotFound from 'components/Modal/ModalNotFound'
 import { createSlug } from 'functions/slug'
 import goTo from 'functions/goTo'
 import scrollToView from 'functions/scrollToView'
 import { selectedToppingsProps } from '@types'
-import { origin } from '@constants'
+import { origin, USER } from '@constants'
 import { stringJson } from 'functions/jsonTools'
 import { focus } from 'utils/functions/focus'
 
@@ -37,6 +40,7 @@ const AddFood = () => {
   const [categoryList, setCategoryList] = useState<string[]>([])
   const [toppings, setToppings] = useState<any>([{}])
   const [modalLoading, setModalLoading] = useState<Element>()
+  const { loading, userType } = useAuth()
 
   //Contexts
   const { tags } = useContext(TagsContext)
@@ -119,7 +123,11 @@ const AddFood = () => {
     setToppings(list)
   }
 
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : USER?.userAccountType !== 'admin' || userType !== 'admin' ? (
+    <ModalNotFound btnLink='/dashboard' btnName='لوحة التحكم' />
+  ) : (
     <>
       {addFoodStatus === 1 ? (
         <Modal
@@ -128,10 +136,9 @@ const AddFood = () => {
           redirectLink={goTo(`menu`)}
           redirectTime={3000}
         />
-      ) : addFoodStatus === 0 ? (
-        <Modal status={Error} msg={addFoodMessage} />
-      ) : null}
-
+      ) : (
+        addFoodStatus === 0 && <Modal status={Error} msg={addFoodMessage} />
+      )}
       <Layout>
         <section className='py-12 my-8 dashboard'>
           <div className='container mx-auto'>

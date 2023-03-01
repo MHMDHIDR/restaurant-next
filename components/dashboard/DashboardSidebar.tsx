@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-// import { USER } from '@constants'
-
+import useAuth from 'hooks/useAuth'
+import { USER } from '@constants'
 import goTo from 'functions/goTo'
 import menuToggler from 'functions/menuToggler'
 
 const DashboardSidebar = () => {
   const menuTogglerRef = useRef<any>()
   const [top, setTop] = useState<number>(0)
+  const { userType } = useAuth()
   useEffect(() => {
     setTop(menuTogglerRef?.current?.getBoundingClientRect().top)
   }, [])
@@ -57,25 +58,23 @@ const DashboardSidebar = () => {
           id='menu'
         >
           <SideBarLink href={'dashboard'}>لوحة التحكم</SideBarLink>
-          {/* {USER?.userAccountType === 'admin' ? ( */}
-          <>
-            <SideBarLink href={'orders'}>الطلبات</SideBarLink>
-            <SideBarLink href={'statistics'}>الإحصائيات</SideBarLink>
-            <SideBarLink href={'menu'}>قائمة الوجبات</SideBarLink>
-            <SideBarLink href={'food/add'}>إضافة وجبة</SideBarLink>
-            <SideBarLink href={'users'}>المستخدمين</SideBarLink>
-            <SideBarLink href={'settings'}>إعدادات الموقع</SideBarLink>
-          </>
-          {/* 
-             ) : (
-               USER?.userAccountType === 'cashier' && (
-                 <>
-                   <SideBarLink href={'orders'}>الطلبات</SideBarLink>
-                   <SideBarLink href={'stats'}>الإحصائيات</SideBarLink>
-                 </>
-               )
-             )}
-           */}
+          {USER?.userAccountType === 'admin' || userType === 'admin' ? (
+            <>
+              <SideBarLink href={'orders'}>الطلبات</SideBarLink>
+              <SideBarLink href={'statistics'}>الإحصائيات</SideBarLink>
+              <SideBarLink href={'menu'}>قائمة الوجبات</SideBarLink>
+              <SideBarLink href={'food/add'}>إضافة وجبة</SideBarLink>
+              <SideBarLink href={'users'}>المستخدمين</SideBarLink>
+              <SideBarLink href={'settings'}>إعدادات الموقع</SideBarLink>
+            </>
+          ) : (
+            USER?.userAccountType === 'cashier' ||
+            (userType === 'cashier' && (
+              <>
+                <SideBarLink href={'orders'}>الطلبات</SideBarLink>
+              </>
+            ))
+          )}
         </ul>
       </>
     </aside>
