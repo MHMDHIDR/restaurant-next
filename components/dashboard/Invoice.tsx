@@ -3,6 +3,7 @@ import Divider from 'components/Divider'
 import Image from 'next/image'
 import { PayPal } from 'components/Icons/Payments'
 import { selectedToppingsProps } from '@types'
+import { useEffect, useState } from 'react'
 
 const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: any) => {
   const inSeletedToppings = orderToppingsId?.map((selected: any) =>
@@ -24,6 +25,8 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
     paymentData,
     grandPrice
   } = ordersData || ''
+
+  const orderItems_cToppings = ordersData?.orderItems[0].cToppings
 
   return (
     <div className='hidden'>
@@ -127,19 +130,15 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
                     {orderToppings?.length > 0 && (
                       <strong className='inline-block text-green-800 bg-green-300 rounded-lg bg-opacity-70'>
                         سعر الاضافات&nbsp;
-                        {item.cToppings.reduce(
-                          (acc: number, curr: selectedToppingsProps) =>
-                            acc +
-                            Number(curr.toppingPrice) *
-                              item.cToppings.reduce(
-                                (acc: number, curr2: selectedToppingsProps) =>
-                                  curr2.toppingId === curr.toppingId
-                                    ? curr2.toppingQuantity
-                                    : acc,
-                                0
-                              ),
-                          0
-                        )}
+                        {orderToppings.reduce((acc: any, topping: any) => {
+                          const item = orderItems_cToppings.find(
+                            (item: any) => item.toppingId === topping.toppingId
+                          )
+                          if (item) {
+                            return acc + topping.toppingPrice * item.toppingQuantity
+                          }
+                          return acc
+                        }, 0)}
                         ر.ق
                       </strong>
                     )}
@@ -155,7 +154,21 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
             الاجمــــــــــــــــــــــــــــــــــــــــــــــــــــــــالي
           </h3>
           <h3 className='inline-block px-10 py-1 font-bold text-green-800 bg-green-300 rounded-lg bg-opacity-70 rtl'>
-            {grandPrice} ر.ق
+            {orderItems?.map(
+              (item: any) =>
+                item.cPrice +
+                orderToppings.reduce((acc: any, topping: any) => {
+                  const item = orderItems_cToppings.find(
+                    (item: any) => item.toppingId === topping.toppingId
+                  )
+                  if (item) {
+                    return acc + topping.toppingPrice * item.toppingQuantity
+                  }
+                  return acc
+                }, 0)
+            )}
+            ر.ق
+            {/* {grandPrice} ر.ق */}
           </h3>
         </div>
         <div className='flex items-center justify-between'>
