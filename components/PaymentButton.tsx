@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { origin as return_url } from '@constants'
+import { origin /*as return_url*/ } from '@constants'
 
 const PayPalButton =
   typeof window !== 'undefined' &&
@@ -23,7 +23,7 @@ const PaymentButton = ({ value, onSuccess }: any) => {
   ) =>
     actions.order.create({
       purchase_units: [{ amount: { value } }],
-      application_context: { return_url }
+      application_context: { return_url: origin }
     })
 
   const onApprove = async (data: any, actions: { order: { capture: () => any } }) => {

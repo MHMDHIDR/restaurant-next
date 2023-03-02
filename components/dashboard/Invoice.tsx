@@ -112,7 +112,6 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
                               <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
                                 Subtotal: {toppingPrice * toppingQuantity!} ر.ق
                               </span>
-                              <hr />
                             </div>
                           )
                       )}
