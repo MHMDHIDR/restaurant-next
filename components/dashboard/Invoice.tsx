@@ -3,7 +3,6 @@ import Divider from 'components/Divider'
 import Image from 'next/image'
 import { PayPal } from 'components/Icons/Payments'
 import { selectedToppingsProps } from '@types'
-import { useEffect, useState } from 'react'
 
 const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: any) => {
   const inSeletedToppings = orderToppingsId?.map((selected: any) =>
