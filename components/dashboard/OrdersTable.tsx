@@ -287,6 +287,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
           ordersData={
             ordersData?.response?.filter((order: any) => order._id === orderInfo.id)[0]
           }
+          order_ID={orderInfo.id}
           orderItemsIds={orderItemsIds}
           orderToppingsId={orderToppingsId}
           forwardedRef={componentRef}

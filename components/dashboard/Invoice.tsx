@@ -4,7 +4,13 @@ import Image from 'next/image'
 import { PayPal } from 'components/Icons/Payments'
 import { selectedToppingsProps } from '@types'
 
-const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: any) => {
+const Invoice = ({
+  ordersData,
+  order_ID,
+  orderItemsIds,
+  orderToppingsId,
+  forwardedRef
+}: any) => {
   const inSeletedToppings = orderToppingsId?.map((selected: any) =>
     //if there is no toppings in order then selected will be empty array
     (selected || []).filter((element: any) =>
