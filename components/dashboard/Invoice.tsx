@@ -4,13 +4,7 @@ import Image from 'next/image'
 import { PayPal } from 'components/Icons/Payments'
 import { selectedToppingsProps } from '@types'
 
-const Invoice = ({
-  ordersData,
-  order_ID,
-  orderItemsIds,
-  orderToppingsId,
-  forwardedRef
-}: any) => {
+const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: any) => {
   const inSeletedToppings = orderToppingsId?.map((selected: any) =>
     //if there is no toppings in order then selected will be empty array
     (selected || []).filter((element: any) =>
@@ -27,8 +21,7 @@ const Invoice = ({
     orderDate,
     orderItems,
     orderToppings,
-    paymentData,
-    grandPrice
+    paymentData
   } = ordersData || ''
 
   const orderItems_cToppings = ordersData?.orderItems[0].cToppings
@@ -96,26 +89,29 @@ const Invoice = ({
                         ?.includes(item.cItemId) && (
                         <h3 className='font-bold'>الاضافات</h3>
                       )}
-                      {item.cToppings.map(
+                      {item?.cToppings?.map(
                         ({
                           toppingId,
                           toppingName,
                           toppingPrice,
                           toppingQuantity
                         }: selectedToppingsProps) =>
-                          inSeletedToppings[idx]?.includes(toppingId) && (
-                            <div key={toppingId} className='flex gap-2.5'>
-                              <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
+                          orderToppings
+                            .map(({ toppingId }: { toppingId: string }) => toppingId)
+                            ?.includes(toppingId) && (
+                            <div key={toppingId} className='flex gap-2.5 text-xs'>
+                              <span className='px-2 py-1 text-orange-900 bg-orange-200 rounded-lg'>
                                 {toppingName}
                               </span>
-                              <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                Price: {toppingPrice}
+                              <span className='px-2 py-1 text-orange-900 bg-orange-200 rounded-lg'>
+                                سعر الوحدة {toppingPrice}
                               </span>
-                              <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                Quantity: {toppingQuantity}
+                              <span className='px-2 py-1 text-orange-900 bg-orange-200 rounded-lg'>
+                                الكمية المطلوبة {toppingQuantity}
                               </span>
-                              <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
-                                Subtotal: {toppingPrice * toppingQuantity!} ر.ق
+                              <span className='px-2 py-1 text-green-900 bg-green-200 rounded-lg'>
+                                السعر حسب الكمية:
+                                {toppingPrice * toppingQuantity!} ر.ق
                               </span>
                             </div>
                           )
@@ -126,7 +122,7 @@ const Invoice = ({
                 </td>
                 <td>{item.cQuantity || 'الكمــــية'}</td>
                 <td>
-                  <span className='flex flex-col px-2 gap-y-2'>
+                  <span className='flex flex-col px-4 gap-y-2'>
                     <strong className='inline-block text-green-800 bg-green-300 rounded-lg bg-opacity-70'>
                       سعر الوجبة {item.cPrice || 1} ر.ق
                     </strong>
@@ -172,7 +168,6 @@ const Invoice = ({
                 }, 0)
             )}
             ر.ق
-            {/* {grandPrice} ر.ق */}
           </h3>
         </div>
         <div className='flex items-center justify-between'>

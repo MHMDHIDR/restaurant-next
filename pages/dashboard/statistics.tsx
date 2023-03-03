@@ -5,39 +5,28 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 import useAxios from 'hooks/useAxios'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useEventListener from 'hooks/useEventListener'
-import logoutUser from 'functions/logoutUser'
-import menuToggler from 'functions/menuToggler'
+import useAuth from 'hooks/useAuth'
 import ModalNotFound from 'components/Modal/ModalNotFound'
 import { LoadingPage } from 'components/Loading'
 import { cCategory } from '@types'
-import { USER } from '@constants'
 import Layout from 'components/dashboard/Layout'
-import { stringJson } from 'functions/jsonTools'
+import logoutUser from 'functions/logoutUser'
+import menuToggler from 'functions/menuToggler'
 
 const DashboardStatistics = () => {
   useDocumentTitle('Home')
+  const { userType, userStatus, userId, loading } = useAuth()
 
-  const [userStatus, setUserStatus] = useState<string>('')
-  const [userType, setUserType] = useState<string>('')
-  const [userID, setUserID] = useState<string>('')
   const [categories, setCategories] = useState<string[]>([''])
   const [ordersBycCategory, setOrdersBycCategory] = useState<cCategory>()
 
   //if there's food id then fetch with food id, otherwise fetch everything
-  const currentUser = useAxios({ url: `/users/all?page=1&limit=1&itemId${USER?._id}` })
   const getCategories = useAxios({ url: `/settings` })
   const menu = useAxios({ url: `/foods?page=1&limit=0` })
-  const orders = useAxios({
-    url: `/orders?page=1&limit=0`,
-    headers: USER ? stringJson({ Authorization: `Bearer ${USER.token}` }) : null
-  })
-  const { loading } = orders
+  const orders = useAxios({ url: `/orders?page=1&limit=0` })
 
   useEffect(() => {
-    if (currentUser?.response !== null || menu.response !== null) {
-      setUserStatus(currentUser?.response?.response?.userAccountStatus)
-      setUserType(currentUser?.response?.response?.userAccountType)
-      setUserID(currentUser?.response?.response[0]?._id)
+    if (menu.response !== null) {
       //Statistics
       setCategories(getCategories?.response?.CategoryList || [])
       setOrdersBycCategory(
@@ -50,7 +39,6 @@ const DashboardStatistics = () => {
       )
     }
   }, [
-    currentUser?.response,
     menu?.response,
     orders?.response,
     orders?.response?.response,
@@ -62,10 +50,10 @@ const DashboardStatistics = () => {
   //check if userStatus is active and the userType is admin
   return loading ? (
     <LoadingPage />
-  ) : USER?._id !== userID ? (
+  ) : userType === 'user' ? (
     <ModalNotFound />
-  ) : userStatus === 'block' || userType === 'user' ? (
-    logoutUser(USER?._id)
+  ) : userStatus === 'block' ? (
+    logoutUser(userId)
   ) : (
     <Layout>
       <div className='container mx-auto'>
