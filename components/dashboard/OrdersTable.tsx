@@ -89,20 +89,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     )
   )
 
-  // console.log(
-  //   // response!?.response!?.response!?.map(({ orderItems }: orderProps['ordersData']) =>
-  //   //   orderItems?.map(({ cItemId }) => cItemId)
-  //   // )
-  //   orderToppingsId?.map((selected: any) =>
-  //     //if there is no toppings in order then selected will be empty array
-  //     (selected || ['']).filter((element: string) =>
-  //       orderItemsIds.map((id: orderProps['ordersData']['orderId']) =>
-  //         id?.includes(element?.slice(0, -2))
-  //       )
-  //     )
-  //   )
-  // )
-
   useEventListener('click', (e: any) => {
     const {
       id,
