@@ -98,7 +98,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     switch (id) {
       case 'acceptOrder':
       case 'rejectOrder':
-      case 'editOrder':
       case 'invoice':
       case 'deleteOrder': {
         setOrderInfo({
