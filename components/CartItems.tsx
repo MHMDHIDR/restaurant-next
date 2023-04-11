@@ -41,14 +41,13 @@ const Items = ({
     orderItemToppings,
     setOrderItemToppings
   } = useContext(ToppingsContext)
-  useEffect(
-    () => setOrderItemToppings(orderToppings),
-    [orderToppings, setOrderItemToppings]
-  )
-
   const { items, setItems, removeFromCart, setGrandPrice } = useContext(CartContext)
   const { removeOrderFromItems } = useContext(DashboardOrderContext)
   const [orderItemQuantity, setOrderItemQuantity] = useState(0)
+
+  useEffect(() => {
+    setOrderItemToppings(orderToppings)
+  }, [orderToppings, setOrderItemToppings])
 
   return orderItems?.map((item: any) => {
     //if has topping in original item (food) object
@@ -91,55 +90,6 @@ const Items = ({
           {/* Product Toppings and it's Quantity */}
           {hasToppings && (
             <div className='flex items-center justify-around gap-y-10 xl:gap-x-5 sm:flex-row'>
-              <div className='flex flex-col gap-2 text-lg select-none md:items-start'>
-                <h2 className='text-center ltr'>الإضافات</h2>
-                {item?.cToppings?.map(
-                  ({
-                    toppingId = '123id',
-                    toppingName = 'إضافة',
-                    toppingPrice = 1,
-                    toppingQuantity = 1
-                  }: selectedToppingsProps) => (
-                    <div className='flex items-center' key={toppingId}>
-                      <input
-                        type='checkbox'
-                        id={toppingId}
-                        value={toppingName}
-                        className='cursor-pointer min-w-[1.5rem] min-h-[1.5rem]'
-                        onChange={() =>
-                          orderToppings
-                            ? handleOrderItemToppingChecked(toppingId, toppingPrice)
-                            : handleToppingChecked(toppingId, toppingPrice)
-                        }
-                        defaultChecked={
-                          orderToppings
-                            ? orderItemToppings?.find(
-                                (topping: { toppingId: string }) =>
-                                  topping.toppingId === toppingId
-                              )
-                            : checkedToppings.find(
-                                (topping: { toppingId: string }) =>
-                                  topping.toppingId === toppingId
-                              )
-                        }
-                      />
-                      <label
-                        htmlFor={toppingId}
-                        className='cursor-pointer p-1.5 text-base rounded-md select-none'
-                      >
-                        {toppingName}
-                      </label>
-                      <label
-                        htmlFor={toppingId}
-                        className='px-3 py-1 mr-2 -ml-2 text-base text-green-800 bg-green-300 rounded-md cursor-pointer bg-opacity-80 min-w-fit'
-                      >
-                        {toppingPrice * toppingQuantity + ' ر.ق'}
-                      </label>
-                    </div>
-                  )
-                )}
-              </div>
-
               <div className='flex flex-col items-center gap-2 text-lg select-none'>
                 <h2 className='text-center ltr'>كمية الإضافات</h2>
                 {item?.cToppings.map((topping: any, idx: number) => {
@@ -151,16 +101,18 @@ const Items = ({
                         className='quantity-btn number-hover'
                         onClick={() => {
                           if (orderToppings) {
-                            orderItems.map((item: any) => {
-                              if (
-                                topping.toppingQuantity < MAX_QUANTITY &&
-                                item.cItemId === toppingId.slice(0, -1)
-                              ) {
-                                topping.toppingQuantity++
-                                setOrderItemQuantity(topping.toppingQuantity)
-                              }
-                              return item
-                            })
+                            setItems(
+                              orderItems.map((item: any) => {
+                                if (
+                                  topping.toppingQuantity < MAX_QUANTITY &&
+                                  item.cItemId === toppingId.slice(0, -1)
+                                ) {
+                                  topping.toppingQuantity++
+                                  setOrderItemQuantity(topping.toppingQuantity)
+                                }
+                                return item
+                              })
+                            )
                           } else if (topping.toppingQuantity < MAX_QUANTITY) {
                             setItems(
                               items.map((item: any) => {
@@ -183,16 +135,18 @@ const Items = ({
                         className='quantity-btn number-hover'
                         onClick={() => {
                           if (orderToppings) {
-                            orderItems.map((item: any) => {
-                              if (
-                                topping.toppingQuantity > 1 &&
-                                item.cItemId === toppingId.slice(0, -1)
-                              ) {
-                                topping.toppingQuantity--
-                                setOrderItemQuantity(topping.toppingQuantity)
-                              }
-                              return item
-                            })
+                            setItems(
+                              orderItems.map((item: any) => {
+                                if (
+                                  topping.toppingQuantity > 1 &&
+                                  item.cItemId === toppingId.slice(0, -1)
+                                ) {
+                                  topping.toppingQuantity--
+                                  setOrderItemQuantity(topping.toppingQuantity)
+                                }
+                                return item
+                              })
+                            )
                           } else if (topping.toppingQuantity > 1) {
                             setItems(
                               items.map(item => {
