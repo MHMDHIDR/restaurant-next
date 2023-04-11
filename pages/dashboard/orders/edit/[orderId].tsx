@@ -4,6 +4,7 @@ import Link from 'next/link'
 import axios from 'axios'
 import { ToppingsContext } from 'contexts/ToppingsContext'
 import { DashboardOrderContext } from 'contexts/DashboardOrderContext'
+import { CartContext } from 'contexts/CartContext'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import { validPhone } from 'functions/validForm'
 import { origin, API_URL, MAX_QUANTITY } from '@constants'
@@ -24,13 +25,14 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
   const { orderItemToppings, setOrderItemToppings } = useContext(ToppingsContext)
   const { ordersData, setOrdersData, orderItemsGrandPrice, setOrderItemsGrandPrice } =
     useContext(DashboardOrderContext)
+  const { grandPrice } = useContext(CartContext)
 
   const { orderId } = useRouter().query
 
   useEffect(() => {
     setOrdersData(OrdersData?.response)
     setOrderItemToppings(OrdersData.response?.orderToppings!)
-  }, [OrdersData, setOrderItemToppings, setOrdersData])
+  }, [OrdersData, setOrderItemToppings, setOrdersData, grandPrice])
 
   //Form States
   const [personName, setPersonName] = useState(ordersData?.personName)
