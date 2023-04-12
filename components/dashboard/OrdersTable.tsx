@@ -253,7 +253,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
               : orderInfo.status === 'invoice'
               ? 'طباعة'
               : 'رفض'
-          } هذا الطلب؟ لا يمكن التراجع عن هذا القرار`}
+          } هذا الطلب؟
+          ${orderInfo.status !== 'invoice' ? ' لا يمكن التراجع عن هذا القرار' : ''}
+          `}
           ctaConfirmBtns={[
             orderInfo.status === 'accept'
               ? 'موافق'

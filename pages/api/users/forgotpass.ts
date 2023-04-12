@@ -53,6 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <p>
           Please <a href="${resetLink}" target="_blank">Click Here</a>
           to reset your password, OR use the following link to reset your password: ${resetLink}
+          <br />
           <small>If you did not request this, please ignore this email and your password will remain unchanged.</small>
           <small>Note: This link will expire in 1 hour</small>
         </p>
