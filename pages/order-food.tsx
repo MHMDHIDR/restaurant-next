@@ -102,7 +102,7 @@ const OrderFood = () => {
       formErr.current!.textContent = ''
 
       //if there's No user in localStorage then show modal to login or register else collect order
-      if (USER || session!.user) {
+      if (USER || session!?.user) {
         setShowLoginRegisterModal(false)
         setShowPaymentModal(true)
       } else {

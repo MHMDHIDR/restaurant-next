@@ -11,7 +11,7 @@ import useEventListener from 'hooks/useEventListener'
 import Modal from '../Modal/Modal'
 import { Success, Error, Loading } from '../Icons/Status'
 import { PayPal } from '../Icons/Payments'
-import { LoadingSpinner } from '../Loading'
+import { LoadingPage, LoadingSpinner } from '../Loading'
 import Pagination from '../Pagination'
 import Divider from '../Divider'
 import NavMenu from '../NavMenu'
@@ -59,7 +59,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const redirectPath = pathname.includes('dashboard/orders') ? 'orders' : 'my-orders'
   const pageNumber = !pageNum || !isNumber(pageNum) || pageNum < 1 ? 1 : parseInt(pageNum)
 
-  const { ...response } = useAxios({
+  const { loading: LoadingOrders, ...response } = useAxios({
     url: `/orders?page=${pageNumber}&limit=${ITEMS_PER_PAGE}?orderDate=-1`
   })
 
@@ -206,7 +206,9 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     }
   }, [setIsLoading, onBeforeGetContentResolve.current])
 
-  return (
+  return LoadingOrders ? (
+    <LoadingPage />
+  ) : (
     <>
       {orderUpdated === 1 || deleteOrderStatus === 1 ? (
         <Modal
