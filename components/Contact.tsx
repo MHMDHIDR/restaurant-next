@@ -56,8 +56,6 @@ const Contact = () => {
     }
   }
 
-  sendStatusMsg && console.log(sendStatusMsg)
-
   return (
     <>
       <section id='contact' className='py-12 my-8 contact'>
