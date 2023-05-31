@@ -197,6 +197,12 @@ const Nav = () => {
                 </Link>
               ) : null}
             </li>
+            <li>
+              <NavMenu label={`اللغة`} className={`dark:text-white ltr`}>
+                <button>العربية 🇶🇦</button>
+                <button>English 🇺🇸</button>
+              </NavMenu>
+            </li>
           </ul>
         </div>
       </nav>

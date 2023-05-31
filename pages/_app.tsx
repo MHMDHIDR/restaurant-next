@@ -9,11 +9,17 @@ import SearchContextProvider from 'contexts/SearchContext'
 import DashboardOrderContextProvider from 'contexts/DashboardOrderContext'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { SessionProvider } from 'next-auth/react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
-export default function App({
-  Component,
-  pageProps: { session, ...pageProps }
-}: AppProps) {
+function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const router = useRouter()
+  useEffect(() => {
+    if (router.locale) {
+      router.push(router.locale)
+    }
+  }, [])
+
   return (
     <SessionProvider session={session}>
       <ThemeProvider attribute='class'>
@@ -41,3 +47,5 @@ export default function App({
     </SessionProvider>
   )
 }
+
+export default App
