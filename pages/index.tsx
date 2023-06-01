@@ -12,6 +12,7 @@ import Card from 'components/Card'
 import abstractText from 'functions/abstractText'
 import { removeSlug } from 'functions/slug'
 import { SLIDES_IN_MENU, API_URL } from '@constants'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Index = ({
   menuFood,
@@ -68,15 +69,14 @@ const Index = ({
     return sweetsImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
   }
 
+  const { t } = useTranslate()
+
   return (
     <>
       <Head>
         <meta charSet='UTF-8' />
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
-        <meta
-          name='description'
-          content='Restaurant App To Find Order And Delicious Food'
-        />
+        <meta name='description' content={t(`app.main.description`)} />
         <meta name='robots' content='index, follow' />
         <meta name='keywords' content='restaurant, food, delicious, order, online' />
         <meta name='author' content='mr.hamood277@gmail.com' />
@@ -240,12 +240,14 @@ const Index = ({
         <meta name='twitter:title' content='{{pageTitle}}' />
         <meta name='twitter:description' content='{{description}}' />
         <meta name='twitter:image' content='{{imageUrl}}' />
-        <title>Restaurant</title>
+        <title>{t(`app.title`)}</title>
       </Head>
       <Layout>
         <section id='menu' className='py-12 my-8 menu'>
           <div className='container relative mx-auto'>
-            <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>القائمة</h2>
+            <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
+              {t('app.menu.title')}
+            </h2>
             <div className='w-11/12 mx-auto overflow-hidden'>
               {menuFood && menuFood?.response?.length > 0 ? (
                 <div className='max-w-5xl mx-auto transition-transform translate-x-0 select-none'>
@@ -253,7 +255,7 @@ const Index = ({
                 </div>
               ) : (
                 <span className='inline-block w-full my-2 text-lg font-bold text-center text-red-500'>
-                  عفواً! لم يتم العثور على وجبات 😥
+                  {t('app.message.noFoodFound')}
                 </span>
               )}
             </div>
@@ -261,7 +263,7 @@ const Index = ({
         </section>
         <section id='Categories' className='container mx-auto'>
           <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-            الوجبات والتصنيفات
+            {t('app.categories.title')}
           </h3>
           <div className='flex flex-wrap justify-center mt-32 gap-14 xl:justify-between'>
             <Link
@@ -274,7 +276,7 @@ const Index = ({
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-                كل الوجبات والمشروبات
+                {t('app.categories.types.all')}
               </h3>
             </Link>
 
@@ -288,7 +290,7 @@ const Index = ({
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-                الوجبات
+                {t('app.categories.types.foods')}
               </h3>
             </Link>
 
@@ -302,7 +304,7 @@ const Index = ({
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-                المشروبات
+                {t('app.categories.types.drinks')}
               </h3>
             </Link>
 
@@ -316,7 +318,7 @@ const Index = ({
               }}
             >
               <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-                الحلويات
+                {t('app.categories.types.sweets')}
               </h3>
             </Link>
           </div>
@@ -324,7 +326,7 @@ const Index = ({
         <section id='new' className='py-12 my-8 overflow-x-hidden new'>
           <div className='container mx-auto text-center'>
             <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-              الوجبات الجديدة
+              {t('app.newFood.title')}
             </h2>
             {newFood && newFood?.response?.length > 0 ? (
               newFood?.response?.map((item: foodDataProps['response'], idx: number) => (
@@ -384,7 +386,7 @@ const Index = ({
               ))
             ) : (
               <p className='form__msg inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'>
-                عفواً، لم يتم العثور على وجبات جديدة 😕
+                {t('app.message.noFoodFound')}
               </p>
             )}
           </div>

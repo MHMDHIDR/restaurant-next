@@ -7,6 +7,10 @@ const nextConfig = {
       'source.unsplash.com',
       'lh3.googleusercontent.com'
     ]
+  },
+  i18n: {
+    locales: ['ar', 'en'],
+    defaultLocale: 'ar'
   }
 }
 

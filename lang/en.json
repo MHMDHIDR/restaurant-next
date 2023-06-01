@@ -1,0 +1,44 @@
+{
+  "app": {
+    "title": "Restaurant",
+    "lang": {
+      "ar": "Arabic 🇶🇦",
+      "en": "English 🇺🇸"
+    },
+    "main": {
+      "description": "Restaurant App To Find Order And Delicious Food!"
+    },
+    "message": {
+      "noFoodFound": "Sorry! We Couldn't Find New Food 😕"
+    },
+    "menu": {
+      "title": "Menu"
+    },
+    "categories": {
+      "title": "Foods and Categories",
+      "types": {
+        "all": "All Foods and Drinks",
+        "foods": "Foods",
+        "drinks": "Drinks",
+        "sweets": "Sweets"
+      }
+    },
+    "newFood": {
+      "title": "New Food"
+    },
+    "about": {
+      "title": "About"
+    },
+    "contact": {
+      "title": "Get In Touch",
+      "description": "Whether you have an inquiry or want to contact us, you can write to us via the form below",
+      "tagLine": "We are always happy to serve you",
+      "form": {
+        "name": "Name",
+        "subject": "Subject",
+        "email": "Email",
+        "message": "Message"
+      }
+    }
+  }
+}

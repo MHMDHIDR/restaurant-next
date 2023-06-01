@@ -28,6 +28,7 @@
       "functions/*": ["utils/functions/*"],
       "components/*": ["components/*"],
       "hooks/*": ["hooks/*"],
+      "lang/*": ["lang/*"],
       "models/*": ["models/*"],
       "middleware/*": ["middleware/*"]
     }

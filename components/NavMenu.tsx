@@ -1,16 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavMenuPros } from '@types'
 import abstractText from 'functions/abstractText'
 import Image from 'next/image'
 
-const NavMenu: React.FC<NavMenuPros> = ({
+const NavMenu = ({
   children,
   isOptions = true,
   label = 'الاجراء',
   className,
   src
-}) => {
+}: NavMenuPros) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   return (
     <div
@@ -33,13 +38,13 @@ const NavMenu: React.FC<NavMenuPros> = ({
         )}
 
         <span className='px-2 text-center text-gray-800 select-none dark:text-white'>
-          {abstractText(label, 30)}
+          {isClient && abstractText(label ?? 'الإجراء', 30)}
         </span>
 
         {src && (
           <Image
             src={src || '/assets/img/icons/mobile/apple-icon-180.png'}
-            alt={label}
+            alt={label ?? 'الإجراء'}
             height={30}
             width={30}
             className={`rounded-full mx-1 border border-gray-300 w-8 h-8`}
@@ -64,7 +69,7 @@ const NavMenu: React.FC<NavMenuPros> = ({
         }${className ? ' ' + className : ''}`}
         aria-label='submenu'
       >
-        {children}
+        {isClient && children}
       </ul>
     </div>
   )

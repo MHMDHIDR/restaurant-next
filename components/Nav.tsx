@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { CartContext } from 'contexts/CartContext'
@@ -13,13 +13,16 @@ import Image from 'next/image'
 import { DEFAULT_USER_DATA, USER } from '@constants'
 import { UserProps } from '@types'
 import useAuth from 'hooks/useAuth'
+import { useLocale } from 'hooks/useLocale'
+import type { Locale } from 'hooks/useLocale'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Nav = () => {
   const { items } = useContext(CartContext)
-  const [userData, setUserData] = useState<UserProps>()
-  const [cartItemsLength, setCartItemsLength] = useState(0)
   const { data: session } = useSession()
   const { userType } = useAuth()
+  const [userData, setUserData] = useState<UserProps>()
+  const [cartItemsLength, setCartItemsLength] = useState(0)
 
   useEffect(() => {
     setUserData(USER)
@@ -66,6 +69,16 @@ const Nav = () => {
       : nav?.classList.remove(hideNavClass)
     lastScrollY = window.scrollY
   })
+
+  const { locale, switchLocale } = useLocale()
+  const { t } = useTranslate()
+  const switchLocaleRefAr = useRef<HTMLButtonElement>(null)
+  const switchLocaleRefEn = useRef<HTMLButtonElement>(null)
+
+  const switchLocaleHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const selectedLocale = e.currentTarget.value as Locale
+    switchLocale(selectedLocale)
+  }
 
   return (
     <div className='fixed inset-0 bottom-auto z-[9999] w-full transition-transform duration-300 nav ltr'>
@@ -138,21 +151,21 @@ const Nav = () => {
             id='menu'
           >
             <li>
-              <MyLink to='menu'>القائمة</MyLink>
+              <MyLink to='menu'>{t('app.menu.title')}</MyLink>
             </li>
             <li>
-              <MyLink to='new'>جديدنا</MyLink>
+              <MyLink to='new'>{t('app.newFood.title')}</MyLink>
             </li>
             <li>
               <Link href='/categories' className='underline-hover'>
-                التصنيفات
+                {t('app.categories.title')}
               </Link>
             </li>
             <li>
-              <MyLink to='about'>عن المطعم</MyLink>
+              <MyLink to='about'>{t('app.about.title')}</MyLink>
             </li>
             <li>
-              <MyLink to='contact'>تواصل معنا</MyLink>
+              <MyLink to='contact'>{t('app.contact.title')}</MyLink>
             </li>
             <li className='flex gap-3'>
               {userData || session ? (
@@ -198,9 +211,29 @@ const Nav = () => {
               ) : null}
             </li>
             <li>
-              <NavMenu label={`اللغة`} className={`dark:text-white ltr`}>
-                <button>العربية 🇶🇦</button>
-                <button>English 🇺🇸</button>
+              <NavMenu
+                label={locale === 'ar' ? t('app.lang.ar') : t('app.lang.en')}
+                className={`dark:text-white ltr gap-y-3`}
+              >
+                {locale === 'ar' ? (
+                  <button
+                    className='inline-block p-1 rounded-lg hover:bg-gray-900 hover:bg-opacity-30'
+                    onClick={switchLocaleHandler}
+                    value={`en`}
+                    ref={switchLocaleRefEn}
+                  >
+                    {t('app.lang.en')}
+                  </button>
+                ) : (
+                  <button
+                    className='inline-block p-1 rounded-lg hover:bg-gray-900 hover:bg-opacity-30'
+                    onClick={switchLocaleHandler}
+                    value={`ar`}
+                    ref={switchLocaleRefAr}
+                  >
+                    {t('app.lang.ar')}
+                  </button>
+                )}
               </NavMenu>
             </li>
           </ul>
