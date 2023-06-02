@@ -11,6 +11,7 @@ import { settingsProps } from '@types'
 import { SUGGESTED_FOOTER_ITEMS_COUNT } from '@constants'
 import Image from 'next/image'
 import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const Footer = () => {
   const [settings, setSettings] = useState<settingsProps | any>()
@@ -32,6 +33,7 @@ const Footer = () => {
   }, [fetchSettings.response, productsNames.response])
 
   const { t } = useTranslate()
+  const { locale } = useLocale()
 
   return (
     <footer className='text-white bg-orange-700 footer'>
@@ -51,7 +53,7 @@ const Footer = () => {
                 <Logo width='10 md:w-14' height='10 md:h-14' />
               )}
             </Link>
-            <p className='w-full mr-4 leading-10'>
+            <p className={`w-full leading-10 ${locale === 'ar' ? 'mr-4' : 'ml-4'}`}>
               {settings
                 ? settings?.appDesc
                 : 'أطلب ألذ الأطعمة والمشروبات الطازجة من مطعمنا العالمي'}
