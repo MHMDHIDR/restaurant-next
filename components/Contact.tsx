@@ -64,7 +64,7 @@ const Contact = () => {
       <section id='contact' className='py-12 my-8 contact'>
         <div className='container mx-auto'>
           <h2 className='mt-4 mb-12 text-2xl text-center md:text-3xl'>
-            {t('app.contact.title')}
+            {t('app.nav.contact.title')}
           </h2>
           <div className='max-w-6xl px-1 mx-auto'>
             <p className='text-sm text-center my-14 sm:text-base md:text-lg'>
@@ -145,7 +145,7 @@ const Contact = () => {
                       جارِ الإرسال...
                     </>
                   ) : (
-                    'أرسل'
+                    t('app.contact.form.send')
                   )}
                 </button>
               </div>

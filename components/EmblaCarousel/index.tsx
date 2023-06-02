@@ -6,6 +6,7 @@ import { Thumb } from './EmblaCarouselThumb'
 import { removeSlug } from 'functions/slug'
 import Image from 'next/image'
 import { HEADER_BG_IMG } from '@constants'
+import { useTranslate } from 'hooks/useTranslate'
 
 const EmblaCarousel = ({ slides, media, smallView = false }: any) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -53,6 +54,8 @@ const EmblaCarousel = ({ slides, media, smallView = false }: any) => {
   const mediaByIndex = (index: number) => media[index % media.length].foodImgDisplayPath
   const nameByIndex = (index: number) => media[index % media.length].foodName
 
+  const { t } = useTranslate()
+
   return (
     <div dir={`ltr`}>
       {/* Big Menu View */}
@@ -70,7 +73,7 @@ const EmblaCarousel = ({ slides, media, smallView = false }: any) => {
               >
                 {priceByIndex(index) && (
                   <span className='absolute z-40 flex items-center justify-center px-4 py-2 text-base font-bold text-white bg-green-900 sm:px-6 sm:text-xl rounded-xl top-3 left-4 rtl'>
-                    {priceByIndex(index)} ر.ق
+                    {priceByIndex(index)} {t('app.currency')}
                   </span>
                 )}
                 <div

@@ -8,6 +8,7 @@ import EmblaCarousel from './EmblaCarousel'
 import { removeSlug } from 'functions/slug'
 import Logo from './Icons/Logo'
 import { cardProps, CartProps, mediaProps, selectedToppingsProps } from '@types'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Card = ({
   cItemId,
@@ -24,7 +25,8 @@ const Card = ({
 }: cardProps) => {
   const { items, addToCart, removeFromCart } = useContext<CartProps>(CartContext)
   const { handleToppingChecked, checkedToppings } = useContext(ToppingsContext)
-  const { isAuth, userType, loading } = useAuth()
+  const { userType, loading } = useAuth()
+  const { t } = useTranslate()
 
   const handleCart = () => {
     const item = items.find(item => item.cItemId === cItemId)
@@ -70,7 +72,7 @@ const Card = ({
           ) : null}
           {cPrice ? (
             <span className='px-3 py-1 text-xl text-green-800 bg-green-300 rounded-xl bg-opacity-80 rtl'>
-              {cPrice + ' ر.ق'}
+              {cPrice + ' ' + t('app.currency')}
             </span>
           ) : null}
           <p className='py-8 break-all'>{cDesc}</p>
@@ -89,7 +91,7 @@ const Card = ({
               ))}
             </ul>
           )}
-          {typeof cToppings[0]?.toppingName === 'string' && (
+          {cToppings && typeof cToppings[0]?.toppingName === 'string' && (
             // if this item has toppings and it's a string
             <div className='flex flex-col flex-wrap items-start gap-4 rtl'>
               <span>الإضافات:</span>
@@ -118,7 +120,7 @@ const Card = ({
                       htmlFor={cToppingId}
                       className='px-3 py-1 mr-2 -ml-2 text-base text-green-800 bg-green-300 rounded-md cursor-pointer bg-opacity-80 min-w-fit'
                     >
-                      {toppingPrice + ' ر.ق'}
+                      {toppingPrice + ' ' + t('app.currency')}
                     </label>
                   </div>
                 )
@@ -142,7 +144,7 @@ const Card = ({
                   href={`/dashboard/food/edit/${cItemId}`}
                   className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
                 >
-                  تعديل
+                  {t('app.foodItem.edit')}
                 </Link>
               )}
             </div>

@@ -1,0 +1,7 @@
+html[dir='rtl'] .form__input {
+  @apply rtl;
+}
+
+html[dir='rtl'] .form__label {
+  @apply right-1;
+}

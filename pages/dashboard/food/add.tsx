@@ -21,6 +21,7 @@ import { selectedToppingsProps } from '@types'
 import { origin, USER } from '@constants'
 import { stringJson } from 'functions/jsonTools'
 import { focus } from 'utils/functions/focus'
+import { useTranslate } from 'hooks/useTranslate'
 
 const AddFood = () => {
   useDocumentTitle('Add Food or Drink')
@@ -122,6 +123,8 @@ const AddFood = () => {
     list.splice(index, 1)
     setToppings(list)
   }
+
+  const { t } = useTranslate()
 
   return loading ? (
     <LoadingPage />
@@ -229,7 +232,7 @@ const AddFood = () => {
                       }
                     }}
                   />
-                  <span className='form__label'>السعر (ر.ق)</span>
+                  <span className='form__label'>السعر ({t('app.currency')})</span>
                   <span
                     className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                     ref={priceErr}
@@ -298,7 +301,7 @@ const AddFood = () => {
                   <h3 className='mb-10 text-xl'>الإضافات - Toppings (اختياري)</h3>
                   <div className='flex justify-around'>
                     <span className='text-xl'>الإضافة</span>
-                    <span className='text-xl'>السعر (ر.ق)</span>
+                    <span className='text-xl'>السعر ({t('app.currency')})</span>
                   </div>
                 </div>
                 {toppings?.map(

@@ -13,6 +13,7 @@ import { removeSlug } from 'functions/slug'
 import scrollToView from 'functions/scrollToView'
 import { foodDataProps } from '@types'
 import { API_URL, ITEMS_PER_PAGE } from '@constants'
+import { useTranslate } from 'hooks/useTranslate'
 
 const ViewFood = ({ viewFood }: any) => {
   useDocumentTitle('View Foods')
@@ -33,6 +34,8 @@ const ViewFood = ({ viewFood }: any) => {
 
   const { items } = useContext(CartContext)
 
+  const { t } = useTranslate()
+
   return (
     <Layout>
       <section id='viewFood' className='py-12 my-8'>
@@ -45,7 +48,7 @@ const ViewFood = ({ viewFood }: any) => {
                     {removeSlug(data?.response?.foodName)}
                   </Link>
                 )
-              : 'عرض الوجبات'}
+              : t('app.viewPage.title')}
           </h2>
 
           {data !== undefined && data?.response?.length > 0 ? (
@@ -85,7 +88,7 @@ const ViewFood = ({ viewFood }: any) => {
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            إحذف من السلة
+                            {t('app.foodItem.removeFromCart')}
                           </span>
                         </div>
                       ) : (
@@ -95,7 +98,7 @@ const ViewFood = ({ viewFood }: any) => {
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            أضف إلى السلة
+                            {t('app.foodItem.addToCart')}
                           </span>
                         </div>
                       )

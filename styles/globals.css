@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'ltr';
+@import 'rtl';
 
 @layer utilities {
   ::-webkit-scrollbar {
@@ -40,11 +42,11 @@
   }
 
   .form__input {
-    @apply w-full text-xl text-gray-700 bg-transparent border-none outline-none dark:text-gray-200 rtl px-6;
+    @apply w-full text-xl text-gray-700 bg-transparent border-none outline-none dark:text-gray-200 px-6;
   }
 
   .form__label {
-    @apply absolute px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none right-1 sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60;
+    @apply absolute px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60;
   }
 
   /*.form__group.notvalid > .form__label,*/

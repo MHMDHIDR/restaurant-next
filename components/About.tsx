@@ -19,7 +19,7 @@ const About = () => {
     <section id='about' className='py-12 my-8 about'>
       <div className='container mx-auto'>
         <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-          {t('app.about.title')}
+          {t('app.nav.about.title')}
         </h2>
         <p
           className={`max-w-6xl mx-4 sm:mx-auto leading-[3rem] ${

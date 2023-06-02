@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import Layout from 'components/Layout'
 import { API_URL } from '@constants'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any) => {
   useDocumentTitle('Categories')
@@ -29,11 +30,13 @@ const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
     return sweetsImgs?.[randomIndex]?.foodImgs[0]?.foodImgDisplayPath
   }
 
+  const { t } = useTranslate()
+
   return (
     <Layout>
       <section className='container py-20 mx-auto my-40'>
         <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-          الوجبات والتصنيفات
+          {t('app.categories.title')}
         </h3>
         <div className='flex flex-wrap justify-center mt-32 gap-14 xl:justify-between'>
           <Link
@@ -46,7 +49,7 @@ const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-              كل الوجبات والمشروبات
+              {t('app.categories.types.all')}
             </h3>
           </Link>
 
@@ -60,7 +63,7 @@ const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-              الوجبات
+              {t('app.categories.types.foods')}
             </h3>
           </Link>
 
@@ -74,7 +77,7 @@ const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-              المشروبات
+              {t('app.categories.types.drinks')}
             </h3>
           </Link>
 
@@ -88,7 +91,7 @@ const Categories = ({ catFoodResponse, catDrinkResponse, catSweetResponse }: any
             }}
           >
             <h3 className='flex items-center justify-center h-full text-sm font-bold text-white bg-gray-800 md:text-base 2xl:text-xl bg-opacity-80'>
-              الحلويات
+              {t('app.categories.types.sweets')}
             </h3>
           </Link>
         </div>

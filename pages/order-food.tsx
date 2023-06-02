@@ -19,6 +19,8 @@ import { validPhone } from 'functions/validForm'
 import scrollToView from 'functions/scrollToView'
 import { parseJson, stringJson } from 'functions/jsonTools'
 import { useSession } from 'next-auth/react'
+import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const formDataFromLocalStorage =
   typeof window !== 'undefined'
@@ -146,6 +148,9 @@ const OrderFood = () => {
     }
   }
 
+  const { locale } = useLocale()
+  const { t } = useTranslate()
+
   return (
     <Layout>
       <section id='orderFood' className='py-12 my-8'>
@@ -190,21 +195,31 @@ const OrderFood = () => {
             <LoadingPage />
           ) : items.length > 0 ? (
             <>
-              <h2 className='inline-block mb-20 text-3xl font-bold'>سلة الطلبات</h2>
+              <h2 className='inline-block mb-20 text-3xl font-bold'>
+                {t('app.order-food.title')}
+              </h2>
               <CartItems />
 
               <form method='POST' onSubmit={handleCollectOrder}>
                 <Link
                   href='/view'
-                  className='relative pr-10 block p-2 mx-auto my-10 text-xl text-gray-900 bg-orange-400 border group border-orange-700 hover:bg-orange-500 transition-colors rounded-md w-[20rem] lg:w-[25rem]'
+                  className={`relative block p-2 mx-auto my-10 text-xl text-gray-900 bg-orange-400 border group border-orange-700 hover:bg-orange-500 transition-colors rounded-md w-[20rem] lg:w-[25rem] ${
+                    locale === 'ar' ? 'pr-10' : 'pl-10'
+                  }`}
                 >
-                  <span className='absolute inline-flex justify-center pt-3.5 ml-3 pointer-events-none transition-all bg-white border border-orange-700 rounded-full -top-1.5 w-14 h-14 group-hover:right-2 right-6'>
+                  <span
+                    className={`absolute inline-flex justify-center pt-3.5 pointer-events-none transition-all bg-white border border-orange-700 rounded-full -top-1.5 w-14 h-14 ${
+                      locale === 'ar'
+                        ? 'group-hover:right-2 right-6 ml-3'
+                        : 'group-hover:left-2 left-6 mr-3 [transform:rotateY(180deg)]'
+                    }`}
+                  >
                     🛒
                   </span>
-                  تصفح وجبات أخرى
+                  {t('app.order-food.explore')}
                 </Link>
 
-                <h2 className='mb-10 text-2xl'>يرجى إضافة تفاصيل الطلب</h2>
+                <h2 className='mb-10 text-2xl'>{t('app.order-food.form.title')}</h2>
                 <label htmlFor='name' className={`form__group`}>
                   <input
                     className={`relative form__input`}
@@ -217,10 +232,13 @@ const OrderFood = () => {
                       const target = e.target.value.trim()
 
                       if (target.length > 0 && target.length < 4) {
-                        personNameErr.current!.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
+                        personNameErr.current!.textContent = t(
+                          'app.order-food.form.name.error.shortText'
+                        )
                       } else if (target.length > 30) {
-                        personNameErr.current!.textContent =
-                          'الاسم طويل جداً، يرجى إضافة إسم لا يزيد عن 30 حرف'
+                        personNameErr.current!.textContent = t(
+                          'app.order-food.form.name.error.longText'
+                        )
                       } else {
                         personNameErr.current!.textContent = ''
                       }
@@ -228,7 +246,7 @@ const OrderFood = () => {
                     required
                   />
                   <span className={`form__label`}>
-                    الاســـــــــــــــــم &nbsp;
+                    {t('app.order-food.form.name.label')} &nbsp;
                     <strong className='text-xl leading-4 text-red-600'>*</strong>
                   </span>
                   <span
@@ -252,8 +270,9 @@ const OrderFood = () => {
                         target.length > 8 ||
                         !validPhone(target)
                       ) {
-                        personPhoneErr.current!.textContent =
-                          'الرجاء إدخال رقم هاتف نفس صيغة رقم الهاتف في المثال'
+                        personPhoneErr.current!.textContent = t(
+                          'app.order-food.form.phone.error.shortText'
+                        )
                       } else {
                         personPhoneErr.current!.textContent = ''
                       }
@@ -261,7 +280,7 @@ const OrderFood = () => {
                     required
                   />
                   <span className={`form__label`}>
-                    رقم الهاتف - مثال: 33445566 &nbsp;
+                    {t('app.order-food.form.phone.label')} &nbsp;
                     <strong className='text-xl leading-4 text-red-600'>*</strong>
                   </span>
                   <span
@@ -281,8 +300,9 @@ const OrderFood = () => {
                       const target = e.target.value.trim()
 
                       if (target.length > 0 && target.length < 4) {
-                        personAddressErr.current!.textContent =
-                          'يرجى إدخال إسم بصيغة صحيحة'
+                        personAddressErr.current!.textContent = t(
+                          'app.order-food.form.phone.error.shortText'
+                        )
                       } else {
                         personAddressErr.current!.textContent = ''
                       }
@@ -290,7 +310,7 @@ const OrderFood = () => {
                     required
                   />
                   <span className={`form__label`}>
-                    العنوان - مثال: منطقة رقم 53 - شارع رقم 000 - منزل رقم 00&nbsp;
+                    {t('app.order-food.form.address.label')}&nbsp;
                     <strong className='text-xl leading-4 text-red-600'>*</strong>
                   </span>
                   <span
@@ -309,7 +329,7 @@ const OrderFood = () => {
                   ></textarea>
 
                   <span className={`form__label`}>
-                    تستطيع وضع ملاحظات أو اضافات للشيف لإضافتها لك في طلبك &nbsp;😄
+                    {t('app.order-food.form.notes.label')} &nbsp;😄
                   </span>
                 </label>
                 <p
@@ -317,7 +337,7 @@ const OrderFood = () => {
                   ref={formErr}
                 ></p>
                 <span className='inline-block px-3 py-1 my-4 text-xl text-green-800 bg-green-300 border border-green-800 rounded-md select-none'>
-                  السعر الاجمالي:&nbsp;
+                  {t('app.order-food.totalOrderPrice')}:&nbsp;
                   <strong ref={grandPriceRef}>
                     {items.reduce(
                       (acc: number, item: any) =>
@@ -341,7 +361,7 @@ const OrderFood = () => {
                       0
                     )}
                   </strong>
-                  &nbsp; ر.ق
+                  &nbsp; {t('app.currency')}
                 </span>
 
                 <div className='flex flex-col items-center justify-evenly'>
@@ -353,10 +373,10 @@ const OrderFood = () => {
                     {isLoading && isLoading ? (
                       <>
                         <LoadingSpinner />
-                        جارِ تأكيد بيانات الطلب...
+                        {t('app.order-food.form.confirmingBtn')}
                       </>
                     ) : (
-                      'تأكيد البيانات'
+                      t('app.order-food.form.confirmBtn')
                     )}
                   </button>
                 </div>
@@ -365,8 +385,8 @@ const OrderFood = () => {
           ) : (
             <NoItems
               links={[
-                { to: `../view`, label: 'تصفح الوجبات' },
-                { to: `../categories`, label: 'تصفح التصنيفات' }
+                { to: `../view`, label: t('app.order-food.viewMeals') },
+                { to: `../categories`, label: t('app.order-food.viewCategories') }
               ]}
             />
           )}

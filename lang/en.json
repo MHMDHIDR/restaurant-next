@@ -8,11 +8,47 @@
     "main": {
       "description": "Restaurant App To Find Order And Delicious Food!"
     },
-    "message": {
-      "noFoodFound": "Sorry! We Couldn't Find New Food 😕"
+    "nav": {
+      "menu": {
+        "title": "Menu"
+      },
+      "newFood": {
+        "title": "New Food"
+      },
+      "about": {
+        "title": "About"
+      },
+      "categories": {
+        "title": "Categories"
+      },
+      "contact": {
+        "title": "Contact"
+      },
+      "accountOptions": {
+        "welcome": "Welcome Back",
+        "dashboard": "Dashboard",
+        "myorders": "My Orders",
+        "signin": "Sign In",
+        "signout": "Sign Out"
+      }
     },
-    "menu": {
-      "title": "Menu"
+    "search": {
+      "searchInput": "Find your favorite food",
+      "searchTitle": "Find products, meals, drinks, sweets...",
+      "searchResultsTitle": "Search results for",
+      "searchNotFound": "There are no search results for"
+    },
+    "contact": {
+      "title": "Get In Touch",
+      "description": "Whether you have an inquiry or want to contact us, you can write to us via the form below",
+      "tagLine": "We are always happy to serve you",
+      "form": {
+        "name": "Name",
+        "subject": "Subject",
+        "email": "Email",
+        "message": "Message",
+        "send": "Send"
+      }
     },
     "categories": {
       "title": "Foods and Categories",
@@ -23,22 +59,79 @@
         "sweets": "Sweets"
       }
     },
-    "newFood": {
-      "title": "New Food"
-    },
-    "about": {
-      "title": "About"
-    },
-    "contact": {
-      "title": "Get In Touch",
-      "description": "Whether you have an inquiry or want to contact us, you can write to us via the form below",
-      "tagLine": "We are always happy to serve you",
+    "order-food": {
+      "title": "Cart",
+      "removeOrder": "Remove Order",
+      "itemQuantity": "Quantity",
+      "totalItemPrice": "The price of the meal, including the calculation of the additions and the quantity for the additions and the meal",
+      "toppings": {
+        "title": "Toppings",
+        "quantity": "Toppings Quantity"
+      },
+      "explore": "Explore other meals",
       "form": {
-        "name": "Name",
-        "subject": "Subject",
-        "email": "Email",
-        "message": "Message"
+        "title": "Please add order details",
+        "name": {
+          "label": "Your Full Name",
+          "error": {
+            "shortText": "Please enter a valid name",
+            "longText": "The name is too long, please add a name of up to 30 characters"
+          }
+        },
+        "phone": {
+          "label": "Phone Number, (e.g: 33445566)",
+          "error": {
+            "shortText": "Please enter a phone number in the same format as the phone number in the example",
+            "longText": ""
+          }
+        },
+        "address": {
+          "label": "Address, (e.g: zone 00, 000st, building 000)",
+          "error": {
+            "shortText": "Please enter a valid name",
+            "longText": ""
+          }
+        },
+        "notes": {
+          "label": "You Can Add Notes or Additions for The chef to Add to Your Order 😄"
+        },
+        "confirmBtn": "Confirm Order Details",
+        "confirmingBtn": "Checking and Confirming Details..."
+      },
+      "totalOrderPrice": "Total Price",
+      "viewCategories": "View Categories",
+      "viewMeals": "View Meals",
+      "messages": {
+        "noItems": "Sorry! No meals or drinks were found in the cart 😥 You can browse the restaurant and add new meals or drinks to the cart"
       }
+    },
+    "viewPage": {
+      "title": "View Meals",
+      "item": {
+        "notFound": "Sorry! The requested meal was not found 😥",
+        "returnToHome": "Return to the homepage"
+      }
+    },
+    "foodItem": {
+      "edit": "Edit Item",
+      "addToCart": "Add To Cart",
+      "removeFromCart": "Remove From Cart"
+    },
+    "currency": "QAR",
+    "messages": {
+      "noFoodFound": "Sorry! We Couldn't Find New Food 😕"
+    },
+    "footer": {
+      "links": {
+        "title": "Links",
+        "all": "All Meals",
+        "new": "Our New Items"
+      },
+      "recommendations": {
+        "title": "Recommendations",
+        "viewMeals": "view Meals"
+      },
+      "copyrights": "To order meals and delicious foods - all rights reserved"
     }
   }
 }

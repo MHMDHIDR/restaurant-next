@@ -23,6 +23,7 @@ import { origin, ITEMS_PER_PAGE, USER } from '@constants'
 import { stringJson } from 'functions/jsonTools'
 import { ClickableButton } from 'components/Button'
 import Add from 'components/Icons/Add'
+import { useTranslate } from 'hooks/useTranslate'
 
 const DashboardMenu = () => {
   useDocumentTitle('Menu')
@@ -98,6 +99,8 @@ const DashboardMenu = () => {
       console.error(err)
     }
   }
+
+  const { t } = useTranslate()
 
   return loading || !userType ? (
     <LoadingPage />
@@ -197,7 +200,7 @@ const DashboardMenu = () => {
                             <strong className='inline-block m-2 text-xl text-green-700 dark:text-green-400'>
                               {item.foodPrice}
                             </strong>
-                            ر.ق
+                            {t('app.currency')}
                           </span>
                         </td>
                         <td className='px-1 py-2 min-w-[16rem]'>
@@ -209,7 +212,7 @@ const DashboardMenu = () => {
                               href={goTo(`food/edit/${item._id}`)}
                               className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
                             >
-                              تعديل
+                              {t('app.foodItem.edit')}
                             </Link>
                             <button
                               id='deleteFood'

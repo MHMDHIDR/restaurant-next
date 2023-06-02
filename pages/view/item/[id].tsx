@@ -8,6 +8,7 @@ import { removeSlug } from 'functions/slug'
 import Card from 'components/Card'
 import { API_URL } from '@constants'
 import Layout from 'components/Layout'
+import { useTranslate } from 'hooks/useTranslate'
 
 const IndexId = ({ item }: any) => {
   useDocumentTitle('View Foods')
@@ -19,6 +20,8 @@ const IndexId = ({ item }: any) => {
     scrollToView()
     setCartItems(items)
   }, [items])
+
+  const { t } = useTranslate()
 
   return (
     <Layout>
@@ -57,7 +60,7 @@ const IndexId = ({ item }: any) => {
                       </span>
                       &nbsp;&nbsp;
                       <span className='mr-4 text-center pointer-events-none'>
-                        إحذف من السلة
+                        {t('app.foodItem.removeFromCart')}
                       </span>
                     </div>
                   ) : (
@@ -67,7 +70,7 @@ const IndexId = ({ item }: any) => {
                       </span>
                       &nbsp;&nbsp;
                       <span className='mr-4 text-center pointer-events-none'>
-                        أضف إلى السلة
+                        {t('app.foodItem.addToCart')}
                       </span>
                     </div>
                   )
@@ -77,18 +80,18 @@ const IndexId = ({ item }: any) => {
           ) : (
             <>
               <h2 className='text-xl font-bold text-center mb-28 md:text-2xl'>
-                عرض الوجبات
+                {t('app.viewPage.title')}
               </h2>
 
-              <div className='flex flex-col items-center justify-center text-base text-center lg:text-xl 2xl:text-3xl gap-14'>
+              <div className='flex flex-col items-center justify-center text-base text-center lg:text-xl 2xl:text-2xl gap-14'>
                 <span className='my-2 font-bold text-red-500'>
-                  عفواً! لم يتم العثور على الوجبة المطلوبة &nbsp;&nbsp;&nbsp; 😥
+                  {t('app.viewPage.item.notFound')}
                 </span>
                 <Link
                   href='/'
                   className='px-3 py-1 text-orange-800 transition-colors bg-orange-100 border border-orange-700 rounded hover:bg-orange-200'
                 >
-                  يمكنك العودة للصفحة الرئيسية
+                  {t('app.viewPage.item.returnToHome')}
                 </Link>
               </div>
             </>

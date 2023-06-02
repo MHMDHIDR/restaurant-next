@@ -1,0 +1,7 @@
+html[dir='ltr'] .form__input {
+  @apply ltr;
+}
+
+html[dir='ltr'] .form__label {
+  @apply left-1;
+}

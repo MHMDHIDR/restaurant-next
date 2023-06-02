@@ -10,12 +10,18 @@ import Card from 'components/Card'
 import Nav from 'components/Nav'
 import Footer from 'components/Footer'
 import Search from 'components/Search'
+import { useTranslate } from 'hooks/useTranslate'
 
 const SearchResults: React.FC = () => {
   const { search, searchResults, loading } = useContext(SearchContext)
   const { items } = useContext(CartContext)
+  const { t } = useTranslate()
 
-  useDocumentTitle(search ? `${search} نتائج البحث عن` : 'ابحث عن طعامك المفضل')
+  useDocumentTitle(
+    search
+      ? `${search} ${t('app.search.searchResultsTitle')}`
+      : t('app.search.searchInput')
+  )
 
   const searchResultsCount = searchResults.length
 
@@ -27,13 +33,13 @@ const SearchResults: React.FC = () => {
           {search ? (
             <>
               <h2 className='mb-10 text-xl md:text-2xl xl:text-4xl'>
-                نتائج البحث عن {search}
+                {t('app.search.searchResultsTitle')} {search}
               </h2>
               <Search />
             </>
           ) : (
             <h2 className='mb-10 text-xl md:text-2xl xl:text-4xl'>
-              ابحث عن منتجات، وجبات، مشروبات، أو حلويات...
+              {t('app.search.searchTitle')}
             </h2>
           )}
         </div>
@@ -66,7 +72,7 @@ const SearchResults: React.FC = () => {
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            إحذف من السلة
+                            {t('app.foodItem.removeFromCart')}
                           </span>
                         </div>
                       ) : (
@@ -76,7 +82,7 @@ const SearchResults: React.FC = () => {
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            أضف إلى السلة
+                            {t('app.foodItem.addToCart')}
                           </span>
                         </div>
                       )
@@ -89,7 +95,7 @@ const SearchResults: React.FC = () => {
             <LoadingCard />
           ) : (
             <h3 className='text-xl text-center md:text-2xl xl:text-4xl'>
-              لا يوجد نتائج بحث عن {search}
+              {t('app.search.searchNotFound')} {search}
             </h3>
           )
         ) : (

@@ -8,6 +8,7 @@ import Divider from 'components/Divider'
 import { selectedToppingsProps } from '@types'
 import { MAX_QUANTITY } from '@constants'
 import Image from 'next/image'
+import { useTranslate } from 'hooks/useTranslate'
 
 const CartItems: any = ({ orderItems, orderToppings }: any) => {
   const { items } = useContext(CartContext)
@@ -48,6 +49,8 @@ const Items = ({
   useEffect(() => {
     setOrderItemToppings(orderToppings)
   }, [orderToppings, setOrderItemToppings])
+
+  const { t } = useTranslate()
 
   return orderItems?.map((item: any) => {
     //if has topping in original item (food) object
@@ -91,7 +94,7 @@ const Items = ({
           {hasToppings && (
             <div className='flex items-center justify-around gap-y-10 xl:gap-x-5 sm:flex-row'>
               <div className='flex flex-col gap-2 text-lg select-none md:items-start'>
-                <h2 className='text-center ltr'>الإضافات</h2>
+                <h2 className='text-center ltr'>{t('app.order-food.toppings.title')}</h2>
                 {item?.cToppings?.map(
                   ({
                     toppingId = '123id',
@@ -99,7 +102,7 @@ const Items = ({
                     toppingPrice = 1,
                     toppingQuantity = 1
                   }: selectedToppingsProps) => (
-                    <div className='flex items-center' key={toppingId}>
+                    <div className='flex items-center gap-3' key={toppingId}>
                       <input
                         type='checkbox'
                         id={toppingId}
@@ -132,14 +135,16 @@ const Items = ({
                         htmlFor={toppingId}
                         className='px-3 py-1 mr-2 -ml-2 text-base text-green-800 bg-green-300 rounded-md cursor-pointer bg-opacity-80 min-w-fit'
                       >
-                        {toppingPrice * toppingQuantity + ' ر.ق'}
+                        {toppingPrice * toppingQuantity + ' ' + t('app.currency')}
                       </label>
                     </div>
                   )
                 )}
               </div>
               <div className='flex flex-col items-center gap-2 text-lg select-none'>
-                <h2 className='text-center ltr'>كمية الإضافات</h2>
+                <h2 className='text-center ltr'>
+                  {t('app.order-food.toppings.quantity')}
+                </h2>
                 {item?.cToppings.map((topping: any, idx: number) => {
                   const toppingId = item.cItemId + idx
 
@@ -224,7 +229,9 @@ const Items = ({
               'lg:col-start-2 lg:col-end-4 xl:col-start-auto xl:col-end-auto'
             }`}
           >
-            <h2 className='text-lg text-center ltr'>عدد الوجبات</h2>
+            <h2 className='text-lg text-center ltr'>
+              {t('app.order-food.itemQuantity')}
+            </h2>
             <span className='text-lg font-bold quantity-btn'>{item.cQuantity}</span>
             <div className='flex gap-2 select-none justify-evenly'>
               <button
@@ -338,7 +345,7 @@ const Items = ({
               !hasToppings && 'xl:row-start-2 xl:row-end-3'
             }`}
           >
-            <span>سعر الوجبة مع حساب الإضافات والكمية للإضافات والوجبة :&nbsp;</span>
+            <span>{t('app.order-food.totalItemPrice')} :&nbsp;</span>
             <strong className='text-lg'>
               {item.cPrice * item.cQuantity +
                 (orderToppings
@@ -373,7 +380,7 @@ const Items = ({
                       0
                     ))}
             </strong>
-            &nbsp;ر.ق
+            &nbsp;{t('app.currency')}
           </span>
 
           {/* Product Remove from Cart Button */}
@@ -398,7 +405,9 @@ const Items = ({
             </span>
             &nbsp;&nbsp;
             <span className='mr-4 text-sm pointer-events-none'>
-              {isDashboard ? 'حذف الطلب' : 'إحذف من السلة'}
+              {isDashboard
+                ? t('app.order-food.removeOrder')
+                : t('app.foodItem.removeFromCart')}
             </span>
           </button>
         </div>

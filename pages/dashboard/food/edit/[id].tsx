@@ -22,6 +22,7 @@ import { origin, API_URL, DEFAULT_FOOD_DATA, USER } from '@constants'
 import { ToppingsProps, foodDataProps, FoodImgsProps } from '@types'
 import { stringJson } from 'functions/jsonTools'
 import uploadS3 from 'utils/functions/uploadS3'
+import { useTranslate } from 'hooks/useTranslate'
 
 const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   useDocumentTitle('Edit Food')
@@ -249,6 +250,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     }
   })
 
+  const { t } = useTranslate()
+
   return loading ? (
     <LoadingPage />
   ) : USER?.userAccountType !== 'admin' || userType !== 'admin' ? (
@@ -315,7 +318,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
             />
 
             <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-              تعديل وجبة أو مشروب
+              {t('app.foodItem.edit')}
             </h3>
 
             <div className='dashboard__food__form edit'>
@@ -395,7 +398,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         }}
                         defaultValue={data?.foodPrice}
                       />
-                      <span className='form__label'>السعر (ر.ق)</span>
+                      <span className='form__label'>السعر (${t('app.currency')})</span>
                       <span
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={priceErr}
@@ -465,7 +468,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                       <h3 className='mb-10 text-xl'>الإضافات - Toppings (اختياري)</h3>
                       <div className='flex justify-around'>
                         <span className='text-xl'>الإضافة</span>
-                        <span className='text-xl'>السعر (ر.ق)</span>
+                        <span className='text-xl'>السعر ({t('app.currency')})</span>
                       </div>
                     </div>
                     {toppings?.map(

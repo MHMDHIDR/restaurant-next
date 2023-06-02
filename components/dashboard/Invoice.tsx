@@ -3,6 +3,7 @@ import Divider from 'components/Divider'
 import Image from 'next/image'
 import { PayPal } from 'components/Icons/Payments'
 import { selectedToppingsProps } from '@types'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: any) => {
   const inSeletedToppings = orderToppingsId?.map((selected: any) =>
@@ -25,6 +26,7 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
   } = ordersData || ''
 
   const orderItems_cToppings = ordersData?.orderItems[0].cToppings
+  const { t } = useTranslate()
 
   return (
     <div className='hidden'>
@@ -111,7 +113,7 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
                               </span>
                               <span className='px-2 py-1 text-green-900 bg-green-200 rounded-lg'>
                                 السعر حسب الكمية:
-                                {toppingPrice * toppingQuantity!} ر.ق
+                                {toppingPrice * toppingQuantity!} {t('app.currency')}
                               </span>
                             </div>
                           )
@@ -124,7 +126,7 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
                 <td>
                   <span className='flex flex-col px-4 gap-y-2'>
                     <strong className='inline-block text-green-800 bg-green-300 rounded-lg bg-opacity-70'>
-                      سعر الوجبة {item.cPrice || 1} ر.ق
+                      سعر الوجبة {item.cPrice || 1} {t('app.currency')}
                     </strong>
 
                     {orderToppings?.length > 0 && (
@@ -139,7 +141,7 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
                           }
                           return acc
                         }, 0)}
-                        ر.ق
+                        {t('app.currency')}
                       </strong>
                     )}
                   </span>
@@ -167,7 +169,7 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
                   return acc
                 }, 0)
             )}
-            ر.ق
+            {t('app.currency')}
           </h3>
         </div>
         <div className='flex items-center justify-between'>

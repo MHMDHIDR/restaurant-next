@@ -20,6 +20,7 @@ import { orderDataProps, selectedToppingsProps } from '@types'
 import goTo from 'functions/goTo'
 import abstractText from 'functions/abstractText'
 import { stringJson } from 'functions/jsonTools'
+import { useTranslate } from 'hooks/useTranslate'
 
 const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => {
   const { orderItemToppings, setOrderItemToppings } = useContext(ToppingsContext)
@@ -107,6 +108,8 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
       setIsLoading(false)
     }
   }
+
+  const { t } = useTranslate()
 
   return (
     <Layout>
@@ -299,7 +302,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                       0
                     )}
                   </strong>
-                  &nbsp; ر.ق
+                  &nbsp; {t('app.currency')}{' '}
                 </span>
 
                 <div className='flex flex-col items-center justify-evenly'>

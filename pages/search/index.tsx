@@ -10,6 +10,7 @@ import Card from 'components/Card'
 import Nav from 'components/Nav'
 import Footer from 'components/Footer'
 import Search from 'components/Search'
+import { useTranslate } from 'hooks/useTranslate'
 
 const SearchResults: React.FC = () => {
   const { search, searchResults, loading } = useContext(SearchContext)
@@ -18,6 +19,8 @@ const SearchResults: React.FC = () => {
   useDocumentTitle(search ? `${search} نتائج البحث عن` : 'ابحث عن طعامك المفضل')
 
   const searchResultsCount = searchResults.length
+
+  const { t } = useTranslate()
 
   return (
     <section id='SearchResults' className='flex flex-col justify-between min-h-screen'>
@@ -66,7 +69,7 @@ const SearchResults: React.FC = () => {
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            إحذف من السلة
+                            {t('app.foodItem.removeFromCart')}
                           </span>
                         </div>
                       ) : (
@@ -76,7 +79,7 @@ const SearchResults: React.FC = () => {
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            أضف إلى السلة
+                            {t('app.foodItem.addToCart')}
                           </span>
                         </div>
                       )

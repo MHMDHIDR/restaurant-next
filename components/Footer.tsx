@@ -10,6 +10,7 @@ import { WhatsApp, Twitter, Instagram } from './Icons/Socials'
 import { settingsProps } from '@types'
 import { SUGGESTED_FOOTER_ITEMS_COUNT } from '@constants'
 import Image from 'next/image'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Footer = () => {
   const [settings, setSettings] = useState<settingsProps | any>()
@@ -29,6 +30,8 @@ const Footer = () => {
       )
     }
   }, [fetchSettings.response, productsNames.response])
+
+  const { t } = useTranslate()
 
   return (
     <footer className='text-white bg-orange-700 footer'>
@@ -56,12 +59,14 @@ const Footer = () => {
           </div>
           <div className='flex flex-wrap flex-1 w-full gap-14 sm:w-auto justify-evenly'>
             <div>
-              <h3 className='mb-3 text-lg font-bold'>مقترحات لــك</h3>
+              <h3 className='mb-3 text-lg font-bold'>
+                {t('app.footer.recommendations.title')}
+              </h3>
               <ul className='space-y-2'>
                 {!suggestedItems || suggestedItems.length === 0 ? (
                   <li>
                     <Link href='/view' className='hover:text-gray-700'>
-                      عرض الوجبات
+                      {t('app.footer.recommendations.viewMeals')}
                     </Link>
                   </li>
                 ) : (
@@ -80,16 +85,16 @@ const Footer = () => {
             </div>
             {/* Links */}
             <div>
-              <h3 className='mb-3 text-lg font-bold'>روابـــــط</h3>
+              <h3 className='mb-3 text-lg font-bold'>{t('app.footer.links.title')}</h3>
               <ul className='space-y-2'>
                 <li>
                   <Link href='/view' className='hover:text-gray-700'>
-                    كل الوجبات
+                    {t('app.footer.links.all')}
                   </Link>
                 </li>
                 <li>
                   <MyLink to='new' className='hover:text-gray-700'>
-                    جديد المطعم
+                    {t('app.footer.links.new')}
                   </MyLink>
                 </li>
               </ul>
@@ -121,8 +126,8 @@ const Footer = () => {
 
         <div className='flex items-center justify-around gap-6 py-4'>
           <p className='font-[600] text-center px-2 sm:px-0 leading-loose'>
-            موقع {settings?.appName} لطلب الوجبات والأطعمة اللذيذة - جميع الحقوق محفوظة
-            &copy; 2021 - {new Date().getFullYear()}
+            <strong>{settings?.appName}</strong> {t('app.footer.copyrights')} &copy; 2021
+            - {new Date().getFullYear()}
           </p>
         </div>
       </div>

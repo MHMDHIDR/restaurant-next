@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { SearchContext } from 'contexts/SearchContext'
 import useEventListener from 'hooks/useEventListener'
 import { removeSlug } from 'functions/slug'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Search = () => {
   const searchWrapperRef = useRef<HTMLDivElement>(null)
@@ -22,13 +23,15 @@ const Search = () => {
     router.push(`/search/${search}`)
   }
 
+  const { t } = useTranslate()
+
   return (
     <form method='post' className='relative z-20 w-full px-2' onSubmit={handleSearch}>
       <input
         type='search'
         id='search'
-        className='text-2xl font-[600] p-5 pl-16 sm:pl-28 w-[inherit] text-black outline-orange-400 border border-orange-400 outline-offset-2 rtl bg-neutral-200 dark:bg-neutral-300'
-        placeholder='ابحث عن طعامك المفضل'
+        className='text-2xl font-[600] p-5 pl-16 sm:pl-28 w-[inherit] text-black outline-orange-400 border border-orange-400 outline-offset-2 bg-neutral-200 dark:bg-neutral-300'
+        placeholder={t('app.search.searchInput')}
         onChange={e => (e.target.value.trim() ? setSearch(e.target.value.trim()) : '')}
         onKeyUp={(e: any) => {
           const searchValue = e.target.value.trim()

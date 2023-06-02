@@ -30,6 +30,7 @@ import { createLocaleDateString } from 'functions/convertDate'
 import scrollToView from 'functions/scrollToView'
 import { isNumber } from 'functions/isNumber'
 import Invoice from './Invoice'
+import { useTranslate } from 'hooks/useTranslate'
 
 const OrdersTable = ({ ordersByUserEmail = false }) => {
   useEffect(() => {
@@ -206,6 +207,8 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     }
   }, [setIsLoading, onBeforeGetContentResolve.current])
 
+  const { t } = useTranslate()
+
   return LoadingOrders ? (
     <LoadingPage />
   ) : (
@@ -376,7 +379,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                           {item.cPrice * item.cQuantity!}
                                           &nbsp;&nbsp;
                                         </strong>
-                                        ر.ق
+                                        {t('app.currency')}
                                       </span>
                                     </div>
                                     <div className='flex flex-col gap-6'>
@@ -403,7 +406,8 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                               </span>
                                               <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
                                                 السعر حسب الكمية:{' '}
-                                                {toppingPrice * toppingQuantity} ر.ق
+                                                {toppingPrice * toppingQuantity}{' '}
+                                                {t('app.currency')}
                                               </span>
                                               <hr />
                                             </div>
@@ -428,7 +432,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                         </td>
                         <td>
                           <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
-                            <strong>{order.grandPrice}</strong> ر.ق
+                            <strong>{order.grandPrice}</strong> {t('app.currency')}
                           </span>
                         </td>
                         <td className='px-1 py-2'>{order.orderId}</td>
@@ -643,7 +647,8 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
 
                                   <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
                                     السعر على حسب الكميات: &nbsp;
-                                    <strong>{item.cPrice * item.cQuantity}</strong> ر.ق
+                                    <strong>{item.cPrice * item.cQuantity}</strong>{' '}
+                                    {t('app.currency')}
                                   </span>
                                 </div>
                                 <div className='flex flex-col gap-6'>
@@ -670,7 +675,8 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                           </span>
                                           <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
                                             السعر حسب الكمية:
-                                            {toppingPrice * toppingQuantity!} ر.ق
+                                            {toppingPrice * toppingQuantity!}{' '}
+                                            {t('app.currency')}
                                           </span>
                                           <hr />
                                         </div>
@@ -695,7 +701,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                     </td>
                     <td>
                       <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
-                        <strong>{order.grandPrice}</strong> ر.ق
+                        <strong>{order.grandPrice}</strong> {t('app.currency')}
                       </span>
                     </td>
                     <td className='px-1 py-2'>{order.orderId}</td>

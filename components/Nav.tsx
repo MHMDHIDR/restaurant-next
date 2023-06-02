@@ -151,26 +151,26 @@ const Nav = () => {
             id='menu'
           >
             <li>
-              <MyLink to='menu'>{t('app.menu.title')}</MyLink>
+              <MyLink to='menu'>{t('app.nav.menu.title')}</MyLink>
             </li>
             <li>
-              <MyLink to='new'>{t('app.newFood.title')}</MyLink>
+              <MyLink to='new'>{t('app.nav.newFood.title')}</MyLink>
             </li>
             <li>
               <Link href='/categories' className='underline-hover'>
-                {t('app.categories.title')}
+                {t('app.nav.categories.title')}
               </Link>
             </li>
             <li>
-              <MyLink to='about'>{t('app.about.title')}</MyLink>
+              <MyLink to='about'>{t('app.nav.about.title')}</MyLink>
             </li>
             <li>
-              <MyLink to='contact'>{t('app.contact.title')}</MyLink>
+              <MyLink to='contact'>{t('app.nav.contact.title')}</MyLink>
             </li>
             <li className='flex gap-3'>
               {userData || session ? (
                 <NavMenu
-                  label={`مرحباً عزيزي ${
+                  label={`${t('app.nav.accountOptions.welcome')} ${
                     userData ? userData.userFullName : session ? session!.user!.name : ''
                   }`}
                   isOptions={false}
@@ -185,20 +185,20 @@ const Nav = () => {
                       href='/dashboard'
                       className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 dark:hover:bg-gray-500 xl:border-0'
                     >
-                      لوحة التحكم
+                      {t('app.nav.accountOptions.dashboard')}
                     </Link>
                   )}
                   <Link
                     href='/my-orders'
                     className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 dark:hover:bg-gray-500 xl:border-0'
                   >
-                    طلباتي
+                    {t('app.nav.accountOptions.myorders')}
                   </Link>
                   <button
                     className='px-3 py-1 text-sm text-center text-white transition-colors bg-red-700 border-2 rounded-lg select-none hover:bg-red-600 xl:border-0'
                     onClick={handleLogout}
                   >
-                    تسجيل الخروج
+                    {t('app.nav.accountOptions.signout')}
                   </button>
                 </NavMenu>
               ) : session === null && !userData && userData === false ? (
@@ -206,7 +206,7 @@ const Nav = () => {
                   href='/auth/login'
                   className='px-3 py-1 text-sm text-center text-white transition-colors bg-gray-800 border-2 rounded-lg select-none hover:bg-gray-700 xl:border-0'
                 >
-                  تسجيل الدخول
+                  {t('app.nav.accountOptions.signin')}
                 </Link>
               ) : null}
             </li>

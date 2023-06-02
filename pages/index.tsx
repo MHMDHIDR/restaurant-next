@@ -246,7 +246,7 @@ const Index = ({
         <section id='menu' className='py-12 my-8 menu'>
           <div className='container relative mx-auto'>
             <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-              {t('app.menu.title')}
+              {t('app.nav.menu.title')}
             </h2>
             <div className='w-11/12 mx-auto overflow-hidden'>
               {menuFood && menuFood?.response?.length > 0 ? (
@@ -255,7 +255,7 @@ const Index = ({
                 </div>
               ) : (
                 <span className='inline-block w-full my-2 text-lg font-bold text-center text-red-500'>
-                  {t('app.message.noFoodFound')}
+                  {t('app.messages.noFoodFound')}
                 </span>
               )}
             </div>
@@ -263,7 +263,7 @@ const Index = ({
         </section>
         <section id='Categories' className='container mx-auto'>
           <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-            {t('app.categories.title')}
+            {t('app.nav.categories.title')}
           </h3>
           <div className='flex flex-wrap justify-center mt-32 gap-14 xl:justify-between'>
             <Link
@@ -326,7 +326,7 @@ const Index = ({
         <section id='new' className='py-12 my-8 overflow-x-hidden new'>
           <div className='container mx-auto text-center'>
             <h2 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-              {t('app.newFood.title')}
+              {t('app.nav.newFood.title')}
             </h2>
             {newFood && newFood?.response?.length > 0 ? (
               newFood?.response?.map((item: foodDataProps['response'], idx: number) => (
@@ -366,7 +366,7 @@ const Index = ({
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            إحذف من السلة
+                            {t('app.foodItem.removeFromCart')}
                           </span>
                         </div>
                       ) : (
@@ -376,7 +376,7 @@ const Index = ({
                           </span>
                           &nbsp;&nbsp;
                           <span className='mr-4 text-center pointer-events-none'>
-                            أضف إلى السلة
+                            {t('app.foodItem.addToCart')}
                           </span>
                         </div>
                       )
@@ -386,7 +386,7 @@ const Index = ({
               ))
             ) : (
               <p className='form__msg inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'>
-                {t('app.message.noFoodFound')}
+                {t('app.messages.noFoodFound')}
               </p>
             )}
           </div>
