@@ -14,8 +14,10 @@ const getInitialLocale = (router: NextRouter): Locale => {
   const storedLocale = Cookies.get('locale')
   if (storedLocale && router.locales?.includes(storedLocale)) {
     return storedLocale as Locale
+  } else if (router.locales) {
+    return router.locales[0] as Locale
   }
-  return router.locale as Locale
+  return router.defaultLocale as Locale
 }
 
 export const useLocale = () => {

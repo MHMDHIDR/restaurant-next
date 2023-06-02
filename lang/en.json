@@ -2,8 +2,8 @@
   "app": {
     "title": "Restaurant",
     "lang": {
-      "ar": "Arabic 🇶🇦",
-      "en": "English 🇺🇸"
+      "en": "English 🇺🇸",
+      "ar": "Arabic 🇶🇦"
     },
     "main": {
       "description": "Restaurant App To Find Order And Delicious Food!"
@@ -30,6 +30,9 @@
         "myorders": "My Orders",
         "signin": "Sign In",
         "signout": "Sign Out"
+      },
+      "cart": {
+        "title": "View Cart"
       }
     },
     "search": {

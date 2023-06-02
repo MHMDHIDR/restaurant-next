@@ -108,9 +108,13 @@ const Nav = () => {
 
         <ThemeToggler />
 
-        <Link href='/order-food' className='underline-hover'>
-          <span className='hidden sm:inline'>سلة الطلبات: </span>
-          <span>{cartItemsLength}&nbsp;&nbsp;🛒</span>
+        <Link
+          href='/order-food'
+          className={`flex gap-x-3 underline-hover ${locale === 'ar' ? 'rtl' : 'ltr'}`}
+        >
+          <span>🛒</span>
+          <span className='hidden sm:inline'>{t('app.nav.cart.title')} : </span>
+          <span className='font-bold'>{cartItemsLength}</span>
         </Link>
 
         {/* Nav toggler */}
