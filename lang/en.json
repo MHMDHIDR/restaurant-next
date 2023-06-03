@@ -124,6 +124,110 @@
     "messages": {
       "noFoodFound": "Sorry! We Couldn't Find New Food 😕"
     },
+    "login": {
+      "title": "Login",
+      "form": {
+        "emailOrPhone": {
+          "label": "Email or Phone Number"
+        },
+        "password": {
+          "label": "Password"
+        },
+        "loginBtn": {
+          "label": "Login",
+          "loading": "Login In..."
+        },
+        "loginWithGoogleBtn": {
+          "label": "Login with Google"
+        },
+        "or": "OR",
+        "join": "Join our Community and Order",
+        "forgot": "Forgot my password"
+      }
+    },
+    "join": {
+      "title": "Join Our Community",
+      "form": {
+        "name": {
+          "label": "Name"
+        },
+        "email": {
+          "label": "Email"
+        },
+        "phone": {
+          "label": "Phone Number, (e.g: 33445566)"
+        },
+        "password": {
+          "label": "Password"
+        },
+        "joinBtn": {
+          "label": "Join",
+          "loading": "Joining..."
+        },
+        "or": "OR",
+        "login": "Login Now and Order"
+      }
+    },
+    "forgot": {
+      "title": "Reset Password",
+      "form": {
+        "emailOrPhone": {
+          "label": "Email or Phone Number"
+        },
+        "forgotBtn": {
+          "label": "Send Reset Request",
+          "loading": "Sending Reset Request..."
+        },
+        "or": "OR",
+        "join": "Join our Community and Order",
+        "login": "Login Now and Order"
+      }
+    },
+    "reset": {
+      "title": "Enter Your New Password",
+      "form": {
+        "password": {
+          "label": "Please Enter a New Password",
+          "longText": "The password must consist of English letters and numbers only, and its length must be from at least 8 letters and numbers to a maximum of 50 letters and numbers",
+          "noMatch": "You Passwords Does NOT Match, You Must Match both passwords"
+        },
+        "confirmPassword": {
+          "label": "Please Re-Enter the New Password again to Confirm"
+        },
+        "resetBtn": {
+          "label": "Reset Password",
+          "loading": "Resetting your password Now..."
+        },
+        "or": "أو",
+        "join": "تسجيل حساب جديد",
+        "login": "تسجيل الدخول"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "mainMenu": {
+        "orders": {
+          "title": "Orders",
+          "subtitle": "Orders Count"
+        },
+        "menu": {
+          "title": "Menu",
+          "subtitle": "Menu Items Count"
+        },
+        "add": {
+          "title": "Add Foods, Drinks, or Sweets"
+        }
+      },
+      "sideBar": {
+        "dashboard": "Dashboard",
+        "orders": "Orders",
+        "statistics": "Statistics",
+        "menu": "Menu",
+        "add": "Add",
+        "users": "Users",
+        "settings": "Settings"
+      }
+    },
     "footer": {
       "links": {
         "title": "Links",

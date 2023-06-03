@@ -15,6 +15,10 @@ export const useLocale = () => {
     [router]
   )
 
+  const direction = useMemo(() => {
+    return router.locale === 'ar' ? 'rtl' : 'ltr'
+  }, [router])
+
   const switchLocale = useCallback(
     (locale: Locale) => {
       if (locale === router.locale) {
@@ -25,5 +29,6 @@ export const useLocale = () => {
     },
     [router]
   )
-  return { locale: router.locale, switchLocale, messages: flattenedMessages }
+
+  return { locale: router.locale, switchLocale, messages: flattenedMessages, direction }
 }

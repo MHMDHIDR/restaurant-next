@@ -7,6 +7,7 @@ import menuToggler from 'functions/menuToggler'
 import Image from 'next/image'
 import useAxios from 'hooks/useAxios'
 import { USER } from '@constants'
+import LanguageSwitcher from 'components/LanguageSwitcher'
 
 const DashboardNav = () => {
   const handleLogout = () => {
@@ -48,7 +49,10 @@ const DashboardNav = () => {
         )}
       </Link>
 
-      <ThemeToggler />
+      <div className='flex items-center justify-center gap-x-5 gap-y-3'>
+        <ThemeToggler />
+        <LanguageSwitcher />
+      </div>
 
       <div className='flex flex-wrap justify-end gap-4'>
         <Link

@@ -10,6 +10,7 @@ import { EyeIconClose, EyeIconOpen } from 'components/Icons/EyeIcon'
 import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
 import { origin, USER } from '@constants'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Join = () => {
   useDocumentTitle('Join')
@@ -61,6 +62,9 @@ const Join = () => {
     }
   }
 
+  const { t } = useTranslate()
+  const { locale } = useRouter()
+
   // if done loading (NOT Loading) then show the login form
   return !loading ? (
     <>
@@ -72,7 +76,7 @@ const Join = () => {
             className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'
             data-section='login'
           >
-            تسجيل حساب جديد
+            {t('app.join.title')}
           </h3>
           <div className='max-w-6xl mx-auto'>
             <form className='mt-32' onSubmit={handleJoin}>
@@ -86,7 +90,7 @@ const Join = () => {
                   autoFocus
                   required
                 />
-                <span className='form__label'>الاســـــــــــــــــم</span>
+                <span className='form__label'>{t('app.join.form.name.label')}</span>
               </label>
 
               <label htmlFor='email' className='form__group'>
@@ -99,7 +103,7 @@ const Join = () => {
                   dir='auto'
                   required
                 />
-                <span className='form__label'>البريد الالكترونــي</span>
+                <span className='form__label'>{t('app.join.form.email.label')}</span>
               </label>
 
               <label htmlFor='tel' className='form__group'>
@@ -112,7 +116,7 @@ const Join = () => {
                   dir='auto'
                   required
                 />
-                <span className='form__label'>رقم الهاتـــــــــف</span>
+                <span className='form__label'>{t('app.join.form.phone.label')}</span>
               </label>
 
               <label htmlFor='password' className='form__group'>
@@ -126,7 +130,9 @@ const Join = () => {
                   required
                 />
                 <span
-                  className='absolute cursor-pointer px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none left-1 sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60;'
+                  className={`absolute cursor-pointer px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60  ${
+                    locale === 'ar' ? 'left-1' : 'right-1'
+                  }`}
                   onClick={prevState2 => setPasswordVisible(prevState => !prevState)}
                 >
                   {passwordVisible ? (
@@ -135,7 +141,7 @@ const Join = () => {
                     <EyeIconOpen className={`fill-green-700 dark:fill-green-400`} />
                   )}
                 </span>
-                <span className='form__label'>كلمــة المــــــرور</span>
+                <span className='form__label'>{t('app.join.form.password.label')}</span>
               </label>
 
               <div className='flex flex-col gap-6 text-center border-none form__group'>
@@ -147,15 +153,15 @@ const Join = () => {
                   {isSendingJoinForm && isSendingJoinForm ? (
                     <>
                       <LoadingSpinner />
-                      &nbsp;جارِ التسجيل...
+                      &nbsp;{t('app.join.form.joinBtn.loading')}
                     </>
                   ) : (
-                    'تسجيل'
+                    t('app.join.form.joinBtn.label')
                   )}
                 </button>
 
                 <strong className='block mx-auto my-8 text-orange-800 dark:text-orange-600 w-fit'>
-                  أو
+                  {t('app.join.form.or')}
                 </strong>
 
                 <div className='flex items-center sm:gap-y-12 gap-x-6 justify-evenly'>
@@ -163,7 +169,7 @@ const Join = () => {
                     href='/auth/login'
                     className='mx-auto text-center text-orange-700 underline-hover dark:text-orange-800 sm:dark:text-orange-500 w-fit'
                   >
-                    تسجيل الدخول
+                    {t('app.join.form.login')}
                   </Link>
                 </div>
               </div>

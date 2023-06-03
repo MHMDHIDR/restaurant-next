@@ -12,6 +12,7 @@ import goTo from 'functions/goTo'
 import logoutUser from 'functions/logoutUser'
 import menuToggler from 'functions/menuToggler'
 import { toJson } from 'utils/functions/jsonTools'
+import { useTranslate } from 'hooks/useTranslate'
 
 const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) => {
   useDocumentTitle('Home')
@@ -21,6 +22,8 @@ const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) 
   typeof window !== 'undefined' && document.body.classList.add('dashboard')
 
   useEventListener('keydown', (e: any) => e.key === 'Escape' && menuToggler())
+
+  const { t } = useTranslate()
 
   //check if userStatus is active and the userType is admin
   return loading ? (
@@ -32,7 +35,9 @@ const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) 
   ) : (
     <Layout>
       <div className='container mx-auto'>
-        <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>لوحة التحكم</h1>
+        <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>
+          {t('app.dashboard.title')}
+        </h1>
         <div
           className={`flex justify-center gap-4 flex-wrap${
             userType === 'cashier' ? ' md:justify-center' : ' md:justify-between'
@@ -51,8 +56,10 @@ const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) 
                 alt='menu slider img'
                 className='w-40 h-24'
               />
-              <h3>الطلبات</h3>
-              <span className='text-lg font-bold'>عدد الطلبات {orderItemsCount}</span>
+              <h3>{t('app.dashboard.mainMenu.orders.title')}</h3>
+              <span className='text-lg font-bold'>
+                {t('app.dashboard.mainMenu.orders.subtitle')} {orderItemsCount}
+              </span>
             </Link>
           )}
 
@@ -70,8 +77,10 @@ const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) 
                   alt='menu slider img'
                   className='w-40 h-24'
                 />
-                <h3>القائمة</h3>
-                <span className='text-lg font-bold'>عدد الوجبات {menuItemsCount}</span>
+                <h3>{t('app.dashboard.mainMenu.menu.title')}</h3>
+                <span className='text-lg font-bold'>
+                  {t('app.dashboard.mainMenu.menu.subtitle')} {menuItemsCount}
+                </span>
               </Link>
 
               <Link
@@ -86,7 +95,7 @@ const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) 
                   alt='menu slider img'
                   className='w-40 h-24'
                 />
-                <h3>إضافة وجبة أو مشروب</h3>
+                <h3>{t('app.dashboard.mainMenu.add.title')}</h3>
               </Link>
             </>
           )}

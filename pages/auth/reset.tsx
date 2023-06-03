@@ -10,6 +10,8 @@ import useAuth from 'hooks/useAuth'
 import { origin } from '@constants'
 import { validPassword } from 'functions/validForm'
 import { stringJson } from 'functions/jsonTools'
+import { useTranslate } from 'hooks/useTranslate'
+import { EyeIconClose, EyeIconOpen } from 'components/Icons/EyeIcon'
 
 const ResetPassword = () => {
   useDocumentTitle('Reset Password')
@@ -19,6 +21,7 @@ const ResetPassword = () => {
   const [sendingResetForm, setIsSendingResetForm] = useState(false)
   const [resetLinkSentStatus, setNewPassStatus] = useState(0)
   const [resetLinkMsg, setNewPassMsg] = useState('')
+  const [passwordVisible, setPasswordVisible] = useState(false)
 
   const newPassErr = useRef<HTMLSpanElement>(null)
   const confirmNewPassErr = useRef<HTMLSpanElement>(null)
@@ -27,7 +30,7 @@ const ResetPassword = () => {
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
   const { push, query } = useRouter()
-  const { t } = query
+  const { t: token } = query
 
   const { isAuth, userType, loading } = useAuth()
 
@@ -65,7 +68,7 @@ const ResetPassword = () => {
     } else {
       const formData = new FormData()
       formData.append('userPassword', newUserPass.trim())
-      formData.append('userToken', stringJson(t ?? 't'))
+      formData.append('userToken', stringJson(token ?? 'token'))
 
       // if there's no error in the form
       e.target.reset()
@@ -94,6 +97,9 @@ const ResetPassword = () => {
     }
   }
 
+  const { t } = useTranslate()
+  const { locale } = useRouter()
+
   // if done loading (NOT Loading) then show the login form
   return !loading ? (
     <Layout>
@@ -104,7 +110,7 @@ const ResetPassword = () => {
             className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'
             data-section='login'
           >
-            كلمة السر الجديدة
+            {t('app.reset.title')}
           </h3>
 
           <div className='max-w-6xl mx-auto'>
@@ -114,7 +120,7 @@ const ResetPassword = () => {
                   className='form__input rtl'
                   id='newUserPass'
                   name='newUserPass'
-                  type='password'
+                  type={passwordVisible ? 'text' : 'password'}
                   min={8}
                   max={50}
                   onChange={e => setNewUserPass(e.target.value)}
@@ -122,14 +128,17 @@ const ResetPassword = () => {
                     const parent = e.target.parentElement
                     if (e.target.value.length > 0 && !validPassword(e.target.value)) {
                       parent!.classList.add('notvalid')
-                      newPassErr.current!.textContent =
-                        'كلمة المرور يجب أن تتكون من حروف وأرقام بالانجليزية فقط، وطولها من 8 أحرف وأرقام على الأقل إلى 50 أحرف وأرقام على الأكثر'
+                      newPassErr.current!.textContent = t(
+                        'app.reset.form.password.longText'
+                      )
                     } else if (
                       newUserPassConfirm.length > 0 &&
                       e.target.value !== newUserPassConfirm
                     ) {
                       parent!.classList.add('notvalid')
-                      newPassErr.current!.textContent = 'كلمة المرور غير متطابقة'
+                      newPassErr.current!.textContent = t(
+                        'app.reset.form.password.noMatch'
+                      )
                     } else {
                       parent!.classList.remove('notvalid')
                       newPassErr.current!.textContent = ''
@@ -138,7 +147,19 @@ const ResetPassword = () => {
                   autoFocus
                   required
                 />
-                <span className='form__label'>الرجاء كتابة كلمة المرور الجديدة</span>
+                <span
+                  className={`absolute cursor-pointer px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60  ${
+                    locale === 'ar' ? 'left-1' : 'right-1'
+                  }`}
+                  onClick={prevState2 => setPasswordVisible(prevState => !prevState)}
+                >
+                  {passwordVisible ? (
+                    <EyeIconClose className={`stroke-red-700 dark:stroke-red-400`} />
+                  ) : (
+                    <EyeIconOpen className={`fill-green-700 dark:fill-green-400`} />
+                  )}
+                </span>
+                <span className='form__label'>{t('app.reset.form.password.label')}</span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                   ref={newPassErr}
@@ -150,7 +171,7 @@ const ResetPassword = () => {
                   className='form__input rtl'
                   id='newUserPassConfirm'
                   name='newUserPassConfirm'
-                  type='password'
+                  type={passwordVisible ? 'text' : 'password'}
                   min={8}
                   max={50}
                   onChange={e => setNewUserPassConfirm(e.target.value)}
@@ -158,11 +179,14 @@ const ResetPassword = () => {
                     const parent = e.target.parentElement
                     if (e.target.value && !validPassword(e.target.value)) {
                       parent.classList.add('notvalid')
-                      confirmNewPassErr.current!.textContent =
-                        'كلمة المرور يجب أن تتكون من حروف وأرقام بالانجليزية فقط، وطولها 8 أحرف وأرقام على الأقل و 50 أحرف وأرقام على الأكثر'
+                      confirmNewPassErr.current!.textContent = t(
+                        'app.reset.form.password.longText'
+                      )
                     } else if (e.target.value !== newUserPass) {
                       parent.classList.add('notvalid')
-                      confirmNewPassErr.current!.textContent = 'كلمة المرور غير متطابقة'
+                      confirmNewPassErr.current!.textContent = t(
+                        'app.reset.form.password.noMatch'
+                      )
                     } else {
                       parent.classList.remove('notvalid')
                       confirmNewPassErr.current!.textContent = ''
@@ -170,8 +194,20 @@ const ResetPassword = () => {
                   }}
                   required
                 />
+                <span
+                  className={`absolute cursor-pointer px-2 text-xs text-black capitalize transition-all bg-gray-200 select-none sm:text-sm md:text-lg dark:text-gray-100 dark:bg-gray-800 opacity-60  ${
+                    locale === 'ar' ? 'left-1' : 'right-1'
+                  }`}
+                  onClick={prevState2 => setPasswordVisible(prevState => !prevState)}
+                >
+                  {passwordVisible ? (
+                    <EyeIconClose className={`stroke-red-700 dark:stroke-red-400`} />
+                  ) : (
+                    <EyeIconOpen className={`fill-green-700 dark:fill-green-400`} />
+                  )}
+                </span>
                 <span className='form__label'>
-                  الرجاء كتابة كلمة المرور الجديدة مرة أخرى للتأكيد
+                  {t('app.reset.form.confirmPassword.label')}
                 </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
@@ -197,10 +233,10 @@ const ResetPassword = () => {
                   {sendingResetForm && sendingResetForm ? (
                     <>
                       <LoadingSpinner />
-                      جارِ تغيير كلمة المرور...
+                      {t('app.reset.form.resetBtn.loading')}
                     </>
                   ) : (
-                    'تغيير كلمة المرور'
+                    t('app.reset.form.resetBtn.label')
                   )}
                 </button>
               </div>

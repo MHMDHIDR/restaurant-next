@@ -10,6 +10,7 @@ import useDocumentTitle from 'hooks/useDocumentTitle'
 import useAuth from 'hooks/useAuth'
 import { origin } from '@constants'
 import { parseJson } from 'functions/jsonTools'
+import { useTranslate } from 'hooks/useTranslate'
 
 const ForgotDataFromLocalStorage =
   typeof window !== 'undefined' && parseJson(localStorage.getItem('ForgotData') || '{}')
@@ -84,10 +85,11 @@ const ForgotPassword = () => {
     }
   }
 
+  const { t } = useTranslate()
+
   // if done loading (NOT Loading) then show the login form
   return !loading ? (
     <Layout>
-      {' '}
       <section className='py-12 my-8'>
         <div className='container mx-auto'>
           <Notification sendStatus={forgotLinkSentStatus} sendStatusMsg={forgotLinkMsg} />
@@ -95,7 +97,7 @@ const ForgotPassword = () => {
             className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'
             data-section='login'
           >
-            إستعادة كلمة المرور
+            {t('app.forgot.title')}
           </h3>
           <div className='max-w-6xl mx-auto'>
             <form className='mt-32' onSubmit={sendForgotPassForm}>
@@ -111,7 +113,9 @@ const ForgotPassword = () => {
                   autoFocus
                   required
                 />
-                <span className='form__label'>البريد الالكتروني أو رقم الهاتف</span>
+                <span className='form__label'>
+                  {t('app.forgot.form.emailOrPhone.label')}
+                </span>
               </label>
 
               <div className='flex flex-col gap-6 text-center border-none form__group ltr'>
@@ -132,15 +136,15 @@ const ForgotPassword = () => {
                   {sendingForgotForm && sendingForgotForm ? (
                     <>
                       <LoadingSpinner />
-                      <span>جارِ إرسال طلب استعادة كلمة المرور...</span>
+                      <span>{t('app.forgot.form.forgotBtn.loading')}</span>
                     </>
                   ) : (
-                    'إرسال طلب الاستعادة'
+                    t('app.forgot.form.forgotBtn.label')
                   )}
                 </button>
 
                 <strong className='block mx-auto my-8 text-orange-800 dark:text-orange-600 w-fit'>
-                  أو
+                  {t('app.forgot.form.or')}
                 </strong>
 
                 <div className='flex items-center sm:gap-y-12 gap-x-6 justify-evenly'>
@@ -148,13 +152,13 @@ const ForgotPassword = () => {
                     href='/auth/join'
                     className='mx-auto text-center text-orange-700 underline-hover dark:text-orange-800 sm:dark:text-orange-500 w-fit'
                   >
-                    تسجيل حساب جديد
+                    {t('app.forgot.form.join')}
                   </Link>
                   <Link
                     href='/auth/login'
                     className='mx-auto text-center text-orange-700 underline-hover dark:text-orange-800 sm:dark:text-orange-500 w-fit'
                   >
-                    تسجيل الدخول
+                    {t('app.forgot.form.login')}
                   </Link>
                 </div>
               </div>
