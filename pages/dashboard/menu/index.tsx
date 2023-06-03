@@ -24,6 +24,7 @@ import { origin, ITEMS_PER_PAGE, USER } from '@constants'
 import { FoodImgsProps } from '@types'
 import { parseJson, stringJson } from 'functions/jsonTools'
 import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const DashboardMenu = () => {
   useDocumentTitle('Menu')
@@ -40,6 +41,9 @@ const DashboardMenu = () => {
   const [modalLoading, setModalLoading] = useState<boolean>(false)
   const [menuFood, setMenuFood] = useState<any>()
   const { userType } = useAuth()
+
+  const { t } = useTranslate()
+  const { locale } = useLocale()
 
   const { loading, ...response } = useAxios({
     url: `/foods?page=1&limit=${ITEMS_PER_PAGE}&createdAt=-1`
@@ -112,8 +116,6 @@ const DashboardMenu = () => {
     }
   }
 
-  const { t } = useTranslate()
-
   return loading || !userType ? (
     <LoadingPage />
   ) : userType !== 'admin' || (USER && USER?.userAccountType !== 'admin') ? (
@@ -150,27 +152,41 @@ const DashboardMenu = () => {
             )}
 
             <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-              قائمة الوجبات والمشروبات
+              {t('app.dashboard.menuPage.title')}
             </h3>
 
             <Link href='food/add'>
               <ClickableButton>
                 <>
-                  <Add className='inline-flex ml-4' />
-                  <span>إضافة وجبة</span>
+                  <Add className={`inline-flex ${locale === 'ar' ? 'ml-4' : 'mr-4'}`} />
+                  <span>{t('app.dashboard.menuPage.add')}</span>
                 </>
               </ClickableButton>
             </Link>
             <table className='table w-full text-center'>
               <thead className='text-white bg-orange-800'>
                 <tr>
-                  <th className='px-1 py-2'>الترتيب</th>
-                  <th className='px-1 py-2'>صورة</th>
-                  <th className='px-1 py-2'>اسم الوجبة</th>
-                  <th className='px-1 py-2'>الوصف</th>
-                  <th className='px-1 py-2'>السعر</th>
-                  <th className='px-1 py-2'>آخر تحديث للوجبة</th>
-                  <th className='px-1 py-2'>الاجراء</th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.menuPage.itemsTable.columns.order')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.menuPage.itemsTable.columns.image')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.menuPage.itemsTable.columns.name')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.menuPage.itemsTable.columns.desc')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.menuPage.itemsTable.columns.price')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.menuPage.itemsTable.columns.lastUpdate')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.menuPage.itemsTable.columns.actions')}
+                  </th>
                 </tr>
               </thead>
 
@@ -193,7 +209,7 @@ const DashboardMenu = () => {
                               `https://source.unsplash.com/random?food`
                             }
                             alt={item.foodName}
-                            className='object-cover rounded-lg shadow-md h-14 w-14'
+                            className='object-cover mx-auto rounded-lg shadow-md h-14 w-14'
                           />
                         </td>
                         <td className='px-1 py-2'>
@@ -208,7 +224,7 @@ const DashboardMenu = () => {
                               : item.foodDesc}
                           </p>
                         </td>
-                        <td className='px-1 py-2 min-w-[4.5rem]'>
+                        <td className='px-1 py-2 min-w-[5.5rem]'>
                           <span>
                             <strong className='inline-block m-2 text-xl text-green-700 dark:text-green-400'>
                               {item.foodPrice}
@@ -272,13 +288,13 @@ const DashboardMenu = () => {
                     <td />
                     <td className='flex flex-col px-1 py-2'>
                       <p className='my-2 md:text-2xl text-red-600 dark:text-red-400 font-[600] py-2 px-1'>
-                        عفواً، لم يتم العثور على أي وجبات
+                        {t('app.dashboard.menuPage.notFound')}
                       </p>
                       <Link
                         href={goTo('add-food')}
                         className='min-w-[7rem] bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-6 rounded-md'
                       >
-                        إضافة وجبة
+                        {t('app.dashboard.menuPage.add')}
                       </Link>
                     </td>
                   </tr>

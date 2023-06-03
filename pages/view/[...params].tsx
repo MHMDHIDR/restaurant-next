@@ -132,13 +132,13 @@ const ViewFood = ({ viewFood }: any) => {
           ) : (
             <div className='flex flex-col items-center justify-center text-base text-center lg:text-xl 2xl:text-3xl gap-14'>
               <span className='my-2 font-bold text-red-500'>
-                عفواً! لم يتم العثور على الوجبة المطلوبة &nbsp;&nbsp;&nbsp; 😥
+                {t('app.viewPage.item.notFound')}
               </span>
               <Link
                 href={`/${locale}`}
                 className='px-3 py-1 text-orange-800 transition-colors bg-orange-100 border border-orange-700 rounded hover:bg-orange-200'
               >
-                يمكنك العودة للصفحة الرئيسية
+                {t('app.viewPage.item.returnToHome')}
               </Link>
             </div>
           )}

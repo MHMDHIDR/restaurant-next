@@ -3,6 +3,7 @@ import scrollToView from 'functions/scrollToView'
 import { Key } from 'react'
 import { PaginationProps } from '@types'
 import { ITEMS_PER_PAGE } from '@constants'
+import { useLocale } from 'hooks/useLocale'
 
 const Pagination = ({
   routeName,
@@ -14,6 +15,7 @@ const Pagination = ({
   category
 }: PaginationProps) => {
   const numOfPages = [...Array(numberOfPages).keys()]
+  const { locale } = useLocale()
 
   return !foodId && count > itemsPerPage ? (
     <div
@@ -22,7 +24,7 @@ const Pagination = ({
     >
       {/* Previous Link Arrow */}
       <a
-        href={`/${routeName}${
+        href={`/${locale}/${routeName}${
           category
             ? '/' + category + '/' + (pageNum! - 1 === 1 ? '' : pageNum! - 1)
             : pageNum! - 1 === 1
@@ -41,7 +43,7 @@ const Pagination = ({
         {numOfPages.map((page: number, index: Key) => (
           <a
             key={index}
-            href={`/${routeName}${
+            href={`/${locale}/${routeName}${
               category
                 ? '/' + category + '/' + (page + 1 === 1 ? '' : page + 1)
                 : page + 1 === 1
@@ -62,7 +64,7 @@ const Pagination = ({
 
       {/* Next Link Arrow */}
       <a
-        href={`/${routeName}${
+        href={`/${locale}/${routeName}${
           category ? '/' + category + '/' + (pageNum! + 1) : '/' + (pageNum! + 1)
         }`}
         className={`${

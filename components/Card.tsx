@@ -128,7 +128,7 @@ const Card = ({
             </div>
           )}
           {cCtaLabel ? (
-            <div className='flex justify-evenly gap-3 flex-wrap grow-[0.5] text-center bg-transparent'>
+            <div className='flex justify-evenly items-center gap-3 flex-wrap grow-[0.5] text-center bg-transparent'>
               {cCtaLink ? (
                 <Link
                   href={cCtaLink}
@@ -142,7 +142,7 @@ const Card = ({
               {!loading && userType === 'admin' && (
                 <Link
                   href={`/dashboard/food/edit/${cItemId}`}
-                  className='px-4 py-1 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700'
+                  className='px-4 py-1.5 mx-2 text-white bg-green-600 rounded-md hover:bg-green-700 h-fit'
                 >
                   {t('app.foodItem.edit')}
                 </Link>

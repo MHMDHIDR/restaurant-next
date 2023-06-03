@@ -9,8 +9,15 @@ import useAxios from 'hooks/useAxios'
 import { USER } from '@constants'
 import LanguageSwitcher from 'components/LanguageSwitcher'
 import { useLocale } from 'hooks/useLocale'
+import { useTranslate } from 'hooks/useTranslate'
 
 const DashboardNav = () => {
+  const [websiteLogoDisplayPath, setWebsiteLogoDisplayPath] = useState('')
+  const { response } = useAxios({ url: '/settings' })
+
+  const { locale } = useLocale()
+  const { t } = useTranslate()
+
   const handleLogout = () => {
     if (USER) {
       localStorage.removeItem('user')
@@ -20,14 +27,9 @@ const DashboardNav = () => {
     }
   }
 
-  const [websiteLogoDisplayPath, setWebsiteLogoDisplayPath] = useState('')
-  const { response } = useAxios({ url: '/settings' })
-
   useEffect(() => {
     if (response !== null) setWebsiteLogoDisplayPath(response.websiteLogoDisplayPath)
   }, [response])
-
-  const { locale } = useLocale()
 
   return (
     <nav
@@ -63,13 +65,13 @@ const DashboardNav = () => {
           className='inline-block px-2 py-1 text-white bg-orange-700 border rounded-lg cursor-pointer hover:bg-opacity-30'
           onClick={handleLogout}
         >
-          تسجيل الخروج
+          {t('app.dashboard.nav.signout')}
         </Link>
         <Link
           href={`/${locale}`}
           className='inline-block px-2 py-1 text-white bg-orange-700 border rounded-lg cursor-pointer hover:bg-opacity-30'
         >
-          زيارة الموقع
+          {t('app.dashboard.nav.visit')}
         </Link>
       </div>
     </nav>

@@ -77,7 +77,7 @@ const DashboardSidebar = () => {
               </SideBarLink>
               <SideBarLink href={'menu'}>{t('app.dashboard.sideBar.menu')}</SideBarLink>
               <SideBarLink href={'food/add'}>
-                {t('app.dashboard.sideBar.dashboard')}
+                {t('app.dashboard.sideBar.add')}
               </SideBarLink>
               <SideBarLink href={'users'}>{t('app.dashboard.sideBar.users')}</SideBarLink>
               <SideBarLink href={'settings'}>
@@ -100,12 +100,14 @@ const DashboardSidebar = () => {
   )
 }
 
-const SideBarLink = ({ href, children }: any) => (
-  <li className='hover:bg-orange-700'>
-    <Link href={goTo(href)} className='dashboard__nav' onClick={() => menuToggler()}>
-      {children}
-    </Link>
-  </li>
-)
+const SideBarLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+  return (
+    <li className='hover:bg-orange-700'>
+      <Link href={goTo(href)} className='dashboard__nav' onClick={() => menuToggler()}>
+        {children}
+      </Link>
+    </li>
+  )
+}
 
 export default DashboardSidebar

@@ -43,6 +43,9 @@ const Login = () => {
 
   const { loading } = useAuth()
 
+  const { t } = useTranslate()
+  const { locale } = useRouter()
+
   useEventListener('click', (e: any) => {
     //confirm means cancel Modal message (hide it)
     if (e.target.id === 'confirm') {
@@ -89,7 +92,7 @@ const Login = () => {
         : userAccountType === 'user'
         ? window.location.replace('/')
         : userAccountType === 'admin'
-        ? window.location.replace('/dashboard')
+        ? window.location.replace(`/${locale}/dashboard`)
         : null
     } catch (response: any) {
       setLoginMsg(response?.response?.message)
@@ -97,9 +100,6 @@ const Login = () => {
       setIsSendingLoginForm(false)
     }
   }
-
-  const { t } = useTranslate()
-  const { locale } = useRouter()
 
   return USER || loading || session!?.user ? (
     <LoadingPage />

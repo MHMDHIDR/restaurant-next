@@ -112,11 +112,12 @@
       "title": "View Meals",
       "item": {
         "notFound": "Sorry! The requested meal was not found 😥",
-        "returnToHome": "Return to the homepage"
+        "returnToHome": "Return to Home"
       }
     },
     "foodItem": {
       "edit": "Edit Item",
+      "remove": "Delete Item",
       "addToCart": "Add To Cart",
       "removeFromCart": "Remove From Cart"
     },
@@ -205,6 +206,10 @@
     },
     "dashboard": {
       "title": "Dashboard",
+      "nav": {
+        "visit": "Visit App",
+        "signout": "Sign Out"
+      },
       "mainMenu": {
         "orders": {
           "title": "Orders",
@@ -226,6 +231,22 @@
         "add": "Add",
         "users": "Users",
         "settings": "Settings"
+      },
+      "menuPage": {
+        "title": "Foods, Drinks, and Sweets Menu",
+        "add": "Add an Item",
+        "notFound": "Sorry! NO meals were found 😥",
+        "itemsTable": {
+          "columns": {
+            "order": "Order",
+            "image": "Image",
+            "name": "Name",
+            "desc": "Description",
+            "price": "Price",
+            "lastUpdate": "The Update Date/Time",
+            "actions": "Actions"
+          }
+        }
       }
     },
     "footer": {
