@@ -9,42 +9,12 @@ import SearchContextProvider from 'contexts/SearchContext'
 import DashboardOrderContextProvider from 'contexts/DashboardOrderContext'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { SessionProvider } from 'next-auth/react'
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { useLocale } from 'hooks/useLocale'
 import { IntlProvider } from 'react-intl'
-import Cookies from 'js-cookie'
 
 export default function App({ Component, pageProps }: AppProps) {
-  const router = useRouter()
-  const { locale } = useLocale() // Use the useLocale hook to get the locale
-
-  const storedLocale = Cookies.get('locale')
-
-  useEffect(() => {
-    if (!storedLocale) {
-      // Language is not set in the cookie, so set it based on the app locale
-      const currentLocale = locale
-      const dir = currentLocale === 'ar' ? 'rtl' : 'ltr'
-
-      Cookies.set('locale', currentLocale ?? 'ar')
-      document.documentElement.setAttribute('dir', dir)
-
-      if (router.defaultLocale !== currentLocale) {
-        // Redirect to the correct language path if it's not the default locale
-        const href = router.pathname
-        const as = `/${currentLocale}${router.asPath}`
-
-        router.replace(href, as)
-      }
-    } else {
-      // Language is already set in the cookie, so set the `dir` attribute
-      const dir = storedLocale === 'ar' ? 'rtl' : 'ltr'
-      document.documentElement.setAttribute('dir', dir)
-    }
-  }, [storedLocale, locale, router])
-
-  const { messages } = useLocale()
+  // useLocale is a custom hook.
+  const { locale, messages } = useLocale()
 
   return (
     <IntlProvider locale={locale as string} messages={messages}>
