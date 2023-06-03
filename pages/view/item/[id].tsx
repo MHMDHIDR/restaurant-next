@@ -9,6 +9,7 @@ import Card from 'components/Card'
 import { API_URL } from '@constants'
 import Layout from 'components/Layout'
 import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const IndexId = ({ item }: any) => {
   useDocumentTitle('View Foods')
@@ -22,6 +23,7 @@ const IndexId = ({ item }: any) => {
   }, [items])
 
   const { t } = useTranslate()
+  const { locale } = useLocale()
 
   return (
     <Layout>
@@ -88,7 +90,7 @@ const IndexId = ({ item }: any) => {
                   {t('app.viewPage.item.notFound')}
                 </span>
                 <Link
-                  href='/'
+                  href={`/${locale}`}
                   className='px-3 py-1 text-orange-800 transition-colors bg-orange-100 border border-orange-700 rounded hover:bg-orange-200'
                 >
                   {t('app.viewPage.item.returnToHome')}

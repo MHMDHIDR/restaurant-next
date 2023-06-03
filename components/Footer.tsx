@@ -40,7 +40,7 @@ const Footer = () => {
       <div className='container mx-auto'>
         <div className='flex flex-col flex-wrap items-center justify-around gap-6 py-4 pb-20 sm:flex-row'>
           <div className='flex flex-wrap items-center justify-center flex-1 sm:flex-nowrap'>
-            <Link href='/' aria-label='App Logo' title='App Logo'>
+            <Link href={`/${locale}`} aria-label='App Logo' title='App Logo'>
               {settings?.websiteLogoDisplayPath ? (
                 <Image
                   src={settings.websiteLogoDisplayPath}

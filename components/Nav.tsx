@@ -71,7 +71,6 @@ const Nav = () => {
   })
 
   const { locale } = useLocale()
-
   const { t } = useTranslate()
 
   return (
@@ -86,7 +85,7 @@ const Nav = () => {
               : ''
           }`}
       >
-        <Link aria-label='App Logo' title='App Logo' href='/'>
+        <Link aria-label='App Logo' title='App Logo' href={`/${locale}`}>
           {websiteLogoDisplayPath ? (
             <Image
               src={websiteLogoDisplayPath}

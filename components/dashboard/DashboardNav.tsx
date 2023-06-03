@@ -8,6 +8,7 @@ import Image from 'next/image'
 import useAxios from 'hooks/useAxios'
 import { USER } from '@constants'
 import LanguageSwitcher from 'components/LanguageSwitcher'
+import { useLocale } from 'hooks/useLocale'
 
 const DashboardNav = () => {
   const handleLogout = () => {
@@ -26,6 +27,8 @@ const DashboardNav = () => {
     if (response !== null) setWebsiteLogoDisplayPath(response.websiteLogoDisplayPath)
   }, [response])
 
+  const { locale } = useLocale()
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-20 flex flex-wrap items-center gap-2 px-5 py-2 text-sm bg-gray-300 shadow-xl xl:text-base bg-opacity-90 dark:bg-neutral-900 dark:bg-opacity-90 nav justify-evenly sm:justify-between lg:px-8 backdrop-blur-sm${
@@ -35,7 +38,7 @@ const DashboardNav = () => {
       }`}
       onClick={() => menuToggler(true)}
     >
-      <Link href='/'>
+      <Link href={`/${locale}`}>
         {websiteLogoDisplayPath ? (
           <Image
             src={websiteLogoDisplayPath}
@@ -63,7 +66,7 @@ const DashboardNav = () => {
           تسجيل الخروج
         </Link>
         <Link
-          href='/'
+          href={`/${locale}`}
           className='inline-block px-2 py-1 text-white bg-orange-700 border rounded-lg cursor-pointer hover:bg-opacity-30'
         >
           زيارة الموقع

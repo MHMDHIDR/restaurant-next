@@ -21,11 +21,9 @@ export const useLocale = () => {
 
   const switchLocale = useCallback(
     (locale: Locale) => {
-      if (locale === router.locale) {
-        return
-      }
+      if (locale === router.locale) return
       const path = router.asPath
-      return router.push(path, path, { locale })
+      return router.push(path, locale, { locale })
     },
     [router]
   )

@@ -1,8 +1,8 @@
+import { useEffect, useRef } from 'react'
 import NavMenu from './NavMenu'
 import { useLocale } from 'hooks/useLocale'
 import type { Locale } from 'hooks/useLocale'
 import { useTranslate } from 'hooks/useTranslate'
-import { useEffect, useRef } from 'react'
 
 const LanguageSwitcher = () => {
   const { locale, switchLocale } = useLocale()
@@ -13,7 +13,7 @@ const LanguageSwitcher = () => {
   const switchLocaleRefEn = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    document.documentElement.setAttribute('dir', direction) // Add this line
+    document.documentElement.setAttribute('dir', direction)
   }, [direction])
 
   const switchLocaleHandler = (e: React.MouseEvent<HTMLButtonElement>) => {

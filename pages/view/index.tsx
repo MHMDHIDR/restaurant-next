@@ -14,6 +14,7 @@ import scrollToView from 'functions/scrollToView'
 import { foodDataProps } from '@types'
 import { API_URL, ITEMS_PER_PAGE } from '@constants'
 import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const ViewFood = ({ viewFood }: any) => {
   useDocumentTitle('View Foods')
@@ -35,6 +36,7 @@ const ViewFood = ({ viewFood }: any) => {
   const { items } = useContext(CartContext)
 
   const { t } = useTranslate()
+  const { locale } = useLocale()
 
   return (
     <Layout>
@@ -124,7 +126,7 @@ const ViewFood = ({ viewFood }: any) => {
                 عفواً! لم يتم العثور على الوجبة المطلوبة &nbsp;&nbsp;&nbsp; 😥
               </span>
               <Link
-                href='/'
+                href={`/${locale}`}
                 className='px-3 py-1 text-orange-800 transition-colors bg-orange-100 border border-orange-700 rounded hover:bg-orange-200'
               >
                 يمكنك العودة للصفحة الرئيسية

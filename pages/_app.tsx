@@ -9,8 +9,8 @@ import SearchContextProvider from 'contexts/SearchContext'
 import DashboardOrderContextProvider from 'contexts/DashboardOrderContext'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { SessionProvider } from 'next-auth/react'
-import { useLocale } from 'hooks/useLocale'
 import { IntlProvider } from 'react-intl'
+import { useLocale } from 'hooks/useLocale'
 
 export default function App({ Component, pageProps }: AppProps) {
   // useLocale is a custom hook.
