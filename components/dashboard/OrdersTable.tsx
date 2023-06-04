@@ -31,6 +31,7 @@ import scrollToView from 'functions/scrollToView'
 import { isNumber } from 'functions/isNumber'
 import Invoice from './Invoice'
 import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const OrdersTable = ({ ordersByUserEmail = false }) => {
   useEffect(() => {
@@ -60,6 +61,8 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const { pageNum }: any = query
   const redirectPath = pathname.includes('dashboard/orders') ? 'orders' : 'my-orders'
   const pageNumber = !pageNum || !isNumber(pageNum) || pageNum < 1 ? 1 : parseInt(pageNum)
+
+  const { locale } = useLocale()
 
   const { loading: LoadingOrders, ...response } = useAxios({
     url: `/orders?page=${pageNumber}&limit=${ITEMS_PER_PAGE}?orderDate=-1`
@@ -285,7 +288,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       )}
 
       <table className='table w-full text-center border-collapse table-auto'>
-        <thead className='text-white bg-orange-800 rtl'>
+        <thead className='text-white bg-orange-800'>
           <tr>
             <th className='min-w-[0.5rem] px-1 py-2'>
               {t('app.dashboard.orders.itemsTable.columns.no')}
@@ -305,11 +308,11 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
             <th className='px-1 py-2 min-w-[20rem]'>
               {t('app.dashboard.orders.itemsTable.columns.details')}
             </th>
-            <th className='px-1 py-2'>
+            <th className='px-1 py-2 min-w-[10rem]'>
               {t('app.dashboard.orders.itemsTable.columns.notes')}
             </th>
-            <th className='px-1 py-2'>
-              ا{t('app.dashboard.orders.itemsTable.columns.totalPrice')}
+            <th className='px-1 py-2 min-w-[5rem]'>
+              {t('app.dashboard.orders.itemsTable.columns.totalPrice')}
             </th>
             <th className='px-1 py-2'>
               {t('app.dashboard.orders.itemsTable.columns.orderNumber')}
@@ -353,7 +356,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                         <td className='min-w-[0.5rem] px-1 py-2'>{idx + 1}</td>
                         <td className='px-1 py-2 min-w-[10rem]'>{order.personName}</td>
                         <td className='px-1 py-2 min-w-[6rem]'>
-                          {!order.userEmail ? order.userEmail : session!?.user!?.email}
+                          {order.userEmail ? order.userEmail : session!?.user!?.email}
                         </td>
                         <td className='text-center min-w-[13rem] px-1 py-2'>
                           <p>{createLocaleDateString(order.orderDate)}</p>
@@ -380,7 +383,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                           <div className='max-h-screen overflow-hidden transition-all duration-300 ordered-items'>
                             {order?.orderItems.length === 0 ? (
                               <p className='max-w-lg mx-auto my-2 text-lg font-bold leading-10 tracking-wider text-red-500'>
-                                عفواً! لا يوجد تفاصيل خاصة بهذا الطلب
+                                {t('app.dashboard.orders.itemsTable.rows.noDetails')}
                               </p>
                             ) : (
                               order?.orderItems?.map((item: cardProps, idx: number) => (
@@ -397,13 +400,26 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                           className='object-cover rounded-lg shadow-md w-14 h-14'
                                         />
                                         <div className='flex flex-col items-start'>
-                                          <span>اسم الطلب: {item.cHeading}</span>
-                                          <span>الكمية: {item.cQuantity}</span>
+                                          <span>
+                                            {t(
+                                              'app.dashboard.orders.itemsTable.rows.itemName'
+                                            )}
+                                            : {item.cHeading}
+                                          </span>
+                                          <span>
+                                            {t(
+                                              'app.dashboard.orders.itemsTable.rows.qty'
+                                            )}
+                                            : {item.cQuantity}
+                                          </span>
                                         </div>
                                       </div>
 
                                       <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
-                                        السعر على حسب الكميات: &nbsp;
+                                        {t(
+                                          'app.dashboard.orders.itemsTable.rows.pricePerQty'
+                                        )}
+                                        : &nbsp;
                                         <strong>
                                           {item.cPrice * item.cQuantity!}
                                           &nbsp;&nbsp;
@@ -421,30 +437,42 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                           toppingName,
                                           toppingPrice,
                                           toppingQuantity
-                                        }) =>
+                                        }: selectedToppingsProps) =>
                                           inSeletedToppings[idx]?.includes(toppingId) && (
-                                            <div key={toppingId} className='flex gap-4'>
+                                            <div
+                                              key={toppingId}
+                                              className='flex flex-wrap gap-4'
+                                            >
                                               <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
                                                 ✅ &nbsp; {toppingName}
                                               </span>
-                                              <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                                سعر الوحدة {toppingPrice}
+                                              <span className='p-1 my-auto text-orange-900 bg-orange-200 rounded-lg min-w-fit'>
+                                                {t(
+                                                  'app.dashboard.orders.itemsTable.rows.toppingPrice'
+                                                )}{' '}
+                                                {toppingPrice} {t('app.currency')}
                                               </span>
                                               <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                                الكمية المطلوبة {toppingQuantity}
+                                                {t(
+                                                  'app.dashboard.orders.itemsTable.rows.toppingQty'
+                                                )}{' '}
+                                                {toppingQuantity}
                                               </span>
                                               <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
-                                                السعر حسب الكمية:{' '}
-                                                {toppingPrice * toppingQuantity}{' '}
+                                                {t(
+                                                  'app.dashboard.orders.itemsTable.rows.pricePerQty'
+                                                )}
+                                                : {toppingPrice * (toppingQuantity ?? 1)}{' '}
                                                 {t('app.currency')}
                                               </span>
-                                              <hr />
                                             </div>
                                           )
                                       )}
                                     </div>
                                   </div>
-                                  <Divider marginY={2} thickness={0.5} />
+                                  {order.length > 1 && (
+                                    <Divider marginY={2} thickness={0.5} />
+                                  )}
                                 </div>
                               ))
                             )}
@@ -453,7 +481,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                         <td className='px-1 py-2'>
                           {!order.personNotes ? (
                             <span className='font-bold text-red-600 dark:text-red-400'>
-                              لا يوجد ملاحظات في الطلب
+                              {t('app.dashboard.orders.itemsTable.rows.noNotes')}
                             </span>
                           ) : (
                             order.personNotes
@@ -467,8 +495,11 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                         <td className='px-1 py-2'>{order.orderId}</td>
                         <td className='px-1 py-2 min-w-[6rem]'>
                           <span
-                            data-tooltip={`دفع عن طريق ${
-                              order.paymentData.paymentSource === 'paypal' && 'باي بال'
+                            data-tooltip={`${t(
+                              'app.dashboard.orders.itemsTable.columns.paymentUsed'
+                            )} ${
+                              order.paymentData.paymentSource === 'paypal' &&
+                              t('app.dashboard.orders.itemsTable.rows.paypal')
                             }`}
                           >
                             {order.paymentData.paymentSource === 'paypal' && <PayPal />}
@@ -494,7 +525,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                           userType === 'admin' ||
                           userType === 'cashier') && (
                           <td>
-                            <NavMenu>
+                            <NavMenu label={`${locale === 'ar' ? 'الإجراء' : 'Action'}`}>
                               {order.orderStatus === 'pending' ? (
                                 <>
                                   <AcceptBtn
@@ -629,7 +660,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                     <td className='px-1 py-2 max-w-[0.25rem]'>{idx + 1}</td>
                     <td className='px-1 py-2 min-w-[10rem]'>{order.personName}</td>
                     <td className='px-1 py-2 min-w-[6rem]'>
-                      {!order.userEmail ? order.userEmail : session!?.user!?.email}
+                      {order.userEmail ? order.userEmail : session!?.user!?.email}
                     </td>
                     <td className='text-center min-w-[13rem] px-1 py-2'>
                       <p>{createLocaleDateString(order.orderDate)}</p>
@@ -656,7 +687,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                       <div className='max-h-screen overflow-hidden transition-all duration-300 ordered-items'>
                         {order?.orderItems.length === 0 ? (
                           <p className='max-w-lg mx-auto my-2 text-lg font-bold leading-10 tracking-wider text-red-500'>
-                            عفواً! لا يوجد تفاصيل خاصة بهذا الطلب
+                            {t('app.dashboard.orders.itemsTable.rows.noDetails')}
                           </p>
                         ) : (
                           order?.orderItems?.map((item: any) => (
@@ -673,13 +704,24 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                       className='object-cover rounded-lg shadow-md w-14 h-14'
                                     />
                                     <div className='flex flex-col items-start'>
-                                      <span>اسم الطلب: {item.cHeading}</span>
-                                      <span>الكمية: {item.cQuantity}</span>
+                                      <span>
+                                        {t(
+                                          'app.dashboard.orders.itemsTable.rows.itemName'
+                                        )}
+                                        : {item.cHeading}
+                                      </span>
+                                      <span>
+                                        {t('app.dashboard.orders.itemsTable.rows.qty')}:{' '}
+                                        {item.cQuantity}
+                                      </span>
                                     </div>
                                   </div>
 
                                   <span className='inline-block px-2 py-2 text-green-800 bg-green-300 rounded-xl bg-opacity-80'>
-                                    السعر على حسب الكميات: &nbsp;
+                                    {t(
+                                      'app.dashboard.orders.itemsTable.rows.pricePerQty'
+                                    )}
+                                    : &nbsp;
                                     <strong>{item.cPrice * item.cQuantity}</strong>{' '}
                                     {t('app.currency')}
                                   </span>
@@ -696,28 +738,40 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                                       toppingQuantity
                                     }: selectedToppingsProps) =>
                                       inSeletedToppings[idx]?.includes(toppingId) && (
-                                        <div key={toppingId} className='flex gap-4'>
-                                          <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
+                                        <div
+                                          key={toppingId}
+                                          className='flex flex-wrap gap-4'
+                                        >
+                                          <span className='p-1 my-auto text-orange-900 bg-orange-200 rounded-lg min-w-fit'>
                                             ✅ &nbsp; {toppingName}
                                           </span>
-                                          <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                            سعر الوحدة {toppingPrice}
+                                          <span className='p-1 my-auto text-orange-900 bg-orange-200 rounded-lg min-w-fit'>
+                                            {t(
+                                              'app.dashboard.orders.itemsTable.rows.toppingPrice'
+                                            )}{' '}
+                                            {toppingPrice} {t('app.currency')}
                                           </span>
-                                          <span className='px-2 text-orange-900 bg-orange-200 rounded-lg'>
-                                            الكمية المطلوبة {toppingQuantity}
+                                          <span className='p-1 my-auto text-orange-900 bg-orange-200 rounded-lg min-w-fit'>
+                                            {t(
+                                              'app.dashboard.orders.itemsTable.rows.toppingQty'
+                                            )}{' '}
+                                            {toppingQuantity}
                                           </span>
-                                          <span className='px-2 text-green-900 bg-green-200 rounded-lg'>
-                                            السعر حسب الكمية:
-                                            {toppingPrice * toppingQuantity!}{' '}
+                                          <span className='p-1 my-auto text-green-900 bg-green-200 rounded-lg min-w-fit'>
+                                            {t(
+                                              'app.dashboard.orders.itemsTable.rows.pricePerQty'
+                                            )}
+                                            :{toppingPrice * toppingQuantity!}{' '}
                                             {t('app.currency')}
                                           </span>
-                                          <hr />
                                         </div>
                                       )
                                   )}
                                 </div>
                               </div>
-                              <Divider marginY={2} thickness={0.5} />
+                              {order.length > 1 && (
+                                <Divider marginY={2} thickness={0.5} />
+                              )}
                             </div>
                           ))
                         )}
@@ -726,7 +780,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                     <td className='px-1 py-2'>
                       {!order.personNotes ? (
                         <span className='font-bold text-red-600 dark:text-red-400'>
-                          لا يوجد ملاحظات في الطلب
+                          {t('app.dashboard.orders.itemsTable.rows.noNotes')}
                         </span>
                       ) : (
                         order.personNotes
@@ -740,8 +794,11 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                     <td className='px-1 py-2'>{order.orderId}</td>
                     <td className='px-1 py-2 min-w-[6rem]'>
                       <span
-                        data-tooltip={`دفع عن طريق ${
-                          order.paymentData.paymentSource === 'paypal' && 'باي بال'
+                        data-tooltip={`${t(
+                          'app.dashboard.orders.itemsTable.columns.paymentUsed'
+                        )} ${
+                          order.paymentData.paymentSource === 'paypal' &&
+                          t('app.dashboard.orders.itemsTable.rows.paypal')
                         }`}
                       >
                         {order.paymentData.paymentSource === 'paypal' && <PayPal />}
@@ -763,7 +820,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                         : 'تم الرفض'}
                     </td>
                     <td>
-                      <NavMenu>
+                      <NavMenu label={`${locale === 'ar' ? 'الإجراء' : 'Action'}`}>
                         {order.orderStatus === 'pending' ? (
                           <>
                             <AcceptBtn

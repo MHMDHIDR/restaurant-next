@@ -1,3 +1,7 @@
+.rtl {
+  direction: rtl;
+}
+
 html[dir='rtl'] .form__input {
   @apply rtl;
 }

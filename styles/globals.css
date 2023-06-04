@@ -77,14 +77,6 @@
   .dashboard__nav.isActive {
     @apply font-bold bg-orange-700;
   }
-
-  .rtl {
-    direction: rtl;
-  }
-
-  .ltr {
-    direction: ltr;
-  }
 }
 
 /* GENERAL CSS */

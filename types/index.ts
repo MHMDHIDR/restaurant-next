@@ -172,6 +172,7 @@ export type DividerProps = {
   thickness?: number
   style?: 'dashed'
   marginY?: number
+  color?: string
 }
 
 export type ImgsProps = {

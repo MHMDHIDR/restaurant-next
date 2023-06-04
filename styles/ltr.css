@@ -1,3 +1,7 @@
+.ltr {
+  direction: ltr;
+}
+
 html[dir='ltr'] .form__input {
   @apply ltr;
 }

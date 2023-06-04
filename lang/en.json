@@ -268,7 +268,15 @@
           "rows": {
             "order": "Order",
             "orders": "Orders",
-            "show": "Show"
+            "show": "Show",
+            "itemName": "Item Name",
+            "qty": "Quantity",
+            "toppingPrice": "Topping Price",
+            "toppingQty": "Topping Quantity",
+            "pricePerQty": "Price Per Quantity",
+            "paypal": "PayPal",
+            "noNotes": "There Are No Notes in the order",
+            "noDetails": "Sorry! There Are No Details for this Order"
           }
         }
       }
