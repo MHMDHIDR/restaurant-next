@@ -51,6 +51,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
   const { data: session } = useSession()
 
   const { userType } = useAuth()
+  const { t } = useTranslate()
 
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
@@ -207,8 +208,6 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     }
   }, [setIsLoading, onBeforeGetContentResolve.current])
 
-  const { t } = useTranslate()
-
   return LoadingOrders ? (
     <LoadingPage />
   ) : (
@@ -288,21 +287,47 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       <table className='table w-full text-center border-collapse table-auto'>
         <thead className='text-white bg-orange-800 rtl'>
           <tr>
-            <th className='min-w-[0.5rem] px-1 py-2 '>م.</th>
-            <th className='px-1 py-2 min-w-[10rem]'>اسم الشخص</th>
-            <th className='px-1 py-2 min-w-[7rem]'>البريد الالكتروني للمستخدم</th>
-            <th className='px-1 py-2'>تاريخ و وقت الطلب</th>
-            <th className='px-1 py-2'>هاتف صاحب الطلب</th>
-            <th className='px-1 py-2 min-w-[20rem]'>تفاصيل الطلب</th>
-            <th className='px-1 py-2'>ملاحظات الطلب</th>
-            <th className='px-1 py-2'>السعر الاجمالي</th>
-            <th className='px-1 py-2'>رقم الطلب</th>
-            <th className='px-1 py-2 min-w-[6rem]'>وسلة الدفع</th>
-            <th className='px-1 py-2'>حالة الطلب</th>
+            <th className='min-w-[0.5rem] px-1 py-2'>
+              {t('app.dashboard.orders.itemsTable.columns.no')}
+            </th>
+            <th className='px-1 py-2 min-w-[10rem]'>
+              {t('app.dashboard.orders.itemsTable.columns.name')}
+            </th>
+            <th className='px-1 py-2 min-w-[7rem]'>
+              {t('app.dashboard.orders.itemsTable.columns.email')}
+            </th>
+            <th className='px-1 py-2'>
+              {t('app.dashboard.orders.itemsTable.columns.datetime')}
+            </th>
+            <th className='px-1 py-2'>
+              {t('app.dashboard.orders.itemsTable.columns.phone')}
+            </th>
+            <th className='px-1 py-2 min-w-[20rem]'>
+              {t('app.dashboard.orders.itemsTable.columns.details')}
+            </th>
+            <th className='px-1 py-2'>
+              {t('app.dashboard.orders.itemsTable.columns.notes')}
+            </th>
+            <th className='px-1 py-2'>
+              ا{t('app.dashboard.orders.itemsTable.columns.totalPrice')}
+            </th>
+            <th className='px-1 py-2'>
+              {t('app.dashboard.orders.itemsTable.columns.orderNumber')}
+            </th>
+            <th className='px-1 py-2 min-w-[6rem]'>
+              {t('app.dashboard.orders.itemsTable.columns.paymentUsed')}
+            </th>
+            <th className='px-1 py-2'>
+              {t('app.dashboard.orders.itemsTable.columns.status')}
+            </th>
             {(USER.userAccountType === 'admin' ||
               USER.userAccountType === 'cashier' ||
               userType === 'admin' ||
-              userType === 'cashier') && <th className='px-1 py-2'>الاجراء</th>}
+              userType === 'cashier') && (
+              <th className='px-1 py-2'>
+                {t('app.dashboard.orders.itemsTable.columns.actions')}
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -336,8 +361,12 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                         <td className='px-1 py-2'>{order.personPhone}</td>
                         <td className='px-1 py-2 min-w-[30rem]'>
                           <span
-                            data-tooltip={`عرض ${order.orderItems.length} ${
-                              order.orderItems.length > 1 ? 'طلبات' : 'طلب'
+                            data-tooltip={`${t(
+                              'app.dashboard.orders.itemsTable.rows.show'
+                            )} ${order.orderItems.length} ${
+                              order.orderItems.length > 1
+                                ? t('app.dashboard.orders.itemsTable.rows.orders')
+                                : t('app.dashboard.orders.itemsTable.rows.order')
                             }`}
                           >
                             <span
@@ -608,8 +637,12 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                     <td className='px-1 py-2'>{order.personPhone}</td>
                     <td className='px-1 py-2 min-w-[30rem]'>
                       <span
-                        data-tooltip={`عرض ${order.orderItems.length} ${
-                          order.orderItems.length > 1 ? 'طلبات' : 'طلب'
+                        data-tooltip={`${t(
+                          'app.dashboard.orders.itemsTable.rows.show'
+                        )} ${order.orderItems.length} ${
+                          order.orderItems.length > 1
+                            ? t('app.dashboard.orders.itemsTable.rows.orders')
+                            : t('app.dashboard.orders.itemsTable.rows.order')
                         }`}
                       >
                         <span

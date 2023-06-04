@@ -39,8 +39,8 @@ const DashboardHome = ({ orderItemsCount, menuItemsCount }: DashboardHomeProps) 
           {t('app.dashboard.title')}
         </h1>
         <div
-          className={`flex justify-center gap-4 flex-wrap${
-            userType === 'cashier' ? ' md:justify-center' : ' md:justify-between'
+          className={`flex justify-center gap-4 flex-wrap ${
+            userType === 'cashier' ? 'md:justify-center' : 'md:justify-between'
           }`}
         >
           {(userType === 'admin' || userType === 'cashier') && (

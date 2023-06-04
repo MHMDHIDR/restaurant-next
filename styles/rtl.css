@@ -5,3 +5,7 @@ html[dir='rtl'] .form__input {
 html[dir='rtl'] .form__label {
   @apply right-1;
 }
+
+html[dir='rtl'] [data-tooltip]::before {
+  @apply right-0 rounded-br-none;
+}

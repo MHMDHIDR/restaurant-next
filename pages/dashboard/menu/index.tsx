@@ -250,7 +250,7 @@ const DashboardMenu = () => {
                               data-imgname={stringJson(item.foodImgs)}
                               className='px-4 py-1 mx-2 text-white bg-red-600 rounded-md hover:bg-red-700'
                             >
-                              حذف
+                              {t('app.foodItem.remove')}
                             </button>
                           </NavMenu>
                         </td>

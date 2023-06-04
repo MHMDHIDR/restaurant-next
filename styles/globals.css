@@ -104,11 +104,11 @@
 [data-tooltip]::before {
   --bottom: 1.75rem;
   --duration: 300ms;
-  @apply content-[attr(data-tooltip)] absolute right-0 bottom-[calc(var(--bottom)*1.65)] z-50
+  @apply content-[attr(data-tooltip)] absolute bottom-[calc(var(--bottom)*1.5)] z-50
   transition-all ease-in-out scale-50 opacity-0 pointer-events-none
-  w-min max-w-min min-w-[calc(100%+5rem)] text-center p-2 duration-[var(--duration)]
-  text-sm text-white font-thin bg-gray-800 dark:bg-gray-300 dark:text-black dark:border-2
-  dark:border-gray-800 shadow-lg rounded-2xl rounded-br-none;
+  w-min max-w-min min-w-[calc(100%+5rem)] text-center p-1.5 duration-[var(--duration)]
+  text-xs text-white font-thin bg-gray-800 dark:bg-gray-300 dark:text-black dark:border-2
+  dark:border-gray-800 shadow-lg rounded-2xl;
 }
 
 [data-tooltip]:hover::before {

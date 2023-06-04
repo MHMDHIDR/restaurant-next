@@ -247,6 +247,30 @@
             "actions": "Actions"
           }
         }
+      },
+      "orders": {
+        "title": "Last Orders",
+        "itemsTable": {
+          "columns": {
+            "no": "No.",
+            "name": "Name",
+            "email": "Email",
+            "datetime": "Date/Time",
+            "phone": "Phone",
+            "details": "Details",
+            "notes": "Notes",
+            "totalPrice": "Total Price",
+            "orderNumber": "Order Number",
+            "paymentUsed": "Payment Used",
+            "status": "Status",
+            "actions": "Actions"
+          },
+          "rows": {
+            "order": "Order",
+            "orders": "Orders",
+            "show": "Show"
+          }
+        }
       }
     },
     "footer": {
