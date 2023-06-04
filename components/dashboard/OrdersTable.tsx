@@ -515,10 +515,10 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                           }`}
                         >
                           {order.orderStatus === 'pending'
-                            ? 'تحت المراجعة'
+                            ? t('app.dashboard.orders.itemsTable.rows.orderPending')
                             : order.orderStatus === 'accept'
-                            ? 'تمت الموافقة'
-                            : 'تم الرفض'}
+                            ? t('app.dashboard.orders.itemsTable.rows.orderAccepted')
+                            : t('app.dashboard.orders.itemsTable.rows.orderRejected')}
                         </td>
                         {(USER.userAccountType === 'admin' ||
                           USER.userAccountType === 'cashier' ||
@@ -814,10 +814,10 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
                       }`}
                     >
                       {order.orderStatus === 'pending'
-                        ? 'تحت المراجعة'
+                        ? t('app.dashboard.orders.itemsTable.rows.orderPending')
                         : order.orderStatus === 'accept'
-                        ? 'تمت الموافقة'
-                        : 'تم الرفض'}
+                        ? t('app.dashboard.orders.itemsTable.rows.orderAccepted')
+                        : t('app.dashboard.orders.itemsTable.rows.orderRejected')}
                     </td>
                     <td>
                       <NavMenu label={`${locale === 'ar' ? 'الإجراء' : 'Action'}`}>

@@ -275,6 +275,9 @@
             "toppingQty": "Topping Quantity",
             "pricePerQty": "Price Per Quantity",
             "paypal": "PayPal",
+            "orderRejected": "Order Rejected",
+            "orderAccepted": "Order Accepted",
+            "orderPending": "Order Pending",
             "noNotes": "There Are No Notes in the order",
             "noDetails": "Sorry! There Are No Details for this Order"
           }
