@@ -146,7 +146,7 @@ const AddFood = () => {
         <section className='py-12 my-8 dashboard'>
           <div className='container mx-auto'>
             <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-              إضافة وجبة
+              {t('app.dashboard.addItem.title')}
             </h3>
             <div className='food'>
               {/* Show Modal Loading when submitting form */}
@@ -204,7 +204,9 @@ const AddFood = () => {
                       }
                     }}
                   />
-                  <span className='form__label'>اسم الوجبة أو المشروب</span>
+                  <span className='form__label'>
+                    {t('app.dashboard.addItem.form.name.label')}
+                  </span>
                   <span
                     className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                     ref={foodNameErr}
@@ -232,7 +234,9 @@ const AddFood = () => {
                       }
                     }}
                   />
-                  <span className='form__label'>السعر ({t('app.currency')})</span>
+                  <span className='form__label'>
+                    {t('app.dashboard.addItem.form.price.label')} ({t('app.currency')})
+                  </span>
                   <span
                     className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                     ref={priceErr}
@@ -258,7 +262,9 @@ const AddFood = () => {
                       </option>
                     ))}
                   </select>
-                  <span className='form__label active'>التصنيف</span>
+                  <span className='form__label active'>
+                    {t('app.dashboard.addItem.form.category.label')}
+                  </span>
                 </label>
 
                 <label htmlFor='foodDescription' className='form__group'>
@@ -282,7 +288,9 @@ const AddFood = () => {
                       }
                     }}
                   ></textarea>
-                  <span className='form__label'>وصف الوجبة أو المشروب</span>
+                  <span className='form__label'>
+                    {t('app.dashboard.addItem.form.desc.label')}
+                  </span>
                   <span
                     className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                     ref={descErr}
@@ -292,16 +300,22 @@ const AddFood = () => {
                 <label htmlFor='foodTags' className='form__group'>
                   <AddTags inputId='foodTags' />
                   <span className='form__label'>
-                    علامات تصنيفية تساعد في عملية البحث عن الوجبة (Tags) - هذا الحقل
-                    اختياري
+                    {t('app.dashboard.addItem.form.tags.label')}
                   </span>
                 </label>
 
                 <div className='mx-0 mt-4 mb-6 text-center'>
-                  <h3 className='mb-10 text-xl'>الإضافات - Toppings (اختياري)</h3>
+                  <h3 className='mb-10 text-xl'>
+                    {t('app.dashboard.addItem.form.toppings.label')}
+                  </h3>
                   <div className='flex justify-around'>
-                    <span className='text-xl'>الإضافة</span>
-                    <span className='text-xl'>السعر ({t('app.currency')})</span>
+                    <span className='text-xl'>
+                      {t('app.dashboard.addItem.form.toppings.toppingName')}
+                    </span>
+                    <span className='text-xl'>
+                      {t('app.dashboard.addItem.form.toppings.toppingPrice')} (
+                      {t('app.currency')})
+                    </span>
                   </div>
                 </div>
                 {toppings?.map(
@@ -346,7 +360,9 @@ const AddFood = () => {
                         {toppings.length !== 1 && (
                           <button
                             type='button'
-                            data-tooltip='حذف الإضافة'
+                            data-tooltip={t(
+                              'app.dashboard.addItem.form.toppings.deleteTopping'
+                            )}
                             className='px-5 py-2 text-white transition-colors bg-red-500 rounded-lg w-fit hover:bg-red-600'
                             onClick={() => handleRemoveClick(idx)}
                           >
@@ -356,7 +372,9 @@ const AddFood = () => {
                         {toppings.length - 1 === idx && (
                           <button
                             type='button'
-                            data-tooltip='إضافة جديدة'
+                            data-tooltip={t(
+                              'app.dashboard.addItem.form.toppings.addTopping'
+                            )}
                             className='px-5 py-2 text-white transition-colors bg-blue-500 rounded-lg w-fit hover:bg-blue-600'
                             onClick={handleAddClick}
                           >
@@ -378,13 +396,13 @@ const AddFood = () => {
                     type='submit'
                     className='min-w-[7rem] bg-green-600 hover:bg-green-700 text-white py-1.5 px-6 rounded-md'
                   >
-                    إضافة
+                    {t('app.dashboard.addItem.form.addBtn')}
                   </button>
                   <Link
                     href={goTo('menu')}
                     className='text-gray-800 underline-hover text-bold dark:text-white'
                   >
-                    القائمة
+                    {t('app.dashboard.addItem.form.menuLink')}
                   </Link>
                 </div>
               </form>

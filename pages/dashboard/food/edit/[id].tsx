@@ -52,6 +52,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   const [hasConfirmBtns, setHasConfirmBtn] = useState(false)
   const { loading, userType } = useAuth()
 
+  const { t } = useTranslate()
+
   //Contexts
   const { tags, setTags } = useContext(TagsContext)
   const { file } = useContext(FileUploadContext)
@@ -250,8 +252,6 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     }
   })
 
-  const { t } = useTranslate()
-
   return loading ? (
     <LoadingPage />
   ) : USER?.userAccountType !== 'admin' || userType !== 'admin' ? (
@@ -366,7 +366,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                           }
                         }}
                       />
-                      <span className='form__label'>اسم الوجبة أو المشروب</span>
+                      <span className='form__label'>
+                        {t('app.dashboard.addItem.form.name.label')}
+                      </span>
                       <span
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={foodNameErr}
@@ -398,7 +400,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         }}
                         defaultValue={data?.foodPrice}
                       />
-                      <span className='form__label'>السعر (${t('app.currency')})</span>
+                      <span className='form__label'>
+                        {t('app.dashboard.addItem.form.price.label')} ({t('app.currency')}
+                        )
+                      </span>
                       <span
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={priceErr}
@@ -425,7 +430,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                           </option>
                         ))}
                       </select>
-                      <span className='form__label active'>التصنيف</span>
+                      <span className='form__label active'>
+                        {t('app.dashboard.addItem.form.category.label')}
+                      </span>
                     </label>
 
                     <label htmlFor='foodDescription' className='form__group'>
@@ -449,7 +456,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         }}
                         defaultValue={data?.foodDesc}
                       ></textarea>
-                      <span className='form__label'>وصف الوجبة</span>
+                      <span className='form__label'>
+                        {t('app.dashboard.addItem.form.desc.label')}
+                      </span>
                       <span
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={descErr}
@@ -459,16 +468,22 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                     <label htmlFor='foodTags' className='form__group'>
                       <AddTags inputId='foodTags' />
                       <span className='form__label'>
-                        علامات تصنيفية تساعد في عملية البحث عن الوجبة (Tags) - هذا الحقل
-                        اختياري
+                        {t('app.dashboard.addItem.form.tags.label')}
                       </span>
                     </label>
 
                     <div className='mx-0 mt-4 mb-6 text-center'>
-                      <h3 className='mb-10 text-xl'>الإضافات - Toppings (اختياري)</h3>
+                      <h3 className='mb-10 text-xl'>
+                        {t('app.dashboard.addItem.form.toppings.label')}
+                      </h3>
                       <div className='flex justify-around'>
-                        <span className='text-xl'>الإضافة</span>
-                        <span className='text-xl'>السعر ({t('app.currency')})</span>
+                        <span className='text-xl'>
+                          {t('app.dashboard.addItem.form.toppings.toppingName')}
+                        </span>
+                        <span className='text-xl'>
+                          {t('app.dashboard.addItem.form.toppings.toppingPrice')} (
+                          {t('app.currency')})
+                        </span>
                       </div>
                     </div>
                     {toppings?.map(
@@ -504,7 +519,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                             {toppings.length !== 1 && (
                               <button
                                 type='button'
-                                data-tooltip='حذف الإضافة'
+                                data-tooltip={t(
+                                  'app.dashboard.addItem.form.toppings.deleteTopping'
+                                )}
                                 className='px-5 py-2 text-white transition-colors bg-red-500 rounded-lg w-fit hover:bg-red-600'
                                 onClick={() => handleRemoveClick(idx)}
                               >
@@ -514,7 +531,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                             {toppings.length - 1 === idx && (
                               <button
                                 type='button'
-                                data-tooltip='إضافة جديدة'
+                                data-tooltip={t(
+                                  'app.dashboard.addItem.form.toppings.addTopping'
+                                )}
                                 className='px-5 py-2 text-white transition-colors bg-blue-500 rounded-lg w-fit hover:bg-blue-600'
                                 onClick={handleAddClick}
                               >
@@ -537,7 +556,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         className='min-w-[7rem] bg-green-600 hover:bg-green-700 text-white py-1.5 px-6 rounded-md'
                         onClick={(e: any) => HandleUpdateFood(e)}
                       >
-                        تحديث
+                        {t('app.dashboard.editItem.form.updateBtn')}
                       </button>
                       <button
                         id='deleteFood'
@@ -545,20 +564,20 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         data-name={data?.foodName}
                         className='min-w-[7rem] bg-red-600 hover:bg-red-700 text-white py-1.5 px-6 rounded-md'
                       >
-                        حذف
+                        {t('app.dashboard.editItem.form.deleteBtn')}
                       </button>
                     </div>
                   </form>
                 ) : !foodData ? (
                   <div className='flex flex-col items-center gap-8 text-lg justify-evenly'>
                     <p className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'>
-                      عفواً، لم يتم العثور على الوجبة &nbsp;&nbsp; 😕
+                      {t('app.dashboard.editItem.messages.noFoodFound')}
                     </p>
                     <Link
                       href={goTo('dashboard')}
                       className='px-3 py-1 text-orange-800 transition-colors bg-orange-100 border border-orange-700 rounded hover:bg-orange-200'
                     >
-                      أرجع الى للوحة التحكم
+                      {t('app.dashboard.editItem.messages.goBack')}
                     </Link>
                   </div>
                 ) : foodData === null || foodData?.itemsCount === 0 ? (

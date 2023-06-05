@@ -4,11 +4,15 @@ import { FileUploadContext } from 'contexts/FileUploadContext'
 import { FileUploadComponentProps, FileUploadProps, FoodImgsProps } from '@types'
 import { FILE_UPLOAD_IMG_SIZE } from '@constants'
 import { useContext } from 'react'
+import { useTranslate } from 'hooks/useTranslate'
 
 const FileUpload = ({ data, ignoreDelete }: FileUploadComponentProps) => {
   const { file, fileURLs, onFileRemove, onFileAdd } =
     useContext<FileUploadProps>(FileUploadContext)
   let { id } = useRouter().query
+
+  const { t } = useTranslate()
+
   const hasImgs =
     data.defaultImg[0]?.foodImgDisplayName!?.length > 0 ||
     data.defaultImg[0]?.websiteLogoDisplayName!?.length > 0
@@ -54,7 +58,7 @@ const FileUpload = ({ data, ignoreDelete }: FileUploadComponentProps) => {
                   className='px-6 py-1 text-white transition-colors bg-red-500 rounded-full hover:bg-red-700'
                   onClick={() => onFileRemove(fileURL, file[index]?.name)}
                 >
-                  حذف
+                  {t('app.fileUpload.deleteBtn')}
                 </button>
               </div>
             ))
@@ -83,7 +87,7 @@ const FileUpload = ({ data, ignoreDelete }: FileUploadComponentProps) => {
                       className='px-6 py-1 text-white transition-colors bg-red-500 rounded-full hover:bg-red-700'
                       data-img-name={foodImgDisplayName}
                     >
-                      حذف
+                      {t('app.fileUpload.deleteBtn')}
                     </button>
                   )}
                 </div>
@@ -95,7 +99,7 @@ const FileUpload = ({ data, ignoreDelete }: FileUploadComponentProps) => {
 
       {id && (
         <p className='text-center text-green-700 dark:text-green-400'>
-          لا تنسى الضغط على زر تحديث أسفل الصفحة لتحميل الصور
+          {t('app.fileUpload.note')}
         </p>
       )}
 

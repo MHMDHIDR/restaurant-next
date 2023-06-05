@@ -232,22 +232,6 @@
         "users": "Users",
         "settings": "Settings"
       },
-      "menuPage": {
-        "title": "Foods, Drinks, and Sweets Menu",
-        "add": "Add an Item",
-        "notFound": "Sorry! NO meals were found 😥",
-        "itemsTable": {
-          "columns": {
-            "order": "Order",
-            "image": "Image",
-            "name": "Name",
-            "desc": "Description",
-            "price": "Price",
-            "lastUpdate": "The Update Date/Time",
-            "actions": "Actions"
-          }
-        }
-      },
       "orders": {
         "title": "Last Orders",
         "itemsTable": {
@@ -283,8 +267,99 @@
           }
         }
       },
+      "editOrder": {
+        "title": "Edit Order Details For",
+        "titleNoPerson": "Edit The Order",
+        "goBack": "Go Back to Orders",
+        "form": {
+          "title": "Please Do not forget to press the Update button at the bottom of the page to update the order information",
+          "name": {
+            "label": "Your Full Name",
+            "error": {
+              "shortText": "Please enter a valid name",
+              "longText": "The name is too long, please add a name of up to 30 characters"
+            }
+          },
+          "phone": {
+            "label": "Phone Number, (e.g: 33445566)",
+            "error": {
+              "shortText": "Please enter a phone number in the same format as the phone number in the example",
+              "longText": ""
+            }
+          },
+          "address": {
+            "label": "Address, (e.g: zone 00, 000st, building 000)",
+            "error": {
+              "shortText": "Please enter a valid name",
+              "longText": ""
+            }
+          },
+          "notes": {
+            "label": "You Can Add Notes or Additions for The chef to Add to Your Order 😄"
+          },
+          "totalPrice": "Total Price",
+          "updateBtn": "Update Order Details",
+          "updatingBtn": "Updating Details..."
+        }
+      },
       "statistics": {
         "title": "The Number of Orders By Category"
+      },
+      "menuPage": {
+        "title": "Foods, Drinks, and Sweets Menu",
+        "add": "Add an Item",
+        "notFound": "Sorry! NO meals were found 😥",
+        "itemsTable": {
+          "columns": {
+            "order": "Order",
+            "image": "Image",
+            "name": "Name",
+            "desc": "Description",
+            "price": "Price",
+            "lastUpdate": "The Update Date/Time",
+            "actions": "Actions"
+          }
+        }
+      },
+      "addItem": {
+        "title": "Add Foods, Drinks, or Sweets",
+        "form": {
+          "name": {
+            "label": "Name"
+          },
+          "price": {
+            "label": "Price"
+          },
+          "category": {
+            "label": "Pick a Category"
+          },
+          "desc": {
+            "label": "Write a Full Description"
+          },
+          "tags": {
+            "label": "Tags help to search for a meal (Tags) - This field is optional",
+            "tagsText": "Type the hashtags you want to add"
+          },
+          "toppings": {
+            "label": "Toppings (Optional)",
+            "toppingName": "Topping Name",
+            "toppingPrice": "Topping Price",
+            "addTopping": "Add New",
+            "deleteTopping": "Delete Topping"
+          },
+          "addBtn": "Add",
+          "menuLink": "Menu"
+        }
+      },
+      "editItem": {
+        "form": {
+          "updateBtn": "Update",
+          "deleteBtn": "Delete"
+        },
+        "messages": {
+          "noFoodFound": "Sorry! We Couldn't Find The Item You're Looking for 😕",
+          "goBack": "Go Back to Dashboard"
+        }
       },
       "users": {
         "title": "Users List",
@@ -356,6 +431,10 @@
           }
         }
       }
+    },
+    "fileUpload": {
+      "note": "Don't forget to press the Update Button at the Bottom of the Form to Set the Image",
+      "deleteBtn": "Delete"
     },
     "footer": {
       "links": {

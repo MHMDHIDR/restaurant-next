@@ -4,7 +4,7 @@ const Arrow = ({
   width = 'clamp(15px,2vw,3rem)',
   height = width,
   toLeft,
-  css
+  className
 }: ArrowProps) => {
   return (
     <svg
@@ -14,7 +14,9 @@ const Arrow = ({
       xmlns='http://www.w3.org/2000/svg'
       className={`${
         toLeft ? 'hover:translate-x-1' : 'rotate-180 hover:-translate-x-1'
-      } w-${width} h-${height} ${css !== undefined ? css : ''} transition-transform`}
+      } w-${width} h-${height} ${
+        className !== undefined ? className : ''
+      } transition-transform`}
       style={{ width: width, height: height }}
     >
       <path

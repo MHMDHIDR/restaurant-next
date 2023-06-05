@@ -21,6 +21,7 @@ import goTo from 'functions/goTo'
 import abstractText from 'functions/abstractText'
 import { stringJson } from 'functions/jsonTools'
 import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => {
   const { orderItemToppings, setOrderItemToppings } = useContext(ToppingsContext)
@@ -43,6 +44,9 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
   const [orderUpdated, setOrderUpdated] = useState()
   const [isLoading, setIsLoading] = useState(false)
 
+  const { t } = useTranslate()
+  const { locale } = useLocale()
+
   const modalLoading =
     typeof window !== 'undefined' ? document.querySelector('#modal') : null
 
@@ -55,8 +59,8 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
 
   useDocumentTitle(
     ordersData
-      ? `تعديل تفاصيل طلب ${abstractText(ordersData.personName, 20)}`
-      : 'تعديل تفاصيل الطلب'
+      ? `${t('app.dashboard.editOrder.title')} ${abstractText(ordersData.personName, 20)}`
+      : t('app.dashboard.editOrder.titleNoPerson')
   )
 
   useEffect(() => {
@@ -109,8 +113,6 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
     }
   }
 
-  const { t } = useTranslate()
-
   return (
     <Layout>
       <section id='orderFood' className='py-12 my-8'>
@@ -146,14 +148,18 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
               <Link href={goTo(`orders`)} className='flex'>
                 <ClickableButton>
                   <>
-                    <Arrow css='inline-flex ml-4' toLeft />
-                    <span>العودة لباقي الطلبات</span>
+                    <Arrow
+                      className={`inline-flex ${locale === 'ar' ? 'ml-4' : 'mr-4'}`}
+                      toLeft
+                    />
+                    <span>{t('app.dashboard.editOrder.goBack')}</span>
                   </>
                 </ClickableButton>
               </Link>
 
               <h2 className='inline-block mb-20 text-3xl font-bold'>
-                تعديل تفاصيل طلب ({abstractText(ordersData.personName, 40)})
+                {t('app.dashboard.editOrder.title')} (
+                {abstractText(ordersData.personName, 40)})
               </h2>
 
               <CartItems
@@ -162,7 +168,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
               />
 
               <p className='my-10 text-xl font-bold text-center text-green-700 select-none dark:text-green-400'>
-                لا تنسى الضغط على زر تحديث أسفل الصفحة لتحديث بيانات الطلب
+                {t('app.dashboard.editOrder.form.title')}
               </p>
 
               <form method='POST' onSubmit={handleCollectOrder}>
@@ -178,10 +184,13 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                       const target = e.target.value.trim()
 
                       if (target.length > 0 && target.length < 4) {
-                        personNameErr.current!.textContent = 'يرجى إدخال إسم بصيغة صحيحة'
+                        personNameErr.current!.textContent = t(
+                          'app.dashboard.editOrder.form.name.error.shortText'
+                        )
                       } else if (target.length > 30) {
-                        personNameErr.current!.textContent =
-                          'الاسم طويل جداً، يرجى إضافة إسم لا يزيد عن 30 حرف'
+                        personNameErr.current!.textContent = t(
+                          'app.dashboard.editOrder.form.name.error.longText'
+                        )
                       } else {
                         personNameErr.current!.textContent = ''
                       }
@@ -189,7 +198,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                     required
                   />
                   <span className={`form__label`}>
-                    الاســـــــــــــــــم &nbsp;
+                    {t('app.dashboard.editOrder.form.name.label')} &nbsp;
                     <strong className='text-xl leading-4 text-red-600'>*</strong>
                   </span>
                   <span
@@ -213,8 +222,9 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                         target.length > 8 ||
                         !validPhone(target)
                       ) {
-                        personPhoneErr.current!.textContent =
-                          'الرجاء إدخال رقم هاتف نفس صيغة رقم الهاتف في المثال'
+                        personPhoneErr.current!.textContent = t(
+                          'app.dashboard.editOrder.form.phone.error.shortText'
+                        )
                       } else {
                         personPhoneErr.current!.textContent = ''
                       }
@@ -222,7 +232,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                     required
                   />
                   <span className={`form__label`}>
-                    رقم الهاتف - مثال: 33445566 &nbsp;
+                    {t('app.dashboard.editOrder.form.phone.label')} &nbsp;
                     <strong className='text-xl leading-4 text-red-600'>*</strong>
                   </span>
                   <span
@@ -242,8 +252,9 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                       const target = e.target.value.trim()
 
                       if (target.length > 0 && target.length < 4) {
-                        personAddressErr.current!.textContent =
-                          'يرجى إدخال إسم بصيغة صحيحة'
+                        personAddressErr.current!.textContent = t(
+                          'app.dashboard.editOrder.form.address.error.shortText'
+                        )
                       } else {
                         personAddressErr.current!.textContent = ''
                       }
@@ -251,7 +262,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                     required
                   />
                   <span className={`form__label`}>
-                    العنوان - مثال: منطقة رقم 53 - شارع رقم 000 - منزل رقم 00&nbsp;
+                    {t('app.dashboard.editOrder.form.address.label')}&nbsp;
                     <strong className='text-xl leading-4 text-red-600'>*</strong>
                   </span>
                   <span
@@ -270,7 +281,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                   ></textarea>
 
                   <span className={`form__label`}>
-                    تستطيع وضع ملاحظات أو اضافات للشيف لإضافتها لك في طلبك &nbsp;😄
+                    {t('app.dashboard.editOrder.form.notes.label')} &nbsp;😄
                   </span>
                 </label>
                 <p
@@ -278,7 +289,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                   ref={formErr}
                 ></p>
                 <span className='inline-block px-3 py-1 my-4 text-xl text-green-800 bg-green-300 border border-green-800 rounded-md select-none'>
-                  السعر الاجمالي:&nbsp;
+                  {t('app.dashboard.editOrder.form.totalPrice')}:&nbsp;
                   <strong ref={grandPriceRef}>
                     {ordersData?.orderItems?.reduce(
                       (acc: number, item: any) =>
@@ -302,7 +313,7 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                       0
                     )}
                   </strong>
-                  &nbsp; {t('app.currency')}{' '}
+                  &nbsp; {t('app.currency')}
                 </span>
 
                 <div className='flex flex-col items-center justify-evenly'>
@@ -314,10 +325,10 @@ const DashboardOrdersEdit = ({ OrdersData }: { OrdersData: orderDataProps }) => 
                     {isLoading && isLoading ? (
                       <>
                         <LoadingSpinner />
-                        جارِ تحديث بيانات الطلب...
+                        {t('app.dashboard.editOrder.form.updatingBtn')}
                       </>
                     ) : (
-                      'تحديث البيانات'
+                      t('app.dashboard.editOrder.form.updateBtn')
                     )}
                   </button>
                 </div>

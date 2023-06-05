@@ -35,7 +35,7 @@ const Pagination = ({
           pageNum! > 1 ? 'opacity-100' : 'opacity-50 pointer-events-none'
         } mr-3`}
       >
-        <Arrow css='p-1.5' height='36' width='36' />
+        <Arrow className='p-1.5' height='36' width='36' />
       </a>
 
       {/* Current Link Number */}
@@ -71,7 +71,7 @@ const Pagination = ({
           pageNum! < numOfPages.length ? 'opacity-100' : 'opacity-50 pointer-events-none'
         } ml-3`}
       >
-        <Arrow toLeft css='p-1.5' height='36' width='36' />
+        <Arrow toLeft className='p-1.5' height='36' width='36' />
       </a>
     </div>
   ) : null

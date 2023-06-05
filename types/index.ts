@@ -230,7 +230,7 @@ export type ArrowProps = {
   width?: string
   height?: string
   toLeft?: boolean
-  css?: string
+  className?: string
 }
 
 export type LogoProps = {
