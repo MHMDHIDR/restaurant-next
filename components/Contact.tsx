@@ -47,7 +47,7 @@ const Contact = () => {
       setSendStatus(data.mailSent)
       setSendStatusMsg(
         data?.message === 'Email Sent Successfully'
-          ? 'شكراً على تواصلك معنا، سيتم الرد عليك في أقرب وقت ممكن 😄'
+          ? t('app.contact.form.afterSendSuccess')
           : data?.message
       )
     } catch (error: any) {
@@ -142,7 +142,7 @@ const Contact = () => {
                   {loading && loading ? (
                     <>
                       <LoadingSpinner />
-                      جارِ الإرسال...
+                      {t('app.contact.form.sending')}
                     </>
                   ) : (
                     t('app.contact.form.send')

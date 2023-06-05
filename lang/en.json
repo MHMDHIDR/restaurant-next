@@ -50,7 +50,9 @@
         "subject": "Subject",
         "email": "Email",
         "message": "Message",
-        "send": "Send"
+        "send": "Send",
+        "sending": "Sending...",
+        "afterSendSuccess": "Thank you for contacting us, we will reply to you as soon as possible 😄"
       }
     },
     "categories": {
@@ -123,7 +125,8 @@
     },
     "currency": "QAR",
     "messages": {
-      "noFoodFound": "Sorry! We Couldn't Find New Food 😕"
+      "noFoodFound": "Sorry! We Couldn't Find New Food 😕",
+      "deleteFromCart": "Are you sure you want to remove the following items from your cart?"
     },
     "login": {
       "title": "Login",

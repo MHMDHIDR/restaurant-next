@@ -32,7 +32,9 @@ const Card = ({
     const item = items.find(item => item.cItemId === cItemId)
     if (item) {
       if (
-        window.confirm(`هل أنت متأكد من حذف (${cHeading.props.children}) من سلة الطلبات؟`)
+        window.confirm(`${t('app.messages.deleteFromCart')}:
+          ${cHeading.props.children}
+        `)
       ) {
         removeFromCart(cItemId)
       }
