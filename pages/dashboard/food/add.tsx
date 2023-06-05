@@ -47,6 +47,8 @@ const AddFood = () => {
   const { tags } = useContext(TagsContext)
   const { file } = useContext(FileUploadContext)
 
+  const { t } = useTranslate()
+
   //Form errors messages
   const ImgErr = useRef<HTMLSpanElement>(null)
   const foodNameErr = useRef<HTMLSpanElement>(null)
@@ -123,8 +125,6 @@ const AddFood = () => {
     list.splice(index, 1)
     setToppings(list)
   }
-
-  const { t } = useTranslate()
 
   return loading ? (
     <LoadingPage />

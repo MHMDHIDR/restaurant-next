@@ -17,6 +17,8 @@ import Pagination from 'components/Pagination'
 import NavMenu from 'components/NavMenu'
 import ModalNotFound from 'components/Modal/ModalNotFound'
 import Layout from 'components/dashboard/Layout'
+import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
 
 const DashboardUsers = () => {
   useDocumentTitle('Users')
@@ -33,6 +35,8 @@ const DashboardUsers = () => {
   const [users, setUsers] = useState<any>('')
   const [modalLoading, setModalLoading] = useState(false)
   const { userType } = useAuth()
+  const { t } = useTranslate()
+  const { locale } = useLocale()
 
   const { loading, ...response } = useAxios({
     url: `/users/all?page=${pageNumber}&limit=${ITEMS_PER_PAGE}`
@@ -199,17 +203,27 @@ const DashboardUsers = () => {
         <section className='py-12 my-8 dashboard'>
           <div className='container mx-auto'>
             <h3 className='mx-0 mt-4 mb-12 text-2xl text-center md:text-3xl'>
-              قائمة المستخدمين
+              {t('app.dashboard.users.title')}
             </h3>
 
             <table className='table w-full text-center'>
               <thead className='text-white bg-orange-800'>
                 <tr>
-                  <th className='px-1 py-2'>الإســــــــــــــم</th>
-                  <th className='px-1 py-2'>البريد الالكتروني</th>
-                  <th className='px-1 py-2'>نوع المستخدم</th>
-                  <th className='px-1 py-2'>حالة المستخدم</th>
-                  <th className='px-1 py-2'>الإجراءات</th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.users.itemsTable.columns.name')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.users.itemsTable.columns.email')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.users.itemsTable.columns.type')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.users.itemsTable.columns.status')}
+                  </th>
+                  <th className='px-1 py-2'>
+                    {t('app.dashboard.users.itemsTable.columns.actions')}
+                  </th>
                 </tr>
               </thead>
 
@@ -245,10 +259,10 @@ const DashboardUsers = () => {
                             className='w-40'
                           >
                             {item.userAccountType === 'admin'
-                              ? 'مدير'
+                              ? t('app.dashboard.users.itemsTable.rows.admin')
                               : item.userAccountType === 'cashier'
-                              ? 'كاشير'
-                              : 'مستخدم عادي'}
+                              ? t('app.dashboard.users.itemsTable.rows.cashier')
+                              : t('app.dashboard.users.itemsTable.rows.user')}
                           </span>
                         </td>
                         <td
@@ -261,23 +275,27 @@ const DashboardUsers = () => {
                           <span
                             data-tooltip={
                               item.userAccountStatus === 'block'
-                                ? 'المستخدم المحظور لا يملك صلاحية للدخول على النظام'
-                                : 'المستخدم المفعل يملك صلاحية الدخول على حسابه فعليه يستطيع الدخول للنظام وعمل الاجراء الذي يتناسب مع صلاحياته'
+                                ? t('app.dashboard.users.itemsTable.rows.blockedTooltip')
+                                : t('app.dashboard.users.itemsTable.rows.activeTooltip')
                             }
                           >
                             {item.userAccountStatus === 'block'
-                              ? '❌\u00A0\u00A0\u00A0محظور'
-                              : '✅\u00A0\u00A0\u00A0مفعل'}
+                              ? `❌\u00A0\u00A0\u00A0${t(
+                                  'app.dashboard.users.itemsTable.rows.blocked'
+                                )}`
+                              : `✅\u00A0\u00A0\u00A0${t(
+                                  'app.dashboard.users.itemsTable.rows.active'
+                                )}`}
                           </span>
                         </td>
                         <td className='px-1 py-2'>
                           {idx === 0 ? (
                             //first admin account doesn't have to get deleted or blocked from others hence no action provided
                             <span className='text-gray-600 select-none dark:text-gray-200'>
-                              لا يوجد إجراء
+                              {t('app.dashboard.users.itemsTable.rows.noAction')}
                             </span>
                           ) : (
-                            <NavMenu>
+                            <NavMenu label={`${locale === 'ar' ? 'الإجراء' : 'Actions'}`}>
                               {/* UserStatus Buttons */}
                               {item.userAccountStatus === 'block' ? (
                                 <button
@@ -286,9 +304,11 @@ const DashboardUsers = () => {
                                   data-name={item.userFullName}
                                   data-action='active'
                                   className='py-1 text-white bg-green-600 border-2 rounded-md hover:bg-green-700 min-w-[4rem]'
-                                  data-tooltip='تفعيل المستخدم'
+                                  data-tooltip={t(
+                                    'app.dashboard.users.itemsTable.rows.activate'
+                                  )}
                                 >
-                                  تفعيل
+                                  {t('app.dashboard.users.itemsTable.rows.activate')}
                                 </button>
                               ) : (
                                 <button
@@ -297,9 +317,11 @@ const DashboardUsers = () => {
                                   data-name={item.userFullName}
                                   data-action='block'
                                   className='py-1 px-2 text-white border-2 rounded-md bg-neutral-600 hover:bg-neutral-700 min-w-[6.5rem]'
-                                  data-tooltip='حظر المستخدم'
+                                  data-tooltip={t(
+                                    'app.dashboard.users.itemsTable.rows.block'
+                                  )}
                                 >
-                                  حظر
+                                  {t('app.dashboard.users.itemsTable.rows.block')}
                                 </button>
                               )}
 
@@ -312,9 +334,11 @@ const DashboardUsers = () => {
                                     data-name={item.userFullName}
                                     data-action='user'
                                     className='py-1 px-2 text-white bg-green-600 border-2 rounded-md hover:bg-green-700 min-w-[6.5rem]'
-                                    data-tooltip='تحويل الى مستخدم عادي'
+                                    data-tooltip={t(
+                                      'app.dashboard.users.itemsTable.rows.makeUser'
+                                    )}
                                   >
-                                    تحويل لمستخدم
+                                    {t('app.dashboard.users.itemsTable.rows.makeUser')}
                                   </button>
                                   <button
                                     id='user'
@@ -322,9 +346,11 @@ const DashboardUsers = () => {
                                     data-name={item.userFullName}
                                     data-action='cashier'
                                     className='py-1 px-2 text-white bg-orange-600 border-2 rounded-md hover:bg-orange-700 min-w-[6.5rem]'
-                                    data-tooltip='تحويل الى لكاشير'
+                                    data-tooltip={t(
+                                      'app.dashboard.users.itemsTable.rows.makeCashier'
+                                    )}
                                   >
-                                    تحويل لكاشير
+                                    {t('app.dashboard.users.itemsTable.rows.makeCashier')}
                                   </button>
                                 </>
                               ) : item.userAccountType === 'cashier' ? (
@@ -335,9 +361,11 @@ const DashboardUsers = () => {
                                     data-name={item.userFullName}
                                     data-action='admin'
                                     className='py-1 px-2 text-white bg-green-600 border-2 rounded-md hover:bg-green-700 min-w-[6.5rem]'
-                                    data-tooltip='تحول الى مدير'
+                                    data-tooltip={t(
+                                      'app.dashboard.users.itemsTable.rows.makeAdmin'
+                                    )}
                                   >
-                                    تحول لمدير
+                                    {t('app.dashboard.users.itemsTable.rows.makeAdmin')}
                                   </button>
                                   <button
                                     id='user'
@@ -345,9 +373,11 @@ const DashboardUsers = () => {
                                     data-name={item.userFullName}
                                     data-action='user'
                                     className='py-1 px-2 text-white bg-green-600 border-2 rounded-md hover:bg-green-700 min-w-[6.5rem]'
-                                    data-tooltip='تحويل الى مستخدم عادي'
+                                    data-tooltip={t(
+                                      'app.dashboard.users.itemsTable.rows.makeUser'
+                                    )}
                                   >
-                                    تحويل لمستخدم
+                                    {t('app.dashboard.users.itemsTable.rows.makeUser')}
                                   </button>
                                 </>
                               ) : (
@@ -358,9 +388,11 @@ const DashboardUsers = () => {
                                     data-name={item.userFullName}
                                     data-action='admin'
                                     className='py-1 px-2 text-white bg-green-600 border-2 rounded-md hover:bg-green-700 min-w-[6.5rem]'
-                                    data-tooltip='تحول الى مدير'
+                                    data-tooltip={t(
+                                      'app.dashboard.users.itemsTable.rows.makeAdmin'
+                                    )}
                                   >
-                                    تحول لمدير
+                                    {t('app.dashboard.users.itemsTable.rows.makeAdmin')}
                                   </button>
                                   <button
                                     id='user'
@@ -368,9 +400,11 @@ const DashboardUsers = () => {
                                     data-name={item.userFullName}
                                     data-action='cashier'
                                     className='py-1 px-2 text-white bg-orange-600 border-2 rounded-md hover:bg-orange-700 min-w-[6.5rem]'
-                                    data-tooltip='تحويل الى لكاشير'
+                                    data-tooltip={t(
+                                      'app.dashboard.users.itemsTable.rows.makeCashier'
+                                    )}
                                   >
-                                    تحويل لكاشير
+                                    {t('app.dashboard.users.itemsTable.rows.makeCashier')}
                                   </button>
                                 </>
                               )}
@@ -382,9 +416,11 @@ const DashboardUsers = () => {
                                 data-name={item.userFullName}
                                 data-action='delete'
                                 className='py-1 px-2 text-white bg-red-600 rounded-md hover:bg-red-700 min-w-[6.5rem]'
-                                data-tooltip='حذف المستخدم'
+                                data-tooltip={t(
+                                  'app.dashboard.users.itemsTable.rows.deleteUser'
+                                )}
                               >
-                                حذف
+                                {t('app.dashboard.users.itemsTable.rows.deleteUser')}
                               </button>
                             </NavMenu>
                           )}

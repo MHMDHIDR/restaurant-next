@@ -15,6 +15,7 @@ import { responseTypes } from '@types'
 import goTo from 'functions/goTo'
 import { stringJson } from 'functions/jsonTools'
 import uploadS3 from 'utils/functions/uploadS3'
+import { useTranslate } from 'hooks/useTranslate'
 
 const Settings = () => {
   useDocumentTitle('Settings')
@@ -42,6 +43,7 @@ const Settings = () => {
   const [isUpdating, setIsUpdating] = useState(false)
   const [modalLoading, setModalLoading] = useState(false)
   const { userType } = useAuth()
+  const { t } = useTranslate()
 
   //fetching description data
   const { response, loading } = useAxios({ url: '/settings' })
@@ -194,7 +196,7 @@ const Settings = () => {
             {/* Description Form */}
             <form id='descForm' onSubmit={HandleUpdate}>
               <h2 className='mx-0 mt-4 mb-8 mr-5 text-xl text-center'>
-                العلامة التجارية
+                {t('app.dashboard.settings.title')}
               </h2>
               <label
                 htmlFor='logoImg'
@@ -237,14 +239,18 @@ const Settings = () => {
                   }}
                   required
                 ></input>
-                <span className='form__label'>اكتب اسم الموقع</span>
+                <span className='form__label'>
+                  {t('app.dashboard.settings.form.name.label')}
+                </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                   ref={appNameErr}
                 ></span>
               </label>
 
-              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>عن الموقع</h3>
+              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>
+                {t('app.dashboard.settings.form.about.label')}
+              </h3>
               <label htmlFor='aboutDescription' className='form__group'>
                 <textarea
                   name='aboutDescription'
@@ -267,14 +273,18 @@ const Settings = () => {
                   }}
                   required
                 ></textarea>
-                <span className='form__label'>اكتب وصف عن الموقع</span>
+                <span className='form__label'>
+                  {t('app.dashboard.settings.form.about.aboutText')}
+                </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                   ref={descErr}
                 ></span>
               </label>
 
-              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>شعار الموقع</h3>
+              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>
+                {t('app.dashboard.settings.form.tagLine.label')}
+              </h3>
               <label htmlFor='aboutTagline' className='form__group'>
                 <textarea
                   name='aboutTagline'
@@ -297,14 +307,18 @@ const Settings = () => {
                   }}
                   required
                 ></textarea>
-                <span className='form__label'>اكتب نص شعار للموقع</span>
+                <span className='form__label'>
+                  {t('app.dashboard.settings.form.tagLine.tagLineText')}
+                </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                   ref={tagLineErr}
                 ></span>
               </label>
 
-              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>رسالة ما بعد الطلب</h3>
+              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>
+                {t('app.dashboard.settings.form.afterOrder.label')}
+              </h3>
               <label htmlFor='orderMsg' className='form__group'>
                 <textarea
                   name='orderMsg'
@@ -327,7 +341,9 @@ const Settings = () => {
                   }}
                   required
                 ></textarea>
-                <span className='form__label'>نجاح الطلب</span>
+                <span className='form__label'>
+                  {t('app.dashboard.settings.form.afterOrder.success')}
+                </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                   ref={orderMsgErr}
@@ -355,14 +371,18 @@ const Settings = () => {
                   }}
                   required
                 ></textarea>
-                <span className='form__label'>فشل الطلب</span>
+                <span className='form__label'>
+                  {t('app.dashboard.settings.form.afterOrder.failure')}
+                </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                   ref={orderMsgErr}
                 ></span>
               </label>
 
-              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>رقم الواتساب</h3>
+              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>
+                {t('app.dashboard.settings.form.whatsapp.label')}
+              </h3>
               <label htmlFor='whatsAppNumber' className='form__group'>
                 <input
                   name='whatsAppNumber'
@@ -386,7 +406,7 @@ const Settings = () => {
                   }}
                 />
                 <span className='pointer-events-none form__label'>
-                  رقم الواتساب الخاص بالموقع للتواصل معك عبر الواتساب (إختياري)
+                  {t('app.dashboard.settings.form.whatsapp.whatsappText')}
                 </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
@@ -395,7 +415,7 @@ const Settings = () => {
               </label>
 
               <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>
-                رابط حساب الانستقرام
+                {t('app.dashboard.settings.form.instagram.label')}
               </h3>
               <label htmlFor='instagramAccount' className='form__group'>
                 <input
@@ -420,8 +440,7 @@ const Settings = () => {
                   }}
                 />
                 <span className='pointer-events-none form__label'>
-                  اكتب رابط حساب الانستقرام الخاص بك، وذلك لفتح صفحة حسابك عند الضغط على
-                  ايقونة انستقرام اسفل الموقع (إختياري)
+                  {t('app.dashboard.settings.form.instagram.instagramText')}
                 </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
@@ -429,7 +448,9 @@ const Settings = () => {
                 ></span>
               </label>
 
-              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>رابط حساب التويتر</h3>
+              <h3 className='mx-0 mt-4 mb-12 text-lg text-center'>
+                {t('app.dashboard.settings.form.twitter.label')}
+              </h3>
               <label htmlFor='twitterAccount' className='form__group'>
                 <input
                   name='twitterAccount'
@@ -453,8 +474,7 @@ const Settings = () => {
                   }}
                 />
                 <span className='pointer-events-none form__label'>
-                  اكتب رابط حساب التويتر الخاص بك، وذلك لفتح صفحة حسابك عند الضغط على
-                  ايقونة تويتر اسفل الموقع (إختياري)
+                  {t('app.dashboard.settings.form.twitter.twitterText')}
                 </span>
                 <span
                   className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
@@ -463,10 +483,12 @@ const Settings = () => {
               </label>
 
               <div className='mx-0 mt-4 mb-6 text-center'>
-                <h3 className='mb-10 text-lg'>تصنيفات الوجبات</h3>
+                <h3 className='mb-10 text-lg'>
+                  {t('app.dashboard.settings.form.categories.label')}
+                </h3>
                 <div className='flex justify-evenly'>
-                  <span>اسم التصنيف بالانجليزي</span>
-                  <span>اسم التصنيف بالعربي</span>
+                  <span>{t('app.dashboard.settings.form.categories.nameEn')}</span>
+                  <span>{t('app.dashboard.settings.form.categories.nameAr')}</span>
                 </div>
               </div>
               {categoryList?.map((categoryItem: string[], idx: number) => (
@@ -533,10 +555,10 @@ const Settings = () => {
                   {isUpdating && isUpdating ? (
                     <>
                       <LoadingSpinner />
-                      تحديث البيانات...
+                      {t('app.dashboard.settings.form.update.updating')}
                     </>
                   ) : (
-                    'تحديث'
+                    t('app.dashboard.settings.form.update.label')
                   )}
                 </button>
               </div>

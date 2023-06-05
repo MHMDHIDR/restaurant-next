@@ -12,6 +12,7 @@ import { cCategory } from '@types'
 import Layout from 'components/dashboard/Layout'
 import logoutUser from 'functions/logoutUser'
 import menuToggler from 'functions/menuToggler'
+import { useTranslate } from 'hooks/useTranslate'
 
 const DashboardStatistics = () => {
   useDocumentTitle('Home')
@@ -19,6 +20,8 @@ const DashboardStatistics = () => {
 
   const [categories, setCategories] = useState<string[]>([''])
   const [ordersBycCategory, setOrdersBycCategory] = useState<cCategory>()
+
+  const { t } = useTranslate()
 
   //if there's food id then fetch with food id, otherwise fetch everything
   const getCategories = useAxios({ url: `/settings` })
@@ -57,7 +60,9 @@ const DashboardStatistics = () => {
   ) : (
     <Layout>
       <div className='container mx-auto'>
-        <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>عدد الطلبات حسب التصنيف</h1>
+        <h1 className='mx-0 mt-32 mb-20 text-2xl text-center'>
+          {t('app.dashboard.statistics.title')}
+        </h1>
 
         <Doughnut
           width={200}
@@ -66,7 +71,7 @@ const DashboardStatistics = () => {
             labels: categories?.map(category => category[1]), //ordersBycCategory && Object.keys(ordersBycCategory)
             datasets: [
               {
-                label: 'عدد الطلبات حسب التصنيف',
+                label: t('app.dashboard.statistics.title'),
                 data: ordersBycCategory && Object.values(ordersBycCategory),
                 backgroundColor: [
                   'rgba(155, 52, 18, 0.7)',
