@@ -22,6 +22,8 @@ import { origin, USER } from '@constants'
 import { stringJson } from 'functions/jsonTools'
 import { focus } from 'utils/functions/focus'
 import { useTranslate } from 'hooks/useTranslate'
+import { useLocale } from 'hooks/useLocale'
+import { capitalizeText } from 'utils/functions/capitalize'
 
 const AddFood = () => {
   useDocumentTitle('Add Food or Drink')
@@ -48,6 +50,7 @@ const AddFood = () => {
   const { file } = useContext(FileUploadContext)
 
   const { t } = useTranslate()
+  const { locale } = useLocale()
 
   //Form errors messages
   const ImgErr = useRef<HTMLSpanElement>(null)
@@ -255,10 +258,12 @@ const AddFood = () => {
                     }
                     required
                   >
-                    <option value=''>اختر التصنيف</option>
+                    <option value=''>
+                      {t('app.dashboard.addItem.form.category.label')}
+                    </option>
                     {categoryList?.map((category, idx) => (
                       <option key={idx} value={category[0]}>
-                        {category[1]}
+                        {locale === 'ar' ? category[1] : capitalizeText(category[0])}
                       </option>
                     ))}
                   </select>
