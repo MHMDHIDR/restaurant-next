@@ -327,17 +327,26 @@
       "addItem": {
         "title": "Add Foods, Drinks, or Sweets",
         "form": {
-          "name": {
-            "label": "Name"
+          "nameAr": {
+            "label": "Name in Arabic"
+          },
+          "nameEn": {
+            "label": "Name in English"
           },
           "price": {
             "label": "Price"
           },
           "category": {
-            "label": "Pick a Category"
+            "label": "Pick a Category in Arabic"
+          },
+          "categoryEn": {
+            "label": "Pick a Category in English"
           },
           "desc": {
-            "label": "Write a Full Description"
+            "label": "Write a Full Description in Arabic"
+          },
+          "descEn": {
+            "label": "Write a Full Description in English"
           },
           "tags": {
             "label": "Tags help to search for a meal (Tags) - This field is optional",

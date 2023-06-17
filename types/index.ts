@@ -285,13 +285,17 @@ export type foodDataProps = {
   response: {
     _id: string
     foodName: string
+    foodNameEn: string
     foodPrice: number
     category: string
+    categoryEn: string
     createdAt: string
     updatedAt: string
     foodDesc: string
+    foodDescEn: string
     foodTags: string[]
     foodToppings: ToppingsProps[]
+    foodToppingsEn: ToppingsProps[]
     foodImgs: FoodImgsProps[]
     foodImgDisplayName?: FoodImgsProps['foodImgDisplayName']
     foodImgDisplayPath?: FoodImgsProps['foodImgDisplayPath']

@@ -44,13 +44,23 @@ export const DEFAULT_USER_DATA = {
 export const DEFAULT_FOOD_DATA = {
   _id: '',
   foodName: '',
+  foodNameEn: '',
   foodPrice: 1,
   category: '',
+  categoryEn: '',
   createdAt: '',
   updatedAt: '',
   foodDesc: '',
+  foodDescEn: '',
   foodTags: [''],
+  foodTagsEn: [''],
   foodToppings: [
+    {
+      toppingName: '',
+      toppingPrice: 1
+    }
+  ],
+  foodToppingsEn: [
     {
       toppingName: '',
       toppingPrice: 1

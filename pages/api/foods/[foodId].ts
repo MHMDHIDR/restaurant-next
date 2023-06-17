@@ -20,6 +20,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
   const { fields }: any = await formHandler(req)
   const {
     foodName,
+    foodNameEn,
     foodPrice,
     category,
     foodDesc,
@@ -50,6 +51,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
             foodId,
             {
               foodName,
+              foodNameEn,
               foodPrice,
               category,
               foodDesc,
@@ -78,6 +80,7 @@ export default async function handler(req: fileRequestProps, res: NextApiRespons
         try {
           await FoodModel.findByIdAndUpdate(foodId, {
             foodName,
+            foodNameEn,
             foodPrice,
             category,
             foodDesc,
