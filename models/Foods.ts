@@ -21,16 +21,11 @@ const reqDate = { type: Date, default: Date.now, required: true }
 
 const FoodSchema = new Schema({
   foodName: reqString,
-  foodNameEn: reqString,
   foodPrice: reqNumber,
   category: reqString,
-  categoryEn: reqString,
   foodDesc: reqString,
-  foodDescEn: reqString,
   foodToppings: foodToppingsType,
-  foodToppingsEn: foodToppingsType,
   foodTags: typeArray,
-  foodTagsEn: typeArray,
   foodImgs: typeArray,
   createdAt: reqDate,
   updatedAt: reqDate

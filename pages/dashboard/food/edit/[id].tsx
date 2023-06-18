@@ -45,12 +45,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
 
   //Form States
   const [foodName, setFoodName] = useState('')
-  const [foodNameEn, setFoodNameEn] = useState('')
   const [foodPrice, setFoodPrice] = useState('')
   const [category, setCategory] = useState<string[]>([])
-  const [categoryEn, setCategoryEn] = useState<string[]>([])
   const [foodDesc, setFoodDesc] = useState('')
-  const [foodDescEn, setFoodDescEn] = useState('')
   const [updatedFoodStatus, setUpdatedFoodStatus] = useState()
   const [loadingMsg, setLoadingMsg] = useState('')
   const [hasConfirmBtns, setHasConfirmBtn] = useState(false)
@@ -66,10 +63,8 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
   //Form errors messages
   const ImgErr = useRef<HTMLSpanElement>(null)
   const foodNameErr = useRef<HTMLSpanElement>(null)
-  const foodNameEnErr = useRef<HTMLSpanElement>(null)
   const priceErr = useRef<HTMLSpanElement>(null)
   const descErr = useRef<HTMLSpanElement>(null)
-  const descEnErr = useRef<HTMLSpanElement>(null)
   const formMsg = useRef<HTMLDivElement>(null)
 
   const modalLoading =
@@ -115,12 +110,9 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     //initial form values if no value was updated taking it from [0] index
     const currentFoodId = data?._id
     const currentFoodName = data?.foodName
-    const currentFoodNameEn = data?.foodNameEn
     const currentFoodPrice = data?.foodPrice
     const currentCategory = data?.category
-    const currentCategoryEn = data?.categoryEn
     const currentFoodDesc = data?.foodDesc
-    const currentFoodDescEn = data?.foodDescEn
     const currentTags = tags
     const currentToppings = toppings
     const prevFoodImgPathsAndNames = data?.foodImgs.map(
@@ -136,14 +128,10 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
     const formData = new FormData()
     formData.append('foodId', String(currentFoodId))
     formData.append('foodName', foodName || currentFoodName)
-    formData.append('foodNameEn', foodNameEn || currentFoodNameEn)
     formData.append('foodPrice', foodPrice || String(currentFoodPrice))
     formData.append('category', category[0] || currentCategory)
-    formData.append('categoryEn', categoryEn[0] || currentCategoryEn)
     formData.append('foodDesc', foodDesc || currentFoodDesc)
-    formData.append('foodDesc', foodDescEn || currentFoodDescEn)
     formData.append('foodTags', stringJson(currentTags))
-    formData.append('foodTagsEn', stringJson(currentTags))
     formData.append('foodToppings', stringJson(currentToppings))
     formData.append('foodToppingsEn', stringJson(currentToppings))
     formData.append('prevFoodImgPathsAndNames', stringJson(prevFoodImgPathsAndNames))
@@ -390,37 +378,6 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                       ></span>
                     </label>
 
-                    <label htmlFor='foodName' className='form__group'>
-                      <input
-                        type='text'
-                        id='foodNameEn'
-                        className='form__input'
-                        defaultValue={removeSlug(data?.foodName)}
-                        autoFocus
-                        onChange={e => setFoodNameEn(createSlug(e.target.value.trim()))}
-                        onKeyUp={e => {
-                          const target = (e.target as HTMLInputElement).value.trim()
-
-                          if (target.length > 0 && target.length < 5) {
-                            foodNameEnErr.current!.textContent =
-                              'The name is too short and it does not describe the item'
-                          } else if (target.length > 30) {
-                            foodNameEnErr.current!.textContent =
-                              'The name can not be longer than 30 characters, if you want more character try adding a full description please'
-                          } else {
-                            foodNameEnErr.current!.textContent = ''
-                          }
-                        }}
-                      />
-                      <span className='form__label'>
-                        {t('app.dashboard.addItem.form.nameEn.label')}
-                      </span>
-                      <span
-                        className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
-                        ref={foodNameEnErr}
-                      ></span>
-                    </label>
-
                     <label htmlFor='foodPrice' className='form__group'>
                       <input
                         type='number'
@@ -462,31 +419,6 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         className='form__input'
                         required
                         onChange={e =>
-                          setCategoryEn([
-                            e.target.value.trim(),
-                            e.target.options[e.target.selectedIndex].textContent ?? ''
-                          ])
-                        }
-                        defaultValue={data?.category}
-                      >
-                        <option value=''>اختر التصنيف</option>
-                        {categoryList?.map((category, idx) => (
-                          <option key={idx} value={category[0]}>
-                            {category[1]}
-                          </option>
-                        ))}
-                      </select>
-                      <span className='form__label active'>
-                        {t('app.dashboard.addItem.form.category.label')}
-                      </span>
-                    </label>
-
-                    <label htmlFor='category' className='form__group'>
-                      <select
-                        id='category'
-                        className='form__input'
-                        required
-                        onChange={e =>
                           setCategory([
                             e.target.value.trim(),
                             e.target.options[e.target.selectedIndex].textContent ?? ''
@@ -504,7 +436,7 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                         ))}
                       </select>
                       <span className='form__label active'>
-                        {t('app.dashboard.addItem.form.categoryEn.label')}
+                        {t('app.dashboard.addItem.form.category.label')}
                       </span>
                     </label>
 
@@ -535,36 +467,6 @@ const EditFood = ({ foodData }: { foodData: foodDataProps }) => {
                       <span
                         className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
                         ref={descErr}
-                      ></span>
-                    </label>
-
-                    <label htmlFor='foodDescription' className='form__group'>
-                      <textarea
-                        name='foodDescription'
-                        id='foodDescription'
-                        className='form__input'
-                        minLength={10}
-                        maxLength={300}
-                        onChange={e => setFoodDescEn(e.target.value?.trim())}
-                        onKeyUp={(e: any) => {
-                          const target = e.target.value?.trim()
-
-                          if (target.length > 0 && target.length < 30) {
-                            descErr.current!.textContent = `الوصف صغير ولا يكفي أن يصف العنصر المضاف`
-                          } else if (target.length > 300) {
-                            descErr.current!.textContent = `الوصف لا يمكن أن يزيد عن 300 حرف`
-                          } else {
-                            descErr.current!.textContent = ''
-                          }
-                        }}
-                        defaultValue={data?.foodDesc}
-                      ></textarea>
-                      <span className='form__label'>
-                        {t('app.dashboard.addItem.form.descEn.label')}
-                      </span>
-                      <span
-                        className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
-                        ref={descEnErr}
                       ></span>
                     </label>
 
