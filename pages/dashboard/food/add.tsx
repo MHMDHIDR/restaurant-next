@@ -208,7 +208,9 @@ const AddFood = () => {
                     }}
                   />
                   <span className='form__label'>
-                    {t('app.dashboard.addItem.form.name.label')}
+                    {locale === 'ar'
+                      ? t('app.dashboard.addItem.form.nameAr.label')
+                      : t('app.dashboard.addItem.form.nameEn.label')}
                   </span>
                   <span
                     className='inline-block md:text-lg text-red-600 dark:text-red-400 font-[600] pt-2 px-1'
