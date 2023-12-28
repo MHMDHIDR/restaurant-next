@@ -49,9 +49,9 @@ const Index = ({
     setDrinkImgs(catSweetResponse?.response)
     setNewFood(newFoodItems)
   }, [
-    catFoodResponse.response,
-    catDrinkResponse.response,
-    catSweetResponse.response,
+    catFoodResponse?.response,
+    catDrinkResponse?.response,
+    catSweetResponse?.response,
     newFoodItems
   ])
 
@@ -398,40 +398,40 @@ const Index = ({
   )
 }
 
-export async function getServerSideProps() {
-  const fetchURLs = {
-    menu: `${API_URL}/foods?page=1&limit=0&category=foods&createdAt=1`,
-    categories: {
-      foods: `${API_URL}/foods?page=1&limit=0&category=foods`,
-      drinks: `${API_URL}/foods?page=1&limit=0&category=drinks`,
-      sweets: `${API_URL}/foods?page=1&limit=0&category=sweets`
-    },
-    new: `${API_URL}/foods?page=1&limit=7&category=foods`
-  }
+// export async function getServerSideProps() {
+//   const fetchURLs = {
+//     menu: `${API_URL}/foods?page=1&limit=0&category=foods&createdAt=1`,
+//     categories: {
+//       foods: `${API_URL}/foods?page=1&limit=0&category=foods`,
+//       drinks: `${API_URL}/foods?page=1&limit=0&category=drinks`,
+//       sweets: `${API_URL}/foods?page=1&limit=0&category=sweets`
+//     },
+//     new: `${API_URL}/foods?page=1&limit=7&category=foods`
+//   }
 
-  const catFoodResponse = await fetch(fetchURLs.categories.foods).then(catFood =>
-    catFood.json()
-  )
-  const catDrinkResponse = await fetch(fetchURLs.categories.drinks).then(catDrink =>
-    catDrink.json()
-  )
-  const catSweetResponse = await fetch(fetchURLs.categories.sweets).then(catSweet =>
-    catSweet.json()
-  )
-  const menuFood = await fetch(fetchURLs.menu).then(menu => menu.json())
-  const newFoodItems = await fetch(fetchURLs.new).then(newFoodItems =>
-    newFoodItems.json()
-  )
+//   const catFoodResponse = await fetch(fetchURLs.categories.foods).then(catFood =>
+//     catFood.json()
+//   )
+//   const catDrinkResponse = await fetch(fetchURLs.categories.drinks).then(catDrink =>
+//     catDrink.json()
+//   )
+//   const catSweetResponse = await fetch(fetchURLs.categories.sweets).then(catSweet =>
+//     catSweet.json()
+//   )
+//   const menuFood = await fetch(fetchURLs.menu).then(menu => menu.json())
+//   const newFoodItems = await fetch(fetchURLs.new).then(newFoodItems =>
+//     newFoodItems.json()
+//   )
 
-  return {
-    props: {
-      menuFood,
-      catFoodResponse,
-      catDrinkResponse,
-      catSweetResponse,
-      newFoodItems
-    }
-  }
-}
+//   return {
+//     props: {
+//       menuFood,
+//       catFoodResponse,
+//       catDrinkResponse,
+//       catSweetResponse,
+//       newFoodItems
+//     }
+//   }
+// }
 
 export default Index

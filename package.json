@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "PORT=3001 next dev & local-ssl-proxy --source 3000 --target 3001",
+    "dev": "PORT=9001 next dev & local-ssl-proxy --source 9000 --target 9001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

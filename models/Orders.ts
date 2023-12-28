@@ -30,4 +30,4 @@ const OrderSchema = new Schema({
   orderDate: reqDate
 })
 
-export default models?.restaurant_orders || model('restaurant_orders', OrderSchema)
+export default models?.orders || model('orders', OrderSchema)

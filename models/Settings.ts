@@ -20,4 +20,4 @@ const SettingsSchema = new Schema({
   CategoryList: reqArray,
   orderMsg
 })
-export default models?.restaurant_settings || model('restaurant_settings', SettingsSchema)
+export default models?.settings || model('settings', SettingsSchema)

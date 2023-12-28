@@ -30,4 +30,4 @@ const FoodSchema = new Schema({
   createdAt: reqDate,
   updatedAt: reqDate
 })
-export default models?.restaurant_foods || model('restaurant_foods', FoodSchema)
+export default models?.foods || model('foods', FoodSchema)
