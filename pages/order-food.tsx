@@ -85,7 +85,7 @@ const OrderFood = () => {
       'formDataCart',
       stringJson({ personName, personPhone, personAddress, personNotes })
     )
-  }, [personName, personPhone, personAddress, personNotes])
+  }, [session, personName, personPhone, personAddress, personNotes])
 
   useEffect(() => {
     setGrandPrice(grandPriceRef?.current?.textContent || grandPrice)

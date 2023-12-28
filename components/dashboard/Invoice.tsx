@@ -36,7 +36,7 @@ const Invoice = ({ ordersData, orderItemsIds, orderToppingsId, forwardedRef }: a
       >
         <header className='flex flex-col gap-y-8'>
           <nav className='flex flex-col items-center justify-center gap-y-2'>
-            <img
+            <Image
               src={`/assets/img/icons/mobile/apple-icon-180.png`}
               className='rounded-lg'
               width='50'

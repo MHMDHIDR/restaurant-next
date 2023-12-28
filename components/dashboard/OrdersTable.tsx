@@ -196,10 +196,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
       }, 2000)
     })
   }, [setIsLoading])
-  const reactToPrintContent = useCallback(
-    () => componentRef.current,
-    [componentRef.current]
-  )
+  const reactToPrintContent = useCallback(() => componentRef.current, [])
   const handlePrint = useReactToPrint({
     content: reactToPrintContent,
     documentTitle: 'Invoice',
@@ -209,7 +206,7 @@ const OrdersTable = ({ ordersByUserEmail = false }) => {
     if (typeof onBeforeGetContentResolve.current === 'function') {
       onBeforeGetContentResolve.current()
     }
-  }, [setIsLoading, onBeforeGetContentResolve.current])
+  }, [setIsLoading])
 
   return LoadingOrders ? (
     <LoadingPage />

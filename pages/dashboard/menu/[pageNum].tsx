@@ -57,7 +57,7 @@ const DashboardMenu = () => {
       .get(`foods?page=${pageNumber}&limit=${ITEMS_PER_PAGE}&createdAt=-1`)
       .then(({ data }) => setMenuFood(data))
     scrollToView()
-  }, [])
+  }, [pageNumber])
 
   useEventListener('click', (e: any) => {
     if (e.target.id === 'deleteFood') {
