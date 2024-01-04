@@ -210,7 +210,7 @@
     "dashboard": {
       "title": "لوحة التحكم",
       "nav": {
-        "visit": "زيارة الموقعp",
+        "visit": "زيارة الموقع",
         "signout": "تسجيل الخروج"
       },
       "mainMenu": {
