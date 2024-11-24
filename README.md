@@ -1,47 +1,36 @@
-## Restaurant App 🥘
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-### Restaurant to find and order delicious foods, drinks, and sweets.
+## Getting Started
 
-&nbsp;
+First, run the development server:
 
-### Built using:
-
-#### ReactJS
-
-#### Tailwindcss
-
-#### NextJS
-
-#### Mongodb
-
-&nbsp;
-
-### Deployed on:
-
-#### Vercel
-
-### How to Install:
-
-#### 1. Go to Root folder (Restaurant) then apply the command:
-
-```
-yarn or npm install
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-&nbsp;
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### How to Run:
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-#### 1. Go to Root folder then apply the command:
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-```
-yarn start
-```
+## Learn More
 
-### You're All Set And Can Use the Project Now 😀 👍🏽
+To learn more about Next.js, take a look at the following resources:
 
-&nbsp;
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-##### All rights reserved
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-&copy; Mohammed Hayder
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
