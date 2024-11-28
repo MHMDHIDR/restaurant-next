@@ -1,12 +1,6 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-export function Divider({
-  children,
-  className,
-}: {
-  children?: string;
-  className?: string;
-}) {
+export function Divider({ children, className }: { children?: string; className?: string }) {
   return (
     <div
       className={cn(
@@ -20,7 +14,7 @@ export function Divider({
         </span>
       ) : null}
     </div>
-  );
+  )
 }
 
-export default Divider;
+export default Divider

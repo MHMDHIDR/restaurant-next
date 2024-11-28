@@ -1,23 +1,22 @@
-import { LogOutButton } from "@/app/_components/auth/logout-button";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/server/auth";
-import Link from "next/link";
+import AccountNav from "./accunt-nav";
+import type { User } from "next-auth";
 
 export default async function Nav() {
   const session = await auth();
+  const user = session?.user as User;
 
   return (
     <header className="bg-white shadow-md">
-      <div className="container mx-auto flex items-center justify-between px-6 py-4">
+      <div className="container mx-auto flex items-center justify-between p-4">
         <Link href="/" className="text-2xl font-bold text-primary">
-          Restaurant Finder
+          Restaurant App
         </Link>
         <nav className="space-x-4">
           {session ? (
-            <>
-              <span>Welcome, {session.user?.name}!</span>
-              <LogOutButton />
-            </>
+            <AccountNav user={user} />
           ) : (
             <Link href="/login">
               <Button>Login</Button>

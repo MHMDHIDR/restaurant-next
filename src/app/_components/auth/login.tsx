@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { IconBrandGoogle, IconLoader, IconMail } from "@tabler/icons-react";
-import { signIn } from "next-auth/react";
-import { handleSignin } from "./actions/handle-signin";
-import { Input } from "@/components/ui/input";
-import Divider from "@/components/ui/divider";
-import { useActionState } from "react";
-import clsx from "clsx";
+import { IconBrandGoogle, IconLoader, IconMail } from "@tabler/icons-react"
+import clsx from "clsx"
+import { signIn } from "next-auth/react"
+import { useActionState } from "react"
+import { Button } from "@/components/ui/button"
+import Divider from "@/components/ui/divider"
+import { Input } from "@/components/ui/input"
+import { handleSignin } from "./actions/handle-signin"
 
 export default function Login() {
   const [state, handleSigninAction, isPending] = useActionState(handleSignin, {
     message: undefined,
     success: true,
-  });
+  })
 
   return (
     <div className="space-y-4">
@@ -28,12 +28,8 @@ export default function Login() {
       <Divider className="my-10" />
 
       <form action={handleSigninAction} className="space-y-3">
-        {!state.success && (
-          <span className="text-red-700">{state.message}</span>
-        )}
-        {state.success && (
-          <span className="text-green-700">{state.message}</span>
-        )}
+        {!state.success && <span className="text-red-700">{state.message}</span>}
+        {state.success && <span className="text-green-700">{state.message}</span>}
         <Input type="email" name="email" placeholder="Email" />
         <Button
           type="submit"
@@ -51,5 +47,5 @@ export default function Login() {
         </Button>
       </form>
     </div>
-  );
+  )
 }

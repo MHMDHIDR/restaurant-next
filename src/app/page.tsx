@@ -1,14 +1,14 @@
-import { auth } from "@/server/auth";
-import { api } from "@/trpc/server";
-import { IconMapPin, IconSearch, IconStar } from "@tabler/icons-react";
+import { IconMapPin, IconSearch, IconStar } from "@tabler/icons-react"
+import { auth } from "@/server/auth"
+import { api } from "@/trpc/server"
 
 export default async function Home() {
-  const session = await auth();
-  const featuredVendors = await api.vendor.getFeatured();
+  const session = await auth()
+  const featuredVendors = await api.vendor.getFeatured()
   const nearbyVendors = await api.vendor.getNearby({
     latitude: 37.7749,
     longitude: -122.4194,
-  });
+  })
 
   return (
     <main className="min-h-screen bg-white">
@@ -36,11 +36,8 @@ export default async function Home() {
         <section className="mb-12">
           <h2 className="mb-6 text-2xl font-semibold">Featured Restaurants</h2>
           <div className="grid gap-6 md:grid-cols-3">
-            {featuredVendors.map((vendor) => (
-              <div
-                key={vendor.id}
-                className="overflow-hidden rounded-lg bg-white shadow-md"
-              >
+            {featuredVendors.map(vendor => (
+              <div key={vendor.id} className="overflow-hidden rounded-lg bg-white shadow-md">
                 <img
                   src={vendor.coverImage}
                   alt={vendor.name}
@@ -52,9 +49,7 @@ export default async function Home() {
                     <IconStar size={16} fill="currentColor" />
                     <span className="ml-2">{vendor.averageRating}</span>
                   </div>
-                  <p className="text-gray-600">
-                    {vendor.cuisineTypes.join(", ")}
-                  </p>
+                  <p className="text-gray-600">{vendor.cuisineTypes.join(", ")}</p>
                 </div>
               </div>
             ))}
@@ -62,5 +57,5 @@ export default async function Home() {
         </section>
       </div>
     </main>
-  );
+  )
 }

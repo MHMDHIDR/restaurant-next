@@ -1,28 +1,33 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
+  decimal,
   index,
   integer,
+  json,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   text,
   timestamp,
   varchar,
-  boolean,
-  decimal,
-  json,
-  pgEnum,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
 export const createTable = pgTableCreator((name) => `restaurant_${name}`);
 
 // Enums
-export const userRoleEnum = pgEnum("user_role", [
-  "SUPER_ADMIN",
-  "ADMIN",
-  "VENDOR_ADMIN",
-  "VENDOR_STAFF",
-  "CUSTOMER",
+export const UserRole = {
+  SUPER_ADMIN: "SuperAdmin",
+  VENDOR_ADMIN: "VendorAdmin",
+  VENDOR_STAFF: "VendorStaff",
+  CUSTOMER: "Customer",
+} as const;
+export const userRoleEnum = pgEnum("role", [
+  UserRole.SUPER_ADMIN,
+  UserRole.VENDOR_ADMIN,
+  UserRole.VENDOR_STAFF,
+  UserRole.CUSTOMER,
 ]);
 
 export const orderStatusEnum = pgEnum("order_status", [
@@ -48,10 +53,10 @@ export const users = createTable("user", {
     .notNull()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 20 }),
-  role: userRoleEnum("role").notNull().default("CUSTOMER"),
+  role: userRoleEnum("role").notNull().default(UserRole.CUSTOMER),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,

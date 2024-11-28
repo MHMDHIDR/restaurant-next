@@ -1,10 +1,10 @@
-import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { vendors } from "@/server/db/schema";
-import { desc, sql } from "drizzle-orm";
+import { desc, sql } from "drizzle-orm"
+import { z } from "zod"
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
+import { vendors } from "@/server/db/schema"
 
 // Constant for Earth's radius in kilometers
-const EARTH_RADIUS_KM = 6371;
+const EARTH_RADIUS_KM = 6371
 
 export const vendorRouter = createTRPCRouter({
   getFeatured: publicProcedure
@@ -16,13 +16,13 @@ export const vendorRouter = createTRPCRouter({
         .optional(),
     )
     .query(async ({ ctx, input }) => {
-      const limit = input?.limit ?? 6;
+      const limit = input?.limit ?? 6
 
       return await ctx.db.query.vendors.findMany({
         where: (vendors, { eq }) => eq(vendors.status, "ACTIVE"),
         orderBy: [desc(vendors.averageRating), desc(vendors.createdAt)],
         limit: limit,
-      });
+      })
     }),
 
   getNearby: publicProcedure
@@ -35,7 +35,7 @@ export const vendorRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { latitude, longitude, radius, limit } = input;
+      const { latitude, longitude, radius, limit } = input
 
       // Improved Haversine formula with more robust distance calculation
       const nearbyVendorsQuery = await ctx.db.execute(sql`
@@ -61,14 +61,14 @@ export const vendorRouter = createTRPCRouter({
         WHERE distance_km <= ${radius}
         ORDER BY distance_km
         LIMIT ${limit}
-      `);
+      `)
 
       // Type-safe transformation of raw query results
-      return nearbyVendorsQuery.map((vendor) => ({
+      return nearbyVendorsQuery.map(vendor => ({
         ...vendor,
         distance: Number(vendor.distance_km),
-      }));
+      }))
     }),
-});
+})
 
-export type VendorRouter = typeof vendorRouter;
+export type VendorRouter = typeof vendorRouter
