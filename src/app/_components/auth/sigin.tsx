@@ -1,21 +1,19 @@
 "use client";
 
-import { IconBrandGoogle, IconLoader, IconMail } from "@tabler/icons-react";
-import clsx from "clsx";
-import { signIn } from "next-auth/react";
-import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import Divider from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { IconBrandGoogle, IconLoader, IconMail } from "@tabler/icons-react";
+import clsx from "clsx";
+import { signIn } from "next-auth/react";
+import { useActionState } from "react";
 import { handleSignin } from "./actions/handle-signin";
 
 export default function Sigin() {
