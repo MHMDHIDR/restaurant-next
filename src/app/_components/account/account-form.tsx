@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { accountFormSchema } from "@/app/schemas/account"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { accountFormSchema } from "@/app/schemas/account";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,14 +13,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
-import type { AccountFormValues } from "@/app/schemas/account"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import type { AccountFormValues } from "@/app/schemas/account";
 
 export function AccountForm() {
-  const [isEditing, setIsEditing] = useState(false)
-  const toast = useToast()
+  const [isEditing, setIsEditing] = useState(false);
+  const toast = useToast();
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
@@ -30,11 +30,11 @@ export function AccountForm() {
       email: "john.doe@example.com",
       phoneNumber: "+1234567890",
     },
-  })
+  });
 
   function onSubmit(data: AccountFormValues) {
-    toast.success("Profile updated successfully!")
-    setIsEditing(false)
+    toast.success("Profile updated successfully!");
+    setIsEditing(false);
   }
 
   return (
@@ -107,5 +107,5 @@ export function AccountForm() {
         )}
       </form>
     </Form>
-  )
+  );
 }
