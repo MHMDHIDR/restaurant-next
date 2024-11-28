@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   boolean,
   decimal,
@@ -11,10 +11,10 @@ import {
   text,
   timestamp,
   varchar,
-} from "drizzle-orm/pg-core";
-import { type AdapterAccount } from "next-auth/adapters";
+} from "drizzle-orm/pg-core"
+import { type AdapterAccount } from "next-auth/adapters"
 
-export const createTable = pgTableCreator((name) => `restaurant_${name}`);
+export const createTable = pgTableCreator(name => `restaurant_${name}`)
 
 // Enums
 export const UserRole = {
@@ -22,13 +22,13 @@ export const UserRole = {
   VENDOR_ADMIN: "VendorAdmin",
   VENDOR_STAFF: "VendorStaff",
   CUSTOMER: "Customer",
-} as const;
+} as const
 export const userRoleEnum = pgEnum("role", [
   UserRole.SUPER_ADMIN,
   UserRole.VENDOR_ADMIN,
   UserRole.VENDOR_STAFF,
   UserRole.CUSTOMER,
-]);
+])
 
 export const orderStatusEnum = pgEnum("order_status", [
   "PENDING",
@@ -38,14 +38,14 @@ export const orderStatusEnum = pgEnum("order_status", [
   "OUT_FOR_DELIVERY",
   "DELIVERED",
   "CANCELLED",
-]);
+])
 
 export const vendorStatusEnum = pgEnum("vendor_status", [
   "PENDING",
   "ACTIVE",
   "SUSPENDED",
   "INACTIVE",
-]);
+])
 
 // Users table with enhanced roles and profile
 export const users = createTable("user", {
@@ -65,7 +65,7 @@ export const users = createTable("user", {
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+})
 
 // Vendors (Restaurants)
 export const vendors = createTable("vendor", {
@@ -86,9 +86,7 @@ export const vendors = createTable("vendor", {
   email: varchar("email", { length: 255 }).notNull(),
   latitude: decimal("latitude", { precision: 10, scale: 7 }),
   longitude: decimal("longitude", { precision: 10, scale: 7 }),
-  openingHours: json("opening_hours").$type<{
-    [key: string]: { open: string; close: string };
-  }>(),
+  openingHours: json("opening_hours").$type<Record<string, { open: string; close: string }>>(),
   cuisineTypes: json("cuisine_types").$type<string[]>().notNull(),
   deliveryRadius: integer("delivery_radius"),
   minimumOrder: decimal("minimum_order", { precision: 10, scale: 2 }),
@@ -96,7 +94,7 @@ export const vendors = createTable("vendor", {
   stripeAccountId: varchar("stripe_account_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+})
 
 // Menu Categories
 export const menuCategories = createTable("menu_category", {
@@ -112,7 +110,7 @@ export const menuCategories = createTable("menu_category", {
   image: varchar("image", { length: 255 }),
   isActive: boolean("is_active").default(true),
   sortOrder: integer("sort_order").default(0),
-});
+})
 
 // Menu Items
 export const menuItems = createTable("menu_item", {
@@ -131,12 +129,12 @@ export const menuItems = createTable("menu_item", {
   preparationTime: integer("preparation_time"),
   allergens: json("allergens").$type<string[]>(),
   nutritionalInfo: json("nutritional_info").$type<{
-    calories?: number;
-    protein?: number;
-    carbs?: number;
-    fat?: number;
+    calories?: number
+    protein?: number
+    carbs?: number
+    fat?: number
   }>(),
-});
+})
 
 // Orders
 export const orders = createTable("order", {
@@ -161,7 +159,7 @@ export const orders = createTable("order", {
   stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+})
 
 // Order Items
 export const orderItems = createTable("order_item", {
@@ -179,7 +177,7 @@ export const orderItems = createTable("order_item", {
   unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
   totalPrice: decimal("total_price", { precision: 10, scale: 2 }).notNull(),
   specialInstructions: text("special_instructions"),
-});
+})
 
 // Reviews
 export const reviews = createTable("review", {
@@ -200,35 +198,32 @@ export const reviews = createTable("review", {
   comment: text("comment"),
   images: json("images").$type<string[]>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+})
 
 // Define relations
 export const vendorsRelations = relations(vendors, ({ many }) => ({
   menuCategories: many(menuCategories),
   orders: many(orders),
   reviews: many(reviews),
-}));
+}))
 
-export const menuCategoriesRelations = relations(
-  menuCategories,
-  ({ one, many }) => ({
-    vendor: one(vendors, {
-      fields: [menuCategories.vendorId],
-      references: [vendors.id],
-    }),
-    menuItems: many(menuItems),
+export const menuCategoriesRelations = relations(menuCategories, ({ one, many }) => ({
+  vendor: one(vendors, {
+    fields: [menuCategories.vendorId],
+    references: [vendors.id],
   }),
-);
+  menuItems: many(menuItems),
+}))
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   user: one(users, { fields: [orders.userId], references: [users.id] }),
   vendor: one(vendors, { fields: [orders.vendorId], references: [vendors.id] }),
   orderItems: many(orderItems),
-}));
+}))
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
-}));
+}))
 
 export const accounts = createTable(
   "account",
@@ -236,9 +231,7 @@ export const accounts = createTable(
     userId: varchar("user_id", { length: 255 })
       .notNull()
       .references(() => users.id),
-    type: varchar("type", { length: 255 })
-      .$type<AdapterAccount["type"]>()
-      .notNull(),
+    type: varchar("type", { length: 255 }).$type<AdapterAccount["type"]>().notNull(),
     provider: varchar("provider", { length: 255 }).notNull(),
     providerAccountId: varchar("provider_account_id", {
       length: 255,
@@ -251,24 +244,22 @@ export const accounts = createTable(
     id_token: text("id_token"),
     session_state: varchar("session_state", { length: 255 }),
   },
-  (account) => ({
+  account => ({
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_user_id_idx").on(account.userId),
   }),
-);
+)
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
-}));
+}))
 
 export const sessions = createTable(
   "session",
   {
-    sessionToken: varchar("session_token", { length: 255 })
-      .notNull()
-      .primaryKey(),
+    sessionToken: varchar("session_token", { length: 255 }).notNull().primaryKey(),
     userId: varchar("user_id", { length: 255 })
       .notNull()
       .references(() => users.id),
@@ -277,14 +268,14 @@ export const sessions = createTable(
       withTimezone: true,
     }).notNull(),
   },
-  (session) => ({
+  session => ({
     userIdIdx: index("session_user_id_idx").on(session.userId),
   }),
-);
+)
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
-}));
+}))
 
 export const verificationTokens = createTable(
   "verification_token",
@@ -296,7 +287,7 @@ export const verificationTokens = createTable(
       withTimezone: true,
     }).notNull(),
   },
-  (vt) => ({
+  vt => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
-);
+)

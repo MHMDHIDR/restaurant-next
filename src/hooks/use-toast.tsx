@@ -1,5 +1,6 @@
-import { toast, ToastT } from "sonner"
+import { toast } from "sonner"
 import { Error, Success } from "@/app/_components/custom/icons"
+import type { ToastT } from "sonner"
 
 type ToastType = "success" | "error"
 

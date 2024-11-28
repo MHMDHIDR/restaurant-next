@@ -1,24 +1,22 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { eq } from "drizzle-orm";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
-import { eq } from "drizzle-orm";
 import { env } from "@/env";
 import { db } from "@/server/db";
 import {
   accounts,
   sessions,
-  UserRole,
   users,
   verificationTokens,
 } from "@/server/db/schema";
+import type { UserRole } from "@/server/db/schema";
 import type { AdapterUser } from "@auth/core/adapters";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-    } & DefaultSession["user"];
+    user: { id: string } & DefaultSession["user"];
   }
   interface User extends AdapterUser {
     role: typeof UserRole;
@@ -43,7 +41,7 @@ export const authConfig = {
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
-  pages: { signIn: "/login" },
+  pages: { signIn: "/sigin" },
   callbacks: {
     // Modify the signIn callback to handle account linking and user updates
     async signIn({ user, account, profile }) {
@@ -52,7 +50,7 @@ export const authConfig = {
         try {
           // Find the user by email
           const existingUser = await db.query.users.findFirst({
-            where: eq(users.email, user.email as string),
+            where: eq(users.email, user.email!),
           });
 
           // If user exists but name is not set, update with Google profile info
@@ -60,8 +58,8 @@ export const authConfig = {
             await db
               .update(users)
               .set({
-                name: profile.name || existingUser.name,
-                image: profile.picture || existingUser.image,
+                name: profile.name ?? existingUser.name,
+                image: profile.picture ?? existingUser.image,
               })
               .where(eq(users.email, user.email!));
           }
@@ -70,7 +68,7 @@ export const authConfig = {
           const existingAccount = await db.query.accounts.findFirst({
             where: (accounts, { and, eq }) =>
               and(
-                eq(accounts.userId, existingUser?.id || user.id!),
+                eq(accounts.userId, existingUser?.id ?? user.id!),
                 eq(accounts.provider, "google"),
               ),
           });
@@ -78,7 +76,7 @@ export const authConfig = {
           // If no existing Google account, create a new account
           if (!existingAccount) {
             await db.insert(accounts).values({
-              userId: existingUser?.id || user.id!,
+              userId: existingUser?.id ?? user.id!,
               type: "oauth",
               provider: "google",
               providerAccountId: account.providerAccountId,

@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { accountFormSchema, AccountFormValues } from "@/app/schemas/account"
+import { accountFormSchema } from "@/app/schemas/account"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
+import type { AccountFormValues } from "@/app/schemas/account"
 
 export function AccountForm() {
   const [isEditing, setIsEditing] = useState(false)
@@ -44,7 +45,7 @@ export function AccountForm() {
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>What's your full name?</FormLabel>
+              <FormLabel>What&apos;s your full name?</FormLabel>
               <FormControl>
                 <Input {...field} disabled={!isEditing} />
               </FormControl>

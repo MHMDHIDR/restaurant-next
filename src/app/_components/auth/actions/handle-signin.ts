@@ -15,7 +15,7 @@ export async function handleSignin(_: SignInType, formData: FormData): Promise<S
 
   if (!validatedFields.success) {
     return {
-      message: validatedFields.error.flatten().fieldErrors.email || "Invalid email",
+      message: validatedFields.error.flatten().fieldErrors.email ?? "Invalid email",
     }
   }
 

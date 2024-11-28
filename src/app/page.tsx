@@ -1,14 +1,9 @@
 import { IconMapPin, IconSearch, IconStar } from "@tabler/icons-react"
-import { auth } from "@/server/auth"
+import Image from "next/image"
 import { api } from "@/trpc/server"
 
 export default async function Home() {
-  const session = await auth()
   const featuredVendors = await api.vendor.getFeatured()
-  const nearbyVendors = await api.vendor.getNearby({
-    latitude: 37.7749,
-    longitude: -122.4194,
-  })
 
   return (
     <main className="min-h-screen bg-white">
@@ -38,9 +33,11 @@ export default async function Home() {
           <div className="grid gap-6 md:grid-cols-3">
             {featuredVendors.map(vendor => (
               <div key={vendor.id} className="overflow-hidden rounded-lg bg-white shadow-md">
-                <img
+                <Image
                   src={vendor.coverImage}
                   alt={vendor.name}
+                  height={192}
+                  width={320}
                   className="h-48 w-full object-cover"
                 />
                 <div className="p-4">

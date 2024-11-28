@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { LogOutButton } from "@/app/_components/auth/logout-button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { LogOutButton } from "@/app/_components/auth/logout-button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetClose,
@@ -12,9 +12,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { fallbackUsername } from "@/lib/fallback-username";
-import type { User } from "next-auth";
+} from "@/components/ui/sheet"
+import { fallbackUsername } from "@/lib/fallback-username"
+import type { User } from "next-auth"
 
 export default function AccountNav({ user }: { user: User }) {
   return (
@@ -36,9 +36,7 @@ export default function AccountNav({ user }: { user: User }) {
             </Avatar>
           </SheetTitle>
           <SheetDescription>
-            <span className="truncate font-semibold">
-              Welcome, {user.name ?? "User"}
-            </span>
+            <span className="truncate font-semibold">Welcome, {user.name ?? "User"}</span>
           </SheetDescription>
         </SheetHeader>
         <SheetFooter className="self-start">
@@ -48,5 +46,5 @@ export default function AccountNav({ user }: { user: User }) {
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  );
+  )
 }
