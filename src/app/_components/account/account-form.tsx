@@ -79,7 +79,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
         <FormField
           control={form.control}
           name="image"
-          render={({ field: { value, onChange, ...field } }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Profile Image</FormLabel>
               <FormControl>
@@ -88,26 +88,33 @@ export function AccountForm({ user }: { user: Session["user"] }) {
                     <Image
                       src={userData.image}
                       alt="Profile"
-                      width={124}
-                      height={124}
-                      className="rounded-full shadow"
+                      width={112}
+                      height={112}
+                      className="h-28 w-28 rounded-full object-contain shadow"
                     />
                   )}
                   <UploadButton
                     endpoint="imageUploader"
-                    onClientUploadComplete={() =>
-                      toast.success("Upload Completed")
-                    }
+                    onClientUploadComplete={(res) => {
+                      if (res?.[0]) {
+                        const imageUrl = res[0].url;
+                        // Update form and UI
+                        form.setValue("image", imageUrl);
+                        setUserData((prev) => ({ ...prev, image: imageUrl }));
+
+                        // Update database
+                        updateUserMutation.mutate({
+                          id: user.id,
+                          image: imageUrl,
+                        });
+
+                        toast.success("Upload Completed");
+                      }
+                    }}
                     onUploadError={(error: Error) =>
                       toast.error(`ERROR! ${error.message}`)
                     }
                     disabled={!isEditing}
-                    // onChange={(e) => {
-                    //   const file = e.target.files?.[0];
-                    //   if (file) {
-                    //     onChange(file);
-                    //   }
-                    // }}
                   />
                 </div>
               </FormControl>
