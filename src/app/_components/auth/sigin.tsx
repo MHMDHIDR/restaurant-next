@@ -23,7 +23,7 @@ export default function Sigin() {
   });
 
   return (
-    <Card className="w-[350px]">
+    <Card className="min-w-96">
       <CardHeader>
         <CardDescription>
           Sigin to continue to the Restaurant App

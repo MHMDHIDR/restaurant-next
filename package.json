@@ -37,6 +37,7 @@
     "@trpc/client": "^11.0.0-rc.645",
     "@trpc/react-query": "^11.0.0-rc.645",
     "@trpc/server": "^11.0.0-rc.645",
+    "@uploadthing/react": "^7.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.33.0",
@@ -56,6 +57,7 @@
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^7.3.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

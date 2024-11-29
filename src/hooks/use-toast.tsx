@@ -1,19 +1,20 @@
-import { toast } from "sonner"
-import { Error, Success } from "@/app/_components/custom/icons"
-import type { ToastT } from "sonner"
+import { toast } from "sonner";
+import { Error, Success, Loading } from "@/app/_components/custom/icons";
+import type { ToastT } from "sonner";
 
-type ToastType = "success" | "error"
+type ToastType = "success" | "error" | "loading";
 
 type ToastStyles = {
-  backgroundColor: string
-  color: string
-  border: string
-}
+  backgroundColor: string;
+  color: string;
+  border: string;
+};
 
 type ToastFunctions = {
-  success: (message: string, options?: Omit<ToastT, "message">) => void
-  error: (message: string, options?: Omit<ToastT, "message">) => void
-}
+  success: (message: string, options?: Omit<ToastT, "message">) => void;
+  error: (message: string, options?: Omit<ToastT, "message">) => void;
+  loading: (message: string, options?: Omit<ToastT, "message">) => void;
+};
 
 const toastStyles: Record<ToastType, ToastStyles> = {
   success: {
@@ -26,25 +27,36 @@ const toastStyles: Record<ToastType, ToastStyles> = {
     color: "#C53030",
     border: "1px solid #C53030",
   },
-}
+  loading: {
+    backgroundColor: "#F0F4FF",
+    color: "#3B82F6",
+    border: "1px solid #3B82F6",
+  },
+};
 
 /**
  * Custom Toast Hook
  * @returns {
  *          success: (message: string, options?: Omit<ToastT, "message">) => void;
  *          error: (message: string, options?: Omit<ToastT, "message">) => void;
+ *          loading : (message: string, options?: Omit<ToastT, "message">) => void;
  *        } - Toast functions
  */
 export function useToast(): ToastFunctions {
-  const showToast = (message: string, type: ToastType, options?: Omit<ToastT, "message">) => {
-    const Icon = type === "success" ? Success : Error
+  const showToast = (
+    message: string,
+    type: ToastType,
+    options?: Omit<ToastT, "message">,
+  ) => {
+    const Icon =
+      type === "success" ? Success : type === "error" ? Error : Loading;
 
     const toastContent = (
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
         <Icon className="h-5 w-5" />
         <span>{message}</span>
       </div>
-    )
+    );
 
     toast(toastContent, {
       ...options,
@@ -52,13 +64,15 @@ export function useToast(): ToastFunctions {
       className: "ltr rtl:rtl rtl:text-right select-none",
       position: "bottom-center",
       duration: 3000,
-    })
-  }
+    });
+  };
 
   return {
     success: (message: string, options?: Omit<ToastT, "message">) =>
       showToast(message, "success", options),
     error: (message: string, options?: Omit<ToastT, "message">) =>
       showToast(message, "error", options),
-  }
+    loading: (message: string, options?: Omit<ToastT, "message">) =>
+      showToast(message, "loading", options),
+  };
 }

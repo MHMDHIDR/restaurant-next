@@ -15,8 +15,10 @@ import {
 } from "@/components/ui/sheet";
 import { fallbackUsername } from "@/lib/fallback-username";
 import { IconUser } from "@tabler/icons-react";
+import clsx from "clsx";
 import type { User } from "next-auth";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function AccountNav({ user }: { user: User }) {
   return (
@@ -43,10 +45,14 @@ export default function AccountNav({ user }: { user: User }) {
             </SheetDescription>
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-1.5">
             <NavLink href="/account">
               <IconUser size={20} className="mr-4" />
               Account
+            </NavLink>
+            <NavLink href="/search">
+              <IconUser size={20} className="mr-4" />
+              Search
             </NavLink>
           </div>
         </SheetHeader>
@@ -68,11 +74,18 @@ function NavLink({
   href: string;
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   return (
     <SheetClose asChild>
       <Link
         href={href}
-        className="inline-flex w-full rounded-sm bg-gray-100 p-2 transition-colors hover:bg-gray-200"
+        className={clsx(
+          "inline-flex w-full rounded-sm border bg-gray-100 p-2 transition-colors hover:bg-gray-200",
+          {
+            "bg-orange-100": pathname === href,
+          },
+        )}
       >
         {children}
       </Link>

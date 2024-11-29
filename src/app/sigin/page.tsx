@@ -8,7 +8,7 @@ export default async function LoginPage() {
   return session ? (
     redirect("/")
   ) : (
-    <main className="flex h-screen flex-col items-center justify-center">
+    <main className="-mt-20 flex h-screen flex-col items-center justify-center">
       <h1 className="mb-6 text-center text-2xl font-bold">
         Sigin to Your Account
       </h1>
