@@ -1,4 +1,4 @@
-import { type Session } from "next-auth";
+import { type Session } from "next-auth"
 
 /**
  * This function takes a username and returns a fallback username
@@ -9,6 +9,6 @@ import { type Session } from "next-auth";
 export function fallbackUsername(username: Session["user"]["name"]) {
   return (username ?? "User")
     .split(" ")
-    .map((name) => name[0])
-    .join("");
+    .map(name => name[0])
+    .join("")
 }

@@ -1,22 +1,16 @@
-import { eq } from "drizzle-orm";
-import { z } from "zod";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "@/server/api/trpc";
-import { users } from "@/server/db/schema";
-import { accountFormSchema } from "@/app/schemas/account";
+import { eq } from "drizzle-orm"
+import { z } from "zod"
+import { accountFormSchema } from "@/app/schemas/account"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
+import { users } from "@/server/db/schema"
 
 export const usersRouter = createTRPCRouter({
   // Public procedure to get a user by ID
-  getById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      return await ctx.db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, input.id),
-      });
-    }),
+  getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, input.id),
+    })
+  }),
 
   // Protected procedure for updating users (requires authentication)
   update: protectedProcedure
@@ -38,8 +32,8 @@ export const usersRouter = createTRPCRouter({
           image: input.image,
         })
         .where(eq(users.id, input.id))
-        .returning();
+        .returning()
 
-      return updatedUser[0] ?? null;
+      return updatedUser[0] ?? null
     }),
-});
+})

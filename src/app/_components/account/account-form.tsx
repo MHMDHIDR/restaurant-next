@@ -1,9 +1,12 @@
-"use client";
+"use client"
 
-import type { AccountFormValues } from "@/app/schemas/account";
-import { accountFormSchema } from "@/app/schemas/account";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod"
+import Image from "next/image"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { accountFormSchema } from "@/app/schemas/account"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -12,22 +15,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PhoneInput } from "@/components/ui/phone-input";
-import { useToast } from "@/hooks/use-toast";
-import { fallbackUsername } from "@/lib/fallback-username";
-import { api } from "@/trpc/react";
-import { UploadButton } from "@/utils/uploadthing";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { Session } from "next-auth";
-import Image from "next/image";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { PhoneInput } from "@/components/ui/phone-input"
+import { useToast } from "@/hooks/use-toast"
+import { fallbackUsername } from "@/lib/fallback-username"
+import { api } from "@/trpc/react"
+import { UploadButton } from "@/utils/uploadthing"
+import type { AccountFormValues } from "@/app/schemas/account"
+import type { Session } from "next-auth"
 
 export function AccountForm({ user }: { user: Session["user"] }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const toast = useToast();
+  const [isEditing, setIsEditing] = useState(false)
+  const toast = useToast()
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
@@ -38,13 +38,13 @@ export function AccountForm({ user }: { user: Session["user"] }) {
       phone: user.phone ?? "",
       image: user.image ?? "",
     },
-  });
+  })
 
   const updateUserMutation = api.users.update.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
-        toast.success("Profile updated successfully!");
-        setIsEditing(false);
+        toast.success("Profile updated successfully!")
+        setIsEditing(false)
 
         form.reset({
           id: user.id,
@@ -52,16 +52,16 @@ export function AccountForm({ user }: { user: Session["user"] }) {
           email: user.email ?? "",
           phone: data.phone ?? "",
           image: data.image ?? "",
-        });
+        })
       }
     },
-    onError: (error) => {
-      toast.error(`Failed to update profile: ${error.message}`);
+    onError: error => {
+      toast.error(`Failed to update profile: ${error.message}`)
     },
     onMutate: () => {
-      toast.loading("Updating profile...");
+      toast.loading("Updating profile...")
     },
-  });
+  })
 
   // Handle form submission
   const onSubmit = async (data: AccountFormValues) => {
@@ -70,26 +70,26 @@ export function AccountForm({ user }: { user: Session["user"] }) {
       name: data.name,
       phone: data.phone,
       image: data.image,
-    });
-  };
+    })
+  }
 
   // Upload handlers
   const handleUploadComplete = (res: Array<{ url: string }>) => {
     if (res?.[0]) {
-      const imageUrl = res[0].url;
+      const imageUrl = res[0].url
 
-      form.setValue("image", imageUrl);
+      form.setValue("image", imageUrl)
 
-      updateUserMutation.mutate({ id: user.id, image: imageUrl });
+      updateUserMutation.mutate({ id: user.id, image: imageUrl })
 
-      toast.success("Upload Completed");
+      toast.success("Upload Completed")
     }
-  };
+  }
   const handleUploadError = (error: Error) => {
-    toast.error(`ERROR! ${error.message}`);
-  };
+    toast.error(`ERROR! ${error.message}`)
+  }
 
-  const currentImage = form.watch("image");
+  const currentImage = form.watch("image")
 
   return (
     <Form {...form}>
@@ -151,11 +151,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  className="disabled:cursor-not-allowed"
-                  disabled
-                />
+                <Input {...field} className="disabled:cursor-not-allowed" disabled />
               </FormControl>
               <FormDescription>
                 To change your email address, please contact customer support.
@@ -172,11 +168,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <FormItem className="flex flex-col items-start">
               <FormLabel className="text-left">Phone Number</FormLabel>
               <FormControl className="relative w-full">
-                <PhoneInput
-                  placeholder="Your Phone Number"
-                  {...field}
-                  disabled={!isEditing}
-                />
+                <PhoneInput placeholder="Your Phone Number" {...field} disabled={!isEditing} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -196,8 +188,8 @@ export function AccountForm({ user }: { user: Session["user"] }) {
               type="button"
               variant="outline"
               onClick={() => {
-                setIsEditing(false);
-                form.reset();
+                setIsEditing(false)
+                form.reset()
               }}
             >
               Cancel
@@ -206,5 +198,5 @@ export function AccountForm({ user }: { user: Session["user"] }) {
         )}
       </form>
     </Form>
-  );
+  )
 }

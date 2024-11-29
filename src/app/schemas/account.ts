@@ -1,5 +1,5 @@
-import { isValidPhoneNumber } from "libphonenumber-js";
-import { z } from "zod";
+import { isValidPhoneNumber } from "libphonenumber-js"
+import { z } from "zod"
 
 export const accountFormSchema = z.object({
   id: z.string(),
@@ -12,6 +12,6 @@ export const accountFormSchema = z.object({
     })
     .optional(),
   image: z.string().url("Invalid URL").optional(),
-});
+})
 
-export type AccountFormValues = z.infer<typeof accountFormSchema>;
+export type AccountFormValues = z.infer<typeof accountFormSchema>

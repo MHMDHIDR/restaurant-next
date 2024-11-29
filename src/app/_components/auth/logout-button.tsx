@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { IconLogout2 } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
-import { handleSignout } from "./actions/handle-signout";
+import { IconLogout2 } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
+import { handleSignout } from "./actions/handle-signout"
 
 export function LogOutButton() {
   return (
@@ -10,5 +10,5 @@ export function LogOutButton() {
       <IconLogout2 className="mx-1 h-5 w-5" />
       <span className="hidden sm:inline-flex">Signout</span>
     </Button>
-  );
+  )
 }

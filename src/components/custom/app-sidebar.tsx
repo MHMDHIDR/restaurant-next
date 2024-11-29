@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react"
 import * as React from "react"
-import { SearchForm } from "@/components/search-form"
+import { SearchForm } from "@/components/custom/search-form"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import {
   Sidebar,

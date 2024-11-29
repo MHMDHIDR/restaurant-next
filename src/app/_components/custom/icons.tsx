@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const ICON_SIZE_CLASS = "w-5 h-5";
+const ICON_SIZE_CLASS = "w-5 h-5"
 
 export function Logo({ className }: { className?: string }): JSX.Element {
   return (
@@ -32,16 +32,11 @@ export function Logo({ className }: { className?: string }): JSX.Element {
       <circle cx="36" cy="35" r="32.4" stroke="white" />
       <defs>
         <clipPath id="clip0">
-          <rect
-            width="42"
-            height="42"
-            fill="white"
-            transform="translate(15 14)"
-          />
+          <rect width="42" height="42" fill="white" transform="translate(15 14)" />
         </clipPath>
       </defs>
     </svg>
-  );
+  )
 }
 
 export function Success({ className }: { className?: string }): JSX.Element {
@@ -54,13 +49,7 @@ export function Success({ className }: { className?: string }): JSX.Element {
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >
       <title>Great :D Everything is good 👍🏻</title>
-      <g
-        fill="none"
-        fillRule="evenodd"
-        id="Page-1"
-        stroke="none"
-        strokeWidth="1"
-      >
+      <g fill="none" fillRule="evenodd" id="Page-1" stroke="none" strokeWidth="1">
         <g id="Group-3" transform="translate(2.000000, 2.000000)">
           <circle
             cx="41.5"
@@ -89,7 +78,7 @@ export function Success({ className }: { className?: string }): JSX.Element {
         </g>
       </g>
     </svg>
-  );
+  )
 }
 
 export function Error({ className }: { className?: string }): JSX.Element {
@@ -102,13 +91,7 @@ export function Error({ className }: { className?: string }): JSX.Element {
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >
       <title>Opps! something went wrong 😞</title>
-      <g
-        fill="none"
-        fillRule="evenodd"
-        id="Page-1"
-        stroke="none"
-        strokeWidth="1"
-      >
+      <g fill="none" fillRule="evenodd" id="Page-1" stroke="none" strokeWidth="1">
         <g id="Group-2" transform="translate(2.000000, 2.000000)">
           <circle
             className="status__icon--error-circle status__icon--error-circle-1"
@@ -136,7 +119,7 @@ export function Error({ className }: { className?: string }): JSX.Element {
         </g>
       </g>
     </svg>
-  );
+  )
 }
 
 export function Loading({ className }: { className?: string }): JSX.Element {
@@ -149,13 +132,7 @@ export function Loading({ className }: { className?: string }): JSX.Element {
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >
       <title>Loading... 💬</title>
-      <g
-        fill="none"
-        fillRule="evenodd"
-        id="Page-1"
-        stroke="none"
-        strokeWidth="1"
-      >
+      <g fill="none" fillRule="evenodd" id="Page-1" stroke="none" strokeWidth="1">
         <g id="Group-3" transform="translate(2.000000, 2.000000)">
           <circle
             className="status__icon--loading-circle status__icon--loading-circle-1"
@@ -173,14 +150,10 @@ export function Loading({ className }: { className?: string }): JSX.Element {
         </g>
       </g>
     </svg>
-  );
+  )
 }
 
-export function NotFoundIcon({
-  className,
-}: {
-  className?: string;
-}): JSX.Element {
+export function NotFoundIcon({ className }: { className?: string }): JSX.Element {
   return (
     <svg
       className={cn(`h-52 w-56`, className)}
@@ -336,5 +309,5 @@ export function NotFoundIcon({
         transform="translate(-169.93432 -164.42601)"
       />
     </svg>
-  );
+  )
 }
