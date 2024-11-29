@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 import { UploadButton } from "@/utils/uploadthing";
@@ -26,14 +26,13 @@ export function AccountForm({ user }: { user: Session["user"] }) {
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState(user);
   const toast = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
-      fullName: userData.name || "",
-      email: userData.email || "",
-      image: userData.image || "",
+      fullName: userData.name ?? "",
+      email: userData.email ?? "",
+      image: userData.image ?? "",
     },
   });
 

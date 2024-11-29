@@ -14,8 +14,12 @@ export const ourFileRouter = {
   })
     .middleware(async () => {
       const session = await auth();
-      if (!session?.user) throw new UploadThingError("Unauthorized");
-      const user = session.user;
+      if (!session!.user)
+        throw new UploadThingError({
+          code: "FORBIDDEN",
+          message: "Unauthorized",
+        });
+      const user = session!.user;
 
       const userDirectory = `${user.name}/${user.id}`;
 
@@ -53,7 +57,10 @@ export const ourFileRouter = {
         };
       } catch (error) {
         console.error("Error during upload:", error);
-        throw new UploadThingError("Upload process failed");
+        throw new UploadThingError({
+          code: "UPLOAD_FAILED",
+          message: "Upload process failed",
+        });
       }
     }),
 } satisfies FileRouter;
