@@ -1,11 +1,13 @@
-import { createEnv } from "@t3-oss/env-nextjs"
-import { z } from "zod"
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    EMAIL_FROM: z.string().email(),
+    EMAIL_FROM: z.string(),
     DATABASE_URL: z.string().url(),
-    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
     UPLOADTHING_TOKEN: z.string(),
     UPLOADTHING_SECRET: z.string(),
   },
@@ -19,4 +21,4 @@ export const env = createEnv({
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
-})
+});

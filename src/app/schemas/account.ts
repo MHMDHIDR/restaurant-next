@@ -1,9 +1,17 @@
-import { z } from "zod"
+import { isValidPhoneNumber } from "libphonenumber-js";
+import { z } from "zod";
 
 export const accountFormSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  id: z.string(),
+  name: z.string().optional(),
   email: z.string().email("Invalid email address").readonly(),
+  phone: z
+    .string()
+    .refine(isValidPhoneNumber, {
+      message: "Please Provide a Valid Phone Number",
+    })
+    .optional(),
   image: z.string().url("Invalid URL").optional(),
-})
+});
 
-export type AccountFormValues = z.infer<typeof accountFormSchema>
+export type AccountFormValues = z.infer<typeof accountFormSchema>;

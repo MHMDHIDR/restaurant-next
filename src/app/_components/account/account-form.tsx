@@ -1,11 +1,9 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import Image from "next/image"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { accountFormSchema } from "@/app/schemas/account"
-import { Button } from "@/components/ui/button"
+import type { AccountFormValues } from "@/app/schemas/account";
+import { accountFormSchema } from "@/app/schemas/account";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,63 +12,84 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
-import { api } from "@/trpc/react"
-import { UploadButton } from "@/utils/uploadthing"
-import type { AccountFormValues } from "@/app/schemas/account"
-import type { Session } from "next-auth"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { useToast } from "@/hooks/use-toast";
+import { fallbackUsername } from "@/lib/fallback-username";
+import { api } from "@/trpc/react";
+import { UploadButton } from "@/utils/uploadthing";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Session } from "next-auth";
+import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export function AccountForm({ user }: { user: Session["user"] }) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [userData, setUserData] = useState(user)
-  const toast = useToast()
+  const [isEditing, setIsEditing] = useState(false);
+  const toast = useToast();
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
-      fullName: userData.name ?? "",
-      email: userData.email ?? "",
-      image: userData.image ?? "",
+      id: user.id,
+      name: user.name ?? "",
+      email: user.email ?? "",
+      phone: user.phone ?? "",
+      image: user.image ?? "",
     },
-  })
+  });
 
   const updateUserMutation = api.users.update.useMutation({
-    onSuccess: data => {
-      // Type guard to ensure data is not undefined
+    onSuccess: (data) => {
       if (data) {
-        toast.success("Profile updated successfully!")
-        setIsEditing(false)
-        setUserData(prevUser => ({
-          ...prevUser,
-          name: data.name ?? prevUser.name,
-          image: data.image ?? prevUser.image,
-        }))
+        toast.success("Profile updated successfully!");
+        setIsEditing(false);
+
+        form.reset({
+          id: user.id,
+          name: data.name ?? user.name ?? "",
+          email: user.email ?? "",
+          phone: data.phone ?? "",
+          image: data.image ?? "",
+        });
       }
     },
-    onError: error => {
-      toast.error(`Failed to update profile: ${error.message}`)
+    onError: (error) => {
+      toast.error(`Failed to update profile: ${error.message}`);
     },
     onMutate: () => {
-      toast.loading("Saving profile...")
+      toast.loading("Updating profile...");
     },
-  })
+  });
 
-  async function onSubmit(data: AccountFormValues) {
-    let imageUrl = userData.image as string | undefined
-
-    // Type-safe file check
-    if (data.image && typeof data.image === "object" && "type" in data.image) {
-      imageUrl = URL.createObjectURL(data.image as File)
-    }
-
+  // Handle form submission
+  const onSubmit = async (data: AccountFormValues) => {
     updateUserMutation.mutate({
       id: user.id,
-      name: data.fullName,
-      image: imageUrl,
-    })
-  }
+      name: data.name,
+      phone: data.phone,
+      image: data.image,
+    });
+  };
+
+  // Upload handlers
+  const handleUploadComplete = (res: Array<{ url: string }>) => {
+    if (res?.[0]) {
+      const imageUrl = res[0].url;
+
+      form.setValue("image", imageUrl);
+
+      updateUserMutation.mutate({ id: user.id, image: imageUrl });
+
+      toast.success("Upload Completed");
+    }
+  };
+  const handleUploadError = (error: Error) => {
+    toast.error(`ERROR! ${error.message}`);
+  };
+
+  const currentImage = form.watch("image");
 
   return (
     <Form {...form}>
@@ -82,35 +101,26 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <FormItem>
               <FormLabel>Profile Image</FormLabel>
               <FormControl>
-                <div className="flex items-center space-x-4">
-                  {userData.image && (
+                <div className="flex select-none items-center gap-x-6">
+                  {currentImage ? (
                     <Image
-                      src={userData.image}
+                      src={currentImage}
                       alt="Profile"
                       width={112}
                       height={112}
-                      className="h-28 w-28 rounded-full object-contain shadow"
+                      className="h-20 w-20 rounded-full object-contain shadow"
                     />
+                  ) : (
+                    <Avatar className="h-20 w-20 rounded-full text-primary shadow">
+                      <AvatarFallback className="text-2xl font-bold">
+                        {fallbackUsername(user.name)}
+                      </AvatarFallback>
+                    </Avatar>
                   )}
                   <UploadButton
                     endpoint="imageUploader"
-                    onClientUploadComplete={res => {
-                      if (res?.[0]) {
-                        const imageUrl = res[0].url
-                        // Update form and UI
-                        form.setValue("image", imageUrl)
-                        setUserData(prev => ({ ...prev, image: imageUrl }))
-
-                        // Update database
-                        updateUserMutation.mutate({
-                          id: user.id,
-                          image: imageUrl,
-                        })
-
-                        toast.success("Upload Completed")
-                      }
-                    }}
-                    onUploadError={(error: Error) => toast.error(`ERROR! ${error.message}`)}
+                    onClientUploadComplete={handleUploadComplete}
+                    onUploadError={handleUploadError}
                     disabled={!isEditing}
                   />
                 </div>
@@ -122,7 +132,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
 
         <FormField
           control={form.control}
-          name="fullName"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>What&apos;s your full name?</FormLabel>
@@ -141,11 +151,33 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} disabled />
+                <Input
+                  {...field}
+                  className="disabled:cursor-not-allowed"
+                  disabled
+                />
               </FormControl>
               <FormDescription>
                 To change your email address, please contact customer support.
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start">
+              <FormLabel className="text-left">Phone Number</FormLabel>
+              <FormControl className="relative w-full">
+                <PhoneInput
+                  placeholder="Your Phone Number"
+                  {...field}
+                  disabled={!isEditing}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -157,15 +189,22 @@ export function AccountForm({ user }: { user: Session["user"] }) {
           </Button>
         ) : (
           <div className="space-x-4">
-            <Button type="submit" disabled={updateUserMutation.status === "pending"}>
-              {updateUserMutation.status === "pending" ? "Saving..." : "Save"}
+            <Button type="submit" disabled={updateUserMutation.isPending}>
+              {updateUserMutation.isPending ? "Saving..." : "Save"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsEditing(false);
+                form.reset();
+              }}
+            >
               Cancel
             </Button>
           </div>
         )}
       </form>
     </Form>
-  )
+  );
 }

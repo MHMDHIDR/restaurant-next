@@ -1,12 +1,8 @@
-"use client"
+"use client";
 
-import { IconHome, IconUser } from "@tabler/icons-react"
-import clsx from "clsx"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { LogOutButton } from "@/app/_components/auth/logout-button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { LogOutButton } from "@/app/_components/auth/logout-button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
@@ -16,9 +12,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { fallbackUsername } from "@/lib/fallback-username"
-import type { User } from "next-auth"
+} from "@/components/ui/sheet";
+import { fallbackUsername } from "@/lib/fallback-username";
+import { IconHome, IconUser } from "@tabler/icons-react";
+import clsx from "clsx";
+import type { User } from "next-auth";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function AccountNav({ user }: { user: User }) {
   return (
@@ -31,13 +31,16 @@ export default function AccountNav({ user }: { user: User }) {
           <div className="flex items-center gap-x-2">
             <SheetTitle>
               <Avatar className="h-8 w-8 rounded-full shadow">
-                <AvatarImage
-                  src={user.image ?? "/logo.svg"}
-                  alt={fallbackUsername(user.name) ?? "Restaurant App User"}
-                />
-                <AvatarFallback className="rounded-lg">
-                  {fallbackUsername(user.name) ?? "User"}
-                </AvatarFallback>
+                {user.image ? (
+                  <AvatarImage
+                    src={user.image}
+                    alt={fallbackUsername(user.name) ?? "Restaurant App User"}
+                  />
+                ) : (
+                  <AvatarFallback className="rounded-lg text-orange-600">
+                    {fallbackUsername(user.name) ?? "User"}
+                  </AvatarFallback>
+                )}
               </Avatar>
             </SheetTitle>
             <SheetDescription className="select-none truncate font-semibold">
@@ -64,11 +67,17 @@ export default function AccountNav({ user }: { user: User }) {
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  const pathname = usePathname()
+function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
 
   return (
     <SheetClose asChild>
@@ -84,5 +93,5 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
         {children}
       </Link>
     </SheetClose>
-  )
+  );
 }
