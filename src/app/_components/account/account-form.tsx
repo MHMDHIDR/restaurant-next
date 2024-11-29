@@ -1,9 +1,11 @@
-"use client";
+"use client"
 
-import { useRef, useState } from "react";
-import type { AccountFormValues } from "@/app/schemas/account";
-import { accountFormSchema } from "@/app/schemas/account";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod"
+import Image from "next/image"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { accountFormSchema } from "@/app/schemas/account"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -12,20 +14,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { api } from "@/trpc/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { Session } from "next-auth";
-import { useForm } from "react-hook-form";
-import Image from "next/image";
-import { UploadButton } from "@/utils/uploadthing";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/hooks/use-toast"
+import { api } from "@/trpc/react"
+import { UploadButton } from "@/utils/uploadthing"
+import type { AccountFormValues } from "@/app/schemas/account"
+import type { Session } from "next-auth"
 
 export function AccountForm({ user }: { user: Session["user"] }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState(user);
-  const toast = useToast();
+  const [isEditing, setIsEditing] = useState(false)
+  const [userData, setUserData] = useState(user)
+  const toast = useToast()
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
@@ -34,42 +34,42 @@ export function AccountForm({ user }: { user: Session["user"] }) {
       email: userData.email ?? "",
       image: userData.image ?? "",
     },
-  });
+  })
 
   const updateUserMutation = api.users.update.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Type guard to ensure data is not undefined
       if (data) {
-        toast.success("Profile updated successfully!");
-        setIsEditing(false);
-        setUserData((prevUser) => ({
+        toast.success("Profile updated successfully!")
+        setIsEditing(false)
+        setUserData(prevUser => ({
           ...prevUser,
           name: data.name ?? prevUser.name,
           image: data.image ?? prevUser.image,
-        }));
+        }))
       }
     },
-    onError: (error) => {
-      toast.error(`Failed to update profile: ${error.message}`);
+    onError: error => {
+      toast.error(`Failed to update profile: ${error.message}`)
     },
     onMutate: () => {
-      toast.loading("Saving profile...");
+      toast.loading("Saving profile...")
     },
-  });
+  })
 
   async function onSubmit(data: AccountFormValues) {
-    let imageUrl = userData.image as string | undefined;
+    let imageUrl = userData.image as string | undefined
 
     // Type-safe file check
     if (data.image && typeof data.image === "object" && "type" in data.image) {
-      imageUrl = URL.createObjectURL(data.image as File);
+      imageUrl = URL.createObjectURL(data.image as File)
     }
 
     updateUserMutation.mutate({
       id: user.id,
       name: data.fullName,
       image: imageUrl,
-    });
+    })
   }
 
   return (
@@ -94,25 +94,23 @@ export function AccountForm({ user }: { user: Session["user"] }) {
                   )}
                   <UploadButton
                     endpoint="imageUploader"
-                    onClientUploadComplete={(res) => {
+                    onClientUploadComplete={res => {
                       if (res?.[0]) {
-                        const imageUrl = res[0].url;
+                        const imageUrl = res[0].url
                         // Update form and UI
-                        form.setValue("image", imageUrl);
-                        setUserData((prev) => ({ ...prev, image: imageUrl }));
+                        form.setValue("image", imageUrl)
+                        setUserData(prev => ({ ...prev, image: imageUrl }))
 
                         // Update database
                         updateUserMutation.mutate({
                           id: user.id,
                           image: imageUrl,
-                        });
+                        })
 
-                        toast.success("Upload Completed");
+                        toast.success("Upload Completed")
                       }
                     }}
-                    onUploadError={(error: Error) =>
-                      toast.error(`ERROR! ${error.message}`)
-                    }
+                    onUploadError={(error: Error) => toast.error(`ERROR! ${error.message}`)}
                     disabled={!isEditing}
                   />
                 </div>
@@ -159,22 +157,15 @@ export function AccountForm({ user }: { user: Session["user"] }) {
           </Button>
         ) : (
           <div className="space-x-4">
-            <Button
-              type="submit"
-              disabled={updateUserMutation.status === "pending"}
-            >
+            <Button type="submit" disabled={updateUserMutation.status === "pending"}>
               {updateUserMutation.status === "pending" ? "Saving..." : "Save"}
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsEditing(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
               Cancel
             </Button>
           </div>
         )}
       </form>
     </Form>
-  );
+  )
 }

@@ -1,8 +1,12 @@
-"use client";
+"use client"
 
-import { LogOutButton } from "@/app/_components/auth/logout-button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { IconHome, IconUser } from "@tabler/icons-react"
+import clsx from "clsx"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { LogOutButton } from "@/app/_components/auth/logout-button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetClose,
@@ -12,13 +16,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { fallbackUsername } from "@/lib/fallback-username";
-import { IconHome, IconUser } from "@tabler/icons-react";
-import clsx from "clsx";
-import type { User } from "next-auth";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+} from "@/components/ui/sheet"
+import { fallbackUsername } from "@/lib/fallback-username"
+import type { User } from "next-auth"
 
 export default function AccountNav({ user }: { user: User }) {
   return (
@@ -64,17 +64,11 @@ export default function AccountNav({ user }: { user: User }) {
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  );
+  )
 }
 
-function NavLink({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const pathname = usePathname()
 
   return (
     <SheetClose asChild>
@@ -90,5 +84,5 @@ function NavLink({
         {children}
       </Link>
     </SheetClose>
-  );
+  )
 }

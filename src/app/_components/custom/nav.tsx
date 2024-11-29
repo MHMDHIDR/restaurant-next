@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { auth } from "@/server/auth";
-import AccountNav from "./accunt-nav";
-import type { User } from "next-auth";
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { auth } from "@/server/auth"
+import AccountNav from "./accunt-nav"
+import type { User } from "next-auth"
 
 export default async function Nav() {
-  const session = await auth();
-  const user = session?.user as User;
+  const session = await auth()
+  const user = session?.user as User
 
   return (
     <header className="bg-white shadow-md">
@@ -25,5 +25,5 @@ export default async function Nav() {
         </nav>
       </div>
     </header>
-  );
+  )
 }

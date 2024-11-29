@@ -1,33 +1,26 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import Divider from "@/components/ui/divider";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { IconBrandGoogle, IconLoader, IconMail } from "@tabler/icons-react";
-import clsx from "clsx";
-import { signIn } from "next-auth/react";
-import { useActionState } from "react";
-import { handleSignin } from "./actions/handle-signin";
+import { IconBrandGoogle, IconLoader, IconMail } from "@tabler/icons-react"
+import clsx from "clsx"
+import { signIn } from "next-auth/react"
+import { useActionState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+import Divider from "@/components/ui/divider"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { handleSignin } from "./actions/handle-signin"
 
 export default function Sigin() {
   const [state, handleSigninAction, isPending] = useActionState(handleSignin, {
     message: undefined,
     success: true,
-  });
+  })
 
   return (
     <Card className="min-w-96">
       <CardHeader>
-        <CardDescription>
-          Sigin to continue to the Restaurant App
-        </CardDescription>
+        <CardDescription>Sigin to continue to the Restaurant App</CardDescription>
       </CardHeader>
       <CardContent>
         <Button
@@ -44,21 +37,14 @@ export default function Sigin() {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
-              {!state.success && (
-                <span className="text-red-700">{state.message}</span>
-              )}
-              {state.success && (
-                <span className="text-green-700">{state.message}</span>
-              )}
+              {!state.success && <span className="text-red-700">{state.message}</span>}
+              {state.success && <span className="text-green-700">{state.message}</span>}
               <Input type="email" name="email" id="email" placeholder="Email" />
               <Button
                 type="submit"
-                className={clsx(
-                  "w-full bg-gray-200 text-black hover:bg-gray-300",
-                  {
-                    "pointer-events-none cursor-not-allowed": isPending,
-                  },
-                )}
+                className={clsx("w-full bg-gray-200 text-black hover:bg-gray-300", {
+                  "pointer-events-none cursor-not-allowed": isPending,
+                })}
                 disabled={isPending}
               >
                 {isPending ? (
@@ -73,5 +59,5 @@ export default function Sigin() {
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }

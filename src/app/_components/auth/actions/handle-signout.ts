@@ -1,7 +1,7 @@
-"use server";
+"use server"
 
-import { signOut } from "@/server/auth";
+import { signOut } from "@/server/auth"
 
 export async function handleSignout() {
-  await signOut({ redirectTo: "/sigin" });
+  await signOut({ redirectTo: "/sigin" })
 }

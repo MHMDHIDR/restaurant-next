@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input"
 
 export default function SearchPage() {
   return (
@@ -7,5 +7,5 @@ export default function SearchPage() {
 
       <Input placeholder="Search" />
     </div>
-  );
+  )
 }
