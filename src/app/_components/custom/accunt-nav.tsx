@@ -14,7 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { fallbackUsername } from "@/lib/fallback-username";
-import { IconUser } from "@tabler/icons-react";
+import { IconHome, IconUser } from "@tabler/icons-react";
 import clsx from "clsx";
 import type { User } from "next-auth";
 import Link from "next/link";
@@ -46,13 +46,13 @@ export default function AccountNav({ user }: { user: User }) {
           </div>
 
           <div className="flex flex-col space-y-1.5">
+            <NavLink href="/">
+              <IconHome size={20} className="mr-4" />
+              Home
+            </NavLink>
             <NavLink href="/account">
               <IconUser size={20} className="mr-4" />
               Account
-            </NavLink>
-            <NavLink href="/search">
-              <IconUser size={20} className="mr-4" />
-              Search
             </NavLink>
           </div>
         </SheetHeader>
@@ -81,9 +81,9 @@ function NavLink({
       <Link
         href={href}
         className={clsx(
-          "inline-flex w-full rounded-sm border bg-gray-100 p-2 transition-colors hover:bg-gray-200",
+          "inline-flex w-full select-none rounded-sm border bg-gray-100 p-2 transition-colors hover:bg-gray-200",
           {
-            "bg-orange-100": pathname === href,
+            "bg-gray-300": pathname === href,
           },
         )}
       >
