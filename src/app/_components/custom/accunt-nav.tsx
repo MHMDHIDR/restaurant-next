@@ -27,7 +27,7 @@ export default function AccountNav({ user }: { user: User }) {
       <SheetTrigger asChild>
         <Button variant="outline" className="inline-flex justify-between px-0">
           <Avatar user={user} className="h-9 w-9 rounded-sm rounded-r-none" />
-          <span className="pr-2">Account</span>
+          <span className="pr-2">{truncateUsername(user.name)}</span>
         </Button>
       </SheetTrigger>
       <SheetContent side={"right"} className="flex flex-col">

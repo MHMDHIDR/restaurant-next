@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { IconLoader2 } from "@tabler/icons-react"
 import Image from "next/image"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -182,7 +183,13 @@ export function AccountForm({ user }: { user: Session["user"] }) {
         ) : (
           <div className="space-x-4">
             <Button type="submit" disabled={updateUserMutation.isPending}>
-              {updateUserMutation.isPending ? "Saving..." : "Save"}
+              {updateUserMutation.isPending ? (
+                <>
+                  <IconLoader2 className="stroke-current animate-spin w-5 h-5 stroke-1" /> Saving...
+                </>
+              ) : (
+                "Save"
+              )}
             </Button>
             <Button
               type="button"

@@ -26,10 +26,11 @@ interface AvatarImageProps
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   AvatarImageProps
->(({ className, src, blurDataURL, alt }) => (
+>(({ className, src, blurDataURL, alt, ...props }, ref) => (
   <Image
     src={src}
-    alt={alt ?? "Avatar"}
+    ref={ref}
+    alt={alt || "Avatar"}
     className={cn("aspect-square h-full w-full object-cover", className)}
     width={40}
     height={40}
