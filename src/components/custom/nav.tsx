@@ -6,7 +6,7 @@ import { auth } from "@/server/auth"
 
 export default async function Nav() {
   const session = await auth()
-  const user = session!.user
+  const user = session?.user
 
   return (
     <header className="shadow-sm border-b">
@@ -17,7 +17,7 @@ export default async function Nav() {
           <span className="text-black">App</span>
         </Link>
         <nav className="space-x-4">
-          {session ? (
+          {user ? (
             <AccountNav user={user} />
           ) : (
             <Link href="/signin">
