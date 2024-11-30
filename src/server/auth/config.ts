@@ -15,13 +15,13 @@ declare module "next-auth" {
     user: { id: string; phone: string } & DefaultSession["user"]
   }
   interface User extends AdapterUser {
-    role: typeof UserRole
+    role: keyof typeof UserRole
     blurImageDataURL: string | null
   }
 }
 declare module "@auth/core/adapters" {
   interface AdapterUser {
-    role: typeof UserRole
+    role: keyof typeof UserRole
     blurImageDataURL: string | null
   }
 }

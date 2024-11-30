@@ -1,6 +1,6 @@
 "use client"
 
-import { IconHome, IconUser } from "@tabler/icons-react"
+import { IconHome, IconSettings, IconUser } from "@tabler/icons-react"
 import clsx from "clsx"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sheet"
 import { fallbackUsername, truncateUsername } from "@/lib/fallback-username"
 import { cn } from "@/lib/utils"
+import { UserRole } from "@/server/db/schema"
 import type { User } from "next-auth"
 
 export default function AccountNav({ user }: { user: User }) {
@@ -50,6 +51,12 @@ export default function AccountNav({ user }: { user: User }) {
               <IconUser size={20} className="mr-4" />
               Account
             </NavLink>
+            {user.role === "SUPER_ADMIN" && (
+              <NavLink href="/dashboard">
+                <IconSettings size={20} className="mr-4" />
+                Dashboard
+              </NavLink>
+            )}
           </div>
         </SheetHeader>
 
@@ -70,7 +77,7 @@ function Avatar({ user, className }: { user: User; className?: string }) {
         <AvatarImage
           src={user.image}
           alt={fallbackUsername(user.name) ?? "Restaurant App User"}
-          blurDataURL={user.blurImageDataURL ?? undefined}
+          blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
         />
       ) : (
         <AvatarFallback className="rounded-lg text-orange-600">
@@ -89,7 +96,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       <Link
         href={href}
         className={clsx(
-          "inline-flex w-full select-none rounded-sm border bg-gray-100 p-2 transition-colors hover:bg-gray-200",
+          "inline-flex items-center w-full select-none rounded-sm border bg-gray-100 p-2 transition-colors hover:bg-gray-200",
           {
             "bg-gray-300": pathname === href,
           },

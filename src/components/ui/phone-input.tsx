@@ -1,8 +1,8 @@
-import { CheckIcon, ChevronsUpDown } from "lucide-react";
-import * as React from "react";
-import * as RPNInput from "react-phone-number-input";
-import flags from "react-phone-number-input/flags";
-import { Button } from "@/components/ui/button";
+import { CheckIcon, ChevronsUpDown } from "lucide-react"
+import * as React from "react"
+import * as RPNInput from "react-phone-number-input"
+import flags from "react-phone-number-input/flags"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -10,77 +10,62 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Input, type InputProps } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/command"
+import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
+import type { InputProps } from "@/components/ui/input"
 
 // Rename to follow PascalCase convention
-const RPNInputDefault = RPNInput.default;
+const RPNInputDefault = RPNInput.default
 
-type PhoneInputProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "onChange" | "value"
-> &
+type PhoneInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> &
   Omit<RPNInput.Props<typeof RPNInputDefault>, "onChange"> & {
-    onChange?: (value: RPNInput.Value) => void;
-  };
+    onChange?: (value: RPNInput.Value) => void
+  }
 
-const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
-  React.forwardRef<React.ElementRef<typeof RPNInputDefault>, PhoneInputProps>(
-    ({ className, onChange, ...props }, ref) => {
-      return (
-        <RPNInputDefault
-          ref={ref}
-          className={cn("flex", className)}
-          flagComponent={FlagComponent}
-          countrySelectComponent={CountrySelect}
-          inputComponent={InputComponent}
-          onChange={(value) => onChange?.(value ?? ("" as RPNInput.Value))}
-          {...props}
-        />
-      );
-    },
-  );
-PhoneInput.displayName = "PhoneInput";
+const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> = React.forwardRef<
+  React.ElementRef<typeof RPNInputDefault>,
+  PhoneInputProps
+>(({ className, onChange, ...props }, ref) => {
+  return (
+    <RPNInputDefault
+      ref={ref}
+      className={cn("flex", className)}
+      flagComponent={FlagComponent}
+      countrySelectComponent={CountrySelect}
+      inputComponent={InputComponent}
+      onChange={value => onChange?.(value ?? ("" as RPNInput.Value))}
+      {...props}
+    />
+  )
+})
+PhoneInput.displayName = "PhoneInput"
 
 const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => (
-    <Input
-      className={cn("rtl:rtl rounded-e-lg rounded-s-none", className)}
-      {...props}
-      ref={ref}
-    />
+    <Input className={cn("rtl:rtl rounded-e-lg rounded-s-none", className)} {...props} ref={ref} />
   ),
-);
-InputComponent.displayName = "InputComponent";
+)
+InputComponent.displayName = "InputComponent"
 
-type CountrySelectOption = { label: string; value: RPNInput.Country };
+type CountrySelectOption = { label: string; value: RPNInput.Country }
 
 type CountrySelectProps = {
-  disabled?: boolean;
-  value: RPNInput.Country;
-  onChange: (value: RPNInput.Country) => void;
-  options: CountrySelectOption[];
-};
+  disabled?: boolean
+  value: RPNInput.Country
+  onChange: (value: RPNInput.Country) => void
+  options: CountrySelectOption[]
+}
 
-const CountrySelect = ({
-  disabled,
-  value,
-  onChange,
-  options,
-}: CountrySelectProps) => {
+const CountrySelect = ({ disabled, value, onChange, options }: CountrySelectProps) => {
   const handleSelect = React.useCallback(
     (country: RPNInput.Country) => {
-      onChange(country);
+      onChange(country)
     },
     [onChange],
-  );
+  )
 
   return (
     <Popover>
@@ -93,10 +78,7 @@ const CountrySelect = ({
         >
           <FlagComponent country={value} countryName={value} />
           <ChevronsUpDown
-            className={cn(
-              "h-4 w-4 opacity-50",
-              disabled ? "hidden" : "opacity-100",
-            )}
+            className={cn("h-4 w-4 opacity-50", disabled ? "hidden" : "opacity-100")}
           />
         </Button>
       </PopoverTrigger>
@@ -108,17 +90,14 @@ const CountrySelect = ({
               <CommandEmpty>No country found.</CommandEmpty>
               <CommandGroup>
                 {options
-                  .filter((x) => x.value)
-                  .map((option) => (
+                  .filter(x => x.value)
+                  .map(option => (
                     <CommandItem
                       className="gap-2"
                       key={option.value}
                       onSelect={() => handleSelect(option.value)}
                     >
-                      <FlagComponent
-                        country={option.value}
-                        countryName={option.label}
-                      />
+                      <FlagComponent country={option.value} countryName={option.label} />
                       <span className="flex-1 text-sm">{option.label}</span>
                       {option.value && (
                         <span className="text-sm text-foreground/50">
@@ -139,18 +118,18 @@ const CountrySelect = ({
         </Command>
       </PopoverContent>
     </Popover>
-  );
-};
+  )
+}
 
 const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
-  const Flag = flags[country];
+  const Flag = flags[country]
 
   return (
     <span className="h-4 w-4 overflow-hidden rounded-sm bg-foreground/15">
       {Flag && <Flag title={countryName} />}
     </span>
-  );
-};
-FlagComponent.displayName = "FlagComponent";
+  )
+}
+FlagComponent.displayName = "FlagComponent"
 
-export { PhoneInput };
+export { PhoneInput }

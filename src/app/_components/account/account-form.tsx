@@ -106,9 +106,11 @@ export function AccountForm({ user }: { user: Session["user"] }) {
                   {currentImage ? (
                     <Image
                       src={currentImage}
-                      alt="Profile"
+                      alt={`Profile Image of ${user.name}`}
                       width={112}
                       height={112}
+                      placeholder={"blur"}
+                      blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
                       className="h-20 w-20 rounded-full object-contain shadow"
                     />
                   ) : (
