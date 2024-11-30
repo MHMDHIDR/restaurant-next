@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import { auth } from "@/server/auth"
-import { AccountForm } from "../_components/account/account-form"
+import { AccountForm } from "./account-form"
 
 export default async function Account() {
   const session = await auth()

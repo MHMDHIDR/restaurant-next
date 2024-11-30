@@ -163,7 +163,11 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} className="disabled:cursor-not-allowed" disabled />
+                <Input
+                  {...field}
+                  className="disabled:cursor-not-allowed disabled:bg-black/50 dark:disabled:bg-white/20"
+                  disabled
+                />
               </FormControl>
               <FormDescription>
                 To change your email address, please contact customer support.

@@ -1,22 +1,22 @@
-import { IconMapPin, IconSearch, IconStar } from "@tabler/icons-react";
-import Image from "next/image";
-import { api } from "@/trpc/server";
+import { IconMapPin, IconSearch, IconStar } from "@tabler/icons-react"
+import Image from "next/image"
+import { api } from "@/trpc/server"
 
 export default async function Home() {
-  const featuredVendors = await api.vendor.getFeatured();
+  const featuredVendors = await api.vendor.getFeatured()
 
   return (
     <div className="container mx-auto px-2 py-12">
       <section className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold text-gray-900">
+        <h1 className="mb-4 text-4xl font-bold leading-loose md:leading-10">
           Discover Delicious Restaurants Near You
         </h1>
-        <div className="mx-auto flex max-w-xl items-center rounded-full bg-gray-100 p-2">
+        <div className="mx-auto flex max-w-xl items-center rounded-full bg-gray-100 p-1 pl-2">
           <IconMapPin className="mr-2 text-gray-500" />
           <input
             type="text"
             placeholder="Enter your address"
-            className="flex-grow bg-transparent outline-none"
+            className="flex-grow bg-transparent outline-none text-black text-lg"
           />
           <button className="flex items-center rounded-full bg-primary px-4 py-2 text-white">
             <IconSearch className="mr-2" size={20} />
@@ -28,11 +28,8 @@ export default async function Home() {
       <section className="mb-12">
         <h2 className="mb-6 text-2xl font-semibold">Featured Restaurants</h2>
         <div className="grid gap-6 md:grid-cols-3">
-          {featuredVendors.map((vendor) => (
-            <div
-              key={vendor.id}
-              className="overflow-hidden rounded-lg bg-white shadow-md"
-            >
+          {featuredVendors.map(vendor => (
+            <div key={vendor.id} className="overflow-hidden rounded-lg bg-white shadow-md">
               <Image
                 src={vendor.coverImage}
                 alt={vendor.name}
@@ -46,14 +43,12 @@ export default async function Home() {
                   <IconStar size={16} fill="currentColor" />
                   <span className="ml-2">{vendor.averageRating}</span>
                 </div>
-                <p className="text-gray-600">
-                  {vendor.cuisineTypes.join(", ")}
-                </p>
+                <p className="text-gray-600">{vendor.cuisineTypes.join(", ")}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
     </div>
-  );
+  )
 }

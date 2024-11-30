@@ -1,13 +1,12 @@
 "use client"
 
-import { Menu, Package2 } from "lucide-react"
+import { Menu } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import React from "react"
 import { navItems } from "@/components/custom/dashboard-sidebar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Logo } from "./icons"
 
 export default function MobileNav() {
   const pathname = usePathname()
@@ -21,10 +20,15 @@ export default function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
+        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <nav className="grid gap-2 text-lg font-medium">
-          <Link href="#" className="flex items-center gap-2 text-lg font-semibold">
-            <Package2 className="h-6 w-6" />
-            <span className="sr-only">Acme Inc</span>
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-base font-semibold text-primary select-none"
+          >
+            <Logo className="h-8 w-8 stroke-primary shadow-sm shadow-primary rounded-sm p-1" />
+            Restaurant
+            <span className="text-black">App</span>
           </Link>
           {navItems.map(navItem => (
             <Link
@@ -39,21 +43,6 @@ export default function MobileNav() {
             </Link>
           ))}
         </nav>
-        <div className="mt-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Upgrade to Pro</CardTitle>
-              <CardDescription>
-                Unlock all features and get unlimited access to our support team.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button size="sm" className="w-full">
-                Upgrade
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
       </SheetContent>
     </Sheet>
   )

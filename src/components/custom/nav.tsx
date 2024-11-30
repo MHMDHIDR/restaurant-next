@@ -16,7 +16,7 @@ export default async function Nav() {
           Restaurant
           <span className="text-black">App</span>
         </Link>
-        <nav className="space-x-4">
+        <nav className="inline-flex">
           {user ? (
             <AccountNav user={user} />
           ) : (
