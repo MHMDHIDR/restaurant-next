@@ -1,5 +1,5 @@
 import { toast } from "sonner"
-import { Error, Loading, Success } from "@/app/_components/custom/icons"
+import { Error, Loading, Success } from "@/components/custom/icons"
 import type { ToastT } from "sonner"
 
 type ToastType = "success" | "error" | "loading"

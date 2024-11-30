@@ -7,12 +7,12 @@ import { env } from "@/env"
 import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { db } from "@/server/db"
 import { accounts, sessions, users, verificationTokens } from "@/server/db/schema"
-import type { UserRole } from "@/server/db/schema"
+import type { themeEnumType, UserRole } from "@/server/db/schema"
 import type { AdapterUser } from "@auth/core/adapters"
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: { id: string; phone: string } & DefaultSession["user"]
+    user: { id: string; phone: string; theme: themeEnumType } & DefaultSession["user"]
   }
   interface User extends AdapterUser {
     role: keyof typeof UserRole
@@ -49,6 +49,16 @@ export const authConfig = {
           const existingUser = await db.query.users.findFirst({
             where: eq(users.email, profile.email!),
           })
+
+          // If no user exists, create a new user
+          if (!existingUser) {
+            await db.insert(users).values({
+              id: user.id,
+              name: profile.name ?? user.name,
+              email: profile.email!,
+              image: profile.picture ?? user.image,
+            })
+          }
 
           // If user exists but name is not set, then set it with Google profile name
           if (existingUser && !existingUser.name) {

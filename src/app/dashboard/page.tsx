@@ -1,53 +1,25 @@
-import { cookies } from "next/headers"
-import { notFound } from "next/navigation"
-import { AppSidebar } from "@/components/custom/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { auth } from "@/server/auth"
+import { Button } from "@/components/ui/button";
 
-export default async function Dashboard() {
-  const session = await auth()
-
-  if (!session) {
-    notFound()
-  }
-  const cookieStore = await cookies()
-  const sidebarState = cookieStore.get("sidebar:state")?.value
-  const initialSidebarOpen = sidebarState === "true"
-
+export default function Dashboard() {
   return (
-    <SidebarProvider defaultOpen={initialSidebarOpen}>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          {Array.from({ length: 24 }).map((_, index) => (
-            <div key={index} className="aspect-video h-12 w-full rounded-lg bg-muted/50" />
-          ))}
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <div className="flex items-center">
+        <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
+      </div>
+      <div
+        className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm"
+        x-chunk="dashboard-02-chunk-1"
+      >
+        <div className="flex flex-col items-center gap-1 text-center">
+          <h3 className="text-2xl font-bold tracking-tight">
+            You have no products
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            You can start selling as soon as you add a product.
+          </p>
+          <Button className="mt-4">Add Product</Button>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+      </div>
+    </main>
+  );
 }

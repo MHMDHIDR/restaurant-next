@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
+import { useTheme } from "next-themes"
 import Image from "next/image"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PhoneInput } from "@/components/ui/phone-input"
+import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
 import { fallbackUsername } from "@/lib/fallback-username"
 import { api } from "@/trpc/react"
@@ -29,6 +31,7 @@ import type { Session } from "next-auth"
 export function AccountForm({ user }: { user: Session["user"] }) {
   const [isEditing, setIsEditing] = useState(false)
   const toast = useToast()
+  const { setTheme } = useTheme()
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
@@ -37,6 +40,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
       name: user.name ?? "",
       email: user.email ?? "",
       phone: user.phone ?? "",
+      theme: user.theme ?? "light",
       image: user.image ?? "",
     },
   })
@@ -70,6 +74,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
       id: user.id,
       name: data.name,
       phone: data.phone,
+      theme: data.theme,
       image: data.image,
     })
   }
@@ -172,6 +177,31 @@ export function AccountForm({ user }: { user: Session["user"] }) {
               <FormLabel className="text-left">Phone Number</FormLabel>
               <FormControl className="relative w-full">
                 <PhoneInput placeholder="Your Phone Number" {...field} disabled={!isEditing} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="theme"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start">
+              <FormLabel className="text-left">
+                {form.watch("theme") === "dark" ? "Dark Mode" : "Light Mode"}
+              </FormLabel>
+              <FormControl className="relative">
+                <Switch
+                  defaultChecked={field.name === "theme" && field.value === "dark"}
+                  onCheckedChange={checked => {
+                    const newThemeValue = checked ? "dark" : "light"
+                    form.setValue("theme", newThemeValue)
+                    setTheme(newThemeValue)
+                  }}
+                  disabled={!isEditing}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

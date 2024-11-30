@@ -2,7 +2,7 @@ import { IconHome } from "@tabler/icons-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { auth } from "@/server/auth"
-import { NotFoundIcon } from "./_components/custom/icons"
+import { NotFoundIcon } from "../components/custom/icons"
 
 export default async function RootNotFound() {
   const session = await auth()

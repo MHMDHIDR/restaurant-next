@@ -11,6 +11,7 @@ export const accountFormSchema = z.object({
       message: "Please Provide a Valid Phone Number",
     })
     .optional(),
+  theme: z.enum(["light", "dark"]).optional(),
   image: z.string().url("Invalid URL").optional(),
 })
 

@@ -16,19 +16,21 @@ import { type AdapterAccount } from "next-auth/adapters"
 
 export const createTable = pgTableCreator(name => `restaurant_${name}`)
 
-// Enums
-export const UserRole = {
-  SUPER_ADMIN: "SuperAdmin",
-  VENDOR_ADMIN: "VendorAdmin",
-  VENDOR_STAFF: "VendorStaff",
-  CUSTOMER: "Customer",
-} as const
 export const userRoleEnum = pgEnum("role", [
-  UserRole.SUPER_ADMIN,
-  UserRole.VENDOR_ADMIN,
-  UserRole.VENDOR_STAFF,
-  UserRole.CUSTOMER,
+  "SUPER_ADMIN",
+  "VENDOR_ADMIN",
+  "VENDOR_STAFF",
+  "CUSTOMER",
 ])
+export const UserRole = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  VENDOR_ADMIN: "VENDOR_ADMIN",
+  VENDOR_STAFF: "VENDOR_STAFF",
+  CUSTOMER: "CUSTOMER",
+} as const
+
+export const themeEnum = pgEnum("theme", ["light", "dark"])
+export type themeEnumType = (typeof users.theme.enumValues)[number]
 
 export const orderStatusEnum = pgEnum("order_status", [
   "PENDING",
@@ -47,7 +49,6 @@ export const vendorStatusEnum = pgEnum("vendor_status", [
   "INACTIVE",
 ])
 
-// Users table with enhanced roles and profile
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -56,18 +57,18 @@ export const users = createTable("user", {
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 20 }),
-  role: userRoleEnum("role").notNull().default(UserRole.CUSTOMER),
+  role: userRoleEnum("role").notNull().default("CUSTOMER"),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,
   }),
   image: varchar("image", { length: 255 }),
+  theme: themeEnum("theme").default("light"),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-// Vendors (Restaurants)
 export const vendors = createTable("vendor", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -96,7 +97,6 @@ export const vendors = createTable("vendor", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-// Menu Categories
 export const menuCategories = createTable("menu_category", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -112,7 +112,6 @@ export const menuCategories = createTable("menu_category", {
   sortOrder: integer("sort_order").default(0),
 })
 
-// Menu Items
 export const menuItems = createTable("menu_item", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -136,7 +135,6 @@ export const menuItems = createTable("menu_item", {
   }>(),
 })
 
-// Orders
 export const orders = createTable("order", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -161,7 +159,6 @@ export const orders = createTable("order", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-// Order Items
 export const orderItems = createTable("order_item", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -179,7 +176,6 @@ export const orderItems = createTable("order_item", {
   specialInstructions: text("special_instructions"),
 })
 
-// Reviews
 export const reviews = createTable("review", {
   id: varchar("id", { length: 255 })
     .notNull()

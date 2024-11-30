@@ -19,6 +19,7 @@ export const usersRouter = createTRPCRouter({
         id: true,
         name: true,
         phone: true,
+        theme: true,
         image: true,
       }),
     )
@@ -29,6 +30,7 @@ export const usersRouter = createTRPCRouter({
         .set({
           name: input.name,
           phone: input.phone,
+          theme: input.theme,
           image: input.image,
         })
         .where(eq(users.id, input.id))

@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/sheet"
 import { fallbackUsername, truncateUsername } from "@/lib/fallback-username"
 import { cn } from "@/lib/utils"
-import { UserRole } from "@/server/db/schema"
 import type { User } from "next-auth"
 
 export default function AccountNav({ user }: { user: User }) {
@@ -96,9 +95,9 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       <Link
         href={href}
         className={clsx(
-          "inline-flex items-center w-full select-none rounded-sm border bg-gray-100 p-2 transition-colors hover:bg-gray-200",
+          "inline-flex items-center w-full select-none rounded-sm border text-orange-400 p-2 transition-colors hover:bg-orange-200/50 dark:hover:bg-orange-900/50 outline-orange-300",
           {
-            "bg-gray-300": pathname === href,
+            "text-orange-500 border-orange-500": pathname === href,
           },
         )}
       >
