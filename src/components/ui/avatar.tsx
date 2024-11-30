@@ -1,6 +1,7 @@
 "use client"
 
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import Image from "next/image"
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
@@ -16,14 +17,24 @@ const Avatar = React.forwardRef<
 ))
 Avatar.displayName = AvatarPrimitive.Root.displayName
 
+interface AvatarImageProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>, "src"> {
+  src: string
+  blurDataURL?: string
+}
+
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full object-contain", className)}
-    {...props}
+  AvatarImageProps
+>(({ className, src, blurDataURL, alt }) => (
+  <Image
+    src={src}
+    alt={alt || "Avatar"}
+    className={cn("aspect-square h-full w-full object-cover", className)}
+    width={40}
+    height={40}
+    placeholder={blurDataURL ? "blur" : "empty"}
+    blurDataURL={blurDataURL}
   />
 ))
 AvatarImage.displayName = AvatarPrimitive.Image.displayName

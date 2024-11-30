@@ -4,6 +4,7 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import Resend from "next-auth/providers/resend"
 import { env } from "@/env"
+import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { db } from "@/server/db"
 import { accounts, sessions, users, verificationTokens } from "@/server/db/schema"
 import type { UserRole } from "@/server/db/schema"
@@ -15,11 +16,13 @@ declare module "next-auth" {
   }
   interface User extends AdapterUser {
     role: typeof UserRole
+    blurImageDataURL: string | null
   }
 }
 declare module "@auth/core/adapters" {
   interface AdapterUser {
     role: typeof UserRole
+    blurImageDataURL: string | null
   }
 }
 
@@ -94,9 +97,16 @@ export const authConfig = {
 
       return true
     },
-    session: ({ session, user }) => ({
-      ...session,
-      user: { ...session.user, id: user.id, role: user.role },
-    }),
+    async session({ session, user }) {
+      let blurImage: string | null = null
+      if (user.image) {
+        blurImage = await getBlurPlaceholder(user.image)
+      }
+
+      return {
+        ...session,
+        user: { ...session.user, id: user.id, role: user.role, blurImageDataURL: blurImage },
+      }
+    },
   },
 } satisfies NextAuthConfig

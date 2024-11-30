@@ -11,7 +11,7 @@ export default async function Nav() {
 
   return (
     <header className="bg-white shadow-md">
-      <div className="container mx-auto flex items-center justify-between p-4">
+      <div className="container mx-auto flex items-center justify-between py-1.5 px-2">
         <Link href="/" className="flex select-none gap-x-2 text-xl font-bold text-primary">
           <Logo className="mx-auto h-7 w-7 stroke-current stroke-1" />
           Restaurant
