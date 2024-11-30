@@ -19,9 +19,9 @@ import {
 } from "@/components/ui/sheet"
 import { fallbackUsername, truncateUsername } from "@/lib/fallback-username"
 import { cn } from "@/lib/utils"
-import type { User } from "next-auth"
+import type { Session } from "next-auth"
 
-export default function AccountNav({ user }: { user: User }) {
+export default function AccountNav({ user }: { user: Session["user"] }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -69,7 +69,7 @@ export default function AccountNav({ user }: { user: User }) {
   )
 }
 
-function Avatar({ user, className }: { user: User; className?: string }) {
+function Avatar({ user, className }: { user: Session["user"]; className?: string }) {
   return (
     <AvatarWrapper className={cn("h-8 w-8 select-none rounded-full shadow", className)}>
       {user.image ? (

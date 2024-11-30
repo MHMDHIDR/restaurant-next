@@ -6,7 +6,7 @@ import { auth } from "@/server/auth"
 
 export default async function Nav() {
   const session = await auth()
-  const user = session?.user
+  const user = session!.user
 
   return (
     <header className="shadow-sm border-b">
