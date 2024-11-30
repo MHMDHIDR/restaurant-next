@@ -70,7 +70,7 @@ function Avatar({ user, className }: { user: User; className?: string }) {
         <AvatarImage
           src={user.image}
           alt={fallbackUsername(user.name) ?? "Restaurant App User"}
-          blurDataURL={user.blurImageDataURL || undefined}
+          blurDataURL={user.blurImageDataURL ?? undefined}
         />
       ) : (
         <AvatarFallback className="rounded-lg text-orange-600">

@@ -29,7 +29,7 @@ const AvatarImage = React.forwardRef<
 >(({ className, src, blurDataURL, alt }) => (
   <Image
     src={src}
-    alt={alt || "Avatar"}
+    alt={alt ?? "Avatar"}
     className={cn("aspect-square h-full w-full object-cover", className)}
     width={40}
     height={40}
