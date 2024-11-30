@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import Sigin from "@/app/_components/auth/sigin"
 import { auth } from "@/server/auth"
 
-export default async function LoginPage() {
+export default async function SignInPage() {
   const session = await auth()
 
   return session ? (

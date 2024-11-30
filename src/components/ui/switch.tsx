@@ -16,7 +16,7 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       <SwitchPrimitives.Root
         type="button"
         className={cn(
-          "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+          "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
           isThreeState
             ? cn(
                 "w-16",
@@ -24,7 +24,11 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
                 layout === "grid" && "bg-primary",
                 layout === "grid-small" && "bg-secondary",
               )
-            : "data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
+            : cn(
+                "transition-colors duration-300 ease-in-out",
+                "data-[state=checked]:bg-primary",
+                "data-[state=unchecked]:bg-input",
+              ),
           className,
         )}
         {...props}
@@ -32,15 +36,25 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       >
         <SwitchPrimitives.Thumb
           className={cn(
-            "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform",
+            "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0",
             isThreeState
               ? cn(
                   layout === "dotted" && "translate-x-0",
                   layout === "grid" && "translate-x-5 rtl:-translate-x-5",
                   layout === "grid-small" && "translate-x-10 rtl:-translate-x-10",
+                  "transition-transform duration-300 ease-in-out",
                 )
-              : "data-[state=checked]:translate-x-5 rtl:data-[state=checked]:-translate-x-5 data-[state=unchecked]:translate-x-0",
+              : cn(
+                  "transition-transform duration-300 ease-in-out will-change-transform",
+                  "data-[state=checked]:translate-x-5",
+                  "rtl:data-[state=checked]:-translate-x-5",
+                  "data-[state=unchecked]:translate-x-0",
+                ),
           )}
+          style={{
+            transformOrigin: "center",
+            backfaceVisibility: "hidden",
+          }}
         />
       </SwitchPrimitives.Root>
     )

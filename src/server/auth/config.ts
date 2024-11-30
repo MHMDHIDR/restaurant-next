@@ -54,9 +54,9 @@ export const authConfig = {
           if (!existingUser) {
             await db.insert(users).values({
               id: user.id,
-              name: profile.name ?? user.name,
+              name: profile.name ?? user.name ?? "Unknown",
               email: profile.email!,
-              image: profile.picture ?? user.image,
+              image: profile.picture ?? user.image ?? "/logo.svg",
             })
           }
 

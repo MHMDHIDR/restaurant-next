@@ -41,7 +41,6 @@ export default function Sigin() {
               {state.success && <span className="text-green-700">{state.message}</span>}
               <Input type="email" name="email" id="email" placeholder="Email" />
               <Button
-                type="submit"
                 className={clsx("w-full bg-gray-200 text-black hover:bg-gray-300", {
                   "pointer-events-none cursor-not-allowed": isPending,
                 })}

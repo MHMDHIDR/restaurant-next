@@ -19,12 +19,10 @@ export async function handleSignin(_: SignInType, formData: FormData): Promise<S
     }
   }
 
+  const { email } = validatedFields.data
+
   try {
-    await signIn("resend", {
-      email: validatedFields.data.email,
-      redirect: false,
-      redirectTo: "/dashboard",
-    })
+    await signIn("resend", { email, redirect: false, redirectTo: "/dashboard" })
 
     return { success: true, message: "Sign in link sent to your email" }
   } catch (error) {

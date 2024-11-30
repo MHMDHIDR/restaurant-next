@@ -122,7 +122,7 @@ const SidebarProvider = React.forwardRef<
       function handleKeyDown(event: KeyboardEvent) {
         if (
           event.key.toLowerCase() === SIDEBAR_KEYBOARD_SHORTCUT &&
-          (event.altKey || event.metaKey) &&
+          (event.altKey ?? event.metaKey) &&
           !event.ctrlKey &&
           !event.shiftKey
         ) {

@@ -63,7 +63,7 @@ export const users = createTable("user", {
     withTimezone: true,
   }),
   image: varchar("image", { length: 255 }),
-  theme: themeEnum("theme").default("light"),
+  theme: themeEnum("theme").default("light").notNull(),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

@@ -21,8 +21,8 @@ export default async function Nav() {
           {session ? (
             <AccountNav user={user} />
           ) : (
-            <Link href="/sigin">
-              <Button>Sigin</Button>
+            <Link href="/signin">
+              <Button>Sign in</Button>
             </Link>
           )}
         </nav>

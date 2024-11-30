@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { accountFormSchema } from "@/app/schemas/account"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -48,16 +48,20 @@ export function AccountForm({ user }: { user: Session["user"] }) {
   const updateUserMutation = api.users.update.useMutation({
     onSuccess: data => {
       if (data) {
-        toast.success("Profile updated successfully!")
-        setIsEditing(false)
-
-        form.reset({
+        const updatedValues = {
           id: user.id,
           name: data.name ?? user.name ?? "",
           email: user.email ?? "",
           phone: data.phone ?? "",
           image: data.image ?? "",
-        })
+          theme: data.theme ?? form.getValues("theme"),
+        }
+
+        form.reset(updatedValues)
+        setTheme(updatedValues.theme ?? user.theme)
+
+        toast.success("Profile updated successfully!")
+        setIsEditing(false)
       }
     },
     onError: error => {
@@ -188,19 +192,15 @@ export function AccountForm({ user }: { user: Session["user"] }) {
           name="theme"
           render={({ field }) => (
             <FormItem className="flex flex-col items-start">
-              <FormLabel className="text-left">
-                {form.watch("theme") === "dark" ? "Dark Mode" : "Light Mode"}
-              </FormLabel>
+              <FormLabel className="capitalize">{field.value} Mode</FormLabel>
               <FormControl className="relative">
                 <Switch
-                  defaultChecked={field.name === "theme" && field.value === "dark"}
+                  checked={field.value === "dark"}
                   onCheckedChange={checked => {
-                    const newThemeValue = checked ? "dark" : "light"
-                    form.setValue("theme", newThemeValue)
-                    setTheme(newThemeValue)
+                    const theme = checked ? "dark" : "light"
+                    form.setValue("theme", theme)
                   }}
                   disabled={!isEditing}
-                  {...field}
                 />
               </FormControl>
               <FormMessage />
