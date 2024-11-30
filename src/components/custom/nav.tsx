@@ -3,11 +3,10 @@ import AccountNav from "@/components/custom/accunt-nav"
 import { Logo } from "@/components/custom/icons"
 import { Button } from "@/components/ui/button"
 import { auth } from "@/server/auth"
-import type { Session } from "next-auth"
 
 export default async function Nav() {
   const session = await auth()
-  const user = session?.user as Session["user"]
+  const user = session?.user
 
   return (
     <header className="shadow-sm border-b">
