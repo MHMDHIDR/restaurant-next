@@ -4,22 +4,15 @@ import { auth } from "@/server/auth"
 import { utapi } from "@/server/uploadthing"
 import type { FileRouter } from "uploadthing/next"
 
-const f = createUploadthing()
+const createUT = createUploadthing()
 
 export const ourFileRouter = {
-  imageUploader: f({
-    image: {
-      maxFileSize: "2MB",
-      maxFileCount: 1,
-    },
+  imageUploader: createUT({
+    image: { maxFileSize: "2MB", maxFileCount: 1 },
   })
     .middleware(async () => {
       const session = await auth()
-      if (!session!.user)
-        throw new UploadThingError({
-          code: "FORBIDDEN",
-          message: "Unauthorized",
-        })
+      if (!session!.user) throw new UploadThingError({ code: "FORBIDDEN", message: "Unauthorized" })
       const user = session!.user
 
       const usersDirectory = `users/${user.id}`
@@ -49,18 +42,10 @@ export const ourFileRouter = {
 
         return {
           uploadedBy: `${metadata.userName} (${metadata.userId})`,
-          // uploadedFile: {
-          //   key: update.newName,
-          //   name: file.name,
-          //   url: file.url,
-          // },
         }
       } catch (error) {
         console.error("Error during upload:", error)
-        throw new UploadThingError({
-          code: "UPLOAD_FAILED",
-          message: "Upload process failed",
-        })
+        throw new UploadThingError({ code: "UPLOAD_FAILED", message: "Upload process failed" })
       }
     }),
 } satisfies FileRouter

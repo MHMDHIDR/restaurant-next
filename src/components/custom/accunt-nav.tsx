@@ -4,7 +4,7 @@ import { IconHome, IconSettings, IconUser } from "@tabler/icons-react"
 import clsx from "clsx"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LogOutButton } from "@/app/_components/auth/logout-button"
+import { SignoutButton } from "@/components/custom/signout-button"
 import { AvatarFallback, AvatarImage, Avatar as AvatarWrapper } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -61,7 +61,7 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
 
         <SheetFooter className="md:self-start self-stretch">
           <SheetClose asChild>
-            <LogOutButton />
+            <SignoutButton />
           </SheetClose>
         </SheetFooter>
       </SheetContent>

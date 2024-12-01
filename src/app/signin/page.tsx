@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
-import Sigin from "@/app/_components/auth/sigin"
 import { auth } from "@/server/auth"
+import Sigin from "./sigin-form"
 
 export default async function SignInPage() {
   const session = await auth()
