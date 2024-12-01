@@ -1,14 +1,16 @@
+import { Suspense } from "react"
+import { LoadingCard } from "@/components/custom/data-table/loading"
 import { api } from "@/trpc/server"
-import { columns } from "./columns"
-import { DataTable } from "./data-table"
-import type { Users } from "@/server/db/schema"
+import UsersTable from "./users-table"
 
 export default async function Users() {
-  const users = await api.users.getUsers()
+  const { users, count } = await api.users.getUsers()
 
   return (
-    <div className="container mx-auto py-10">
-      <DataTable<Users, unknown> columns={columns} data={users} />
+    <div className="max-w-xl sm:max-w-3xl md:max-w-4xl py-4 mx-auto">
+      <Suspense fallback={<LoadingCard renderedSkeletons={count} />}>
+        <UsersTable users={users} />
+      </Suspense>
     </div>
   )
 }

@@ -51,7 +51,7 @@ export default function DashboardSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden border-r bg-muted/40 md:block">
+    <aside className="hidden border-r bg-muted/40 md:block h-screen">
       <div className="flex flex-col h-full max-h-screen gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link href="/" className="flex items-center font-semibold gap-2">

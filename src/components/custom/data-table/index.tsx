@@ -10,14 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { BaseEntity } from "./base-columns"
 import type { ColumnDef } from "@tanstack/react-table"
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[] | undefined
+interface DataTableProps<TData extends BaseEntity> {
+  columns: ColumnDef<TData>[]
+  data: TData[]
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends BaseEntity>({ columns, data }: DataTableProps<TData>) {
   const table = useReactTable({
     data: data ?? [],
     columns,
@@ -25,11 +26,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   })
 
   return (
-    <div className="rounded-md border">
+    <div className="border rounded-md mx-3">
       <Table>
-        <TableHeader>
+        <TableHeader className="select-none">
           {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map(header => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder
@@ -45,7 +46,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             table.getRowModel().rows.map(row => (
               <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map(cell => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="text-center whitespace-nowrap">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -56,7 +57,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 <EmptyState>
                   <p className="mt-4 text-lg text-gray-500 select-none dark:text-gray-400">
-                    Sorry we couldn&apos;t find any users.
+                    Sorry we couldn&apos;t find any data.
                   </p>
                 </EmptyState>
               </TableCell>

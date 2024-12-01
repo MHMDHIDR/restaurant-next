@@ -16,7 +16,7 @@ export default function EmptyState({
       <Image
         alt="Empty State"
         height={isSmall ? 100 : 300}
-        src="/images/empty-state.svg"
+        src="/empty-state.svg"
         width={isSmall ? 100 : 300}
       />
 

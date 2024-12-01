@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { z } from "zod"
 import { accountFormSchema } from "@/app/schemas/account"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
@@ -11,7 +11,14 @@ export const usersRouter = createTRPCRouter({
     })
   }),
 
-  getUsers: protectedProcedure.query(async ({ ctx }) => await ctx.db.query.users.findMany()),
+  getUsers: protectedProcedure.query(async ({ ctx }) => {
+    const usersList = await ctx.db.query.users.findMany()
+    const [{ count = 0 } = { count: 0 }] = await ctx.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+
+    return { users: usersList, count }
+  }),
 
   update: protectedProcedure
     .input(

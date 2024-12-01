@@ -14,12 +14,12 @@ export default async function DashboardLayout({
   return !user || role !== UserRole.SUPER_ADMIN ? (
     notFound()
   ) : (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+    <div className="grid md:grid-cols-4 lg:grid-cols-4">
       <DashboardSidebar />
-      <div className="flex flex-col">
+      <main className="col-span-3">
         <Header />
         {children}
-      </div>
+      </main>
     </div>
   )
 }
