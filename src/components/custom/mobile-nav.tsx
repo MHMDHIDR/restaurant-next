@@ -15,18 +15,18 @@ export default function MobileNav() {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="shrink-0 md:hidden">
-          <Menu className="h-5 w-5" />
+          <Menu className="w-5 h-5" />
           <span className="sr-only">Toggle navigation menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-        <nav className="grid gap-2 text-lg font-medium">
+        <nav className="text-lg font-medium grid gap-2">
           <Link
             href="/"
-            className="flex items-center gap-2 text-base font-semibold text-primary select-none"
+            className="flex items-center text-base font-semibold select-none gap-2 text-primary"
           >
-            <Logo className="h-8 w-8 stroke-primary shadow-sm shadow-primary rounded-sm p-1" />
+            <Logo className="w-8 h-8 p-1 rounded-sm stroke-primary shadow-sm shadow-primary" />
             Restaurant
             <span className="text-black">App</span>
           </Link>

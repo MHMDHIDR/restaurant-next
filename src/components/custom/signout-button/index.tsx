@@ -7,7 +7,7 @@ import { handleSignout } from "./actions/handle-signout"
 export function SignoutButton() {
   return (
     <Button onClick={handleSignout} className="cursor-pointer">
-      <IconLogout2 className="mx-1 h-5 w-5" />
+      <IconLogout2 className="w-5 h-5 mx-1" />
       <span>Signout</span>
     </Button>
   )

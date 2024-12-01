@@ -8,8 +8,8 @@ export default async function SignInPage() {
   return session ? (
     redirect("/")
   ) : (
-    <main className="-mt-20 flex h-screen flex-col items-center justify-center">
-      <h1 className="mb-6 text-center text-2xl font-bold">Sigin to Your Account</h1>
+    <main className="flex flex-col items-center justify-center h-screen -mt-20">
+      <h1 className="mb-6 text-2xl font-bold text-center">Sigin to Your Account</h1>
       <Sigin />
     </main>
   )

@@ -233,7 +233,7 @@ const Sidebar = React.forwardRef<
             <VisuallyHidden.Root>
               <SheetTitle>Menu</SheetTitle>
             </VisuallyHidden.Root>
-            <div className="flex h-full w-full flex-col">{children}</div>
+            <div className="flex flex-col w-full h-full">{children}</div>
           </SheetContent>
         </Sheet>
       )
@@ -242,7 +242,7 @@ const Sidebar = React.forwardRef<
     return (
       <div
         ref={ref}
-        className="text-sidebar-foreground group peer hidden md:block"
+        className="hidden text-sidebar-foreground group peer md:block"
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}

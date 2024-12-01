@@ -12,7 +12,7 @@ export default async function Account() {
   const user = session.user
 
   return (
-    <section className="container mx-auto px-6 py-10">
+    <section className="container px-6 py-10 mx-auto">
       <h1 className="mb-6 text-3xl font-bold">Account Details</h1>
       <AccountForm user={user} />
     </section>

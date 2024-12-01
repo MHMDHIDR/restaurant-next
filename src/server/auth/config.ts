@@ -57,6 +57,7 @@ export const authConfig = {
               name: profile.name ?? user.name ?? "Unknown",
               email: profile.email!,
               image: profile.picture ?? user.image ?? "/logo.svg",
+              phone: "",
             })
           }
 

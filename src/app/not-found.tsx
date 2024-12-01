@@ -10,8 +10,8 @@ export default async function RootNotFound() {
 
   return (
     <section>
-      <div className="container mx-auto flex min-h-screen w-full flex-col items-center justify-center px-6 py-20">
-        <div className="mx-auto flex max-w-lg flex-col items-center text-center">
+      <div className="container flex flex-col items-center justify-center w-full min-h-screen px-6 py-20 mx-auto">
+        <div className="flex flex-col items-center max-w-lg mx-auto text-center">
           <NotFoundIcon />
 
           <h1 className="mt-3 text-2xl font-semibold text-gray-800 dark:text-white md:text-3xl">
@@ -21,10 +21,10 @@ export default async function RootNotFound() {
             Sorry, the page you are looking for does not exist or has been moved.
           </p>
 
-          <div className="mt-6 flex w-full shrink-0 items-center gap-x-3 sm:w-auto">
+          <div className="flex items-center w-full mt-6 shrink-0 gap-x-3 sm:w-auto">
             <Link href="/" className="w-full cursor-pointer">
               <Button type="button" variant={"pressable"}>
-                <IconHome className="h-5 w-5 stroke-2" />
+                <IconHome className="w-5 h-5 stroke-2" />
                 Go Home
               </Button>
             </Link>

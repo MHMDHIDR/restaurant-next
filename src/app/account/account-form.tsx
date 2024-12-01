@@ -111,7 +111,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <FormItem>
               <FormLabel>Profile Image</FormLabel>
               <FormControl>
-                <div className="flex select-none items-center gap-x-6">
+                <div className="flex items-center select-none gap-x-6">
                   {currentImage ? (
                     <Image
                       src={currentImage}
@@ -120,10 +120,10 @@ export function AccountForm({ user }: { user: Session["user"] }) {
                       height={112}
                       placeholder={"blur"}
                       blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
-                      className="h-20 w-20 rounded-full object-contain shadow"
+                      className="object-contain w-20 h-20 rounded-full shadow"
                     />
                   ) : (
-                    <Avatar className="h-20 w-20 rounded-full text-primary shadow">
+                    <Avatar className="w-20 h-20 rounded-full shadow text-primary">
                       <AvatarFallback className="text-2xl font-bold">
                         {fallbackUsername(user.name)}
                       </AvatarFallback>
@@ -221,7 +221,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <Button type="submit" disabled={updateUserMutation.isPending}>
               {updateUserMutation.isPending ? (
                 <>
-                  <IconLoader2 className="stroke-current animate-spin w-5 h-5 stroke-1" /> Saving...
+                  <IconLoader2 className="w-5 h-5 stroke-current animate-spin stroke-1" /> Saving...
                 </>
               ) : (
                 "Save"

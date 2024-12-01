@@ -26,17 +26,17 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" className="inline-flex justify-between px-0">
-          <Avatar user={user} className="h-9 w-9 rounded-sm rounded-r-none" />
+          <Avatar user={user} className="rounded-sm rounded-r-none h-9 w-9" />
           <span className="pr-2">{truncateUsername(user.name)}</span>
         </Button>
       </SheetTrigger>
       <SheetContent side={"right"} className="flex flex-col">
-        <SheetHeader className="flex-1 flex-col gap-2">
+        <SheetHeader className="flex-col flex-1 gap-2">
           <div className="flex items-center gap-x-2">
             <SheetTitle>
               <Avatar user={user} />
             </SheetTitle>
-            <SheetDescription className="select-none truncate font-semibold">
+            <SheetDescription className="font-semibold truncate select-none">
               Welcome, {truncateUsername(user.name)}
             </SheetDescription>
           </div>
@@ -59,7 +59,7 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
           </div>
         </SheetHeader>
 
-        <SheetFooter className="md:self-start self-stretch">
+        <SheetFooter className="self-stretch md:self-start">
           <SheetClose asChild>
             <SignoutButton />
           </SheetClose>
@@ -79,7 +79,7 @@ function Avatar({ user, className }: { user: Session["user"]; className?: string
           blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
         />
       ) : (
-        <AvatarFallback className="rounded-lg text-orange-600">
+        <AvatarFallback className="text-orange-600 rounded-lg">
           {fallbackUsername(user.name) ?? "User"}
         </AvatarFallback>
       )}

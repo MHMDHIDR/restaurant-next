@@ -5,14 +5,14 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/
 import { users } from "@/server/db/schema"
 
 export const usersRouter = createTRPCRouter({
-  // Public procedure to get a user by ID
   getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
     return await ctx.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, input.id),
     })
   }),
 
-  // Protected procedure for updating users (requires authentication)
+  getUsers: protectedProcedure.query(async ({ ctx }) => await ctx.db.query.users.findMany()),
+
   update: protectedProcedure
     .input(
       accountFormSchema.pick({

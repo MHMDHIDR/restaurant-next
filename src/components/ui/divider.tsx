@@ -9,7 +9,7 @@ export function Divider({ children, className }: { children?: string; className?
       )}
     >
       {children ? (
-        <span className="z-10 select-none bg-background px-2 text-primary/80">{children}</span>
+        <span className="z-10 px-2 select-none bg-background text-primary/80">{children}</span>
       ) : null}
     </div>
   )

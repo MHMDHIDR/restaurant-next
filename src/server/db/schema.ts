@@ -22,33 +22,16 @@ export const userRoleEnum = pgEnum("role", [
   "VENDOR_STAFF",
   "CUSTOMER",
 ])
+export const userStatusEnum = pgEnum("status", ["PENDING", "ACTIVE", "SUSPENDED"])
+export const themeEnum = pgEnum("theme", ["light", "dark"])
+export type themeEnumType = (typeof users.theme.enumValues)[number]
 export const UserRole = {
   SUPER_ADMIN: "SUPER_ADMIN",
   VENDOR_ADMIN: "VENDOR_ADMIN",
   VENDOR_STAFF: "VENDOR_STAFF",
   CUSTOMER: "CUSTOMER",
 } as const
-
-export const themeEnum = pgEnum("theme", ["light", "dark"])
-export type themeEnumType = (typeof users.theme.enumValues)[number]
-
-export const orderStatusEnum = pgEnum("order_status", [
-  "PENDING",
-  "CONFIRMED",
-  "PREPARING",
-  "READY_FOR_PICKUP",
-  "OUT_FOR_DELIVERY",
-  "DELIVERED",
-  "CANCELLED",
-])
-
-export const vendorStatusEnum = pgEnum("vendor_status", [
-  "PENDING",
-  "ACTIVE",
-  "SUSPENDED",
-  "INACTIVE",
-])
-
+export type UserRoleType = (typeof UserRole)[keyof typeof UserRole]
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -56,8 +39,9 @@ export const users = createTable("user", {
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
-  phone: varchar("phone", { length: 20 }),
+  phone: varchar("phone", { length: 20 }).notNull(),
   role: userRoleEnum("role").notNull().default("CUSTOMER"),
+  status: userStatusEnum("status").notNull().default("PENDING"),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,
@@ -68,7 +52,14 @@ export const users = createTable("user", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
+export type Users = typeof users.$inferSelect
 
+export const vendorStatusEnum = pgEnum("vendor_status", [
+  "PENDING",
+  "ACTIVE",
+  "SUSPENDED",
+  "INACTIVE",
+])
 export const vendors = createTable("vendor", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -135,6 +126,15 @@ export const menuItems = createTable("menu_item", {
   }>(),
 })
 
+export const orderStatusEnum = pgEnum("order_status", [
+  "PENDING",
+  "CONFIRMED",
+  "PREPARING",
+  "READY_FOR_PICKUP",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
+  "CANCELLED",
+])
 export const orders = createTable("order", {
   id: varchar("id", { length: 255 })
     .notNull()
