@@ -2,7 +2,7 @@ import { IconMapPin, IconSearch } from "@tabler/icons-react"
 
 export default async function Home() {
   return (
-    <div className="container px-2 py-12 mx-auto">
+    <div className="container px-2 py-12 mx-auto max-w-screen-xl">
       <section className="mb-12 text-center">
         <h1 className="mb-4 text-4xl font-bold leading-loose md:leading-10">
           Discover Delicious Restaurants Near You

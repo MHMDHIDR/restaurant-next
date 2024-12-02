@@ -16,7 +16,7 @@ export default async function DashboardLayout({
   return (
     <div className="grid md:grid-cols-4 lg:grid-cols-4">
       <DashboardSidebar />
-      <main className="col-span-3">
+      <main className="col-span-3 max-w-screen-xl">
         <Header />
         {children}
       </main>
