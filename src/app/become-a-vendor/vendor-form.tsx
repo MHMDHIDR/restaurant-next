@@ -61,7 +61,11 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
   return `${hour}:${minute}`
 })
 
-export function VendorApplicationForm({ vendor }: { vendor: typeof vendors.$inferSelect }) {
+export function VendorApplicationForm({
+  vendor,
+}: {
+  vendor: typeof vendors.$inferSelect | undefined
+}) {
   const router = useRouter()
   const toast = useToast()
 

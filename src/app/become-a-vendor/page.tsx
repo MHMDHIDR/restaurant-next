@@ -10,7 +10,6 @@ export default async function BecomeVendor() {
     notFound()
   }
 
-  // Check if user already has a vendor application
   const vendor = await api.vendor.getBySessionUser()
 
   return vendor?.status === "ACTIVE" ? (
