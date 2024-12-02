@@ -73,9 +73,12 @@ export function VendorApplicationForm({
     resolver: zodResolver(vendorFormSchema),
     defaultValues: {
       ...vendor,
+      name: vendor?.name ?? "",
       logo: vendor?.logo ?? "",
+      email: vendor?.email ?? "",
       latitude: Number(vendor?.latitude ?? 0),
       longitude: Number(vendor?.longitude ?? 0),
+      address: vendor?.address ?? "",
       minimumOrder: Number(vendor?.minimumOrder ?? 0),
       deliveryRadius: Number(vendor?.deliveryRadius ?? 0),
     },
@@ -378,6 +381,28 @@ export function VendorApplicationForm({
             <FormItem>
               <FormLabel>Opening Hours</FormLabel>
               <div className="space-y-4">
+                <Checkbox
+                  onCheckedChange={
+                    // when clicked, set the opening hours for the rest of the week as the same as the first day
+                    checked => {
+                      if (checked) {
+                        const firstDay = DAYS_OF_WEEK[0]
+                        const firstDayOpeningHours =
+                          form.getValues("openingHours")[firstDay as string]
+                        DAYS_OF_WEEK.slice(1).forEach(day => {
+                          const openingHours = firstDayOpeningHours || {
+                            open: "09:00",
+                            close: "17:00",
+                          } // Default values
+                          form.setValue(`openingHours.${day}`, openingHours)
+                        })
+                      }
+                    }
+                  }
+                  disabled={isPending}
+                >
+                  Set the same opening hours for the rest of the week as the first day
+                </Checkbox>
                 {DAYS_OF_WEEK.map(day => (
                   <div key={day} className="grid gap-4 md:grid-cols-2">
                     <FormField
