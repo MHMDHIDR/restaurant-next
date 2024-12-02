@@ -1,0 +1,1 @@
+[ ] View Data by SuperAdmin, to accept the vendor, when it's accepted set the user that created it to VENDOR_ADMIN and send an email to notify them + redirect them to vendor setting page to set the StripeId and other important data.

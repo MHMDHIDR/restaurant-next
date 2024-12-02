@@ -387,10 +387,9 @@ export function VendorApplicationForm({
                     checked => {
                       if (checked) {
                         const firstDay = DAYS_OF_WEEK[0]
-                        const firstDayOpeningHours =
-                          form.getValues("openingHours")[firstDay as string]
+                        const firstDayOpeningHours = form.getValues("openingHours")[firstDay!]
                         DAYS_OF_WEEK.slice(1).forEach(day => {
-                          const openingHours = firstDayOpeningHours || {
+                          const openingHours = firstDayOpeningHours ?? {
                             open: "09:00",
                             close: "17:00",
                           } // Default values
