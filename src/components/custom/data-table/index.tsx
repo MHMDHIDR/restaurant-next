@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { BaseEntity } from "./base-columns"
+import type { BaseEntity } from "./base-columns"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface DataTableProps<TData extends BaseEntity> {

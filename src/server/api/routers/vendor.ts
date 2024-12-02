@@ -4,7 +4,6 @@ import { z } from "zod"
 import { vendorFormSchema } from "@/app/schemas/vendor"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { UserRole, vendors } from "@/server/db/schema"
-import type { Users } from "@/server/db/schema"
 
 export const vendorRouter = createTRPCRouter({
   create: protectedProcedure.input(vendorFormSchema).mutation(async ({ ctx, input }) => {
@@ -109,7 +108,7 @@ export const vendorRouter = createTRPCRouter({
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.query.vendors.findFirst({
-      where: (vendors, { eq }) => eq(vendors.email, ctx.session.user.email as Users["email"]),
+      where: (vendors, { eq }) => eq(vendors.email, ctx.session.user.email!),
     })
   }),
 

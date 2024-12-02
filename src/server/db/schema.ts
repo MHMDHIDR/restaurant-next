@@ -5,7 +5,6 @@ import {
   index,
   integer,
   json,
-  numeric,
   pgEnum,
   pgTableCreator,
   primaryKey,

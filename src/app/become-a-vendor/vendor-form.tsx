@@ -374,7 +374,7 @@ export function VendorApplicationForm({
         <FormField
           control={form.control}
           name="openingHours"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Opening Hours</FormLabel>
               <div className="space-y-4">

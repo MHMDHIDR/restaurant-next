@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { UserRole, UserRoleType } from "@/server/db/schema"
+import type { UserRoleType } from "@/server/db/schema"
 
 /**
  * Checks if a user has the required role(s) to access a resource

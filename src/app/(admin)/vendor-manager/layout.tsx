@@ -1,5 +1,3 @@
-import { notFound } from "next/navigation"
-// import DashboardSidebar from "@/components/custom/dashboard-sidebar"
 import Header from "@/components/ui/header"
 import { checkRoleAccess } from "@/lib/check-role-access"
 import { auth } from "@/server/auth"
