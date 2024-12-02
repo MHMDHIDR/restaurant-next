@@ -66,6 +66,7 @@ export const vendors = createTable("vendor", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
+  addedById: varchar("added_by_id", { length: 255 }).notNull(),
   description: text("description").notNull(),
   logo: varchar("logo", { length: 255 }),
   coverImage: varchar("cover_image", { length: 255 }).notNull(),

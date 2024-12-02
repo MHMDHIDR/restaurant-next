@@ -21,6 +21,7 @@ export const vendorRouter = createTRPCRouter({
     // Convert input data to match database types explicitly
     await ctx.db.insert(vendors).values({
       ...input,
+      addedById: ctx.session.user.id,
       status: "PENDING",
       averageRating: sql`0.00`,
       stripeAccountId: "",
@@ -108,7 +109,7 @@ export const vendorRouter = createTRPCRouter({
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.query.vendors.findFirst({
-      where: (vendors, { eq }) => eq(vendors.email, ctx.session.user.email!),
+      where: (vendors, { eq }) => eq(vendors.addedById, ctx.session.user.id),
     })
   }),
 
