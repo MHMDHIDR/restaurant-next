@@ -7,8 +7,10 @@ import { type Session } from "next-auth"
  * @returns
  */
 export function fallbackUsername(username: Session["user"]["name"]) {
-  return (username ?? "User")
-    .split(" ")
+  // Sanitize the username from injection attacks, emojis, and other malicious content
+  const SANITIZED_USEERNAME = (username ?? "User").replace(/[^a-zA-Z0-9\s]/g, "")
+
+  return SANITIZED_USEERNAME.split(" ")
     .map(name => name[0])
     .join("")
 }

@@ -1,11 +1,11 @@
 import { eq, sql } from "drizzle-orm"
 import { z } from "zod"
 import { accountFormSchema } from "@/app/schemas/account"
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { users } from "@/server/db/schema"
 
 export const usersRouter = createTRPCRouter({
-  getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+  getById: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
     return await ctx.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, input.id),
     })

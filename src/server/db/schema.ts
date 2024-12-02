@@ -5,6 +5,7 @@ import {
   index,
   integer,
   json,
+  numeric,
   pgEnum,
   pgTableCreator,
   primaryKey,
@@ -31,7 +32,7 @@ export const UserRole = {
   VENDOR_STAFF: "VENDOR_STAFF",
   CUSTOMER: "CUSTOMER",
 } as const
-export type UserRoleType = (typeof UserRole)[keyof typeof UserRole]
+export type UserRoleType = keyof typeof UserRole
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -66,7 +67,7 @@ export const vendors = createTable("vendor", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
+  description: text("description").notNull(),
   logo: varchar("logo", { length: 255 }),
   coverImage: varchar("cover_image", { length: 255 }).notNull(),
   status: vendorStatusEnum("status").notNull().default("PENDING"),
@@ -76,14 +77,16 @@ export const vendors = createTable("vendor", {
   postalCode: varchar("postal_code", { length: 20 }).notNull(),
   phone: varchar("phone", { length: 20 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
-  latitude: decimal("latitude", { precision: 10, scale: 7 }),
-  longitude: decimal("longitude", { precision: 10, scale: 7 }),
-  openingHours: json("opening_hours").$type<Record<string, { open: string; close: string }>>(),
+  latitude: decimal("latitude", { precision: 10, scale: 7 }).notNull(),
+  longitude: decimal("longitude", { precision: 10, scale: 7 }).notNull(),
+  openingHours: json("opening_hours")
+    .$type<Record<string, { open: string; close: string }>>()
+    .notNull(),
   cuisineTypes: json("cuisine_types").$type<string[]>().notNull(),
-  deliveryRadius: integer("delivery_radius"),
-  minimumOrder: decimal("minimum_order", { precision: 10, scale: 2 }),
-  averageRating: decimal("average_rating", { precision: 3, scale: 2 }),
-  stripeAccountId: varchar("stripe_account_id", { length: 255 }),
+  deliveryRadius: integer("delivery_radius").notNull(),
+  minimumOrder: decimal("minimum_order", { precision: 10, scale: 2 }).notNull(),
+  averageRating: decimal("average_rating", { precision: 3, scale: 2 }).notNull().default("0.00"),
+  stripeAccountId: varchar("stripe_account_id", { length: 255 }).notNull().default(""),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })

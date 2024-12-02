@@ -1,10 +1,6 @@
-import { IconMapPin, IconSearch, IconStar } from "@tabler/icons-react"
-import Image from "next/image"
-import { api } from "@/trpc/server"
+import { IconMapPin, IconSearch } from "@tabler/icons-react"
 
 export default async function Home() {
-  const featuredVendors = await api.vendor.getFeatured()
-
   return (
     <div className="container px-2 py-12 mx-auto">
       <section className="mb-12 text-center">
@@ -27,27 +23,7 @@ export default async function Home() {
 
       <section className="mb-12">
         <h2 className="mb-6 text-2xl font-semibold">Featured Restaurants</h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          {featuredVendors.map(vendor => (
-            <div key={vendor.id} className="overflow-hidden bg-white rounded-lg shadow-md">
-              <Image
-                src={vendor.coverImage}
-                alt={vendor.name}
-                height={192}
-                width={320}
-                className="object-cover w-full h-48"
-              />
-              <div className="p-4">
-                <h3 className="text-xl font-bold">{vendor.name}</h3>
-                <div className="flex items-center text-yellow-500">
-                  <IconStar size={16} fill="currentColor" />
-                  <span className="ml-2">{vendor.averageRating}</span>
-                </div>
-                <p className="text-gray-600">{vendor.cuisineTypes.join(", ")}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <div className="grid gap-6 md:grid-cols-3"></div>
       </section>
     </div>
   )

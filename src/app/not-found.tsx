@@ -6,7 +6,7 @@ import { NotFoundIcon } from "../components/custom/icons"
 
 export default async function RootNotFound() {
   const session = await auth()
-  const user = session?.user
+  const userRole = session?.user.role
 
   return (
     <section>
@@ -28,7 +28,7 @@ export default async function RootNotFound() {
                 Go Home
               </Button>
             </Link>
-            {user && (
+            {userRole === "SUPER_ADMIN" && (
               <Link href="/dashboard" className="w-full cursor-pointer">
                 <Button type="button" variant={"pressable"}>
                   Dashboard

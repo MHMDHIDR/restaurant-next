@@ -1,6 +1,6 @@
 "use client"
 
-import { IconHome, IconSettings, IconUser } from "@tabler/icons-react"
+import { IconHome, IconPackage, IconSettings, IconUser } from "@tabler/icons-react"
 import clsx from "clsx"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -22,6 +22,13 @@ import { cn } from "@/lib/utils"
 import type { Session } from "next-auth"
 
 export default function AccountNav({ user }: { user: Session["user"] }) {
+  const NAV_ITEMS = [
+    { href: "/", icon: IconHome, label: "Home" },
+    { href: "/account", icon: IconUser, label: "Account" },
+    user.role === "SUPER_ADMIN" && { href: "/dashboard", icon: IconSettings, label: "Dashboard" },
+    { href: "/become-a-vendor", icon: IconPackage, label: "Become a Vendor" },
+  ]
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -41,21 +48,17 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
             </SheetDescription>
           </div>
 
-          <div className="flex flex-col space-y-1.5">
-            <NavLink href="/">
-              <IconHome size={20} className="mr-4" />
-              Home
-            </NavLink>
-            <NavLink href="/account">
-              <IconUser size={20} className="mr-4" />
-              Account
-            </NavLink>
-            {user.role === "SUPER_ADMIN" && (
-              <NavLink href="/dashboard">
-                <IconSettings size={20} className="mr-4" />
-                Dashboard
-              </NavLink>
-            )}
+          <div className="flex flex-col gap-y-1.5">
+            {NAV_ITEMS.map(item => {
+              if (!item) return null
+              const Icon = item.icon
+              return (
+                <NavLink key={item.href} href={item.href}>
+                  <Icon size={20} />
+                  <span>{item.label}</span>
+                </NavLink>
+              )
+            })}
           </div>
         </SheetHeader>
 
@@ -95,7 +98,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       <Link
         href={href}
         className={clsx(
-          "inline-flex items-center w-full select-none rounded-sm border text-orange-400 p-2 transition-colors hover:bg-orange-200/50 dark:hover:bg-orange-900/50 outline-orange-300",
+          "inline-flex items-center gap-x-2 w-full select-none rounded-sm border text-orange-400 p-2 transition-colors hover:bg-orange-200/50 dark:hover:bg-orange-900/50 outline-orange-300",
           {
             "text-orange-500 border-orange-500": pathname === href,
           },

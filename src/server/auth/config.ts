@@ -7,7 +7,7 @@ import { env } from "@/env"
 import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { db } from "@/server/db"
 import { accounts, sessions, users, verificationTokens } from "@/server/db/schema"
-import type { themeEnumType, UserRole } from "@/server/db/schema"
+import type { themeEnumType, UserRoleType } from "@/server/db/schema"
 import type { AdapterUser } from "@auth/core/adapters"
 
 declare module "next-auth" {
@@ -15,13 +15,13 @@ declare module "next-auth" {
     user: { id: string; phone: string; theme: themeEnumType } & DefaultSession["user"]
   }
   interface User extends AdapterUser {
-    role: keyof typeof UserRole
+    role: UserRoleType
     blurImageDataURL: string | null
   }
 }
 declare module "@auth/core/adapters" {
   interface AdapterUser {
-    role: keyof typeof UserRole
+    role: UserRoleType
     blurImageDataURL: string | null
   }
 }

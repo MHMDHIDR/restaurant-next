@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <SessionProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme={session?.user?.theme ?? "light"}
+              defaultTheme={session?.user.theme || "light"}
               disableTransitionOnChange
               enableSystem
             >

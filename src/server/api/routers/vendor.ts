@@ -1,74 +1,148 @@
-import { desc, sql } from "drizzle-orm"
+import { TRPCError } from "@trpc/server"
+import { and, eq, sql } from "drizzle-orm"
 import { z } from "zod"
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
-import { vendors } from "@/server/db/schema"
-
-// Constant for Earth's radius in kilometers
-const EARTH_RADIUS_KM = 6371
+import { vendorFormSchema } from "@/app/schemas/vendor"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
+import { UserRole, vendors } from "@/server/db/schema"
+import type { Users } from "@/server/db/schema"
 
 export const vendorRouter = createTRPCRouter({
-  getFeatured: publicProcedure
+  create: protectedProcedure.input(vendorFormSchema).mutation(async ({ ctx, input }) => {
+    const existingVendor = await ctx.db.query.vendors.findFirst({
+      where: (vendors, { eq }) => eq(vendors.email, input.email),
+    })
+
+    if (existingVendor) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "A vendor with this email already exists",
+      })
+    }
+
+    // Convert input data to match database types explicitly
+    await ctx.db.insert(vendors).values({
+      ...input,
+      status: "PENDING",
+      averageRating: sql`0.00`,
+      stripeAccountId: "",
+      latitude: sql`${input.latitude}`,
+      longitude: sql`${input.longitude}`,
+      minimumOrder: sql`${input.minimumOrder}`,
+      deliveryRadius: sql`${input.deliveryRadius}`,
+    })
+
+    return { success: true }
+  }),
+
+  update: protectedProcedure
+    .input(vendorFormSchema.partial().extend({ email: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      // Use sql to convert numeric fields while maintaining type compatibility
+      await ctx.db
+        .update(vendors)
+        .set({
+          ...(input.name && { name: input.name }),
+          ...(input.description && { description: input.description }),
+          ...(input.logo && { logo: input.logo }),
+          ...(input.coverImage && { coverImage: input.coverImage }),
+          ...(input.address && { address: input.address }),
+          ...(input.city && { city: input.city }),
+          ...(input.state && { state: input.state }),
+          ...(input.postalCode && { postalCode: input.postalCode }),
+          ...(input.phone && { phone: input.phone }),
+          ...(input.email && { email: input.email }),
+          ...(input.latitude !== undefined && { latitude: sql`${input.latitude}` }),
+          ...(input.longitude !== undefined && { longitude: sql`${input.longitude}` }),
+          ...(input.openingHours && { openingHours: input.openingHours }),
+          ...(input.cuisineTypes && { cuisineTypes: input.cuisineTypes }),
+          ...(input.minimumOrder !== undefined && { minimumOrder: sql`${input.minimumOrder}` }),
+          ...(input.deliveryRadius !== undefined && {
+            deliveryRadius: sql`${input.deliveryRadius}`,
+          }),
+        })
+        .where(eq(vendors.email, input.email))
+
+      return { success: true }
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const vendor = await ctx.db.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.id, input.id),
+      })
+
+      if (!vendor) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Vendor not found",
+        })
+      }
+
+      if (
+        vendor.email !== ctx.session.user.email &&
+        ctx.session.user.role !== UserRole.SUPER_ADMIN
+      ) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not authorized to delete this vendor",
+        })
+      }
+
+      return await ctx.db.delete(vendors).where(eq(vendors.id, input.id))
+    }),
+
+  getById: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const vendor = await ctx.db.query.vendors.findFirst({
+      where: (vendors, { eq }) => eq(vendors.id, input.id),
+    })
+
+    if (!vendor) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Vendor not found",
+      })
+    }
+
+    return vendor
+  }),
+
+  getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.vendors.findFirst({
+      where: (vendors, { eq }) => eq(vendors.email, ctx.session.user.email as Users["email"]),
+    })
+  }),
+
+  getAll: publicProcedure
     .input(
       z
         .object({
-          limit: z.number().min(1).max(20).default(6),
+          status: z.enum(["PENDING", "ACTIVE", "SUSPENDED", "INACTIVE"]).optional(),
+          limit: z.number().min(1).max(100).default(10),
+          cursor: z.number().default(0),
         })
         .optional(),
     )
     .query(async ({ ctx, input }) => {
-      const limit = input?.limit ?? 6
+      const limit = input?.limit ?? 10
+      const cursor = input?.cursor ?? 0
+      const status = input?.status
 
-      return await ctx.db.query.vendors.findMany({
-        where: (vendors, { eq }) => eq(vendors.status, "ACTIVE"),
-        orderBy: [desc(vendors.averageRating), desc(vendors.createdAt)],
-        limit: limit,
+      const where = status ? and(eq(vendors.status, status)) : undefined
+
+      const items = await ctx.db.query.vendors.findMany({
+        where,
+        limit: limit + 1,
+        offset: cursor,
+        orderBy: (vendors, { desc }) => [desc(vendors.createdAt)],
       })
-    }),
 
-  getNearby: publicProcedure
-    .input(
-      z.object({
-        latitude: z.number(),
-        longitude: z.number(),
-        radius: z.number().min(1).max(50).default(10), // kilometers
-        limit: z.number().min(1).max(20).default(10),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { latitude, longitude, radius, limit } = input
+      let nextCursor: number | undefined
+      if (items.length > limit) {
+        items.pop()
+        nextCursor = cursor + limit
+      }
 
-      // Improved Haversine formula with more robust distance calculation
-      const nearbyVendorsQuery = await ctx.db.execute(sql`
-        WITH nearby_vendors AS (
-          SELECT
-            *,
-            ${EARTH_RADIUS_KM} * 2 * ASIN(
-              SQRT(
-                POWER(SIN((RADIANS(${latitude}) - RADIANS(latitude)) / 2), 2) +
-                COS(RADIANS(${latitude})) * COS(RADIANS(latitude)) *
-                POWER(SIN((RADIANS(${longitude}) - RADIANS(longitude)) / 2), 2)
-              )
-            ) AS distance_km
-          FROM restaurant_vendor
-          WHERE
-            status = 'ACTIVE' AND
-            latitude IS NOT NULL AND
-            longitude IS NOT NULL
-        )
-        SELECT
-          *
-        FROM nearby_vendors
-        WHERE distance_km <= ${radius}
-        ORDER BY distance_km
-        LIMIT ${limit}
-      `)
-
-      // Type-safe transformation of raw query results
-      return nearbyVendorsQuery.map(vendor => ({
-        ...vendor,
-        distance: Number(vendor.distance_km),
-      }))
+      return { items, nextCursor }
     }),
 })
-
-export type VendorRouter = typeof vendorRouter
