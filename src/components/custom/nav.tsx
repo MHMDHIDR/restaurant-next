@@ -2,12 +2,9 @@ import Link from "next/link"
 import AccountNav from "@/components/custom/accunt-nav"
 import { Logo } from "@/components/custom/icons"
 import { Button } from "@/components/ui/button"
-import { auth } from "@/server/auth"
+import type { Session } from "next-auth"
 
-export default async function Nav() {
-  const session = await auth()
-  const user = session?.user
-
+export default function Nav({ user }: { user: Session["user"] }) {
   return (
     <header className="border-b shadow-sm mx-auto">
       <div className="flex items-center justify-between p-1.5">

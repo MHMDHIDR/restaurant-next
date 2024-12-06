@@ -18,13 +18,14 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth()
+  const user = session?.user
 
   return (
     <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
       <body>
-        <Nav />
-        <Providers>
-          <SessionProvider>
+        <SessionProvider>
+          <Nav user={user} />
+          <Providers>
             <ThemeProvider
               attribute="class"
               defaultTheme={session?.user.theme ?? "light"}
@@ -34,8 +35,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
               {children}
             </ThemeProvider>
-          </SessionProvider>
-        </Providers>
+          </Providers>
+        </SessionProvider>
       </body>
     </html>
   )
