@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
 import { generateReactHelpers } from "@uploadthing/react"
-import { Session } from "next-auth"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -33,7 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
-import { OurFileRouter } from "../api/uploadthing/core"
+import type { OurFileRouter } from "../api/uploadthing/core"
 import type { VendorFormValues } from "@/app/schemas/vendor"
 import type { vendors } from "@/server/db/schema"
 
@@ -69,10 +68,8 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
 
 export function VendorApplicationForm({
   vendor,
-  userId,
 }: {
   vendor: typeof vendors.$inferSelect | undefined
-  userId: Session["user"]["id"]
 }) {
   const router = useRouter()
   const toast = useToast()
@@ -151,7 +148,7 @@ export function VendorApplicationForm({
   }
 
   const onSubmit = (data: VendorFormValues) => {
-    const { logo, ...vendorData } = data
+    const { ...vendorData } = data
     createVendorMutation.mutate(vendorData)
   }
 
@@ -167,7 +164,7 @@ export function VendorApplicationForm({
                 <FormLabel>Logo</FormLabel>
                 <FormControl>
                   <div className="flex gap-y-2 flex-col">
-                    {(field.value || logoFile) && (
+                    {(field.value ?? logoFile) && (
                       <Image
                         src={field.value ? field.value : URL.createObjectURL(logoFile!)}
                         alt="Logo"
@@ -183,7 +180,6 @@ export function VendorApplicationForm({
                         setLogoFile(file)
                         field.onChange(file ? URL.createObjectURL(file) : "")
                       }}
-                      input={{ objectType: "vendor", objectId: userId }}
                     />
                   </div>
                 </FormControl>
@@ -216,7 +212,6 @@ export function VendorApplicationForm({
                         setCoverImageFile(file)
                         field.onChange(file ? URL.createObjectURL(file) : "")
                       }}
-                      input={{ objectType: "vendor", objectId: userId }}
                     />
                   </div>
                 </FormControl>

@@ -27,7 +27,7 @@ export default async function BecomeVendor() {
       ) : (
         <>
           <h1 className="mb-6 text-3xl font-bold">Become a Vendor</h1>
-          <VendorApplicationForm vendor={vendor} userId={session.user.id} />
+          <VendorApplicationForm vendor={vendor} />
         </>
       )}
     </section>

@@ -12,7 +12,7 @@ type FileSelectUploadProps = {
   isSelectButton?: boolean
   onFileSelect?: (file: File | null) => void
   onUploadComplete?: (res: Array<{ url: string }>) => void
-  input: { objectType: string; objectId: string }
+  input?: { objectType: string; objectId: string }
   className?: string
 }
 
@@ -45,7 +45,7 @@ export function FileSelectUpload({
 
   const handleFileUpload = async () => {
     if (selectedFile) {
-      await startUpload([selectedFile], input)
+      await startUpload([selectedFile], input ?? { objectType: "generic", objectId: "0" })
     }
   }
 
