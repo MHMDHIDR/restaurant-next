@@ -54,6 +54,7 @@ export const vendorRouter = createTRPCRouter({
           ...(input.description && { description: input.description }),
           ...(input.logo && { logo: input.logo }),
           ...(input.coverImage && { coverImage: input.coverImage }),
+          ...(input.status && { status: input.status }),
           ...(input.address && { address: input.address }),
           ...(input.city && { city: input.city }),
           ...(input.state && { state: input.state }),

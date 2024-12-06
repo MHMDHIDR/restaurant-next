@@ -85,6 +85,7 @@ export function VendorApplicationForm({
       ...vendor,
       name: vendor?.name ?? "",
       logo: vendor?.logo ?? "",
+      status: vendor?.status ?? "PENDING",
       email: vendor?.email ?? "",
       latitude: Number(vendor?.latitude ?? 0),
       longitude: Number(vendor?.longitude ?? 0),
@@ -523,6 +524,32 @@ export function VendorApplicationForm({
             </FormItem>
           )}
         />
+
+        {isEditing && (
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">Active</SelectItem>
+                      <SelectItem value="PENDING">Pending</SelectItem>
+                      <SelectItem value="SUSPENDED">Suspended</SelectItem>
+                      <SelectItem value="INACTIVE">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <Button
           type="submit"

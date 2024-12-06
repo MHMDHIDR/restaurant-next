@@ -1,10 +1,13 @@
 import { z } from "zod"
 
+const vendorStatus = z.enum(["PENDING", "ACTIVE", "SUSPENDED", "INACTIVE"])
+
 export const vendorFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   logo: z.string().optional(),
   coverImage: z.string().min(1, "Cover image is required"),
+  status: vendorStatus.optional(),
   address: z.string().min(5, "Address must be at least 5 characters"),
   city: z.string().min(2, "City must be at least 2 characters"),
   state: z.string().min(2, "State must be at least 2 characters"),
