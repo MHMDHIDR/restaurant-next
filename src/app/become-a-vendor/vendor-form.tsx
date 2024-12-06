@@ -122,11 +122,11 @@ export function VendorApplicationForm({
   const editVendorMutation = api.vendor.update.useMutation({
     onSuccess: async () => {
       if (logoFile) {
-        await uploadFile(logoFile, "logo", vendor?.id!)
+        await uploadFile(logoFile, "logo", vendor?.id ?? "n/a")
       }
 
       if (coverImageFile) {
-        await uploadFile(coverImageFile, "coverImage", vendor?.id!)
+        await uploadFile(coverImageFile, "coverImage", vendor?.id ?? "n/a")
       }
 
       toast.success("Vendor information updated successfully")

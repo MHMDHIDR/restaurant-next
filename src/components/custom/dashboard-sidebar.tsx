@@ -1,18 +1,8 @@
 "use client"
 
-import {
-  Bell,
-  ChefHatIcon,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  ShoppingCart,
-  Users,
-} from "lucide-react"
+import { ChefHatIcon, Home, LineChart, Package, ShoppingCart, Users } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
 
 export const navItems = [
   {
