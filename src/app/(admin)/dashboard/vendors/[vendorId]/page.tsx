@@ -1,9 +1,14 @@
 import { redirect } from "next/navigation"
 import { VendorApplicationForm } from "@/app/become-a-vendor/vendor-form"
 import { api } from "@/trpc/server"
+import type { Vendors } from "@/server/db/schema"
 
-export default async function VendorDetails({ params }: { params: { vendorId: string } }) {
-  const { vendorId } = params
+export default async function VendorDetails({
+  params,
+}: {
+  params: Promise<{ vendorId: Vendors["id"] }>
+}) {
+  const { vendorId } = await params
 
   const vendor = await api.vendor.getById({ id: vendorId })
 
