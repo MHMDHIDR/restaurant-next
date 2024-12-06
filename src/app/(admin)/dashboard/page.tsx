@@ -7,7 +7,7 @@ export default function Dashboard() {
         <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
       </div>
       <div
-        className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm"
+        className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm py-3"
         x-chunk="dashboard-02-chunk-1"
       >
         <div className="flex flex-col items-center text-center gap-1">
