@@ -33,6 +33,9 @@ const VendorActionsCell: React.FC<{ vendor: Vendors }> = ({ vendor }) => {
     onError: error => {
       toast.error(`Failed to update vendor status: ${error.message}`)
     },
+    onMutate: () => {
+      toast.loading("Updating Vendor...")
+    },
   })
 
   const handleActivate = () => {
