@@ -68,8 +68,10 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
 
 export function VendorApplicationForm({
   vendor,
+  isEditing,
 }: {
   vendor: typeof vendors.$inferSelect | undefined
+  isEditing?: boolean
 }) {
   const router = useRouter()
   const toast = useToast()
@@ -116,6 +118,20 @@ export function VendorApplicationForm({
     },
   })
 
+  const editVendorMutation = api.vendor.update.useMutation({
+    onSuccess: async () => {
+      if (logoFile) {
+        await uploadFile(logoFile, "logo", vendor?.id!)
+      }
+
+      if (coverImageFile) {
+        await uploadFile(coverImageFile, "coverImage", vendor?.id!)
+      }
+
+      toast.success("Vendor information updated successfully")
+    },
+  })
+
   const updateVendorMutation = api.vendor.update.useMutation({
     onSuccess: () => {
       toast.success("Vendor information updated successfully")
@@ -151,10 +167,14 @@ export function VendorApplicationForm({
     const { ...vendorData } = data
     createVendorMutation.mutate(vendorData)
   }
+  const onSubmitEdit = (data: VendorFormValues) => {
+    const { ...vendorData } = data
+    editVendorMutation.mutate(vendorData)
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(isEditing ? onSubmitEdit : onSubmit)} className="space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           <FormField
             control={form.control}
@@ -507,10 +527,14 @@ export function VendorApplicationForm({
         <Button
           type="submit"
           className="w-full md:w-auto"
-          disabled={createVendorMutation.isPending}
+          disabled={createVendorMutation.isPending || editVendorMutation.isPending}
         >
-          {createVendorMutation.isPending && <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />}
-          Submit Application
+          <>
+            {isEditing ? "Update Information" : "Submit Application"}
+            {(createVendorMutation.isPending || editVendorMutation.isPending) && (
+              <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+            )}
+          </>
         </Button>
       </form>
     </Form>

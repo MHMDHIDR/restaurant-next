@@ -1,6 +1,11 @@
 "use client"
 
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
 import EmptyState from "@/components/custom/empty-state"
 import {
   Table,
@@ -23,10 +28,11 @@ export function DataTable<TData extends BaseEntity>({ columns, data }: DataTable
     data: data ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   })
 
   return (
-    <div className="border rounded-md mx-3">
+    <div className="border rounded-md md:mx-2 overflow-auto">
       <Table>
         <TableHeader className="select-none">
           {table.getHeaderGroups().map(headerGroup => (

@@ -9,8 +9,8 @@ export default async function Nav() {
   const user = session?.user
 
   return (
-    <header className="border-b shadow-sm max-w-screen-xl mx-auto">
-      <div className="container mx-auto flex items-center justify-between p-1.5 md:px-0">
+    <header className="border-b shadow-sm mx-auto">
+      <div className="flex items-center justify-between p-1.5">
         <Link href="/" className="flex text-xl font-bold select-none gap-x-2 text-primary">
           <Logo className="mx-auto stroke-current h-7 w-7 stroke-1" />
           Restaurant

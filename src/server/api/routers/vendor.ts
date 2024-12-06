@@ -39,13 +39,11 @@ export const vendorRouter = createTRPCRouter({
 
   update: protectedProcedure
     .input(
-      vendorFormSchema
-        .partial()
-        .extend({
-          email: z.string().email(),
-          logo: z.string().optional(),
-          coverImage: z.string().optional(),
-        }),
+      vendorFormSchema.partial().extend({
+        email: z.string().email(),
+        logo: z.string().optional(),
+        coverImage: z.string().optional(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Use sql to convert numeric fields while maintaining type compatibility
@@ -142,11 +140,18 @@ export const vendorRouter = createTRPCRouter({
       const where = status ? and(eq(vendors.status, status)) : undefined
 
       const items = await ctx.db.query.vendors.findMany({
+        with: { assignedUser: true },
         where,
         limit: limit + 1,
         offset: cursor,
         orderBy: (vendors, { desc }) => [desc(vendors.createdAt)],
       })
+      // Get total count of items from vendors table with the same query as above
+      const [{ count = 0 } = { count: 0 }] = await ctx.db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(vendors)
+        .where(where)
+        .limit(limit + 1)
 
       let nextCursor: number | undefined
       if (items.length > limit) {
@@ -154,6 +159,6 @@ export const vendorRouter = createTRPCRouter({
         nextCursor = cursor + limit
       }
 
-      return { items, nextCursor }
+      return { items, nextCursor, count }
     }),
 })

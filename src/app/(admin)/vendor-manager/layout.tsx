@@ -1,4 +1,4 @@
-import Header from "@/components/ui/header"
+import DashboardSidebar from "@/components/custom/dashboard-sidebar"
 import { checkRoleAccess } from "@/lib/check-role-access"
 import { auth } from "@/server/auth"
 import { UserRole } from "@/server/db/schema"
@@ -14,11 +14,8 @@ export default async function DashboardLayout({
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      {/* <DashboardSidebar /> */}
-      <div className="flex flex-col">
-        <Header />
-        {children}
-      </div>
+      <DashboardSidebar />
+      <div className="flex flex-col">{children}</div>
     </div>
   )
 }

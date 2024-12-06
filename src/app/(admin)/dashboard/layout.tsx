@@ -1,5 +1,5 @@
 import DashboardSidebar from "@/components/custom/dashboard-sidebar"
-import Header from "@/components/ui/header"
+import MobileNav from "@/components/custom/mobile-nav"
 import { checkRoleAccess } from "@/lib/check-role-access"
 import { auth } from "@/server/auth"
 import { UserRole } from "@/server/db/schema"
@@ -17,7 +17,7 @@ export default async function DashboardLayout({
     <div className="grid md:grid-cols-4 lg:grid-cols-4">
       <DashboardSidebar />
       <main className="col-span-3 max-w-screen-xl">
-        <Header />
+        <MobileNav />
         {children}
       </main>
     </div>

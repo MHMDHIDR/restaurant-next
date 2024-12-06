@@ -201,10 +201,11 @@ export const reviews = createTable("review", {
 })
 
 // Define relations
-export const vendorsRelations = relations(vendors, ({ many }) => ({
+export const vendorsRelations = relations(vendors, ({ many, one }) => ({
   menuCategories: many(menuCategories),
   orders: many(orders),
   reviews: many(reviews),
+  assignedUser: one(users, { fields: [vendors.addedById], references: [users.id] }),
 }))
 
 export const menuCategoriesRelations = relations(menuCategories, ({ one, many }) => ({

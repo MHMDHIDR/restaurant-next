@@ -14,11 +14,16 @@ export default function MobileNav() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+        <Button
+          variant="outline"
+          size="icon"
+          className="shrink-0 m-1.5 size-9 rounded-sm md:hidden"
+        >
           <Menu className="w-5 h-5" />
           <span className="sr-only">Toggle navigation menu</span>
         </Button>
       </SheetTrigger>
+      <div className="border border-b w-full md:hidden" />
       <SheetContent side="left" className="flex flex-col">
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <nav className="text-lg font-medium grid gap-2">
