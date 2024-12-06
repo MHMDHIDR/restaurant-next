@@ -4,7 +4,7 @@ import { Logo } from "@/components/custom/icons"
 import { Button } from "@/components/ui/button"
 import type { Session } from "next-auth"
 
-export default function Nav({ user }: { user: Session["user"] }) {
+export default function Nav({ user }: { user: Session["user"] | undefined }) {
   return (
     <header className="border-b shadow-sm mx-auto">
       <div className="flex items-center justify-between p-1.5">

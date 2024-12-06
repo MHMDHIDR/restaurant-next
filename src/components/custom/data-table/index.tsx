@@ -16,9 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Vendors } from "@/server/db/schema"
 import { LoadingCard } from "./loading"
 import type { BaseEntity } from "./base-columns"
+import type { Vendors } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface DataTableProps<TData extends BaseEntity> {
@@ -60,7 +60,7 @@ export function DataTable<TData extends BaseEntity>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map(row => {
-              const status = row.getValue("status") as Vendors["status"]
+              const status = (row.original as unknown as Vendors).status
               const isSuspended = (row.original as unknown as Vendors).suspendedAt !== null
 
               return isLoading ? (
