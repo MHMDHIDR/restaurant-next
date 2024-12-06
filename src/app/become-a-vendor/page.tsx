@@ -15,7 +15,7 @@ export default async function BecomeVendor() {
   return vendor?.status === "ACTIVE" ? (
     redirect("/account")
   ) : (
-    <section className="container px-6 py-10 mx-auto">
+    <section className="container px-6 py-10 mx-auto max-w-5xl">
       {vendor?.status === "PENDING" ? (
         <div className="p-6 mb-6 text-center border rounded-lg">
           <h1 className="mb-4 text-3xl font-bold">Vendor Application Pending</h1>
@@ -27,7 +27,7 @@ export default async function BecomeVendor() {
       ) : (
         <>
           <h1 className="mb-6 text-3xl font-bold">Become a Vendor</h1>
-          <VendorApplicationForm vendor={vendor} />
+          <VendorApplicationForm vendor={vendor} userId={session.user.id} />
         </>
       )}
     </section>

@@ -90,6 +90,7 @@ export const vendors = createTable("vendor", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
+export type Vendors = typeof vendors.$inferSelect
 
 export const menuCategories = createTable("menu_category", {
   id: varchar("id", { length: 255 })

@@ -1,1 +1,2 @@
+[x] Make sure to differntiate between user/user-id uploaded file (Add the default prefix as user/ ) , then when uploading for example new vendor cover add ( vendor/ vendor-id ), this goes for other objects as well when uploading menu-item/vendor-id/image-id or any other object. ( const usersDirectory = `users/${user.id}` )
 [ ] View Data by SuperAdmin, to accept the vendor, when it's accepted set the user that created it to VENDOR_ADMIN and send an email to notify them + redirect them to vendor setting page to set the StripeId and other important data.

@@ -132,6 +132,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
                   <UploadButton
                     endpoint="imageUploader"
                     onClientUploadComplete={handleUploadComplete}
+                    input={{ objectType: "vendor", objectId: user.id }}
                     onUploadError={handleUploadError}
                     disabled={!isEditing}
                   />

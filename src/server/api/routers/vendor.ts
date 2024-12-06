@@ -19,23 +19,34 @@ export const vendorRouter = createTRPCRouter({
     }
 
     // Convert input data to match database types explicitly
-    await ctx.db.insert(vendors).values({
-      ...input,
-      addedById: ctx.session.user.id,
-      status: "PENDING",
-      averageRating: sql`0.00`,
-      stripeAccountId: "",
-      latitude: sql`${input.latitude}`,
-      longitude: sql`${input.longitude}`,
-      minimumOrder: sql`${input.minimumOrder}`,
-      deliveryRadius: sql`${input.deliveryRadius}`,
-    })
+    const [createdVendor] = await ctx.db
+      .insert(vendors)
+      .values({
+        ...input,
+        addedById: ctx.session.user.id,
+        status: "PENDING",
+        averageRating: sql`0.00`,
+        stripeAccountId: "",
+        latitude: sql`${input.latitude}`,
+        longitude: sql`${input.longitude}`,
+        minimumOrder: sql`${input.minimumOrder}`,
+        deliveryRadius: sql`${input.deliveryRadius}`,
+      })
+      .returning()
 
-    return { success: true }
+    return { success: true, createdVendor }
   }),
 
   update: protectedProcedure
-    .input(vendorFormSchema.partial().extend({ email: z.string().email() }))
+    .input(
+      vendorFormSchema
+        .partial()
+        .extend({
+          email: z.string().email(),
+          logo: z.string().optional(),
+          coverImage: z.string().optional(),
+        }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Use sql to convert numeric fields while maintaining type compatibility
       await ctx.db
