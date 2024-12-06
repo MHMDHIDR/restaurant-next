@@ -6,6 +6,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import clsx from "clsx"
 import EmptyState from "@/components/custom/empty-state"
 import {
   Table,
@@ -15,15 +16,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Vendors } from "@/server/db/schema"
+import { LoadingCard } from "./loading"
 import type { BaseEntity } from "./base-columns"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface DataTableProps<TData extends BaseEntity> {
   columns: ColumnDef<TData>[]
   data: TData[]
+  isLoading?: boolean
+  count?: number
 }
 
-export function DataTable<TData extends BaseEntity>({ columns, data }: DataTableProps<TData>) {
+export function DataTable<TData extends BaseEntity>({
+  columns,
+  data,
+  isLoading = false,
+  count = 7,
+}: DataTableProps<TData>) {
   const table = useReactTable({
     data: data ?? [],
     columns,
@@ -49,15 +59,37 @@ export function DataTable<TData extends BaseEntity>({ columns, data }: DataTable
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map(row => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                {row.getVisibleCells().map(cell => (
-                  <TableCell key={cell.id} className="text-center whitespace-nowrap">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            table.getRowModel().rows.map(row => {
+              const status = row.getValue("status") as Vendors["status"]
+              const isSuspended = (row.original as unknown as Vendors).suspendedAt !== null
+
+              return isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <LoadingCard renderedSkeletons={count} />
                   </TableCell>
-                ))}
-              </TableRow>
-            ))
+                </TableRow>
+              ) : (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={clsx({
+                    "text-orange-700 hover:text-orange-50 bg-orange-200 hover:bg-orange-500 dark:text-orange-200 dark:bg-orange-900 dark:hover:bg-orange-950":
+                      status === "DEACTIVATED",
+                    "text-yellow-700 hover:text-yellow-50 bg-yellow-200 hover:bg-yellow-500 dark:text-yellow-200 dark:bg-yellow-900 dark:hover:bg-yellow-950":
+                      status === "PENDING",
+                    "text-red-700 hover:text-red-50 bg-red-200 hover:bg-red-500 dark:text-red-200 dark:bg-red-900 dark:hover:bg-red-950":
+                      isSuspended,
+                  })}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id} className="text-center whitespace-nowrap">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">

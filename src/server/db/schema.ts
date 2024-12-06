@@ -54,12 +54,7 @@ export const users = createTable("user", {
 })
 export type Users = typeof users.$inferSelect
 
-export const vendorStatusEnum = pgEnum("vendor_status", [
-  "PENDING",
-  "ACTIVE",
-  "SUSPENDED",
-  "INACTIVE",
-])
+export const vendorStatusEnum = pgEnum("vendor_status", ["PENDING", "ACTIVE", "DEACTIVATED"])
 export const vendors = createTable("vendor", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -89,6 +84,8 @@ export const vendors = createTable("vendor", {
   stripeAccountId: varchar("stripe_account_id", { length: 255 }).notNull().default(""),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at"),
+  suspendedAt: timestamp("suspended_at"),
 })
 export type Vendors = typeof vendors.$inferSelect
 

@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { and, eq, sql } from "drizzle-orm"
 import { z } from "zod"
-import { vendorFormSchema } from "@/app/schemas/vendor"
+import { vendorFormSchema, vendorStatus } from "@/app/schemas/vendor"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { UserRole, vendors } from "@/server/db/schema"
 
@@ -12,10 +12,7 @@ export const vendorRouter = createTRPCRouter({
     })
 
     if (existingVendor) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: "A vendor with this email already exists",
-      })
+      throw new TRPCError({ code: "CONFLICT", message: "A vendor with this email already exists" })
     }
 
     // Convert input data to match database types explicitly
@@ -43,6 +40,8 @@ export const vendorRouter = createTRPCRouter({
         email: z.string().email(),
         logo: z.string().optional(),
         coverImage: z.string().optional(),
+        deletedAt: z.date().optional(),
+        suspendedAt: z.date().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -69,6 +68,10 @@ export const vendorRouter = createTRPCRouter({
           ...(input.deliveryRadius !== undefined && {
             deliveryRadius: sql`${input.deliveryRadius}`,
           }),
+          ...(input.deletedAt && { deletedAt: input.deletedAt ?? sql`now()` }),
+          ...(input.suspendedAt === null
+            ? { suspendedAt: null }
+            : input.suspendedAt && { suspendedAt: input.suspendedAt }),
         })
         .where(eq(vendors.email, input.email))
 
@@ -127,7 +130,7 @@ export const vendorRouter = createTRPCRouter({
     .input(
       z
         .object({
-          status: z.enum(["PENDING", "ACTIVE", "SUSPENDED", "INACTIVE"]).optional(),
+          status: vendorStatus.optional(),
           limit: z.number().min(1).max(100).default(10),
           cursor: z.number().default(0),
         })
@@ -154,12 +157,6 @@ export const vendorRouter = createTRPCRouter({
         .where(where)
         .limit(limit + 1)
 
-      let nextCursor: number | undefined
-      if (items.length > limit) {
-        items.pop()
-        nextCursor = cursor + limit
-      }
-
-      return { items, nextCursor, count }
+      return { items, count }
     }),
 })
