@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import type { JSX } from "react"
 
 const ICON_SIZE_CLASS = "w-5 h-5"
 
