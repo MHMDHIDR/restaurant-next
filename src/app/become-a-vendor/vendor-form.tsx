@@ -103,11 +103,11 @@ export function VendorApplicationForm({
       if (!createdVendor) return
 
       if (logoFile) {
-        await uploadFile(logoFile, "logo", createdVendor.id)
+        await uploadFile(logoFile, "logo")
       }
 
       if (coverImageFile) {
-        await uploadFile(coverImageFile, "coverImage", createdVendor.id)
+        await uploadFile(coverImageFile, "coverImage")
       }
 
       toast.success("Your application has been submitted successfully! We will contact you soon.")
@@ -122,11 +122,11 @@ export function VendorApplicationForm({
   const editVendorMutation = api.vendor.update.useMutation({
     onSuccess: async () => {
       if (logoFile) {
-        await uploadFile(logoFile, "logo", vendor?.id ?? "n/a")
+        await uploadFile(logoFile, "logo")
       }
 
       if (coverImageFile) {
-        await uploadFile(coverImageFile, "coverImage", vendor?.id ?? "n/a")
+        await uploadFile(coverImageFile, "coverImage")
       }
 
       toast.success("Vendor information updated successfully")
@@ -144,12 +144,9 @@ export function VendorApplicationForm({
 
   const { startUpload } = useUploadThing("imageUploader")
 
-  const uploadFile = async (file: File, fileType: "logo" | "coverImage", vendorId: string) => {
+  const uploadFile = async (file: File, fileType: "logo" | "coverImage") => {
     try {
-      const response = await startUpload([file], {
-        objectType: "vendor",
-        objectId: vendorId,
-      })
+      const response = await startUpload([file])
 
       if (response) {
         updateVendorMutation.mutate({

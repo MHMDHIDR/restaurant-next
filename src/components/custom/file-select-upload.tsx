@@ -45,7 +45,7 @@ export function FileSelectUpload({
 
   const handleFileUpload = async () => {
     if (selectedFile) {
-      await startUpload([selectedFile], input ?? { objectType: "generic", objectId: "0" })
+      await startUpload([selectedFile])
     }
   }
 

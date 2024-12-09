@@ -11,21 +11,18 @@ export const ourFileRouter = {
   imageUploader: createUT({
     image: { maxFileSize: "2MB", maxFileCount: 1 },
   })
-    .input(z.object({ objectType: z.string(), objectId: z.string() }))
     .middleware(async ({ input }) => {
       const session = await auth()
       if (!session?.user) throw new UploadThingError({ code: "FORBIDDEN", message: "Unauthorized" })
 
-      const { objectType, objectId } = input
-
-      const objectDirectory = `${objectType}/${objectId}`
-
       // List all files
       const existingFiles = await utapi.listFiles()
 
-      const objectFiles = existingFiles.files.filter(
-        file => file.status === "Uploaded" && file.name.startsWith(objectDirectory),
-      )
+      // Check for existing files based on the user's profile image URL
+      const userProfileImageKey = session.user.image ? session.user.image.split("/").pop() : null // Extract the key from the URL
+      const objectFiles = existingFiles.files.filter(file => {
+        return file.status === "Uploaded" && file.key === userProfileImageKey // Check if the file key matches the user's profile image key
+      })
 
       // Delete existing files for this object
       if (objectFiles.length > 0) {
@@ -36,7 +33,7 @@ export const ourFileRouter = {
       return {
         userId: session.user.id,
         userName: session.user.name,
-        objectDirectory,
+        objectDirectory: "", // Initialize or define this variable appropriately
       }
     })
     .onUploadComplete(async ({ metadata, file }) => {
