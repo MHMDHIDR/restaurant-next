@@ -1,6 +1,7 @@
 import { usersRouter } from "@/server/api/routers/users"
 import { vendorRouter } from "@/server/api/routers/vendor"
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc"
+import { menuCategoryRouter } from "./routers/menuCategory"
 
 /**
  * This is the primary router for your server.
@@ -9,6 +10,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc"
  */
 export const appRouter = createTRPCRouter({
   vendor: vendorRouter,
+  menuCategory: menuCategoryRouter,
   users: usersRouter,
 })
 

@@ -1,11 +1,11 @@
+import { ourFileRouter } from "@/app/api/uploadthing/core"
+import Nav from "@/components/custom/nav"
+import { auth } from "@/server/auth"
 import "@/styles/globals.css"
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin"
 import { GeistSans } from "geist/font/sans"
 import { SessionProvider } from "next-auth/react"
 import { extractRouterConfig } from "uploadthing/server"
-import { ourFileRouter } from "@/app/api/uploadthing/core"
-import Nav from "@/components/custom/nav"
-import { auth } from "@/server/auth"
 import { Providers } from "./providers"
 import { ThemeProvider } from "./providers/theme-provider"
 import type { Metadata } from "next"
@@ -24,8 +24,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
       <body>
         <SessionProvider>
-          <Nav user={user} />
           <Providers>
+            <Nav user={user} />
             <ThemeProvider
               attribute="class"
               defaultTheme={session?.user.theme ?? "light"}

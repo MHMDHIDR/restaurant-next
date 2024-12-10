@@ -17,16 +17,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { checkRoleAccess } from "@/lib/check-role-access"
 import { fallbackUsername, truncateUsername } from "@/lib/fallback-username"
 import { cn } from "@/lib/utils"
+import { UserRole } from "@/server/db/schema"
+import { api } from "@/trpc/react"
 import type { Session } from "next-auth"
 
 export default function AccountNav({ user }: { user: Session["user"] }) {
+  const { data: vendor } = api.vendor.getBySessionUser.useQuery()
+
   const NAV_ITEMS = [
     { href: "/", icon: IconHome, label: "Home" },
     { href: "/account", icon: IconUser, label: "Account" },
     user.role === "SUPER_ADMIN" && { href: "/dashboard", icon: IconSettings, label: "Dashboard" },
-    { href: "/become-a-vendor", icon: IconPackage, label: "Become a Vendor" },
+    vendor?.id && checkRoleAccess(user?.role, [UserRole.VENDOR_ADMIN])
+      ? {
+          href: `/vendor-manager/categories`,
+          icon: IconPackage,
+          label: "Sell",
+        }
+      : { href: "/become-a-vendor", icon: IconPackage, label: "Become a Vendor" },
   ]
 
   return (

@@ -5,7 +5,7 @@ import { z } from "zod"
 import { vendorFormSchema, vendorStatus } from "@/app/schemas/vendor"
 import { env } from "@/env"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
-import { UserRole, vendors } from "@/server/db/schema"
+import { UserRole, users, vendors } from "@/server/db/schema"
 
 export const vendorRouter = createTRPCRouter({
   create: protectedProcedure.input(vendorFormSchema).mutation(async ({ ctx, input }) => {
@@ -47,8 +47,16 @@ export const vendorRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const existingVendor = await ctx.db.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.email, input.email),
+      })
+
+      if (!existingVendor) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
+      }
+
       const RESEND = new Resend(env.AUTH_RESEND_KEY)
-      const confirmLink = `${env.NEXT_PUBLIC_APP_URL}/account`
+      const confirmLink = `${env.NEXT_PUBLIC_APP_URL}/vendor-manager/categories`
       const btnStyles =
         "background-color: #4CAF50; color: white; padding: 5px 12px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 12px;"
 
@@ -58,9 +66,15 @@ export const vendorRouter = createTRPCRouter({
           from: env.ADMIN_EMAIL,
           to: input.email,
           subject: "Congratulations! Your Vendor has been Approved",
-          html: `<p>Click <a href="${confirmLink}" style="${btnStyles}">here</a> to login to your account</p>`,
+          html: `<p>To Start setting up your restaurant, and sell, please <a href="${confirmLink}" style="${btnStyles}">Click here</a> to login to your account</p><br /><br /><p>Thank you for choosing us!</p>`,
         })
       }
+
+      // Make the user who create that vendor (vendor.addedById) as the Vendor Admin
+      await ctx.db
+        .update(users)
+        .set({ role: UserRole.VENDOR_ADMIN })
+        .where(eq(users.id, existingVendor.addedById))
 
       // Use sql to convert numeric fields while maintaining type compatibility
       await ctx.db
