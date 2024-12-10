@@ -95,17 +95,19 @@ const VendorActionsCell: React.FC<{ vendor: Vendors }> = ({ vendor }) => {
             )
           )}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={isSuspended ? handleUnsuspend : handleSuspend}>
-          {isSuspended ? (
-            <>
-              <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
-            </>
-          ) : (
-            <>
-              <Ban className="mr-0.5 h-4 w-4" /> Suspend
-            </>
-          )}
-        </DropdownMenuItem>
+        {status === "ACTIVE" && (
+          <DropdownMenuItem onClick={isSuspended ? handleUnsuspend : handleSuspend}>
+            {isSuspended ? (
+              <>
+                <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
+              </>
+            ) : (
+              <>
+                <Ban className="mr-0.5 h-4 w-4" /> Suspend
+              </>
+            )}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onClick={handleDelete}>
           <Trash2 className="mr-0.5 h-4 w-4" /> Delete
         </DropdownMenuItem>

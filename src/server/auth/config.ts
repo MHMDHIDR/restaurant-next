@@ -31,7 +31,7 @@ export const authConfig = {
     GoogleProvider({
       allowDangerousEmailAccountLinking: true,
     }),
-    Resend({ name: "Email", from: env.EMAIL_FROM }),
+    Resend({ name: "Email", from: env.ADMIN_EMAIL }),
   ],
   adapter: DrizzleAdapter(db, {
     usersTable: users,

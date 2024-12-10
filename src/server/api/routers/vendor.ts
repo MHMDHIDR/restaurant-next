@@ -1,7 +1,9 @@
 import { TRPCError } from "@trpc/server"
 import { and, eq, sql } from "drizzle-orm"
+import { Resend } from "resend"
 import { z } from "zod"
 import { vendorFormSchema, vendorStatus } from "@/app/schemas/vendor"
+import { env } from "@/env"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { UserRole, vendors } from "@/server/db/schema"
 
@@ -45,6 +47,21 @@ export const vendorRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const RESEND = new Resend(env.AUTH_RESEND_KEY)
+      const confirmLink = `${env.NEXT_PUBLIC_APP_URL}/account`
+      const btnStyles =
+        "background-color: #4CAF50; color: white; padding: 5px 12px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 12px;"
+
+      // send an email to the vendor when their vendor gets approved (activated)
+      if (input.status === "ACTIVE") {
+        await RESEND.emails.send({
+          from: env.ADMIN_EMAIL,
+          to: input.email,
+          subject: "Congratulations! Your Vendor has been Approved",
+          html: `<p>Click <a href="${confirmLink}" style="${btnStyles}">here</a> to login to your account</p>`,
+        })
+      }
+
       // Use sql to convert numeric fields while maintaining type compatibility
       await ctx.db
         .update(vendors)

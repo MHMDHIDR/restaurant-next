@@ -60,6 +60,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.53.2",
     "react-phone-number-input": "^3.4.9",
+    "resend": "^4.0.1",
     "server-only": "^0.0.1",
     "sonner": "^1.7.0",
     "superjson": "^2.2.2",
