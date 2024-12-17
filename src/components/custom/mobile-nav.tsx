@@ -3,12 +3,12 @@
 import { Menu } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { navItems } from "@/components/custom/dashboard-sidebar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Logo } from "./icons"
+import type { NavItemsProps } from "./dashboard-sidebar"
 
-export default function MobileNav() {
+export default function MobileNav({ navItems }: NavItemsProps) {
   const pathname = usePathname()
 
   return (

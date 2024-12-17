@@ -2,7 +2,9 @@
 
 import { generateReactHelpers } from "@uploadthing/react"
 import { useState } from "react"
+import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { UploadButton } from "@/lib/uploadthing"
 import type { OurFileRouter } from "@/app/api/uploadthing/core"
 
 const { useUploadThing } = generateReactHelpers<OurFileRouter>()
@@ -12,7 +14,6 @@ type FileSelectUploadProps = {
   isSelectButton?: boolean
   onFileSelect?: (file: File | null) => void
   onUploadComplete?: (res: Array<{ url: string }>) => void
-  input?: { objectType: string; objectId: string }
   className?: string
 }
 
@@ -21,15 +22,14 @@ export function FileSelectUpload({
   isSelectButton = false,
   onFileSelect,
   onUploadComplete,
-  input,
   className,
 }: FileSelectUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
   const toast = useToast()
 
   const { startUpload, isUploading } = useUploadThing(endpoint, {
     onClientUploadComplete: res => {
-      // Reset selected file after upload
       setSelectedFile(null)
 
       // Call the original onUploadComplete if provided
@@ -49,34 +49,24 @@ export function FileSelectUpload({
     }
   }
 
-  if (isSelectButton) {
-    return (
-      <div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={e => {
-            const file = e.target.files?.[0] ?? null
-            setSelectedFile(file)
-            onFileSelect?.(file)
-          }}
-          className={className}
-        />
-        {selectedFile && (
-          <div className="mt-2 text-sm text-muted-foreground">
-            Selected file: {selectedFile.name}
-            <button
-              onClick={handleFileUpload}
-              disabled={isUploading}
-              className="ml-2 text-blue-500 hover:underline"
-            >
-              {isUploading ? "Uploading..." : "Upload"}
-            </button>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  return null
+  return isSelectButton ? (
+    <div>
+      <input
+        id="file"
+        type="file"
+        accept="image/*"
+        onChange={e => {
+          const file = e.target.files?.[0] ?? null
+          setSelectedFile(file)
+          onFileSelect?.(file)
+        }}
+        className={"hidden"}
+      />
+      <Label htmlFor="file" className={`pressable ${className}`} aria-disabled={isUploading}>
+        Select File
+      </Label>
+    </div>
+  ) : (
+    <UploadButton endpoint="imageUploader" onClientUploadComplete={handleFileUpload} />
+  )
 }

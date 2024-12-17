@@ -69,6 +69,10 @@
 }
 
 @layer components {
+  .pressable {
+    @apply inline-flex h-10 min-w-[7rem] cursor-pointer items-center justify-center whitespace-nowrap rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-[0_7px] shadow-green-700 ring-offset-background transition-all hover:translate-y-1 hover:bg-green-700 hover:shadow-[0_5px] hover:shadow-green-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+
   .status__icon--success-circle {
     stroke-dasharray: 260.752190248px, 260.752190248px;
     stroke-dashoffset: 260.752190248px;

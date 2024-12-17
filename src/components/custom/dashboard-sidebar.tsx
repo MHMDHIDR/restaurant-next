@@ -1,43 +1,14 @@
 "use client"
 
-import { ChefHatIcon, Home, LineChart, Package, ShoppingCart, Users } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { JSX } from "react"
 
-export const navItems = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: <Home className="w-4 h-4" />,
-  },
-  {
-    label: "Vendors",
-    href: "/dashboard/vendors",
-    icon: <ChefHatIcon className="w-4 h-4" />,
-  },
-  {
-    label: "Orders",
-    href: "/dashboard/orders",
-    icon: <ShoppingCart className="w-4 h-4" />,
-  },
-  {
-    label: "Products",
-    href: "/dashboard/products",
-    icon: <Package className="w-4 h-4" />,
-  },
-  {
-    label: "Users",
-    href: "/dashboard/users",
-    icon: <Users className="w-4 h-4" />,
-  },
-  {
-    label: "Analytics",
-    href: "/dashboard/analytics",
-    icon: <LineChart className="w-4 h-4" />,
-  },
-]
+export type NavItemsProps = {
+  navItems: { label: string; href: string; icon: JSX.Element }[]
+}
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ navItems }: NavItemsProps) {
   const pathname = usePathname()
 
   return (
