@@ -2,6 +2,7 @@
 
 import { IconHome, IconPackage, IconSettings, IconUser } from "@tabler/icons-react"
 import clsx from "clsx"
+import { Loader2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignoutButton } from "@/components/custom/signout-button"
@@ -25,19 +26,17 @@ import { api } from "@/trpc/react"
 import type { Session } from "next-auth"
 
 export default function AccountNav({ user }: { user: Session["user"] }) {
-  const { data: vendor } = api.vendor.getBySessionUser.useQuery()
+  const { data: vendor, isLoading } = api.vendor.getBySessionUser.useQuery()
 
   const NAV_ITEMS = [
     { href: "/", icon: IconHome, label: "Home" },
     { href: "/account", icon: IconUser, label: "Account" },
     user.role === "SUPER_ADMIN" && { href: "/dashboard", icon: IconSettings, label: "Dashboard" },
-    vendor?.id && checkRoleAccess(user?.role, [UserRole.VENDOR_ADMIN])
-      ? {
-          href: `/vendor-manager/categories`,
-          icon: IconPackage,
-          label: "Sell",
-        }
-      : { href: "/become-a-vendor", icon: IconPackage, label: "Become a Vendor" },
+    isLoading
+      ? { href: "#", icon: Loader2, label: "" }
+      : vendor && checkRoleAccess(user?.role, [UserRole.VENDOR_ADMIN])
+        ? { href: `/vendor-manager/categories`, icon: IconPackage, label: "Sell" }
+        : { href: "/become-a-vendor", icon: IconPackage, label: "Become a Vendor" },
   ]
 
   return (

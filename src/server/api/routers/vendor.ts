@@ -52,7 +52,7 @@ export const vendorRouter = createTRPCRouter({
       })
 
       if (!existingVendor) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
+        throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found!" })
       }
 
       const RESEND = new Resend(env.AUTH_RESEND_KEY)
@@ -64,9 +64,30 @@ export const vendorRouter = createTRPCRouter({
       if (input.status === "ACTIVE") {
         await RESEND.emails.send({
           from: env.ADMIN_EMAIL,
-          to: input.email,
+          to: existingVendor.email,
           subject: "Congratulations! Your Vendor has been Approved",
           html: `<p>To Start setting up your restaurant, and sell, please <a href="${confirmLink}" style="${btnStyles}">Click here</a> to login to your account</p><br /><br /><p>Thank you for choosing us!</p>`,
+        })
+      } else if (input.status === "DEACTIVATED") {
+        await RESEND.emails.send({
+          from: env.ADMIN_EMAIL,
+          to: existingVendor.email,
+          subject: "Your Vendor has been Deactivated",
+          html: `<p>Your Vendor has been deactivated. Please contact the admin for more information</p>`,
+        })
+      } else if (input.suspendedAt) {
+        await RESEND.emails.send({
+          from: env.ADMIN_EMAIL,
+          to: existingVendor.email,
+          subject: "Your Vendor has been Suspended",
+          html: `<p>Your Vendor has been suspended. Please contact the admin for more information</p>`,
+        })
+      } else if (input.deletedAt) {
+        await RESEND.emails.send({
+          from: env.ADMIN_EMAIL,
+          to: existingVendor.email,
+          subject: "Your Vendor has been Deleted",
+          html: `<p>Your Vendor has been deleted. Please contact the admin for more information</p>`,
         })
       }
 
@@ -152,9 +173,10 @@ export const vendorRouter = createTRPCRouter({
   }),
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.query.vendors.findFirst({
+    const vendor = await ctx.db.query.vendors.findFirst({
       where: (vendors, { eq }) => eq(vendors.addedById, ctx.session.user.id),
     })
+    return vendor ?? null
   }),
 
   getAll: publicProcedure

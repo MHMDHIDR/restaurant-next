@@ -9,8 +9,8 @@ export default async function RootNotFound() {
   const userRole = session?.user.role
 
   return (
-    <section>
-      <div className="container flex flex-col items-center justify-center w-full min-h-screen px-6 py-20 mx-auto">
+    <section className="h-screen flex items-center">
+      <div className="container w-full px-6 mx-auto">
         <div className="flex flex-col items-center max-w-lg mx-auto text-center">
           <NotFoundIcon />
 

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table"
 import { LoadingCard } from "./loading"
 import type { BaseEntity } from "./base-columns"
-import type { Vendors } from "@/server/db/schema"
+import type { Users, Vendors } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
 interface DataTableProps<TData extends BaseEntity> {
@@ -60,8 +60,13 @@ export function DataTable<TData extends BaseEntity>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map(row => {
-              const status = (row.original as unknown as Vendors).status
-              const isSuspended = (row.original as unknown as Vendors).suspendedAt !== null
+              const vendorStatus = (row.original as unknown as Vendors).status
+              const userStatus = (row.original as unknown as Users).status
+              const isSuspended =
+                (row.original as unknown as Vendors).suspendedAt &&
+                (row.original as unknown as Vendors).suspendedAt !== null
+
+              console.log("userStatus =", userStatus)
 
               return isLoading ? (
                 <TableRow>
@@ -75,9 +80,11 @@ export function DataTable<TData extends BaseEntity>({
                   data-state={row.getIsSelected() && "selected"}
                   className={clsx({
                     "text-orange-700 hover:text-orange-50 bg-orange-200 hover:bg-orange-500 dark:text-orange-200 dark:bg-orange-900 dark:hover:bg-orange-950":
-                      status === "DEACTIVATED",
+                      vendorStatus === "DEACTIVATED",
                     "text-yellow-700 hover:text-yellow-50 bg-yellow-200 hover:bg-yellow-500 dark:text-yellow-200 dark:bg-yellow-900 dark:hover:bg-yellow-950":
-                      status === "PENDING",
+                      vendorStatus === "PENDING" || userStatus === "PENDING",
+                    "text-green-700 hover:text-green-50 bg-green-200 hover:bg-green-500 dark:text-green-200 dark:bg-green-900 dark:hover:bg-green-950":
+                      userStatus === "ACTIVE",
                     "text-red-700 hover:text-red-50 bg-red-200 hover:bg-red-500 dark:text-red-200 dark:bg-red-900 dark:hover:bg-red-950":
                       isSuspended,
                   })}
