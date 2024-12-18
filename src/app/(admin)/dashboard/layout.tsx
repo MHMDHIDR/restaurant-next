@@ -63,9 +63,9 @@ export default async function DashboardLayout({
       <AppSidebar items={adminNavItems} />
       <SidebarInset>
         <Nav user={user} />
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <div className="border-b px-4 py-1">
           <SidebarTrigger className="-ml-1" />
-        </header>
+        </div>
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="grid auto-rows-min gap-4 grid-cols-1">{children}</div>
         </div>

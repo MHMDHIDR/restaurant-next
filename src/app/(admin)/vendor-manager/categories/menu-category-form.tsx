@@ -50,7 +50,7 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
         try {
           const response = await startUpload([categoryImage])
 
-          if (response && response[0]?.url) {
+          if (response?.[0]?.url) {
             await updateMenuCategoryImage.mutateAsync({
               id: createdCategory.id,
               image: response[0].url,
