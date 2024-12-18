@@ -103,6 +103,7 @@ export const menuCategories = createTable("menu_category", {
   isActive: boolean("is_active").default(true),
   sortOrder: integer("sort_order").default(0),
 })
+export type MenuCategories = typeof menuCategories.$inferSelect
 
 export const menuItems = createTable("menu_item", {
   id: varchar("id", { length: 255 })
