@@ -1,6 +1,7 @@
 import { ChefHatIcon, Home, LineChart, Package, ShoppingCart, Users } from "lucide-react"
 import { cookies } from "next/headers"
 import { notFound } from "next/navigation"
+import Nav from "@/components/custom/nav"
 import { AppSidebar } from "@/components/ui/app-sidebar"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { checkRoleAccess } from "@/lib/check-role-access"
@@ -53,12 +54,12 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
+        <Nav user={user} />
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">{children}</div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+          <div className="grid auto-rows-min gap-4 grid-cols-1">{children}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>
