@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import * as React from "react"
 import {
   Sidebar,
@@ -14,6 +17,9 @@ import {
 import { VendorNavItems } from "@/types/vendorNavItems"
 
 export function AppSidebar({ items }: { items: VendorNavItems }) {
+  const pathname = usePathname()
+  const isActive = (url: string) => pathname === url
+
   return (
     <Sidebar>
       <SidebarContent className="select-none">
@@ -24,8 +30,10 @@ export function AppSidebar({ items }: { items: VendorNavItems }) {
               <SidebarMenu>
                 {item.items?.map(subItem => (
                   <SidebarMenuItem key={subItem.title}>
-                    <SidebarMenuButton asChild isActive={subItem.isActive}>
-                      <Link href={subItem.url}>{subItem.title}</Link>
+                    <SidebarMenuButton asChild isActive={isActive(subItem.url)}>
+                      <Link href={subItem.url} className={isActive(subItem.url) ? "font-bold" : ""}>
+                        {subItem.title}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

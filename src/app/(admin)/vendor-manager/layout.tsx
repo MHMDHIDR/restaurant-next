@@ -41,7 +41,6 @@ export default async function DashboardLayout({
             title: "Products",
             url: "/vendor-manager/products",
             icon: <Package className="w-4 h-4" />,
-            isActive: true,
           },
           {
             title: "Categories",
