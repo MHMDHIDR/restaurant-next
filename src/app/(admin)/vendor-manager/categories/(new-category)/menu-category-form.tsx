@@ -4,9 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
 import { generateReactHelpers } from "@uploadthing/react"
 import Image from "next/image"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { menuCategorySchema } from "@/app/schemas/menuCategory" // Create this schema
+import { useRef, useState } from "react"
+import { Controller, useForm } from "react-hook-form"
+import { z } from "zod"
+import { menuCategorySchema } from "@/app/schemas/menuCategory"
 import { FileSelectUpload } from "@/components/custom/file-select-upload"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -31,9 +32,16 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
   const toast = useToast()
   const [categoryImage, setCategoryImage] = useState<File | null>(null)
   const { startUpload } = useUploadThing("imageUploader")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const form = useForm<MenuCategoryFormValues>({
-    resolver: zodResolver(menuCategorySchema),
+  const form = useForm<MenuCategoryFormValues & { fileInput: File }>({
+    resolver: zodResolver(
+      menuCategorySchema.extend({
+        fileInput: categoryImage
+          ? z.instanceof(File)
+          : z.instanceof(File, { message: "Category image is required" }),
+      }),
+    ),
     defaultValues: {
       vendorId,
       name: "",
@@ -41,6 +49,7 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
       image: "",
       isActive: true,
       sortOrder: 0,
+      fileInput: undefined,
     },
   })
 
@@ -79,7 +88,7 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
     },
   })
 
-  const onSubmit = (data: MenuCategoryFormValues) => {
+  const onSubmit = (data: MenuCategoryFormValues & { fileInput?: File }) => {
     createMenuCategoryMutation.mutate(data)
   }
 
@@ -88,13 +97,17 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="image"
-          render={({ field }) => (
+          name="fileInput"
+          render={({ field, fieldState: { error } }) => (
             <FormItem>
               <FormLabel>Category Image</FormLabel>
-              {(field.value ?? categoryImage) && (
+              {(form.getValues("image") ?? categoryImage) && (
                 <Image
-                  src={field.value ? field.value : URL.createObjectURL(categoryImage!)}
+                  src={
+                    form.getValues("image")
+                      ? form.getValues("image")
+                      : URL.createObjectURL(categoryImage!)
+                  }
                   alt="Category"
                   width={100}
                   height={100}
@@ -103,15 +116,20 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
               )}
               <FormControl>
                 <FileSelectUpload
+                  ref={field.ref}
                   endpoint="imageUploader"
                   isSelectButton={true}
                   onFileSelect={file => {
-                    setCategoryImage(file)
-                    field.onChange(file ? URL.createObjectURL(file) : "")
+                    if (file) {
+                      setCategoryImage(file)
+                      field.onChange(file)
+                      form.setValue("image", URL.createObjectURL(file))
+                    }
                   }}
+                  required
                 />
               </FormControl>
-              <FormMessage />
+              {error && <FormMessage>{error.message}</FormMessage>}
             </FormItem>
           )}
         />

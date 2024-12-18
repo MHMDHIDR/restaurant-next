@@ -99,7 +99,7 @@ export const menuCategories = createTable("menu_category", {
     .references(() => vendors.id),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  image: varchar("image", { length: 255 }),
+  image: varchar("image", { length: 255 }).notNull(),
   isActive: boolean("is_active").default(true),
   sortOrder: integer("sort_order").default(0),
 })

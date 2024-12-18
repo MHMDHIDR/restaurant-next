@@ -48,7 +48,7 @@ export function DataTable<TData extends BaseEntity>({
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map(header => (
-                <TableHead key={header.id}>
+                <TableHead key={header.id} className="text-center">
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -65,8 +65,6 @@ export function DataTable<TData extends BaseEntity>({
               const isSuspended =
                 (row.original as unknown as Vendors).suspendedAt &&
                 (row.original as unknown as Vendors).suspendedAt !== null
-
-              console.log("userStatus =", userStatus)
 
               return isLoading ? (
                 <TableRow>
@@ -90,7 +88,7 @@ export function DataTable<TData extends BaseEntity>({
                   })}
                 >
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id} className="text-center whitespace-nowrap">
+                    <TableCell key={cell.id} className="whitespace-nowrap text-center">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
