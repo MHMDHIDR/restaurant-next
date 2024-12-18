@@ -1,5 +1,5 @@
 import { IconCategory2 } from "@tabler/icons-react"
-import { Home, Package, ShoppingCart } from "lucide-react"
+import { Package, ShoppingCart } from "lucide-react"
 import { notFound } from "next/navigation"
 import Nav from "@/components/custom/nav"
 import { AppSidebar } from "@/components/ui/app-sidebar"
@@ -7,6 +7,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { checkRoleAccess } from "@/lib/check-role-access"
 import { auth } from "@/server/auth"
 import { UserRole } from "@/server/db/schema"
+import type { VendorNavItems } from "@/types/vendorNavItems"
 
 export default async function DashboardLayout({
   children,
@@ -15,34 +16,48 @@ export default async function DashboardLayout({
   const user = session?.user
   const ALLOWED_ROLES = [UserRole.SUPER_ADMIN, UserRole.VENDOR_ADMIN] as const
 
-  const vendorNavItems = [
-    {
-      label: "Dashboard",
-      href: "/vendor-manager",
-      icon: <Home className="w-4 h-4" />,
-    },
-    {
-      label: "Orders",
-      href: "/vendor-manager/orders",
-      icon: <ShoppingCart className="w-4 h-4" />,
-    },
-    {
-      label: "Products",
-      href: "/vendor-manager/products",
-      icon: <Package className="w-4 h-4" />,
-    },
-    {
-      label: "Categories",
-      href: "/vendor-manager/categories",
-      icon: <IconCategory2 className="w-4 h-4" />,
-    },
-  ]
+  const vendorNavItems: VendorNavItems = {
+    navMain: [
+      {
+        title: "Main",
+        url: "#",
+        items: [
+          {
+            title: "Dashboard",
+            url: "/vendor-manager",
+          },
+        ],
+      },
+      {
+        title: "Vendor",
+        url: "#",
+        items: [
+          {
+            title: "Orders",
+            url: "/vendor-manager/orders",
+            icon: <ShoppingCart className="w-4 h-4" />,
+          },
+          {
+            title: "Products",
+            url: "/vendor-manager/products",
+            icon: <Package className="w-4 h-4" />,
+            isActive: true,
+          },
+          {
+            title: "Categories",
+            url: "/vendor-manager/categories",
+            icon: <IconCategory2 className="w-4 h-4" />,
+          },
+        ],
+      },
+    ],
+  }
 
   return !checkRoleAccess(user?.role, ALLOWED_ROLES) ? (
     notFound()
   ) : (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar items={vendorNavItems} />
       <SidebarInset>
         <Nav user={user} />
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
