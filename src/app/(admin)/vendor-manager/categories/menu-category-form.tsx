@@ -85,14 +85,14 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-10">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="image"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category Image</FormLabel>
-              {(field.value || categoryImage) && (
+              {(field.value ?? categoryImage) && (
                 <Image
                   src={field.value ? field.value : URL.createObjectURL(categoryImage!)}
                   alt="Category"

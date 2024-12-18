@@ -1,6 +1,5 @@
 import { createUploadthing } from "uploadthing/next"
 import { UploadThingError } from "uploadthing/server"
-import { z } from "zod"
 import { auth } from "@/server/auth"
 import { utapi } from "@/server/uploadthing"
 import type { FileRouter } from "uploadthing/next"
@@ -11,7 +10,7 @@ export const ourFileRouter = {
   imageUploader: createUT({
     image: { maxFileSize: "2MB", maxFileCount: 1 },
   })
-    .middleware(async ({ input }) => {
+    .middleware(async () => {
       const session = await auth()
       if (!session?.user) throw new UploadThingError({ code: "FORBIDDEN", message: "Unauthorized" })
 

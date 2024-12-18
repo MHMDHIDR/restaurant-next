@@ -2,7 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot"
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
-import { cva, VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
 import Link from "next/link"
 import * as React from "react"
@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
+import type { VariantProps } from "class-variance-authority"
 
 /* eslint-disable max-lines */
 
@@ -658,7 +659,7 @@ const SidebarMenuLink = React.forwardRef<
 
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
+        <TooltipTrigger asChild={asChild}>{content}</TooltipTrigger>
         <TooltipContent
           side="right"
           align="center"

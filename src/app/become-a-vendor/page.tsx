@@ -12,11 +12,18 @@ export default async function BecomeVendor() {
 
   const vendor = await api.vendor.getBySessionUser()
 
-  return vendor?.status === "ACTIVE" ? (
-    redirect("/account")
+  return !vendor ? (
+    <section className="container px-6 py-10 mx-auto max-w-5xl">
+      <h1 className="mb-6 text-3xl font-bold">Vendor Not Found</h1>
+      <p className="text-lg text-muted-foreground">
+        We could not find your vendor information. Please try again later.
+      </p>
+    </section>
+  ) : vendor.status === "ACTIVE" ? (
+    redirect("/vendor-manager")
   ) : (
     <section className="container px-6 py-10 mx-auto max-w-5xl">
-      {vendor?.status === "PENDING" ? (
+      {vendor.status === "PENDING" ? (
         <div className="p-6 mb-6 text-center border rounded-lg">
           <h1 className="mb-4 text-3xl font-bold">Vendor Application Pending</h1>
           <p className="text-lg text-muted-foreground">
