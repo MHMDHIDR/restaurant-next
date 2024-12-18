@@ -31,9 +31,7 @@ export function AppSidebar({ items }: { items: VendorNavItems }) {
                 {item.items?.map(subItem => (
                   <SidebarMenuItem key={subItem.title}>
                     <SidebarMenuButton asChild isActive={isActive(subItem.url)}>
-                      <Link href={subItem.url} className={isActive(subItem.url) ? "font-bold" : ""}>
-                        {subItem.title}
-                      </Link>
+                      <Link href={subItem.url}>{subItem.title}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
