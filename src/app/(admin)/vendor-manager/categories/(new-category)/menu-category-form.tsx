@@ -5,7 +5,7 @@ import { IconLoader2 } from "@tabler/icons-react"
 import { generateReactHelpers } from "@uploadthing/react"
 import Image from "next/image"
 import { useRef, useState } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { menuCategorySchema } from "@/app/schemas/menuCategory"
 import { FileSelectUpload } from "@/components/custom/file-select-upload"
@@ -32,7 +32,6 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
   const toast = useToast()
   const [categoryImage, setCategoryImage] = useState<File | null>(null)
   const { startUpload } = useUploadThing("imageUploader")
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<MenuCategoryFormValues & { fileInput: File }>({
     resolver: zodResolver(
