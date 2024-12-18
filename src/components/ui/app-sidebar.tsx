@@ -16,7 +16,7 @@ import { VendorNavItems } from "@/types/vendorNavItems"
 export function AppSidebar({ items }: { items: VendorNavItems }) {
   return (
     <Sidebar>
-      <SidebarContent>
+      <SidebarContent className="select-none">
         {items.navMain.map(item => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
