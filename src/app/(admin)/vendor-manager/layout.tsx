@@ -38,8 +38,8 @@ export default async function DashboardLayout({
             icon: <ShoppingCart className="w-4 h-4" />,
           },
           {
-            title: "Products",
-            url: "/vendor-manager/products",
+            title: "Menu Items",
+            url: "/vendor-manager/menu-items",
             icon: <Package className="w-4 h-4" />,
           },
           {

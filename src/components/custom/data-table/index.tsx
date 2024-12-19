@@ -42,7 +42,7 @@ export function DataTable<TData extends BaseEntity>({
   })
 
   return (
-    <div className="border rounded-md md:mx-2 overflow-auto">
+    <div className="border rounded-md overflow-auto">
       <Table>
         <TableHeader className="select-none">
           {table.getHeaderGroups().map(headerGroup => (
