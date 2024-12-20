@@ -151,7 +151,6 @@ export function VendorApplicationForm({
   }
 
   const createVendorMutation = api.vendor.create.useMutation({
-    onMutate: () => {},
     onSuccess: async data => {
       if (!data) return
       toast.success("Vendor application submitted successfully!")

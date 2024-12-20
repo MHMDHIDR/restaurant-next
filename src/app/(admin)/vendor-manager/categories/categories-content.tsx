@@ -2,9 +2,9 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MenuCategories } from "@/server/db/schema"
 import CategoriesTable from "./(categories)/categories-table"
 import { MenuCategoryForm } from "./(new-category)/menu-category-form"
+import type { MenuCategories } from "@/server/db/schema"
 
 interface CategoriesContentProps {
   vendor: { id: string }
