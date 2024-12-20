@@ -151,12 +151,8 @@ export function VendorApplicationForm({
   }
 
   const createVendorMutation = api.vendor.create.useMutation({
-    onMutate: () => {
-      console.log("Submitting vendor application")
-    },
+    onMutate: () => {},
     onSuccess: async data => {
-      console.log("createVendorMutation")
-
       if (!data) return
       toast.success("Vendor application submitted successfully!")
       router.push("/account")
@@ -179,7 +175,6 @@ export function VendorApplicationForm({
   })
 
   const onSubmit = async (data: VendorFormValues) => {
-    console.log("Form submitted with data:", data)
     setIsSubmitting(true)
     if (!coverFiles.length && !data.coverImage) {
       toast.error("Cover image is required")
@@ -206,11 +201,9 @@ export function VendorApplicationForm({
         id: vendorId,
         latitude: data.latitude || 51.5074, // Default to London coordinates
         longitude: data.longitude || -0.1278,
-        addedById: session?.user?.id as string,
         logo: logoUrl,
         coverImage: coverUrl,
       }
-      console.log("Submitting vendor data:", vendorData)
 
       createVendorMutation.mutate(vendorData)
     } catch (error) {
@@ -253,7 +246,7 @@ export function VendorApplicationForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(isEditing ? onSubmitEdit : onSubmit)} className="space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           <FormField
             control={form.control}
@@ -266,7 +259,7 @@ export function VendorApplicationForm({
                     {(field.value || logoFiles.length > 0) && (
                       <Image
                         src={
-                          logoFiles.length > 0 ? URL.createObjectURL(logoFiles[0]!) : field.value!
+                          logoFiles.length > 0 ? URL.createObjectURL(logoFiles[0]!) : field.value
                         }
                         alt="Logo"
                         width={112}
@@ -293,7 +286,7 @@ export function VendorApplicationForm({
                     {(field.value || coverFiles.length > 0) && (
                       <Image
                         src={
-                          coverFiles.length > 0 ? URL.createObjectURL(coverFiles[0]!) : field.value!
+                          coverFiles.length > 0 ? URL.createObjectURL(coverFiles[0]!) : field.value
                         }
                         alt="Cover"
                         width={224}

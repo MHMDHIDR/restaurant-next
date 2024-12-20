@@ -5,7 +5,6 @@ import { z } from "zod"
 import { menuCategorySchema } from "@/app/schemas/menuCategory"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { menuCategories } from "@/server/db/schema"
-import { api } from "@/trpc/server"
 
 export const menuCategoryRouter = createTRPCRouter({
   createWithImage: protectedProcedure.input(menuCategorySchema).mutation(async ({ ctx, input }) => {

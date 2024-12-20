@@ -2,12 +2,13 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { MenuCategories } from "@/server/db/schema"
 import CategoriesTable from "./(categories)/categories-table"
 import { MenuCategoryForm } from "./(new-category)/menu-category-form"
 
 interface CategoriesContentProps {
   vendor: { id: string }
-  categories: any[]
+  categories: MenuCategories[]
 }
 
 export default function CategoriesContent({ vendor, categories }: CategoriesContentProps) {
@@ -15,7 +16,7 @@ export default function CategoriesContent({ vendor, categories }: CategoriesCont
   const router = useRouter()
   const pathname = usePathname()
 
-  const view = searchParams.get("view") || "categories"
+  const view = searchParams.get("view") ?? "categories"
 
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString())

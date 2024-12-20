@@ -57,7 +57,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
   })
 
   const updateUserMutation = api.users.update.useMutation({
-    onSuccess: data => {
+    onSuccess: async data => {
       if (data) {
         const updatedValues = {
           id: user.id,
@@ -72,7 +72,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
         setTheme(updatedValues.theme ?? user.theme)
 
         if (data.image) {
-          update({ user: { ...session?.user, image: data.image, name: data.name } })
+          await update({ user: { ...session?.user, image: data.image, name: data.name } })
         }
 
         toast.success("Profile updated successfully!")
