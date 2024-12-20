@@ -221,35 +221,35 @@ export function VendorApplicationForm({
     }
   }
 
-  // const onSubmitEdit = async (data: VendorFormValues) => {
-  //   setIsUploading(true)
-  //   try {
-  //     let logoUrl = data.logo
-  //     let coverUrl = data.coverImage
+  const onSubmitEdit = async (data: VendorFormValues) => {
+    setIsUploading(true)
+    try {
+      let logoUrl = data.logo
+      let coverUrl = data.coverImage
 
-  //     if (logoFiles.length > 0) {
-  //       const uploadedLogoUrl = await optimizeAndUploadImage(logoFiles[0]!, "logo")
-  //       if (uploadedLogoUrl) logoUrl = uploadedLogoUrl
-  //     }
+      if (logoFiles.length > 0) {
+        const uploadedLogoUrl = await optimizeAndUploadImage(logoFiles[0]!, "logo")
+        if (uploadedLogoUrl) logoUrl = uploadedLogoUrl
+      }
 
-  //     if (coverFiles.length > 0) {
-  //       const uploadedCoverUrl = await optimizeAndUploadImage(coverFiles[0]!, "cover")
-  //       if (uploadedCoverUrl) coverUrl = uploadedCoverUrl
-  //     }
+      if (coverFiles.length > 0) {
+        const uploadedCoverUrl = await optimizeAndUploadImage(coverFiles[0]!, "cover")
+        if (uploadedCoverUrl) coverUrl = uploadedCoverUrl
+      }
 
-  //     const vendorData = {
-  //       ...data,
-  //       logo: logoUrl,
-  //       coverImage: coverUrl,
-  //     }
+      const vendorData = {
+        ...data,
+        logo: logoUrl,
+        coverImage: coverUrl,
+      }
 
-  //     editVendorMutation.mutate(vendorData)
-  //   } catch (error) {
-  //     toast.error(error instanceof Error ? error.message : "An unexpected error occurred")
-  //   } finally {
-  //     setIsUploading(false)
-  //   }
-  // }
+      editVendorMutation.mutate(vendorData)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An unexpected error occurred")
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   return (
     <Form {...form}>

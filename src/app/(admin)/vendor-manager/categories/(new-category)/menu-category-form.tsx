@@ -91,7 +91,7 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
 
     // Upload to S3
     const uploadedUrls = await uploadFilesMutation.mutateAsync({
-      entityId: `${vendorId}/menu-category`,
+      entityId: `menu-category/${vendorId}`,
       fileData,
     })
 
