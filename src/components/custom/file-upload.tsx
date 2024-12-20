@@ -31,7 +31,7 @@ export function FileUpload({ onFilesSelected, disabled = false }: FileUploadProp
         ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:border-primary"}
       `}
     >
-      <input {...getInputProps()} multiple={false} required />
+      <input {...getInputProps()} multiple={false} />
       {isDragActive ? (
         <p>Drop the image here...</p>
       ) : (
