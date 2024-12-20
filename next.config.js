@@ -8,12 +8,8 @@ import "./src/env.js"
 const config = {
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        pathname: "/**",
-      },
-      { protocol: "https", hostname: "utfs.io", pathname: "/**" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/**" },
+      { protocol: "https", hostname: "s3.eu-west-2.amazonaws.com", pathname: "/**" },
     ],
   },
 }

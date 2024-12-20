@@ -25,7 +25,7 @@ export default function CategoriesTable({
   const toast = useToast()
   const utils = api.useUtils()
 
-  const { mutate: deleteCategory } = api.menuCategory.delete.useMutation({
+  const { mutate: deleteCategory } = api.menuCategory.deleteCategoryWithImage.useMutation({
     onSuccess: async () => {
       toast.success("Category deleted successfully")
       await utils.menuCategory.getCategoriesByVendorId.invalidate()

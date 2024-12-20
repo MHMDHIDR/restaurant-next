@@ -1,8 +1,5 @@
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin"
 import { GeistSans } from "geist/font/sans"
 import { SessionProvider } from "next-auth/react"
-import { extractRouterConfig } from "uploadthing/server"
-import { ourFileRouter } from "@/app/api/uploadthing/core"
 import Nav from "@/components/custom/nav"
 import { auth } from "@/server/auth"
 import { Providers } from "./providers"
@@ -25,14 +22,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <SessionProvider>
           <Providers>
-            <Nav user={user} isHidden />
+            <Nav user={user} key={user?.image} isHidden />
             <ThemeProvider
               attribute="class"
               defaultTheme={session?.user.theme ?? "light"}
               disableTransitionOnChange
               enableSystem
             >
-              <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
               {children}
             </ThemeProvider>
           </Providers>

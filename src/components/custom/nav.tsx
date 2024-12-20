@@ -1,5 +1,6 @@
 "use client"
 
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import AccountNav from "@/components/custom/accunt-nav"
@@ -16,6 +17,8 @@ export default function Nav({
 }) {
   isHidden = isHidden ?? false
   const pathname = usePathname()
+  const { data: session } = useSession()
+  const currentUser = session?.user ?? user
 
   return (pathname.includes("/dashboard") || pathname.includes("/vendor-manager")) &&
     isHidden ? null : (
@@ -28,7 +31,7 @@ export default function Nav({
         </Link>
         <nav className="inline-flex">
           {user ? (
-            <AccountNav user={user} />
+            <AccountNav user={currentUser!} />
           ) : (
             <Link href="/signin">
               <Button>Sign in</Button>

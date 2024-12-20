@@ -8,33 +8,34 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/
 import { UserRole, users, vendors } from "@/server/db/schema"
 
 export const vendorRouter = createTRPCRouter({
-  create: protectedProcedure.input(vendorFormSchema).mutation(async ({ ctx, input }) => {
-    const existingVendor = await ctx.db.query.vendors.findFirst({
-      where: (vendors, { eq }) => eq(vendors.email, input.email),
-    })
-
-    if (existingVendor) {
-      throw new TRPCError({ code: "CONFLICT", message: "A vendor with this email already exists" })
-    }
-
-    // Convert input data to match database types explicitly
-    const [createdVendor] = await ctx.db
-      .insert(vendors)
-      .values({
-        ...input,
-        addedById: ctx.session.user.id,
-        status: "PENDING",
-        averageRating: sql`0.00`,
-        stripeAccountId: "",
-        latitude: sql`${input.latitude}`,
-        longitude: sql`${input.longitude}`,
-        minimumOrder: sql`${input.minimumOrder}`,
-        deliveryRadius: sql`${input.deliveryRadius}`,
+  create: protectedProcedure
+    .input(vendorFormSchema.extend({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const existingVendor = await ctx.db.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.email, input.email),
       })
-      .returning()
 
-    return { success: true, createdVendor }
-  }),
+      if (existingVendor) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "A vendor with this email already exists",
+        })
+      }
+
+      // Ensure addedById is included in the schema
+      const [createdVendor] = await ctx.db
+        .insert(vendors)
+        .values({
+          ...input,
+          addedById: ctx.session.user.id,
+          latitude: input.latitude.toString(),
+          longitude: input.longitude.toString(),
+          minimumOrder: input.minimumOrder.toString(),
+        })
+        .returning()
+
+      return { success: true, createdVendor }
+    }),
 
   update: protectedProcedure
     .input(
@@ -56,7 +57,7 @@ export const vendorRouter = createTRPCRouter({
       }
 
       const RESEND = new Resend(env.AUTH_RESEND_KEY)
-      const confirmLink = `${env.NEXT_PUBLIC_APP_URL}/vendor-manager/categories`
+      const confirmLink = `${env.NEXT_PUBLIC_APP_URL}/vendor-manager/categories?view=new-category`
       const btnStyles =
         "background-color: #4CAF50; color: white; padding: 5px 12px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 12px;"
 
@@ -66,7 +67,7 @@ export const vendorRouter = createTRPCRouter({
           from: env.ADMIN_EMAIL,
           to: existingVendor.email,
           subject: "Congratulations! Your Vendor has been Approved",
-          html: `<p>To Start setting up your restaurant, and sell, please <a href="${confirmLink}" style="${btnStyles}">Click here</a> to login to your account</p><br /><br /><p>Thank you for choosing us!</p>`,
+          html: `<p>To Start setting up your restaurant by creating categories, adding menu items, and sell, please <a href="${confirmLink}" style="${btnStyles}">Visit Here</a> to login to your account</p><br /><br /><p>Thank you for choosing us!</p>`,
         })
       } else if (input.status === "DEACTIVATED") {
         await RESEND.emails.send({

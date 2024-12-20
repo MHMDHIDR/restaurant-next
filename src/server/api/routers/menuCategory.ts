@@ -5,30 +5,29 @@ import { z } from "zod"
 import { menuCategorySchema } from "@/app/schemas/menuCategory"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { menuCategories } from "@/server/db/schema"
-import { utapi } from "@/server/uploadthing"
+import { api } from "@/trpc/server"
 
 export const menuCategoryRouter = createTRPCRouter({
-  create: protectedProcedure.input(menuCategorySchema).mutation(async ({ ctx, input }) => {
+  createWithImage: protectedProcedure.input(menuCategorySchema).mutation(async ({ ctx, input }) => {
     const { vendorId, ...data } = input
 
-    // Ensure the vendor exists
-    const vendor = await ctx.db.query.vendors.findFirst({
-      where: (vendors, { eq }) => eq(vendors.id, vendorId),
-    })
-
-    if (!vendor) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
-    }
-
-    const [createdCategory] = await ctx.db
-      .insert(menuCategories)
-      .values({
-        ...data,
-        vendorId,
+    return await ctx.db.transaction(async tx => {
+      const vendor = await tx.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.id, vendorId),
       })
-      .returning()
 
-    return { success: true, createdCategory }
+      if (!vendor) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
+      }
+
+      // Create the category
+      const [createdCategory] = await tx
+        .insert(menuCategories)
+        .values({ vendorId, ...data })
+        .returning()
+
+      return { success: true, createdCategory }
+    })
   }),
 
   updateImage: protectedProcedure
@@ -59,17 +58,25 @@ export const menuCategoryRouter = createTRPCRouter({
       })
     }),
 
-  delete: protectedProcedure
+  deleteCategoryWithImage: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const category = await ctx.db.query.menuCategories.findFirst({
         where: (menuCategories, { eq }) => eq(menuCategories.id, input.id),
       })
       const imageId = category?.image
-      const imageKeyToDelete = imageId?.split("/").pop()
+      // get the string from /menu-category inside imageId
+      const imageKeyToDelete = imageId?.split("/").slice(-1)[0]
+      if (imageKeyToDelete) {
+        // await api.S3.deleteFile({ fileName: imageKeyToDelete })
+      }
+      await ctx.db.delete(menuCategories).where(eq(menuCategories.id, input.id))
+      return { success: true }
+    }),
 
-      await utapi.deleteFiles(imageKeyToDelete!)
-
+  deleteCategory: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(menuCategories).where(eq(menuCategories.id, input.id))
       return { success: true }
     }),

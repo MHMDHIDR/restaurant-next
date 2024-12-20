@@ -5,6 +5,7 @@ import {
   index,
   integer,
   json,
+  numeric,
   pgEnum,
   pgTableCreator,
   primaryKey,
@@ -16,22 +17,41 @@ import { type AdapterAccount } from "next-auth/adapters"
 
 export const createTable = pgTableCreator(name => `restaurant_${name}`)
 
-export const userRoleEnum = pgEnum("role", [
+// First, create all enums with the restaurant_ prefix to match table naming
+export const userRoleEnum = pgEnum("restaurant_user_role", [
   "SUPER_ADMIN",
   "VENDOR_ADMIN",
   "VENDOR_STAFF",
   "CUSTOMER",
 ])
-export const userStatusEnum = pgEnum("status", ["PENDING", "ACTIVE", "SUSPENDED"])
-export const themeEnum = pgEnum("theme", ["light", "dark"])
+export const userStatusEnum = pgEnum("restaurant_user_status", ["PENDING", "ACTIVE", "SUSPENDED"])
+export const themeEnum = pgEnum("restaurant_theme", ["light", "dark"])
+export const vendorStatusEnum = pgEnum("restaurant_vendor_status", [
+  "PENDING",
+  "ACTIVE",
+  "DEACTIVATED",
+])
+export const orderStatusEnum = pgEnum("restaurant_order_status", [
+  "PENDING",
+  "CONFIRMED",
+  "PREPARING",
+  "READY_FOR_PICKUP",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
+  "CANCELLED",
+])
+
 export type themeEnumType = (typeof users.theme.enumValues)[number]
+
 export const UserRole = {
   SUPER_ADMIN: "SUPER_ADMIN",
   VENDOR_ADMIN: "VENDOR_ADMIN",
   VENDOR_STAFF: "VENDOR_STAFF",
   CUSTOMER: "CUSTOMER",
 } as const
+
 export type UserRoleType = keyof typeof UserRole
+
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -52,9 +72,9 @@ export const users = createTable("user", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
+
 export type Users = typeof users.$inferSelect
 
-export const vendorStatusEnum = pgEnum("vendor_status", ["PENDING", "ACTIVE", "DEACTIVATED"])
 export const vendors = createTable("vendor", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -63,7 +83,7 @@ export const vendors = createTable("vendor", {
   name: varchar("name", { length: 255 }).notNull(),
   addedById: varchar("added_by_id", { length: 255 }).notNull(),
   description: text("description").notNull(),
-  logo: varchar("logo", { length: 255 }),
+  logo: varchar("logo", { length: 255 }).notNull(),
   coverImage: varchar("cover_image", { length: 255 }).notNull(),
   status: vendorStatusEnum("status").notNull().default("PENDING"),
   address: text("address").notNull(),
@@ -79,7 +99,7 @@ export const vendors = createTable("vendor", {
     .notNull(),
   cuisineTypes: json("cuisine_types").$type<string[]>().notNull(),
   deliveryRadius: integer("delivery_radius").notNull(),
-  minimumOrder: decimal("minimum_order", { precision: 10, scale: 2 }).notNull(),
+  minimumOrder: numeric("minimum_order", { precision: 10, scale: 2 }).notNull(),
   averageRating: decimal("average_rating", { precision: 3, scale: 2 }).notNull().default("0.00"),
   stripeAccountId: varchar("stripe_account_id", { length: 255 }).notNull().default(""),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -87,6 +107,7 @@ export const vendors = createTable("vendor", {
   deletedAt: timestamp("deleted_at"),
   suspendedAt: timestamp("suspended_at"),
 })
+
 export type Vendors = typeof vendors.$inferSelect
 
 export const menuCategories = createTable("menu_category", {
@@ -99,10 +120,11 @@ export const menuCategories = createTable("menu_category", {
     .references(() => vendors.id),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  image: varchar("image", { length: 255 }).notNull(),
+  image: varchar("image", { length: 255 }),
   isActive: boolean("is_active").default(true),
   sortOrder: integer("sort_order").default(0),
 })
+
 export type MenuCategories = typeof menuCategories.$inferSelect
 
 export const menuItems = createTable("menu_item", {
@@ -128,15 +150,6 @@ export const menuItems = createTable("menu_item", {
   }>(),
 })
 
-export const orderStatusEnum = pgEnum("order_status", [
-  "PENDING",
-  "CONFIRMED",
-  "PREPARING",
-  "READY_FOR_PICKUP",
-  "OUT_FOR_DELIVERY",
-  "DELIVERED",
-  "CANCELLED",
-])
 export const orders = createTable("order", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -198,7 +211,58 @@ export const reviews = createTable("review", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 
-// Define relations
+export const accounts = createTable(
+  "account",
+  {
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id),
+    type: varchar("type", { length: 255 }).$type<AdapterAccount["type"]>().notNull(),
+    provider: varchar("provider", { length: 255 }).notNull(),
+    providerAccountId: varchar("provider_account_id", { length: 255 }).notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: varchar("token_type", { length: 255 }),
+    scope: varchar("scope", { length: 255 }),
+    id_token: text("id_token"),
+    session_state: varchar("session_state", { length: 255 }),
+  },
+  account => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+    userIdIdx: index("account_user_id_idx").on(account.userId),
+  }),
+)
+
+export const sessions = createTable(
+  "session",
+  {
+    sessionToken: varchar("session_token", { length: 255 }).notNull().primaryKey(),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id),
+    expires: timestamp("expires", { mode: "date", withTimezone: true }).notNull(),
+  },
+  session => ({
+    userIdIdx: index("session_user_id_idx").on(session.userId),
+  }),
+)
+
+export const verificationTokens = createTable(
+  "verification_token",
+  {
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    token: varchar("token", { length: 255 }).notNull(),
+    expires: timestamp("expires", { mode: "date", withTimezone: true }).notNull(),
+  },
+  vt => ({
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
+)
+
+// Relations
 export const vendorsRelations = relations(vendors, ({ many, one }) => ({
   menuCategories: many(menuCategories),
   orders: many(orders),
@@ -224,69 +288,10 @@ export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
 }))
 
-export const accounts = createTable(
-  "account",
-  {
-    userId: varchar("user_id", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    type: varchar("type", { length: 255 }).$type<AdapterAccount["type"]>().notNull(),
-    provider: varchar("provider", { length: 255 }).notNull(),
-    providerAccountId: varchar("provider_account_id", {
-      length: 255,
-    }).notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: varchar("token_type", { length: 255 }),
-    scope: varchar("scope", { length: 255 }),
-    id_token: text("id_token"),
-    session_state: varchar("session_state", { length: 255 }),
-  },
-  account => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-    userIdIdx: index("account_user_id_idx").on(account.userId),
-  }),
-)
-
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }))
 
-export const sessions = createTable(
-  "session",
-  {
-    sessionToken: varchar("session_token", { length: 255 }).notNull().primaryKey(),
-    userId: varchar("user_id", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    expires: timestamp("expires", {
-      mode: "date",
-      withTimezone: true,
-    }).notNull(),
-  },
-  session => ({
-    userIdIdx: index("session_user_id_idx").on(session.userId),
-  }),
-)
-
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }))
-
-export const verificationTokens = createTable(
-  "verification_token",
-  {
-    identifier: varchar("identifier", { length: 255 }).notNull(),
-    token: varchar("token", { length: 255 }).notNull(),
-    expires: timestamp("expires", {
-      mode: "date",
-      withTimezone: true,
-    }).notNull(),
-  },
-  vt => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  }),
-)
