@@ -94,7 +94,10 @@ export const menuItemsColumns: ColumnDef<MenuItems>[] = [
     ),
     cell: ({ row }) => {
       const time = row.getValue("preparationTime")
-      return time ? `${time.toString()} mins` : "N/A"
+      if (typeof time === "number") {
+        return `${time} mins`
+      }
+      return "N/A"
     },
   },
 ]
