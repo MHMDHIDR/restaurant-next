@@ -1,6 +1,7 @@
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CategoriesTable from "./(categories)/categories-table"
 import { MenuCategoryForm } from "./(new-category)/menu-category-form"
@@ -21,11 +22,20 @@ export default function CategoriesContent({ vendor, categories }: CategoriesCont
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("view", value)
-    router.push(`${pathname}?${params.toString()}`)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
+
+  // Ensure tabs are in sync with URL parameters
+  useEffect(() => {
+    const currentView = searchParams.get("view")
+    if (currentView && (currentView === "categories" || currentView === "new-category")) {
+      handleTabChange(currentView)
+    }
+  }, [searchParams])
 
   return (
     <Tabs
+      value={view}
       defaultValue={view}
       className="container max-w-6xl md:px-3.5 px-2 py-3"
       onValueChange={handleTabChange}

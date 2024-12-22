@@ -42,9 +42,20 @@ export default async function DashboardLayout({
             url: "/vendor-manager/menu-items",
             icon: <Package className="w-4 h-4" />,
           },
+        ],
+      },
+      {
+        title: "Categories",
+        url: "#",
+        items: [
           {
-            title: "Categories",
-            url: "/vendor-manager/categories",
+            title: "All Categories",
+            url: "/vendor-manager/categories?view=categories",
+            icon: <IconCategory2 className="w-4 h-4" />,
+          },
+          {
+            title: "Create",
+            url: "/vendor-manager/categories?view=new-category",
             icon: <IconCategory2 className="w-4 h-4" />,
           },
         ],

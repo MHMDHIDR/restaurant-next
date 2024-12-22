@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import * as React from "react"
 import {
   Sidebar,
@@ -18,7 +18,20 @@ import type { VendorNavItems } from "@/types/vendorNavItems"
 
 export function AppSidebar({ items }: { items: VendorNavItems }) {
   const pathname = usePathname()
-  const isActive = (url: string) => pathname === url
+  const searchParams = useSearchParams()
+
+  const isActive = (url: string) => {
+    // If the URL contains a search parameter
+    if (url.includes("?")) {
+      const [path, query] = url.split("?")
+      const urlParams = new URLSearchParams(query)
+
+      // Check if both pathname and search params match
+      return pathname === path && urlParams.get("view") === searchParams.get("view")
+    }
+    // Otherwise just check the pathname
+    return pathname === url
+  }
 
   return (
     <Sidebar>
