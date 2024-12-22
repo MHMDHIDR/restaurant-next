@@ -16,5 +16,6 @@ export const baseColumns: ColumnDef<BaseEntity>[] = [
         <ArrowUpDown className="w-4 h-4 ml-2" />
       </Button>
     ),
+    id: "base_name",
   },
 ]

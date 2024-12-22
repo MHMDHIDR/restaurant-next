@@ -1,30 +1,29 @@
 import { redirect } from "next/navigation"
-import { auth } from "@/server/auth"
 import { api } from "@/trpc/server"
 import { MenuItemsContent } from "./menu-items-content"
 
 export default async function MenuItemsPage() {
-  const session = await auth()
-  const user = session?.user
-
-  if (!user) {
-    redirect("/auth/signin")
-  }
-
   const vendor = await api.vendor.getBySessionUser()
 
   if (!vendor) {
     redirect("/")
   }
 
-  // Fetch menu categories for the dropdown in the form
-  const categories = await api.menuCategory.getCategoriesByVendorId({
-    vendorId: vendor.id,
-  })
+  try {
+    const vendor = await api.vendor.getBySessionUser()
+    if (!vendor) {
+      redirect("/")
+    }
 
-  const menuItems = await api.menuItem.getMenuItemsByVendorId({
-    vendorId: vendor.id,
-  })
+    // Use Promise.all to fetch data in parallel
+    const [categories, menuItems] = await Promise.all([
+      api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
+      api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
+    ])
 
-  return <MenuItemsContent vendor={vendor} categories={categories} menuItems={menuItems} />
+    return <MenuItemsContent vendor={vendor} categories={categories} menuItems={menuItems} />
+  } catch (error) {
+    console.error("Error fetching data:", error)
+    redirect("/error")
+  }
 }
