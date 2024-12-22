@@ -1,4 +1,5 @@
 import { menuCategoryRouter } from "@/server/api/routers/menuCategory"
+import { menuItemRouter } from "@/server/api/routers/menuItem"
 import { optimizeImageRouter } from "@/server/api/routers/optimize-image"
 import { usersRouter } from "@/server/api/routers/users"
 import { vendorRouter } from "@/server/api/routers/vendor"
@@ -13,6 +14,7 @@ import { S3Router } from "./routers/s3"
 export const appRouter = createTRPCRouter({
   vendor: vendorRouter,
   menuCategory: menuCategoryRouter,
+  menuItem: menuItemRouter,
   users: usersRouter,
   optimizeImage: optimizeImageRouter,
   S3: S3Router,

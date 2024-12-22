@@ -125,7 +125,6 @@ export const menuCategories = createTable("menu_category", {
   isActive: boolean("is_active").default(true),
   sortOrder: integer("sort_order").default(0),
 })
-
 export type MenuCategories = typeof menuCategories.$inferSelect
 
 export const menuItems = createTable("menu_item", {
@@ -137,19 +136,29 @@ export const menuItems = createTable("menu_item", {
     .notNull()
     .references(() => menuCategories.id),
   name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
+  slug: varchar("slug", { length: 255 }).notNull(),
+  description: text("description").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  image: varchar("image", { length: 255 }),
+  image: varchar("image", { length: 255 }).notNull(),
   isAvailable: boolean("is_available").default(true),
-  preparationTime: integer("preparation_time"),
-  allergens: json("allergens").$type<string[]>(),
-  nutritionalInfo: json("nutritional_info").$type<{
-    calories?: number
-    protein?: number
-    carbs?: number
-    fat?: number
-  }>(),
+  preparationTime: integer("preparation_time").notNull(),
+  allergens: json("allergens").$type<string[]>().notNull(),
+  nutritionalInfo: json("nutritional_info")
+    .$type<{
+      calories?: number
+      protein?: number
+      carbs?: number
+      fat?: number
+    }>()
+    .notNull(),
+  addons: json("addons").$type<
+    {
+      toppingName: string
+      toppingPrice: number
+    }[]
+  >(),
 })
+export type MenuItems = typeof menuItems.$inferSelect
 
 export const orders = createTable("order", {
   id: varchar("id", { length: 255 })
@@ -295,4 +304,11 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}))
+
+export const menuItemsRelations = relations(menuItems, ({ one }) => ({
+  category: one(menuCategories, {
+    fields: [menuItems.categoryId],
+    references: [menuCategories.id],
+  }),
 }))

@@ -37,9 +37,20 @@ export default async function DashboardLayout({
             url: "/vendor-manager/orders",
             icon: <ShoppingCart className="w-4 h-4" />,
           },
+        ],
+      },
+      {
+        title: "Menu",
+        url: "#",
+        items: [
           {
-            title: "Menu Items",
-            url: "/vendor-manager/menu-items",
+            title: "Items",
+            url: "/vendor-manager/menu-items?view=items",
+            icon: <Package className="w-4 h-4" />,
+          },
+          {
+            title: "New Menu Item",
+            url: "/vendor-manager/menu-items?view=new-item",
             icon: <Package className="w-4 h-4" />,
           },
         ],

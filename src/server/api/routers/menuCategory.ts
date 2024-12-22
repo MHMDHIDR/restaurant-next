@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { menuCategorySchema } from "@/app/schemas/menuCategory"
 import { createSlug } from "@/lib/create-slug"
+import { extractS3FileName } from "@/lib/extract-s3-filename"
+import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { menuCategories } from "@/server/db/schema"
 
@@ -64,12 +66,18 @@ export const menuCategoryRouter = createTRPCRouter({
       const category = await ctx.db.query.menuCategories.findFirst({
         where: (menuCategories, { eq }) => eq(menuCategories.id, input.id),
       })
-      const imageId = category?.image
-      // get the string from /menu-category inside imageId
-      const imageKeyToDelete = imageId?.split("/").slice(-1)[0]
-      if (imageKeyToDelete) {
-        // await api.S3.deleteFile({ fileName: imageKeyToDelete })
+
+      if (!category?.image) {
+        await ctx.db.delete(menuCategories).where(eq(menuCategories.id, input.id))
+        return { success: true }
       }
+
+      const fileKey = extractS3FileName(category.image)
+      if (fileKey) {
+        const caller = createCaller(ctx)
+        await caller.S3.deleteFile({ fileName: fileKey })
+      }
+
       await ctx.db.delete(menuCategories).where(eq(menuCategories.id, input.id))
       return { success: true }
     }),
