@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { menuCategorySchema } from "@/app/schemas/menuCategory"
+import { createSlug } from "@/lib/create-slug"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { menuCategories } from "@/server/db/schema"
 
@@ -22,7 +23,7 @@ export const menuCategoryRouter = createTRPCRouter({
       // Create the category
       const [createdCategory] = await tx
         .insert(menuCategories)
-        .values({ vendorId, ...data })
+        .values({ vendorId, slug: createSlug(data.name), ...data })
         .returning()
 
       return { success: true, createdCategory }

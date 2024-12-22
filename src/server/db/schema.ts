@@ -119,6 +119,7 @@ export const menuCategories = createTable("menu_category", {
     .notNull()
     .references(() => vendors.id),
   name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull(),
   description: text("description"),
   image: varchar("image", { length: 255 }),
   isActive: boolean("is_active").default(true),
