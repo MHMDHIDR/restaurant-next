@@ -1,29 +1,43 @@
 import { List, ShoppingBag, Utensils } from "lucide-react"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { api } from "@/trpc/server"
 
-const stats = [
-  {
-    title: "Menu Items",
-    value: 48,
-    icon: Utensils,
-    href: "/vendor-manager/menu-items?view=items",
-  },
-  {
-    title: "Orders",
-    value: 256,
-    icon: ShoppingBag,
-    href: "/vendor-manager/orders",
-  },
-  {
-    title: "Categories",
-    value: 8,
-    icon: List,
-    href: "/vendor-manager/categories?view=categories",
-  },
-]
+export default async function DashboardPage() {
+  const vendor = await api.vendor.getBySessionUser()
 
-export default function DashboardPage() {
+  if (!vendor) {
+    redirect("/")
+  }
+
+  // Fetch menu items and categories
+  const [menuItems, categories] = await Promise.all([
+    api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
+    api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
+  ])
+
+  const stats = [
+    {
+      title: "Menu Items",
+      value: menuItems.length,
+      icon: Utensils,
+      href: "/vendor-manager/menu-items?view=items",
+    },
+    {
+      title: "Orders",
+      value: 0, // TODO: Implement orders count
+      icon: ShoppingBag,
+      href: "/vendor-manager/orders",
+    },
+    {
+      title: "Categories",
+      value: categories.length,
+      icon: List,
+      href: "/vendor-manager/categories?view=categories",
+    },
+  ]
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Restaurant Dashboard</h1>

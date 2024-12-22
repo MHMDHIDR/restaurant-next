@@ -24,7 +24,7 @@ export async function handleSignin(_: SignInType, formData: FormData): Promise<S
   try {
     await signIn("resend", { email, redirect: false, redirectTo: "/dashboard" })
 
-    return { success: true, message: "Sign in link sent to your email" }
+    return { success: true, message: "Check Your Email for a Sign in link." }
   } catch (error) {
     return {
       message: error instanceof Error ? error.message : "An unknown error occurred",

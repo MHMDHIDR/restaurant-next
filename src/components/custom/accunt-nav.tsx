@@ -36,7 +36,7 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
       ? { href: "#", icon: Loader2, label: "" }
       : vendor && checkRoleAccess(user?.role, [UserRole.VENDOR_ADMIN])
         ? {
-            href: `/vendor-manager/menu-items?view=items`,
+            href: `/vendor-manager`,
             icon: IconPackage,
             label: "Manage Your Restaurant",
           }
