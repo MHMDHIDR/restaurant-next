@@ -3,7 +3,7 @@ import { auth } from "@/server/auth"
 import { api } from "@/trpc/server"
 import { MenuItemsContent } from "./menu-items-content"
 
-export default async function MenuItemsPage({ searchParams }: { searchParams: { view?: string } }) {
+export default async function MenuItemsPage() {
   const session = await auth()
   const user = session?.user
 

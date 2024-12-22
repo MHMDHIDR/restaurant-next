@@ -1,6 +1,7 @@
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MenuItemsTable } from "./(items)/menu-items-table"
 import { MenuItemForm } from "./(new-item)/menu-item-form"
@@ -22,11 +23,20 @@ export function MenuItemsContent({ vendor, categories, menuItems }: MenuItemsCon
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("view", value)
-    router.push(`${pathname}?${params.toString()}`)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
+
+  // Ensure tabs are in sync with URL parameters
+  useEffect(() => {
+    const currentView = searchParams.get("view")
+    if (currentView && (currentView === "items" || currentView === "new-item")) {
+      handleTabChange(currentView)
+    }
+  }, [searchParams])
 
   return (
     <Tabs
+      value={view}
       defaultValue={view}
       className="container max-w-6xl md:px-3.5 px-2 py-3"
       onValueChange={handleTabChange}
