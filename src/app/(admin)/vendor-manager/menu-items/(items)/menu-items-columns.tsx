@@ -44,6 +44,15 @@ export const menuItemsColumns: ColumnDef<MenuItems>[] = [
         <ArrowUpDown className="w-4 h-4 ml-2" />
       </Button>
     ),
+    cell: ({ row }) => {
+      const description = row.getValue("description") as string
+      const MAX_LENGTH = 50
+      return (
+        <span title={description}>
+          {description.length > MAX_LENGTH ? `${description.slice(0, MAX_LENGTH)}...` : description}
+        </span>
+      )
+    },
   },
   {
     accessorKey: "price",
