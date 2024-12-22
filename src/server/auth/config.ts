@@ -7,7 +7,7 @@ import { env } from "@/env"
 import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { db } from "@/server/db"
 import { accounts, sessions, users, verificationTokens } from "@/server/db/schema"
-import type { themeEnumType, UserRoleType } from "@/server/db/schema"
+import type { themeEnumType, UserRoleType, Users } from "@/server/db/schema"
 import type { AdapterUser } from "@auth/core/adapters"
 
 declare module "next-auth" {
@@ -53,7 +53,6 @@ export const authConfig = {
           // If no user exists, create a new user
           if (!existingUser) {
             await db.insert(users).values({
-              id: user.id,
               name: profile.name ?? user.name ?? "Unknown",
               email: profile.email!,
               image: profile.picture ?? user.image ?? "/logo.svg",
@@ -102,6 +101,33 @@ export const authConfig = {
           return true
         } catch (error) {
           console.error("Google Sign-In Error:", error)
+          return false
+        }
+      }
+
+      // Handle email provider
+      if (account?.provider === "resend" && user.email) {
+        try {
+          // Find the user by email
+          const existingUser = await db.query.users.findFirst({
+            where: eq(users.email, user.email),
+          })
+
+          // If no user exists, create a new user with a default name
+          if (!existingUser) {
+            const username = user.email.split("@")[0]
+            await db.insert(users).values({
+              name: username,
+              email: user.email,
+              image: "/logo.svg",
+              phone: "",
+              status: "ACTIVE",
+            } as Users)
+          }
+
+          return true
+        } catch (error) {
+          console.error("Email Sign-In Error:", error)
           return false
         }
       }

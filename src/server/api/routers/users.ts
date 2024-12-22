@@ -1,6 +1,6 @@
+import { TRPCError } from "@trpc/server"
 import { eq, sql } from "drizzle-orm"
 import { z } from "zod"
-import { accountFormSchema } from "@/app/schemas/account"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { users } from "@/server/db/schema"
 
@@ -22,27 +22,41 @@ export const usersRouter = createTRPCRouter({
 
   update: protectedProcedure
     .input(
-      accountFormSchema.pick({
-        id: true,
-        name: true,
-        phone: true,
-        theme: true,
-        image: true,
+      z.object({
+        id: z.string().optional(),
+        email: z.string().email().optional(),
+        name: z.string().optional(),
+        phone: z.string().optional(),
+        theme: z.enum(["light", "dark"]).optional(),
+        image: z.string().optional(),
+        status: z.enum(["PENDING", "ACTIVE", "SUSPENDED"]).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Perform update with additional safety checks
-      const updatedUser = await ctx.db
+      // Find user by id or email
+      const whereClause = input.id ? eq(users.id, input.id) : eq(users.email, input.email!)
+      const existingUser = await ctx.db.query.users.findFirst({
+        where: () => whereClause,
+      })
+
+      if (!existingUser) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found!" })
+      }
+
+      // Update user with provided fields
+      const [updatedUser] = await ctx.db
         .update(users)
         .set({
-          name: input.name,
-          phone: input.phone,
-          theme: input.theme,
-          image: input.image,
+          ...(input.name && { name: input.name }),
+          ...(input.phone && { phone: input.phone }),
+          ...(input.theme && { theme: input.theme }),
+          ...(input.image && { image: input.image }),
+          ...(input.status && { status: input.status }),
+          updatedAt: new Date(),
         })
-        .where(eq(users.id, input.id))
+        .where(whereClause)
         .returning()
 
-      return updatedUser[0] ?? null
+      return updatedUser
     }),
 })

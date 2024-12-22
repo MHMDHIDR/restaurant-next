@@ -1,7 +1,90 @@
-import { ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Ban, Check, CheckCircle, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import React from "react"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useToast } from "@/hooks/use-toast"
+import { api } from "@/trpc/react"
 import type { Users } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
+
+// Wrapper component to handle router and mutation logic
+const UsersActionsCell: React.FC<{ user: Users }> = ({ user }) => {
+  const router = useRouter()
+  const toast = useToast()
+
+  const utils = api.useUtils()
+  const status = user.status
+  const isSuspended = user.status === "SUSPENDED"
+
+  const updateUserMutation = api.users.update.useMutation({
+    onSuccess: async () => {
+      toast.success("User status updated successfully")
+      await utils.users.getUsers.invalidate()
+      router.refresh()
+    },
+    onError: error => {
+      toast.error(`Failed to update user status: ${error.message}`)
+    },
+    onMutate: () => {
+      toast.loading("Updating User...")
+    },
+  })
+
+  const handleActivate = () => {
+    updateUserMutation.mutate({ email: user.email, status: "ACTIVE" })
+  }
+
+  const handleSuspend = () => {
+    updateUserMutation.mutate({ email: user.email, status: "SUSPENDED" })
+  }
+
+  const handleUnsuspend = () => {
+    updateUserMutation.mutate({ email: user.email, status: "ACTIVE" })
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="w-8 h-8 p-0">
+          <span className="sr-only">Actions</span>
+          <MoreHorizontal className="w-4 h-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="rtl:rtl">
+        <DropdownMenuLabel className="select-none">Actions</DropdownMenuLabel>
+        <DropdownMenuItem asChild>
+          <Link href={`/dashboard/users/${user.id}`}>
+            <Pencil className="mr-0.5 h-4 w-4" />
+            View / Edit
+          </Link>
+        </DropdownMenuItem>
+        {status === "PENDING" && (
+          <DropdownMenuItem onClick={handleActivate}>
+            <Check className="mr-0.5 h-4 w-4" /> Activate
+          </DropdownMenuItem>
+        )}
+        {status === "ACTIVE" && (
+          <DropdownMenuItem onClick={handleSuspend}>
+            <Ban className="mr-0.5 h-4 w-4" /> Suspend
+          </DropdownMenuItem>
+        )}
+        {isSuspended && (
+          <DropdownMenuItem onClick={handleUnsuspend}>
+            <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 export const userColumns: ColumnDef<Users>[] = [
   {
@@ -65,5 +148,10 @@ export const userColumns: ColumnDef<Users>[] = [
       const date = row.getValue("updatedAt")
       return new Date(String(date)).toLocaleDateString()
     },
+  },
+  {
+    accessorKey: "actions",
+    header: "Actions",
+    cell: ({ row }) => <UsersActionsCell user={row.original} />,
   },
 ]

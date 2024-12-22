@@ -72,7 +72,6 @@ export const users = createTable("user", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
-
 export type Users = typeof users.$inferSelect
 
 export const vendors = createTable("vendor", {

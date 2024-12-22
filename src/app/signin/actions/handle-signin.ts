@@ -22,7 +22,7 @@ export async function handleSignin(_: SignInType, formData: FormData): Promise<S
   const { email } = validatedFields.data
 
   try {
-    await signIn("resend", { email, redirect: false, redirectTo: "/dashboard" })
+    await signIn("resend", { email, redirect: false, redirectTo: "/" })
 
     return { success: true, message: "Check Your Email for a Sign in link." }
   } catch (error) {
