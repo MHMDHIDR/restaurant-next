@@ -13,13 +13,27 @@ import type { BaseEntity } from "@/components/custom/data-table/base-columns"
 import type { MenuItems } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
-export function MenuItemsTable({ menuItems }: { menuItems: (MenuItems & BaseEntity)[] }) {
+interface MenuItemsTableProps {
+  menuItems: (MenuItems & BaseEntity)[]
+  vendorId: string
+}
+
+export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
   const [isDialogOpen, setDialogOpen] = useState(false)
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
 
   const router = useRouter()
   const toast = useToast()
   const utils = api.useUtils()
+
+  const { data: categories } = api.menuCategory.getCategoriesByVendorId.useQuery(
+    {
+      vendorId,
+    },
+    {
+      enabled: !!vendorId,
+    },
+  )
 
   const { mutate: deleteMenuItem } = api.menuItem.deleteMenuItem.useMutation({
     onSuccess: async () => {
@@ -37,7 +51,11 @@ export function MenuItemsTable({ menuItems }: { menuItems: (MenuItems & BaseEnti
     setDialogOpen(true)
   }
 
-  const columns = [...baseColumns, ...menuItemsColumns, ...actionsColumns(handleDeleteClick)]
+  const columns = [
+    ...baseColumns,
+    ...menuItemsColumns,
+    ...actionsColumns(handleDeleteClick, categories ?? []),
+  ]
 
   return (
     <>

@@ -1,12 +1,12 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { IconLoader2 } from "@tabler/icons-react"
+import { IconLoader2, IconTrash } from "@tabler/icons-react"
 import { CircleHelp } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-import { z } from "zod"
+import { MenuItemFormValues, menuItemSchema } from "@/app/schemas/menuItem"
 import { FileUpload } from "@/components/custom/file-upload"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -32,35 +32,6 @@ import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import type { MenuCategories } from "@/server/db/schema"
 
-const menuItemSchema = z.object({
-  categoryId: z.string().nonempty("Category is required"),
-  name: z.string().nonempty("Name is required"),
-  description: z.string().optional(),
-  price: z.string().nonempty("Price is required"),
-  image: z.string().optional(),
-  isAvailable: z.boolean().default(true),
-  preparationTime: z.string().optional(),
-  allergens: z.array(z.string()).optional(),
-  nutritionalInfo: z
-    .object({
-      calories: z.string().optional(),
-      protein: z.string().optional(),
-      carbs: z.string().optional(),
-      fat: z.string().optional(),
-    })
-    .optional(),
-  addons: z
-    .array(
-      z.object({
-        toppingName: z.string(),
-        toppingPrice: z.string(),
-      }),
-    )
-    .optional(),
-})
-
-type MenuItemFormValues = z.infer<typeof menuItemSchema>
-
 interface MenuItemFormProps {
   vendorId: string
   categories: MenuCategories[]
@@ -80,22 +51,26 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
       categoryId: "",
       name: "",
       description: "",
-      price: "",
+      price: 0,
       image: "",
       isAvailable: true,
-      preparationTime: "",
+      preparationTime: 0,
       allergens: [],
       nutritionalInfo: {
-        calories: "",
-        protein: "",
-        carbs: "",
-        fat: "",
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
       },
       addons: [],
     },
   })
 
-  const { fields: addonFields, append: appendAddon } = useFieldArray({
+  const {
+    fields: addonFields,
+    append: appendAddon,
+    remove: removeAddon,
+  } = useFieldArray({
     control: form.control,
     name: "addons",
   })
@@ -121,7 +96,7 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
       quality: 70,
     })
 
-    // Prepare file data for S3 upload
+    // Prepare file data for S3 upload with a clean path
     const fileData = [
       {
         name: file.name.replace(/\.[^.]+$/, ".webp"),
@@ -168,26 +143,10 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
         return
       }
 
-      // Convert string values to numbers where needed
+      // Prepare the data for submission
       const formattedData = {
-        categoryId: data.categoryId,
-        name: data.name,
-        description: data.description ?? "",
-        price: parseFloat(data.price),
+        ...data,
         image: uploadedUrl,
-        isAvailable: data.isAvailable,
-        preparationTime: parseInt(data.preparationTime ?? "0"),
-        allergens: data.allergens ?? [],
-        nutritionalInfo: {
-          calories: parseInt(data.nutritionalInfo?.calories ?? "0"),
-          protein: parseInt(data.nutritionalInfo?.protein ?? "0"),
-          carbs: parseInt(data.nutritionalInfo?.carbs ?? "0"),
-          fat: parseInt(data.nutritionalInfo?.fat ?? "0"),
-        },
-        addons: data.addons?.map(addon => ({
-          toppingName: addon.toppingName,
-          toppingPrice: parseFloat(addon.toppingPrice),
-        })),
       }
 
       await createMenuItemMutation.mutateAsync(formattedData)
@@ -216,8 +175,8 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {categories.map((category, index) => (
-                    <SelectItem key={index} value={category.id}>
+                  {categories.map(category => (
+                    <SelectItem key={category.id} value={category.id}>
                       {category.name}
                     </SelectItem>
                   ))}
@@ -288,7 +247,12 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
             <FormItem>
               <FormLabel>Price</FormLabel>
               <FormControl>
-                <Input type="number" step="0.01" {...field} />
+                <Input
+                  type="number"
+                  step="0.01"
+                  {...field}
+                  onChange={e => field.onChange(parseFloat(e.target.value))}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -302,7 +266,11 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
             <FormItem>
               <FormLabel>Preparation Time (minutes)</FormLabel>
               <FormControl>
-                <Input type="number" {...field} />
+                <Input
+                  type="number"
+                  {...field}
+                  onChange={e => field.onChange(parseInt(e.target.value))}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -341,13 +309,13 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => appendAddon({ toppingName: "", toppingPrice: "" })}
+              onClick={() => appendAddon({ toppingName: "", toppingPrice: 0 })}
             >
               Add Topping
             </Button>
           </div>
-          {addonFields.map((_field, index) => (
-            <div key={`addon-${index}`} className="flex gap-4">
+          {addonFields.map((field, index) => (
+            <div key={field.id} className="flex items-center gap-4">
               <FormField
                 control={form.control}
                 name={`addons.${index}.toppingName`}
@@ -366,12 +334,28 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder="Price" {...field} />
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="Price"
+                        {...field}
+                        onChange={e => field.onChange(parseFloat(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-destructive"
+                onClick={() => removeAddon(index)}
+              >
+                <IconTrash className="h-4 w-4" />
+                <span className="sr-only">Remove topping</span>
+              </Button>
             </div>
           ))}
         </div>
@@ -382,12 +366,15 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
             <FormField
               control={form.control}
               name="nutritionalInfo.calories"
-              key="calories"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Calories</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={e => field.onChange(parseInt(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -396,12 +383,15 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
             <FormField
               control={form.control}
               name="nutritionalInfo.protein"
-              key="protein"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Protein (g)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={e => field.onChange(parseInt(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -410,12 +400,15 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
             <FormField
               control={form.control}
               name="nutritionalInfo.carbs"
-              key="carbs"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Carbs (g)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={e => field.onChange(parseInt(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -424,12 +417,15 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
             <FormField
               control={form.control}
               name="nutritionalInfo.fat"
-              key="fat"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Fat (g)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={e => field.onChange(parseInt(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -48,7 +48,7 @@ export function MenuItemsContent({ vendor, categories, menuItems }: MenuItemsCon
         <TabsTrigger value="new-item">New Item</TabsTrigger>
       </TabsList>
       <TabsContent value="items">
-        <MenuItemsTable menuItems={menuItems} />
+        <MenuItemsTable menuItems={menuItems} vendorId={vendor.id} />
       </TabsContent>
       <TabsContent value="new-item">
         <MenuItemForm vendorId={vendor.id} categories={categories} />

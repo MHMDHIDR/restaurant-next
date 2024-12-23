@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { menuItemSchema } from "@/app/schemas/menuItem"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
 import { createCaller } from "@/server/api/root"
@@ -8,21 +9,24 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { menuItems } from "@/server/db/schema"
 import type { MenuItems } from "@/server/db/schema"
 
-const menuItemSchema = z.object({
-  categoryId: z.string().nonempty("Category is required"),
-  name: z.string().nonempty("Name is required"),
-  description: z.string(),
-  price: z.number().positive("Price must be greater than 0"),
-  image: z.string(),
-  isAvailable: z.boolean().default(true),
-  preparationTime: z.number().int().positive(),
-  allergens: z.array(z.string()),
-  nutritionalInfo: z.object({
-    calories: z.number().int(),
-    protein: z.number().int(),
-    carbs: z.number().int(),
-    fat: z.number().int(),
-  }),
+const updateMenuItemSchema = z.object({
+  id: z.string(),
+  categoryId: z.string().optional(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  price: z.number().positive("Price must be greater than 0").optional(),
+  image: z.string().optional(),
+  isAvailable: z.boolean().optional(),
+  preparationTime: z.number().int().positive().optional(),
+  allergens: z.array(z.string()).optional(),
+  nutritionalInfo: z
+    .object({
+      calories: z.number().int(),
+      protein: z.number().int(),
+      carbs: z.number().int(),
+      fat: z.number().int(),
+    })
+    .optional(),
   addons: z
     .array(
       z.object({
@@ -105,5 +109,53 @@ export const menuItemRouter = createTRPCRouter({
       await ctx.db.delete(menuItems).where(eq(menuItems.id, input.id))
 
       return { success: true }
+    }),
+
+  updateMenuItem: protectedProcedure
+    .input(updateMenuItemSchema)
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.transaction(async tx => {
+        const existingItem = await tx.query.menuItems.findFirst({
+          where: (items, { eq }) => eq(items.id, input.id),
+        })
+
+        if (!existingItem) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Menu item not found" })
+        }
+
+        // If there's a new image, delete the old one from S3
+        if (input.image && input.image !== existingItem.image) {
+          const oldFileKey = extractS3FileName(existingItem.image)
+          if (oldFileKey) {
+            const caller = createCaller(ctx)
+            await caller.S3.deleteFile({ fileName: oldFileKey })
+          }
+        }
+
+        // Prepare update data, only including fields that were provided
+        const updateData: Partial<MenuItems> = {}
+
+        if (input.categoryId) updateData.categoryId = input.categoryId
+        if (input.name) {
+          updateData.name = input.name
+          updateData.slug = createSlug(input.name)
+        }
+        if (input.description) updateData.description = input.description
+        if (input.price) updateData.price = input.price.toString()
+        if (input.image) updateData.image = input.image
+        if (typeof input.isAvailable === "boolean") updateData.isAvailable = input.isAvailable
+        if (input.preparationTime) updateData.preparationTime = input.preparationTime
+        if (input.allergens) updateData.allergens = input.allergens
+        if (input.nutritionalInfo) updateData.nutritionalInfo = input.nutritionalInfo
+        if (input.addons) updateData.addons = input.addons
+
+        const [updatedItem] = await tx
+          .update(menuItems)
+          .set(updateData)
+          .where(eq(menuItems.id, input.id))
+          .returning()
+
+        return { success: true, updatedItem }
+      })
     }),
 })
