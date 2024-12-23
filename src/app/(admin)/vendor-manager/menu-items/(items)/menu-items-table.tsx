@@ -3,17 +3,18 @@
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { DataTable } from "@/components/custom/data-table"
-import { actionsColumns } from "@/components/custom/data-table/actions-column"
+import { createActionsColumn } from "@/components/custom/data-table/actions-column"
 import { baseColumns } from "@/components/custom/data-table/base-columns"
 import { ConfirmationDialog } from "@/components/custom/data-table/confirmation-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
+import { MenuItemEdit } from "./menu-item-edit"
 import { menuItemsColumns } from "./menu-items-columns"
 import type { BaseEntity } from "@/components/custom/data-table/base-columns"
 import type { MenuItems } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
-interface MenuItemsTableProps {
+type MenuItemsTableProps = {
   menuItems: (MenuItems & BaseEntity)[]
   vendorId: string
 }
@@ -21,18 +22,16 @@ interface MenuItemsTableProps {
 export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
   const [isDialogOpen, setDialogOpen] = useState(false)
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItems | null>(null)
 
   const router = useRouter()
   const toast = useToast()
   const utils = api.useUtils()
 
   const { data: categories } = api.menuCategory.getCategoriesByVendorId.useQuery(
-    {
-      vendorId,
-    },
-    {
-      enabled: !!vendorId,
-    },
+    { vendorId },
+    { enabled: !!vendorId },
   )
 
   const { mutate: deleteMenuItem } = api.menuItem.deleteMenuItem.useMutation({
@@ -51,10 +50,15 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
     setDialogOpen(true)
   }
 
+  const handleEditClick = (menuItem: MenuItems & BaseEntity) => {
+    setSelectedMenuItem(menuItem)
+    setIsEditOpen(true)
+  }
+
   const columns = [
     ...baseColumns,
     ...menuItemsColumns,
-    ...actionsColumns(handleDeleteClick, categories ?? []),
+    createActionsColumn<MenuItems & BaseEntity>(handleDeleteClick, handleEditClick),
   ]
 
   return (
@@ -76,6 +80,14 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
           }
         }}
       />
+      {selectedMenuItem && (
+        <MenuItemEdit
+          open={isEditOpen}
+          onOpenChange={setIsEditOpen}
+          categories={categories}
+          menuItem={selectedMenuItem}
+        />
+      )}
     </>
   )
 }

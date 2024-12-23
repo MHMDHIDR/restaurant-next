@@ -40,7 +40,6 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
   const form = useForm<MenuCategoryFormValues>({
     resolver: zodResolver(menuCategorySchema),
     defaultValues: {
-      vendorId,
       name: "",
       description: "",
       image: "",
@@ -113,10 +112,13 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
         return
       }
 
-      await createMenuCategoryMutation.mutateAsync({
+      const formattedData = {
         ...data,
+        vendorId,
         image: uploadedUrl,
-      })
+      }
+
+      await createMenuCategoryMutation.mutateAsync(formattedData)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An unexpected error occurred")
     } finally {

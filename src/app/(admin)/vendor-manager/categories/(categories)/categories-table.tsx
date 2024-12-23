@@ -3,23 +3,26 @@
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { DataTable } from "@/components/custom/data-table"
-import { actionsColumns } from "@/components/custom/data-table/actions-column"
+import { createActionsColumn } from "@/components/custom/data-table/actions-column"
 import { baseColumns } from "@/components/custom/data-table/base-columns"
 import { ConfirmationDialog } from "@/components/custom/data-table/confirmation-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import { categoriesColumns } from "./categories-columns"
+import { CategoryEdit } from "./category-edit"
 import type { BaseEntity } from "@/components/custom/data-table/base-columns"
 import type { MenuCategories } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
-export default function CategoriesTable({
-  categories,
-}: {
+type CategoriesTableProps = {
   categories: (MenuCategories & BaseEntity)[]
-}) {
+}
+
+export default function CategoriesTable({ categories }: CategoriesTableProps) {
   const [isDialogOpen, setDialogOpen] = useState(false)
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<MenuCategories | null>(null)
 
   const router = useRouter()
   const toast = useToast()
@@ -41,7 +44,16 @@ export default function CategoriesTable({
     setDialogOpen(true)
   }
 
-  const columns = [...baseColumns, ...categoriesColumns, ...actionsColumns(handleDeleteClick)]
+  const handleEditClick = (category: MenuCategories & BaseEntity) => {
+    setSelectedCategory(category)
+    setIsEditOpen(true)
+  }
+
+  const columns = [
+    ...baseColumns,
+    ...categoriesColumns,
+    createActionsColumn<MenuCategories & BaseEntity>(handleDeleteClick, handleEditClick),
+  ]
 
   return (
     <>
@@ -53,7 +65,7 @@ export default function CategoriesTable({
         open={isDialogOpen}
         onOpenChange={setDialogOpen}
         title="Confirm Deletion"
-        description={`Are you sure you want to delete this category?`}
+        description="Are you sure you want to delete this category?"
         buttonText="Delete"
         onConfirm={async () => {
           if (selectedCategoryId) {
@@ -62,6 +74,9 @@ export default function CategoriesTable({
           }
         }}
       />
+      {selectedCategory && (
+        <CategoryEdit open={isEditOpen} onOpenChange={setIsEditOpen} category={selectedCategory} />
+      )}
     </>
   )
 }

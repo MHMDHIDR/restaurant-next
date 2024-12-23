@@ -47,7 +47,7 @@ export default function CategoriesContent({ vendor, categories }: CategoriesCont
         <TabsTrigger value="new-category">New Category</TabsTrigger>
       </TabsList>
       <TabsContent value="categories">
-        <CategoriesTable categories={categories} />
+        <CategoriesTable categories={categories} vendorId={vendor.id} />
       </TabsContent>
       <TabsContent value="new-category">
         <MenuCategoryForm vendorId={vendor.id} />

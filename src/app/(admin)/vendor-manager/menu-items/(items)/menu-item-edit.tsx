@@ -37,7 +37,7 @@ interface MenuItemEditProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   menuItem: MenuItems
-  categories: MenuCategories[]
+  categories: MenuCategories[] | undefined
 }
 
 export function MenuItemEdit({ open, onOpenChange, menuItem, categories }: MenuItemEditProps) {
@@ -199,11 +199,15 @@ export function MenuItemEdit({ open, onOpenChange, menuItem, categories }: MenuI
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
+                      {categories ? (
+                        categories.map(category => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value={""}>No category available</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
