@@ -198,7 +198,7 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
                 <div className="flex items-center select-none gap-x-6">
                   {currentImage || files.length > 0 ? (
                     <Image
-                      src={files.length > 0 ? URL.createObjectURL(files[0] as File) : currentImage}
+                      src={files.length > 0 ? URL.createObjectURL(files[0]!) : currentImage}
                       alt="Item Image"
                       width={112}
                       height={112}

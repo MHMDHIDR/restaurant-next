@@ -4,7 +4,6 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { MenuCategoryFormValues } from "@/app/schemas/menuCategory"
 import { FileUpload } from "@/components/custom/file-upload"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -22,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
+import type { MenuCategoryFormValues } from "@/app/schemas/menuCategory"
 import type { MenuCategories } from "@/server/db/schema"
 
 interface CategoryEditProps {
@@ -176,7 +176,7 @@ export function CategoryEdit({ open, onOpenChange, category }: CategoryEditProps
                   <FormLabel>Category Image</FormLabel>
                   <FormControl>
                     <div className="flex items-center select-none gap-x-6">
-                      {(category.image || files.length > 0) && (
+                      {(category.image ?? files.length > 0) && (
                         <Image
                           src={files.length > 0 ? URL.createObjectURL(files[0]!) : category.image!}
                           alt="Category Image"
