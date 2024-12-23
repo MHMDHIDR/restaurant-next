@@ -94,6 +94,7 @@ function Avatar({ user, className }: { user: Session["user"]; className?: string
           src={user.image}
           alt={fallbackUsername(user.name) ?? "Restaurant App User"}
           blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
+          className="object-contain"
         />
       ) : (
         <AvatarFallback className="text-orange-600 rounded-lg">

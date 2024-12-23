@@ -119,7 +119,7 @@ export const authConfig = {
             await db.insert(users).values({
               name: username,
               email: user.email,
-              image: "/logo.svg",
+              image: `${env.NEXT_PUBLIC_APP_URL}/logo.svg`,
               phone: "",
               status: "ACTIVE",
             } as Users)
