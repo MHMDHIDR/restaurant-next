@@ -6,7 +6,7 @@ import { CircleHelp } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-import { MenuItemFormValues, menuItemSchema } from "@/app/schemas/menuItem"
+import { menuItemSchema } from "@/app/schemas/menuItem"
 import { FileUpload } from "@/components/custom/file-upload"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
+import type { MenuItemFormValues } from "@/app/schemas/menuItem"
 import type { MenuCategories } from "@/server/db/schema"
 
 interface MenuItemFormProps {
@@ -197,7 +198,7 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
                 <div className="flex items-center select-none gap-x-6">
                   {currentImage || files.length > 0 ? (
                     <Image
-                      src={files.length > 0 ? URL.createObjectURL(files[0]!) : currentImage!}
+                      src={files.length > 0 ? URL.createObjectURL(files[0] as File) : currentImage}
                       alt="Item Image"
                       width={112}
                       height={112}
