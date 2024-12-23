@@ -60,8 +60,9 @@ export function DataTable<TData extends BaseEntity>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map(row => {
-              const vendorStatus = (row.original as unknown as Vendors).status
               const userStatus = (row.original as unknown as Users).status
+              const isDeleted = (row.original as unknown as Users).deletedAt !== null
+              const vendorStatus = (row.original as unknown as Vendors).status
               const isSuspended =
                 (row.original as unknown as Vendors).suspendedAt &&
                 (row.original as unknown as Vendors).suspendedAt !== null
@@ -84,7 +85,7 @@ export function DataTable<TData extends BaseEntity>({
                     "text-green-700 hover:text-green-50 bg-green-200 hover:bg-green-500 dark:text-green-200 dark:bg-green-900 dark:hover:bg-green-950":
                       userStatus === "ACTIVE",
                     "text-red-700 hover:text-red-50 bg-red-200 hover:bg-red-500 dark:text-red-200 dark:bg-red-900 dark:hover:bg-red-950":
-                      isSuspended,
+                      isSuspended || isDeleted,
                   })}
                 >
                   {row.getVisibleCells().map(cell => (

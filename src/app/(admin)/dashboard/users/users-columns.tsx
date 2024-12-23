@@ -50,6 +50,10 @@ const UsersActionsCell: React.FC<{ user: Users }> = ({ user }) => {
     updateUserMutation.mutate({ email: user.email, status: "ACTIVE" })
   }
 
+  const handleDelete = () => {
+    updateUserMutation.mutate({ email: user.email, deletedAt: new Date() })
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -81,6 +85,9 @@ const UsersActionsCell: React.FC<{ user: Users }> = ({ user }) => {
             <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
           </DropdownMenuItem>
         )}
+        <DropdownMenuItem onClick={handleDelete}>
+          <Trash2 className="mr-0.5 h-4 w-4" /> Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -122,6 +129,12 @@ export const userColumns: ColumnDef<Users>[] = [
         <ArrowUpDown className="w-4 h-4 ml-2" />
       </Button>
     ),
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string
+      const isDeleted = row.original.deletedAt !== null
+
+      return isDeleted ? "Deleted" : status.charAt(0) + status.slice(1).toLowerCase()
+    },
   },
   {
     accessorKey: "createdAt",

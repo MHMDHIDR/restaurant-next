@@ -71,6 +71,7 @@ export const users = createTable("user", {
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at"),
 })
 export type Users = typeof users.$inferSelect
 
@@ -106,7 +107,6 @@ export const vendors = createTable("vendor", {
   deletedAt: timestamp("deleted_at"),
   suspendedAt: timestamp("suspended_at"),
 })
-
 export type Vendors = typeof vendors.$inferSelect
 
 export const menuCategories = createTable("menu_category", {

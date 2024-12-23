@@ -30,6 +30,7 @@ export const usersRouter = createTRPCRouter({
         theme: z.enum(["light", "dark"]).optional(),
         image: z.string().optional(),
         status: z.enum(["PENDING", "ACTIVE", "SUSPENDED"]).optional(),
+        deletedAt: z.date().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -52,6 +53,7 @@ export const usersRouter = createTRPCRouter({
           ...(input.theme && { theme: input.theme }),
           ...(input.image && { image: input.image }),
           ...(input.status && { status: input.status }),
+          ...(input.deletedAt && { deletedAt: input.deletedAt }),
           updatedAt: new Date(),
         })
         .where(whereClause)
