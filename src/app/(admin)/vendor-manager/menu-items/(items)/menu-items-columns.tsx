@@ -45,7 +45,7 @@ export const menuItemsColumns: ColumnDef<MenuItems>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const description = row.getValue("description") as string
+      const description = String(row.getValue("description"))
       const MAX_LENGTH = 50
       return (
         <span title={description}>

@@ -85,7 +85,7 @@ export function DataTable<TData extends BaseEntity>({
                     "text-green-700 hover:text-green-50 bg-green-200 hover:bg-green-500 dark:text-green-200 dark:bg-green-900 dark:hover:bg-green-950":
                       userStatus === "ACTIVE",
                     "text-red-700 hover:text-red-50 bg-red-200 hover:bg-red-500 dark:text-red-200 dark:bg-red-900 dark:hover:bg-red-950":
-                      isSuspended || isDeleted,
+                      isSuspended ?? isDeleted,
                   })}
                 >
                   {row.getVisibleCells().map(cell => (

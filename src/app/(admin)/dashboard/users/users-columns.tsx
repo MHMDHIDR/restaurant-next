@@ -130,7 +130,7 @@ export const userColumns: ColumnDef<Users>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const status = row.getValue("status") as string
+      const status = String(row.getValue("status"))
       const isDeleted = row.original.deletedAt !== null
 
       return isDeleted ? "Deleted" : status.charAt(0) + status.slice(1).toLowerCase()
