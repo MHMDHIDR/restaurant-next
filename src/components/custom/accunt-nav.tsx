@@ -21,27 +21,35 @@ import {
 import { checkRoleAccess } from "@/lib/check-role-access"
 import { fallbackUsername, truncateUsername } from "@/lib/fallback-username"
 import { cn } from "@/lib/utils"
-import { UserRole } from "@/server/db/schema"
+import { UserRole, Vendors } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import type { Session } from "next-auth"
 
 export default function AccountNav({ user }: { user: Session["user"] }) {
-  const { data: vendor, isLoading } = api.vendor.getBySessionUser.useQuery()
-
   const NAV_ITEMS = [
     { href: "/", icon: IconHome, label: "Home" },
     { href: "/account", icon: IconUser, label: "Account" },
-    user.role === "SUPER_ADMIN" && { href: "/dashboard", icon: IconSettings, label: "Dashboard" },
-    isLoading
-      ? { href: "#", icon: Loader2, label: "" }
-      : vendor && checkRoleAccess(user?.role, [UserRole.VENDOR_ADMIN])
+    user.role === UserRole.SUPER_ADMIN && {
+      href: "/dashboard",
+      icon: IconSettings,
+      label: "Dashboard",
+    },
+    // Show vendor management link if user is VENDOR_ADMIN and has a vendor
+    checkRoleAccess(user.role, [UserRole.VENDOR_ADMIN]) && user.hasVendor
+      ? {
+          href: "/vendor-manager",
+          icon: IconPackage,
+          label: "Manage Your Restaurant",
+        }
+      : // Show become a vendor link only for customers
+        checkRoleAccess(user.role, [UserRole.CUSTOMER])
         ? {
-            href: `/vendor-manager`,
+            href: "/become-a-vendor",
             icon: IconPackage,
-            label: "Manage Your Restaurant",
+            label: "Become a Vendor",
           }
-        : { href: "/become-a-vendor", icon: IconPackage, label: "Become a Vendor" },
-  ]
+        : null,
+  ].filter(Boolean)
 
   return (
     <Sheet>

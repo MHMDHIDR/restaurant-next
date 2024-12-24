@@ -164,10 +164,7 @@ export const vendorRouter = createTRPCRouter({
     })
 
     if (!vendor) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Vendor not found",
-      })
+      throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
     }
 
     return vendor

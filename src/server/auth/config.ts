@@ -6,13 +6,20 @@ import Resend from "next-auth/providers/resend"
 import { env } from "@/env"
 import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { db } from "@/server/db"
-import { accounts, sessions, users, verificationTokens } from "@/server/db/schema"
+import { accounts, sessions, users, vendors, verificationTokens } from "@/server/db/schema"
 import type { themeEnumType, UserRoleType, Users } from "@/server/db/schema"
 import type { AdapterUser } from "@auth/core/adapters"
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: { id: string; phone: string; theme: themeEnumType } & DefaultSession["user"]
+    user: {
+      id: string
+      phone: string
+      theme: themeEnumType
+      hasVendor: boolean
+      vendorId?: string
+      vendorStatus?: string
+    } & DefaultSession["user"]
   }
   interface User extends AdapterUser {
     role: UserRoleType
@@ -140,9 +147,24 @@ export const authConfig = {
         blurImage = await getBlurPlaceholder(user.image)
       }
 
+      const vendor = await db.query.vendors.findFirst({
+        where: eq(vendors.addedById, user.id),
+      })
+      // const vendor = await ctx.db.query.vendors.findFirst({
+      //   where: (vendors, { eq }) => eq(vendors.addedById, input.userId),
+      // })
+
       return {
         ...session,
-        user: { ...session.user, id: user.id, role: user.role, blurImageDataURL: blurImage },
+        user: {
+          ...session.user,
+          id: user.id,
+          role: user.role,
+          blurImageDataURL: blurImage,
+          hasVendor: !!vendor,
+          vendorId: vendor?.id,
+          vendorStatus: vendor?.status,
+        },
       }
     },
   },
