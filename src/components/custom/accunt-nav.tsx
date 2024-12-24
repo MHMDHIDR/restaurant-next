@@ -2,7 +2,6 @@
 
 import { IconHome, IconPackage, IconSettings, IconUser } from "@tabler/icons-react"
 import clsx from "clsx"
-import { Loader2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignoutButton } from "@/components/custom/signout-button"
@@ -21,8 +20,7 @@ import {
 import { checkRoleAccess } from "@/lib/check-role-access"
 import { fallbackUsername, truncateUsername } from "@/lib/fallback-username"
 import { cn } from "@/lib/utils"
-import { UserRole, Vendors } from "@/server/db/schema"
-import { api } from "@/trpc/react"
+import { UserRole } from "@/server/db/schema"
 import type { Session } from "next-auth"
 
 export default function AccountNav({ user }: { user: Session["user"] }) {
