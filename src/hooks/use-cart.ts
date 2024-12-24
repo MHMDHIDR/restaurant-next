@@ -15,7 +15,7 @@ type CartItem = {
 type CartStore = {
   items: CartItem[]
   addItem: (item: CartItem) => void
-  removeItem: (itemId: string) => void
+  removeItem: (itemId: string, selectedAddons?: string[]) => void
   updateQuantity: (itemId: string, quantity: number) => void
   clearCart: () => void
   total: number
@@ -52,11 +52,22 @@ export const useCart = create<CartStore>()(
           })
         }
       },
-      removeItem: itemId => {
+      removeItem: (itemId, selectedAddons) => {
         const currentItems = get().items
-        const itemToRemove = currentItems.find(item => item.id === itemId)
+        const itemToRemove = currentItems.find(
+          item =>
+            item.id === itemId &&
+            JSON.stringify(item.selectedAddons) === JSON.stringify(selectedAddons),
+        )
+
         if (itemToRemove) {
-          const remainingItems = currentItems.filter(item => item.id !== itemId)
+          const remainingItems = currentItems.filter(
+            item =>
+              !(
+                item.id === itemId &&
+                JSON.stringify(item.selectedAddons) === JSON.stringify(selectedAddons)
+              ),
+          )
           set({
             items: remainingItems,
             total:

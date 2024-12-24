@@ -1,12 +1,13 @@
 "use client"
 
+import { Trash2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useCart } from "@/hooks/use-cart"
-import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
+import { DEFAULT_CURRENCY_SYMBOL, DELIVERY_FEE } from "@/lib/constants"
 
 export default function CartPage() {
   const router = useRouter()
@@ -29,11 +30,14 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 text-2xl font-bold">Your Cart</h1>
-      <div className="grid gap-8 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2">
           {items.map(item => (
-            <Card key={`${item.id}-${item.selectedAddons?.join("-")}`} className="mb-4">
-              <CardContent className="flex items-center gap-4 p-4">
+            <Card
+              key={`${item.id}-${item.selectedAddons?.join("-")}`}
+              className="mb-4 shadow-none hover:shadow-sm"
+            >
+              <CardContent className="flex items-center gap-2.5 p-2.5">
                 <div className="relative h-24 w-24 flex-shrink-0">
                   <Image
                     src={item.image}
@@ -49,12 +53,15 @@ export default function CartPage() {
                     {item.price.toFixed(2)}
                   </p>
                   {item.selectedAddons && item.selectedAddons.length > 0 && (
-                    <p className="text-sm text-muted-foreground">
-                      Add-ons: {item.selectedAddons.join(", ")}
-                    </p>
+                    <ol className="text-sm text-muted-foreground">
+                      {item.selectedAddons.length > 1 ? "Add-ons:" : "Add-on:"}
+                      {item.selectedAddons.map(addon => (
+                        <li key={addon}>{addon}</li>
+                      ))}
+                    </ol>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <Button
                     variant="outline"
                     size="sm"
@@ -72,15 +79,20 @@ export default function CartPage() {
                     +
                   </Button>
                 </div>
-                <Button variant="destructive" size="sm" onClick={() => removeItem(item.id)}>
-                  Remove
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => removeItem(item.id, item.selectedAddons)}
+                >
+                  <span className="sr-only">Remove</span>
+                  <Trash2 size={16} />
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
         <div className="md:col-span-1">
-          <Card>
+          <Card className="shadow-none">
             <CardContent className="p-4">
               <h3 className="mb-4 text-lg font-semibold">Order Summary</h3>
               <div className="mb-4 flex justify-between">
@@ -94,7 +106,7 @@ export default function CartPage() {
                 <span>Delivery Fee</span>
                 <span>
                   {DEFAULT_CURRENCY_SYMBOL}
-                  {5.0}
+                  {DELIVERY_FEE}
                 </span>
               </div>
               <div className="mb-4 border-t pt-4">
