@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
+import { Checkbox } from "./ui/checkbox"
 import type { MenuItems, Vendors } from "@/server/db/schema"
 
 interface MenuSectionProps {
@@ -61,18 +62,18 @@ export function MenuSection({ vendor, menuItems }: MenuSectionProps) {
                   <p className="mb-2 text-sm font-medium">Add-ons:</p>
                   {item.addons.map(addon => (
                     <label key={addon.toppingName} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        onChange={e => {
+                      <Checkbox
+                        id="addon-checkbox"
+                        checked={selectedAddons[item.id]?.includes(addon.toppingName)}
+                        onCheckedChange={e => {
                           const current = selectedAddons[item.id] ?? []
                           setSelectedAddons({
                             ...selectedAddons,
-                            [item.id]: e.target.checked
+                            [item.id]: e.valueOf()
                               ? [...current, addon.toppingName]
                               : current.filter(name => name !== addon.toppingName),
                           })
                         }}
-                        checked={selectedAddons[item.id]?.includes(addon.toppingName)}
                       />
                       <span className="text-sm">
                         {addon.toppingName} (+{DEFAULT_CURRENCY_SYMBOL}
