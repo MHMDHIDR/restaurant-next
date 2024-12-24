@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-interface CartItem {
+type CartItem = {
   id: string
   name: string
   price: number
@@ -12,7 +12,7 @@ interface CartItem {
   selectedAddons?: string[]
 }
 
-interface CartStore {
+type CartStore = {
   items: CartItem[]
   addItem: (item: CartItem) => void
   removeItem: (itemId: string) => void
@@ -35,11 +35,12 @@ export const useCart = create<CartStore>()(
         )
 
         if (existingItem) {
+          if ((existingItem.quantity ?? 1) >= 100) return
           set({
             items: currentItems.map(i =>
               i.id === item.id &&
               JSON.stringify(i.selectedAddons) === JSON.stringify(item.selectedAddons)
-                ? { ...i, quantity: (i.quantity ?? 1) + 1 }
+                ? { ...i, quantity: Math.min((i.quantity ?? 1) + 1, 100) }
                 : i,
             ),
             total: get().total + item.price,
@@ -53,22 +54,29 @@ export const useCart = create<CartStore>()(
       },
       removeItem: itemId => {
         const currentItems = get().items
-        const itemToRemove = currentItems.find(i => i.id === itemId)
+        const itemToRemove = currentItems.find(item => item.id === itemId)
         if (itemToRemove) {
+          const remainingItems = currentItems.filter(item => item.id !== itemId)
           set({
-            items: currentItems.filter(i => i.id !== itemId),
-            total: get().total - itemToRemove.price * (itemToRemove.quantity ?? 1),
+            items: remainingItems,
+            total:
+              remainingItems.length === 0
+                ? 0
+                : get().total - itemToRemove.price * (itemToRemove.quantity ?? 1),
           })
         }
       },
       updateQuantity: (itemId, quantity) => {
+        const limitedQuantity = Math.min(quantity, 100)
         const currentItems = get().items
         const item = currentItems.find(i => i.id === itemId)
         if (item) {
           const oldTotal = item.price * (item.quantity ?? 1)
-          const newTotal = item.price * quantity
+          const newTotal = item.price * limitedQuantity
           set({
-            items: currentItems.map(i => (i.id === itemId ? { ...i, quantity } : i)),
+            items: currentItems.map(i =>
+              i.id === itemId ? { ...i, quantity: limitedQuantity } : i,
+            ),
             total: get().total - oldTotal + newTotal,
           })
         }

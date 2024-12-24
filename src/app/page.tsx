@@ -4,13 +4,8 @@ import { RestaurantCard } from "@/components/restaurant-card"
 import { api } from "@/trpc/server"
 
 export default async function Home() {
-  // Fetch featured restaurants (active vendors)
-  const { items: vendors } = await api.vendor.getAll({
-    status: "ACTIVE",
-    limit: 6, // Limit to 6 featured restaurants
-  })
+  const { items: vendors } = await api.vendor.getAll({ status: "ACTIVE", limit: 6 })
 
-  // For each vendor, fetch their menu items
   const vendorsWithMenus = await Promise.all(
     vendors.map(async vendor => {
       const menuItems = await api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id })

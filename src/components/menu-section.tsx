@@ -45,7 +45,7 @@ export function MenuSection({ vendor, menuItems }: MenuSectionProps) {
       <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
       <div className="grid gap-6 md:grid-cols-3">
         {menuItems.map(item => (
-          <Card key={item.id} className="overflow-clip">
+          <Card key={item.id} className="overflow-clip h-full flex flex-col select-none">
             <div className="relative h-48 w-full">
               <Image src={item.image} alt={item.name} fill className="object-cover" />
             </div>
@@ -56,7 +56,7 @@ export function MenuSection({ vendor, menuItems }: MenuSectionProps) {
                 {Number(item.price).toFixed(2)}
               </p>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 pt-0 flex flex-col flex-1">
               {item.addons && item.addons.length > 0 && (
                 <div className="mb-4">
                   <p className="mb-2 text-sm font-medium">Add-ons:</p>
@@ -83,7 +83,7 @@ export function MenuSection({ vendor, menuItems }: MenuSectionProps) {
                   ))}
                 </div>
               )}
-              <Button onClick={() => handleAddToCart(item)} className="w-full">
+              <Button onClick={() => handleAddToCart(item)} className="w-full mt-auto">
                 Add to Cart
               </Button>
             </CardContent>

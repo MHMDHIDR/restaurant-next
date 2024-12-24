@@ -3,11 +3,7 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import type { Vendors } from "@/server/db/schema"
 
-interface RestaurantCardProps {
-  vendor: Vendors
-}
-
-export function RestaurantCard({ vendor }: RestaurantCardProps) {
+export function RestaurantCard({ vendor }: { vendor: Vendors }) {
   return (
     <Link href={`/restaurants/${vendor.id}`}>
       <Card className="overflow-hidden transition-shadow hover:shadow-lg">

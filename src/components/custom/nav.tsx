@@ -38,7 +38,7 @@ export default function Nav({
             <Link href="/cart">
               <Button variant="outline" size="sm" className="relative">
                 <IconShoppingCart className="h-5 w-5" />
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-white">
+                <span className="absolute -right-2 -top-2 flex h-5 min-w-5 w-fit px-1 items-center justify-center rounded-full bg-primary text-xs text-white">
                   {itemCount}
                 </span>
               </Button>
