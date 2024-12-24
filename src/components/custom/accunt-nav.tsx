@@ -64,7 +64,8 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
               <Avatar user={user} />
             </SheetTitle>
             <SheetDescription className="font-semibold truncate select-none">
-              Welcome, {truncateUsername(user.name)}
+              <span className="hidden md:inline-flex mr-1">Welcome, </span>
+              {truncateUsername(user.name, 2, 20)}
             </SheetDescription>
           </div>
 

@@ -154,7 +154,7 @@ export function VendorApplicationForm({
     onSuccess: async data => {
       if (!data) return
       toast.success("Vendor application submitted successfully!")
-      router.push("/account")
+
       router.refresh()
     },
     onError: error => {

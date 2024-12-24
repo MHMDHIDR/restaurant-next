@@ -50,6 +50,7 @@ export const vendorRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const existingVendor = await ctx.db.query.vendors.findFirst({
         where: (vendors, { eq }) => eq(vendors.email, input.email),
+        with: { assignedUser: true },
       })
 
       if (!existingVendor) {
@@ -66,6 +67,7 @@ export const vendorRouter = createTRPCRouter({
         await RESEND.emails.send({
           from: env.ADMIN_EMAIL,
           to: existingVendor.email,
+          cc: existingVendor.assignedUser.email,
           subject: "Congratulations! Your Vendor has been Approved",
           html: `<p>To Start setting up your restaurant by creating categories, adding menu items, and sell, please <a href="${confirmLink}" style="${btnStyles}">Visit Here</a> to login to your account</p><br /><br /><p>Thank you for choosing us!</p>`,
         })
@@ -73,6 +75,7 @@ export const vendorRouter = createTRPCRouter({
         await RESEND.emails.send({
           from: env.ADMIN_EMAIL,
           to: existingVendor.email,
+          cc: existingVendor.assignedUser.email,
           subject: "Your Vendor has been Deactivated",
           html: `<p>Your Vendor has been deactivated. Please contact the admin for more information</p>`,
         })
@@ -80,6 +83,7 @@ export const vendorRouter = createTRPCRouter({
         await RESEND.emails.send({
           from: env.ADMIN_EMAIL,
           to: existingVendor.email,
+          cc: existingVendor.assignedUser.email,
           subject: "Your Vendor has been Suspended",
           html: `<p>Your Vendor has been suspended. Please contact the admin for more information</p>`,
         })
@@ -87,6 +91,7 @@ export const vendorRouter = createTRPCRouter({
         await RESEND.emails.send({
           from: env.ADMIN_EMAIL,
           to: existingVendor.email,
+          cc: existingVendor.assignedUser.email,
           subject: "Your Vendor has been Deleted",
           html: `<p>Your Vendor has been deleted. Please contact the admin for more information</p>`,
         })
