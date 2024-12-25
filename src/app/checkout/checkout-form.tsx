@@ -79,7 +79,7 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
       setPredictions(predictions ?? [])
     }
     if (input.length > 2) {
-      fetchPredictions()
+      void fetchPredictions()
     }
   }, [input])
 
