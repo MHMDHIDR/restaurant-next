@@ -8,7 +8,7 @@ type CartItem = {
   image: string
   vendorId: string
   vendorName: string
-  quantity?: number
+  quantity: number
   selectedAddons?: string[]
 }
 

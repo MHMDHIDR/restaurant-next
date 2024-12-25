@@ -35,6 +35,7 @@ export function MenuSection({ vendor, menuItems }: MenuSectionProps) {
       vendorId: vendor.id,
       vendorName: vendor.name,
       selectedAddons: itemAddons,
+      quantity: 1,
     })
 
     toast.success(`${item.name} has been added to your cart.`)

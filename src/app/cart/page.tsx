@@ -119,7 +119,7 @@ export default function CartPage() {
                 </div>
               </div>
               <Button className="w-full" onClick={() => router.push("/checkout")}>
-                Proceed to Checkout
+                Checkout
               </Button>
             </CardContent>
           </Card>

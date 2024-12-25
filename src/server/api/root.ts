@@ -4,6 +4,7 @@ import { optimizeImageRouter } from "@/server/api/routers/optimize-image"
 import { usersRouter } from "@/server/api/routers/users"
 import { vendorRouter } from "@/server/api/routers/vendor"
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc"
+import { orderRouter } from "./routers/order"
 import { S3Router } from "./routers/s3"
 
 /**
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   users: usersRouter,
   optimizeImage: optimizeImageRouter,
   S3: S3Router,
+  order: orderRouter,
 })
 
 // export type definition of API
