@@ -1,6 +1,6 @@
 "use client"
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { useCallback, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MenuItemsTable } from "./(items)/menu-items-table"
@@ -15,7 +15,6 @@ interface MenuItemsContentProps {
 
 export function MenuItemsContent({ vendor, categories, menuItems }: MenuItemsContentProps) {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const pathname = usePathname()
 
   const view = searchParams.get("view") ?? "items"
@@ -24,9 +23,9 @@ export function MenuItemsContent({ vendor, categories, menuItems }: MenuItemsCon
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString())
       params.set("view", value)
-      router.push(`${pathname}?${params.toString()}`, { scroll: false })
+      window.history.pushState(null, "", `?${params.toString()}`)
     },
-    [searchParams, pathname, router],
+    [searchParams, pathname],
   )
 
   // Sync URL with tab view
