@@ -1,6 +1,5 @@
 "use client"
 
-import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -27,10 +26,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { env } from "@/env"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
-import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
 import { autocomplete } from "@/lib/google"
 import { api } from "@/trpc/react"
 import type { Session } from "next-auth"
@@ -50,7 +47,7 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
   const toast = useToast()
   const { items, clearCart } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
-  const [predictions, setPredictions] = useState<PlaceAutocompleteResult[]>([])
+  const [predictions, setPredictions] = useState<{ description: string; place_id: string }[]>([])
   const [input, setInput] = useState("")
 
   const form = useForm<CheckoutFormValues>({

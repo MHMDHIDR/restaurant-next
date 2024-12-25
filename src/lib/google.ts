@@ -2,7 +2,15 @@
 
 import { env } from "@/env"
 
-export const autocomplete = async (input: string) => {
+type fetchResponseType = {
+  status: string
+  predictions: { description: string; place_id: string }[]
+  error_message?: string
+}
+
+export const autocomplete = async (
+  input: string,
+): Promise<{ description: string; place_id: string }[]> => {
   if (!input) return []
 
   try {
@@ -12,7 +20,7 @@ export const autocomplete = async (input: string) => {
       )}&types=address&key=${env.GOOGLE_API_KEY}`,
     )
 
-    const data = await response.json()
+    const data: fetchResponseType = await response.json()
 
     if (data.status === "OK") {
       return data.predictions
