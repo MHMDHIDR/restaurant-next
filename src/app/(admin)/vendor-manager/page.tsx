@@ -12,27 +12,28 @@ export default async function DashboardPage() {
   }
 
   // Fetch menu items and categories
-  const [menuItems, categories] = await Promise.all([
+  const [{ menuItemsCount }, { menuCategoriesCount }, { count: ordersCount }] = await Promise.all([
     api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
     api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
+    api.order.getOrdersByVendorId({ vendorId: vendor.id }),
   ])
 
   const stats = [
     {
       title: "Menu Items",
-      value: menuItems.length,
+      value: menuItemsCount,
       icon: Utensils,
       href: "/vendor-manager/menu-items?view=items",
     },
     {
       title: "Orders",
-      value: 0, // TODO: Implement orders count
+      value: ordersCount,
       icon: ShoppingBag,
       href: "/vendor-manager/orders",
     },
     {
       title: "Categories",
-      value: categories.length,
+      value: menuCategoriesCount,
       icon: List,
       href: "/vendor-manager/categories?view=categories",
     },

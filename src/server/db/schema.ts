@@ -180,6 +180,7 @@ export const orders = createTable("order", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
+export type Orders = typeof orders.$inferSelect
 
 export const orderItems = createTable("order_item", {
   id: varchar("id", { length: 255 })
@@ -307,5 +308,16 @@ export const menuItemsRelations = relations(menuItems, ({ one }) => ({
   category: one(menuCategories, {
     fields: [menuItems.categoryId],
     references: [menuCategories.id],
+  }),
+}))
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  menuItem: one(menuItems, {
+    fields: [orderItems.menuItemId],
+    references: [menuItems.id],
   }),
 }))

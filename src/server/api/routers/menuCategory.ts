@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { menuCategorySchema, updateCategorySchema } from "@/app/schemas/menuCategory"
@@ -110,9 +110,16 @@ export const menuCategoryRouter = createTRPCRouter({
   getCategoriesByVendorId: protectedProcedure
     .input(z.object({ vendorId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.query.menuCategories.findMany({
-        where: (categories, { eq }) => eq(categories.vendorId, input.vendorId),
-      })
+      const where = eq(menuCategories.vendorId, input.vendorId)
+      const [categories, [{ count = 0 } = { count: 0 }]] = await Promise.all([
+        ctx.db.query.menuCategories.findMany({ where }),
+        ctx.db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(menuCategories)
+          .where(where),
+      ])
+
+      return { menuCategories: categories, menuCategoriesCount: count }
     }),
 
   deleteCategoryWithImage: protectedProcedure

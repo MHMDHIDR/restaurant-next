@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { eq } from "drizzle-orm"
+import { eq, inArray, sql } from "drizzle-orm"
 import { z } from "zod"
 import { menuItemSchema } from "@/app/schemas/menuItem"
 import { createSlug } from "@/lib/create-slug"
@@ -77,13 +77,27 @@ export const menuItemRouter = createTRPCRouter({
       })
     }),
 
-  getMenuItemsByVendorId: publicProcedure
+  getMenuItemsByVendorId: protectedProcedure
     .input(z.object({ vendorId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const items = await ctx.db.query.menuItems.findMany({
-        with: { category: { columns: { vendorId: true } } },
+      // First get relevant category IDs for the vendor
+      const categories = await ctx.db.query.menuCategories.findMany({
+        where: (categories, { eq }) => eq(categories.vendorId, input.vendorId),
+        columns: { id: true },
       })
-      return items.filter(item => item.category.vendorId === input.vendorId)
+      const categoryIds = categories.map(cat => cat.id)
+
+      // Then get menu items for these categories
+      const items = await ctx.db.query.menuItems.findMany({
+        where: (items, { inArray }) => inArray(items.categoryId, categoryIds),
+      })
+
+      const [{ count: menuItemsCount = 0 } = { count: 0 }] = await ctx.db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(menuItems)
+        .where(inArray(menuItems.categoryId, categoryIds))
+
+      return { items, menuItemsCount }
     }),
 
   deleteMenuItem: protectedProcedure

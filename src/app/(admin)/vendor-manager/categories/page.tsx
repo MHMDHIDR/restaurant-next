@@ -9,7 +9,7 @@ export default async function ManageCategoriesPage() {
     return notFound()
   }
 
-  const categories = await api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id })
+  const { menuCategories } = await api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id })
 
-  return <CategoriesContent vendor={vendor} categories={categories} />
+  return <CategoriesContent vendor={vendor} categories={menuCategories} />
 }

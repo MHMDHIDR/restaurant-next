@@ -6,6 +6,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import AccountNav from "@/components/custom/accunt-nav"
 import { Logo } from "@/components/custom/icons"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/hooks/use-cart"
 import type { Session } from "next-auth"
@@ -38,9 +39,9 @@ export default function Nav({
             <Link href="/cart">
               <Button variant="outline" size="sm" className="relative">
                 <IconShoppingCart className="h-5 w-5" />
-                <span className="absolute -right-2 -top-2 flex h-5 min-w-5 w-fit px-1 items-center justify-center rounded-full bg-primary text-xs text-white">
+                <Badge className="absolute -right-2 -top-2 flex h-5 min-w-5 w-fit px-1 items-center justify-center rounded-full bg-primary text-xs text-white">
                   {itemCount}
-                </span>
+                </Badge>
               </Button>
             </Link>
           )}

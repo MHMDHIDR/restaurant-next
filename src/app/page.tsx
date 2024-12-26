@@ -9,7 +9,7 @@ export default async function Home() {
   const vendorsWithMenus = await Promise.all(
     vendors.map(async vendor => {
       const menuItems = await api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id })
-      return { ...vendor, menuItems }
+      return { ...vendor, menuItems: menuItems.items }
     }),
   )
 
