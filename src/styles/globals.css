@@ -192,4 +192,19 @@
       stroke-dashoffset: -2px;
     }
   }
+
+  @keyframes slide {
+    0% {
+      left: -100px;
+    }
+    30% {
+      left: calc(50% - 64px);
+    }
+    70% {
+      left: calc(50% - 64px);
+    }
+    100% {
+      left: 100%;
+    }
+  }
 }

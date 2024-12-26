@@ -19,6 +19,8 @@ type CartStore = {
   updateQuantity: (itemId: string, quantity: number) => void
   clearCart: () => void
   total: number
+  isLoading: boolean
+  setIsLoading: (loading: boolean) => void
 }
 
 export const useCart = create<CartStore>()(
@@ -26,6 +28,8 @@ export const useCart = create<CartStore>()(
     (set, get) => ({
       items: [],
       total: 0,
+      isLoading: true,
+      setIsLoading: (loading: boolean) => set({ isLoading: loading }),
       addItem: item => {
         const currentItems = get().items
         const existingItem = currentItems.find(
@@ -96,6 +100,9 @@ export const useCart = create<CartStore>()(
     }),
     {
       name: "shopping-cart",
+      onRehydrateStorage: () => state => {
+        state?.setIsLoading(false)
+      },
     },
   ),
 )

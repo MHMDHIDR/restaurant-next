@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { LoadingPage } from "@/components/custom/loading"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useCart } from "@/hooks/use-cart"
@@ -11,23 +12,21 @@ import { DEFAULT_CURRENCY_SYMBOL, DELIVERY_FEE } from "@/lib/constants"
 
 export default function CartPage() {
   const router = useRouter()
-  const { items, total, updateQuantity, removeItem } = useCart()
+  const { items, total, updateQuantity, removeItem, isLoading } = useCart()
 
-  if (items.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-2xl font-bold">Your Cart</h1>
-        <div className="text-center">
-          <p className="mb-4 text-gray-600">Your cart is empty</p>
-          <Link href="/">
-            <Button>Continue Shopping</Button>
-          </Link>
-        </div>
+  return isLoading ? (
+    <LoadingPage />
+  ) : items.length === 0 ? (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="mb-8 text-2xl font-bold">Your Cart</h1>
+      <div className="text-center">
+        <p className="mb-4 text-gray-600">Your cart is empty</p>
+        <Link href="/">
+          <Button>Continue Shopping</Button>
+        </Link>
       </div>
-    )
-  }
-
-  return (
+    </div>
+  ) : (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 text-2xl font-bold">Your Cart</h1>
       <div className="grid gap-6 md:grid-cols-3">

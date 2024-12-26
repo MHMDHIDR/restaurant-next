@@ -4,10 +4,10 @@ import Image from "next/image"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
-import { Checkbox } from "./ui/checkbox"
 import type { MenuItems, Vendors } from "@/server/db/schema"
 
 interface MenuSectionProps {

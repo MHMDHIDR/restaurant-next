@@ -1,6 +1,6 @@
 import { IconMapPin, IconSearch } from "@tabler/icons-react"
-import { MenuSection } from "@/components/menu-section"
-import { RestaurantCard } from "@/components/restaurant-card"
+import { MenuSection } from "@/components/custom/menu-section"
+import { RestaurantCard } from "@/components/custom/restaurant-card"
 import { api } from "@/trpc/server"
 
 export default async function Home() {

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { LoadingPage } from "@/components/custom/loading"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import CardDetails from "@/components/ui/card-details"
@@ -124,12 +125,15 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
     }
   }
 
-  if (items.length === 0) {
-    router.push("/cart")
-    return null
-  }
+  useEffect(() => {
+    if (items.length === 0) {
+      router.push("/cart")
+    }
+  }, [items, router])
 
-  return (
+  return items.length === 0 ? (
+    <LoadingPage />
+  ) : (
     <div className="grid gap-8 md:grid-cols-3">
       <div className="md:col-span-2">
         <Card>
@@ -197,7 +201,6 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
                               <CommandGroup heading="Suggestions">
                                 {predictions.map(prediction => (
                                   <CommandItem
-                                    key={prediction.place_id}
                                     onSelect={() => {
                                       field.onChange(prediction.description)
                                       setInput(prediction.description)
@@ -243,8 +246,6 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
           </CardContent>
         </Card>
       </div>
-
-      {/* Order Summary Card - Same as before */}
     </div>
   )
 }
