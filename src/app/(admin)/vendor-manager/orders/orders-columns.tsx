@@ -23,7 +23,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const status = row.getValue("status") as string
+      const status = row.original.status
       return (
         <Badge
           variant={

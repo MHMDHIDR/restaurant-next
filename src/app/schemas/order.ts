@@ -10,4 +10,12 @@ export const orderStatusSchema = z.enum([
   "CANCELLED",
 ])
 
+export const orderItemSchema = z.object({
+  menuItemId: z.string(),
+  quantity: z.number(),
+  unitPrice: z.number(),
+  totalPrice: z.number(),
+  specialInstructions: z.string(),
+})
+
 export type OrderStatus = z.infer<typeof orderStatusSchema>

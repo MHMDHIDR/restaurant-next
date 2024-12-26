@@ -37,10 +37,10 @@ interface MenuItemEditProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   menuItem: MenuItems
-  categories: MenuCategories[] | undefined
+  menuCategories: MenuCategories[]
 }
 
-export function MenuItemEdit({ open, onOpenChange, menuItem, categories }: MenuItemEditProps) {
+export function MenuItemEdit({ open, onOpenChange, menuItem, menuCategories }: MenuItemEditProps) {
   const toast = useToast()
   const router = useRouter()
   const [files, setFiles] = useState<Array<File>>([])
@@ -199,8 +199,8 @@ export function MenuItemEdit({ open, onOpenChange, menuItem, categories }: MenuI
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories ? (
-                        categories.map(category => (
+                      {menuCategories ? (
+                        menuCategories.map(category => (
                           <SelectItem key={category.id} value={category.id}>
                             {category.name}
                           </SelectItem>
