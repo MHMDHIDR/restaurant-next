@@ -27,7 +27,7 @@ export default function Sigin() {
       </CardHeader>
       <CardContent>
         <Button
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", { callbackUrl })}
           className="w-full text-white bg-blue-500 hover:bg-blue-600"
         >
           <IconBrandGoogle className="inline-block w-6 h-6 mx-1" />
