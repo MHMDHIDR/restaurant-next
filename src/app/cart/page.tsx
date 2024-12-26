@@ -38,12 +38,14 @@ export default function CartPage() {
               className="mb-4 shadow-none hover:shadow-sm"
             >
               <CardContent className="flex items-center gap-2.5 p-2.5">
-                <div className="relative h-24 w-24 flex-shrink-0">
+                <div className="relative h-20 w-20 flex-shrink-0">
                   <Image
                     src={item.image}
                     alt={item.name}
-                    fill
                     className="rounded-md object-cover"
+                    width={80}
+                    height={80}
+                    priority
                   />
                 </div>
                 <div className="flex-grow">

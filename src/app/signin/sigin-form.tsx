@@ -3,6 +3,7 @@
 import { IconBrandGoogle, IconLoader, IconMail } from "@tabler/icons-react"
 import clsx from "clsx"
 import { signIn } from "next-auth/react"
+import { useSearchParams } from "next/navigation"
 import { useActionState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
@@ -12,9 +13,11 @@ import { Label } from "@/components/ui/label"
 import { handleSignin } from "./actions/handle-signin"
 
 export default function Sigin() {
+  const callbackUrl = useSearchParams().get("callbackUrl") ?? "/"
   const [state, handleSigninAction, isPending] = useActionState(handleSignin, {
     message: undefined,
     success: true,
+    callbackUrl,
   })
 
   return (

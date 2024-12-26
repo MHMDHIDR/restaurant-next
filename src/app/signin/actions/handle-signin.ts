@@ -6,9 +6,10 @@ import { signIn } from "@/server/auth"
 type SignInType = {
   message?: string | string[]
   success?: boolean
+  callbackUrl?: string
 }
 
-export async function handleSignin(_: SignInType, formData: FormData): Promise<SignInType> {
+export async function handleSignin(state: SignInType, formData: FormData): Promise<SignInType> {
   const validatedFields = signInSchema.safeParse({
     email: formData.get("email"),
   })
@@ -22,7 +23,7 @@ export async function handleSignin(_: SignInType, formData: FormData): Promise<S
   const { email } = validatedFields.data
 
   try {
-    await signIn("resend", { email, redirect: false, redirectTo: "/" })
+    await signIn("resend", { email, redirect: false, redirectTo: state.callbackUrl })
 
     return { success: true, message: "Check Your Email for a Sign in link." }
   } catch (error) {
