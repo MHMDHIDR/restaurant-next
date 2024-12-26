@@ -1,7 +1,10 @@
 "use server"
 
+import { eq } from "drizzle-orm"
 import { signInSchema } from "@/app/schemas/auth"
 import { signIn } from "@/server/auth"
+import { db } from "@/server/db"
+import { users } from "@/server/db/schema"
 
 type SignInType = {
   message?: string | string[]
@@ -23,7 +26,14 @@ export async function handleSignin(state: SignInType, formData: FormData): Promi
   const { email } = validatedFields.data
 
   try {
-    await signIn("resend", { email, redirect: false, redirectTo: state.callbackUrl })
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    })
+
+    const redirectTo =
+      user?.role === "VENDOR_ADMIN" ? "/vendor-manager" : (state.callbackUrl ?? "/")
+
+    await signIn("resend", { email, redirect: false, redirectTo })
 
     return { success: true, message: "Check Your Email for a Sign in link." }
   } catch (error) {

@@ -47,8 +47,14 @@ export function MenuSection({ vendor, menuItems }: MenuSectionProps) {
       <div className="grid gap-6 md:grid-cols-3">
         {menuItems.map(item => (
           <Card key={item.id} className="overflow-clip h-full flex flex-col select-none">
-            <div className="relative h-48 w-full">
-              <Image src={item.image} alt={item.name} fill className="object-cover" />
+            <div className="relative h-48 max-h-48 w-full overflow-y-clip">
+              <Image
+                src={item.image}
+                alt={item.name}
+                width={300}
+                height={192}
+                className="w-full object-cover aspect-square"
+              />
             </div>
             <CardHeader>
               <h4 className="font-semibold">{item.name}</h4>

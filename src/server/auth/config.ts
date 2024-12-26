@@ -150,9 +150,6 @@ export const authConfig = {
       const vendor = await db.query.vendors.findFirst({
         where: eq(vendors.addedById, user.id),
       })
-      // const vendor = await ctx.db.query.vendors.findFirst({
-      //   where: (vendors, { eq }) => eq(vendors.addedById, input.userId),
-      // })
 
       return {
         ...session,

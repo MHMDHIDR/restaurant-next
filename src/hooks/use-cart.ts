@@ -23,11 +23,15 @@ type CartStore = {
   setIsLoading: (loading: boolean) => void
 }
 
+// Add helper to get initial cart state from localStorage
+const getInitialState = () => {
+  return { items: [], total: 0 }
+}
+
 export const useCart = create<CartStore>()(
   persist(
     (set, get) => ({
-      items: [],
-      total: 0,
+      ...getInitialState(),
       isLoading: true,
       setIsLoading: (loading: boolean) => set({ isLoading: loading }),
       addItem: item => {
@@ -38,23 +42,22 @@ export const useCart = create<CartStore>()(
             JSON.stringify(i.selectedAddons) === JSON.stringify(item.selectedAddons),
         )
 
-        if (existingItem) {
-          if ((existingItem.quantity ?? 1) >= 100) return
-          set({
-            items: currentItems.map(i =>
-              i.id === item.id &&
-              JSON.stringify(i.selectedAddons) === JSON.stringify(item.selectedAddons)
-                ? { ...i, quantity: Math.min((i.quantity ?? 1) + 1, 100) }
-                : i,
-            ),
-            total: get().total + item.price,
-          })
-        } else {
-          set({
-            items: [...currentItems, { ...item, quantity: 1 }],
-            total: get().total + item.price,
-          })
-        }
+        const newState = existingItem
+          ? {
+              items: currentItems.map(i =>
+                i.id === item.id &&
+                JSON.stringify(i.selectedAddons) === JSON.stringify(item.selectedAddons)
+                  ? { ...i, quantity: Math.min((i.quantity ?? 1) + 1, 100) }
+                  : i,
+              ),
+              total: get().total + item.price,
+            }
+          : {
+              items: [...currentItems, { ...item, quantity: 1 }],
+              total: get().total + item.price,
+            }
+
+        set(newState)
       },
       removeItem: (itemId, selectedAddons) => {
         const currentItems = get().items
@@ -96,7 +99,9 @@ export const useCart = create<CartStore>()(
           })
         }
       },
-      clearCart: () => set({ items: [], total: 0 }),
+      clearCart: () => {
+        set({ items: [], total: 0 })
+      },
     }),
     {
       name: "shopping-cart",

@@ -7,8 +7,14 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
   return (
     <Link href={`/restaurants/${vendor.id}`}>
       <Card className="overflow-hidden transition-shadow hover:shadow-lg">
-        <div className="relative h-48 w-full">
-          <Image src={vendor.coverImage} alt={vendor.name} fill className="object-cover" />
+        <div className="relative h-48 max-h-48 w-full overflow-y-clip">
+          <Image
+            src={vendor.coverImage}
+            alt={vendor.name}
+            width={300}
+            height={192}
+            className="w-full object-cover aspect-square"
+          />
         </div>
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -16,8 +22,9 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
               <Image
                 src={vendor.logo}
                 alt={`${vendor.name} logo`}
-                fill
-                className="rounded-full object-cover"
+                width={48}
+                height={48}
+                className="w-full rounded-full object-cover aspect-square"
               />
             </div>
             <div>
