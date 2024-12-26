@@ -201,6 +201,7 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
                               <CommandGroup heading="Suggestions">
                                 {predictions.map(prediction => (
                                   <CommandItem
+                                    key={prediction.place_id}
                                     onSelect={() => {
                                       field.onChange(prediction.description)
                                       setInput(prediction.description)

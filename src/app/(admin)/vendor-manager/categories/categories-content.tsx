@@ -1,7 +1,6 @@
 "use client"
 
-import { usePathname, useSearchParams } from "next/navigation"
-import { useRouter } from "next/router"
+import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CategoriesTable from "./(categories)/categories-table"
@@ -15,7 +14,6 @@ interface CategoriesContentProps {
 
 export default function CategoriesContent({ vendor, categories }: CategoriesContentProps) {
   const searchParams = useSearchParams()
-  const pathname = usePathname()
 
   const view = searchParams.get("view") ?? "categories"
 
@@ -25,7 +23,7 @@ export default function CategoriesContent({ vendor, categories }: CategoriesCont
       params.set("view", value)
       window.history.pushState(null, "", `?${params.toString()}`)
     },
-    [searchParams, pathname],
+    [searchParams],
   )
 
   // Sync URL with tab view
