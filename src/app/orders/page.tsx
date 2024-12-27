@@ -1,4 +1,3 @@
-import { desc, eq } from "drizzle-orm"
 import { redirect } from "next/navigation"
 import { auth } from "@/server/auth"
 import { api } from "@/trpc/server"
