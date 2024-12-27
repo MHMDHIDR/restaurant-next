@@ -61,21 +61,9 @@ export const orderRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const where = eq(orders.vendorId, input.vendorId)
       const withClause = {
-        user: {
-          columns: {
-            email: true,
-          },
-        },
-        orderItems: {
-          with: {
-            menuItem: {
-              columns: {
-                name: true,
-              },
-            },
-          },
-        },
-      } //as const
+        user: { columns: { email: true } },
+        orderItems: { with: { menuItem: { columns: { name: true, image: true } } } },
+      }
 
       const [vendorOrders, [{ count = 0 } = { count: 0 }]] = await Promise.all([
         ctx.db.query.orders.findMany({
@@ -95,8 +83,8 @@ export const orderRouter = createTRPCRouter({
   getOrdersByUserId: protectedProcedure.query(async ({ ctx }) => {
     const where = eq(orders.userId, ctx.session.user.id)
     const withClause = {
-      orderItems: { with: { menuItem: { columns: { name: true } } } },
-    } //as const
+      orderItems: { with: { menuItem: { columns: { name: true, image: true } } } },
+    }
 
     const [userOrders, [{ count = 0 } = { count: 0 }]] = await Promise.all([
       ctx.db.query.orders.findMany({

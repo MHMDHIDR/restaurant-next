@@ -192,7 +192,7 @@ export const notifications = createTable("notification", {
     .references(() => users.id),
   title: varchar("title", { length: 255 }).notNull(),
   message: text("message").notNull(),
-  type: varchar("type", { length: 50 }).notNull(), // 'ORDER_STATUS', 'SYSTEM', etc.
+  type: varchar("type", { length: 50 }).notNull(),
   isRead: boolean("is_read").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
@@ -214,6 +214,7 @@ export const orderItems = createTable("order_item", {
   totalPrice: decimal("total_price", { precision: 10, scale: 2 }).notNull(),
   specialInstructions: text("special_instructions"),
 })
+export type OrderItems = typeof orderItems.$inferSelect
 
 export const reviews = createTable("review", {
   id: varchar("id", { length: 255 })
