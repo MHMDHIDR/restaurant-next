@@ -74,8 +74,9 @@ export default function Notifications() {
               )}
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-medium">{notification.title}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {formatDate(new Date(notification.createdAt).toISOString())}
+                <p className="text-sm text-gray-500">{notification.message}</p>
+                <p className="text-sm text-gray-400 dark:text-gray-400">
+                  {formatDate(new Date(notification.createdAt).toISOString(), false, true)}
                 </p>
               </div>
             </div>

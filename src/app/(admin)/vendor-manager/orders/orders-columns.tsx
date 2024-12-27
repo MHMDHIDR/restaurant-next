@@ -39,7 +39,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
       }
 
       return (
-        <ul className="space-y-1.5 text-left">
+        <ul className="space-y-1.5 text-left min-w-80">
           {items.orderItems.map(item => (
             <li key={item.id} className="flex items-center gap-2">
               <Image

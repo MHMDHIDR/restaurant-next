@@ -11,7 +11,7 @@ export function formatDate(date: string, isNormalDate?: boolean, withTime = fals
       year: "numeric",
       month: "long",
       day: "numeric",
-      ...(withTime && { hour: "numeric", minute: "numeric" }),
+      ...(withTime && { hour: "numeric", minute: "numeric", hour12: true }),
     }
     return new Date(date).toLocaleDateString("en-US", dateOptions)
   }
@@ -21,65 +21,50 @@ export function formatDate(date: string, isNormalDate?: boolean, withTime = fals
   const diff = now - givenDate
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
+  const timeSuffix = withTime
+    ? ` at ${new Date(givenDate).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      })}`
+    : ""
+
   const weeks = Math.floor(days / 7)
   const months = Math.floor(days / 30)
   const years = Math.floor(days / 365)
 
   switch (true) {
     case days === 0:
-      return "Today"
+      return `Today${timeSuffix}`
 
     case days === 1:
-      return "Yesterday"
+      return `Yesterday${timeSuffix}`
 
     case days >= 2 && days <= 5:
-      return `${days} days ago`
+      return `${days} days ago${timeSuffix}`
 
     case days >= 6 && days <= 12:
-      return `${weeks} weeks ago`
+      return `${weeks} weeks ago${timeSuffix}`
 
     case days >= 13 && days <= 17:
-      return `${weeks} weeks ago`
+      return `${weeks} weeks ago${timeSuffix}`
 
     case weeks > 2 && weeks < 4:
-      return "3 weeks ago"
+      return `3 weeks ago${timeSuffix}`
 
     case days >= 25 && days <= 35:
-      return "1 month ago"
+      return `1 month ago${timeSuffix}`
 
     case months >= 2 && months <= 11:
-      return `${months} months ago`
+      return `${months} months ago${timeSuffix}`
 
     case years === 1:
-      return "1 year ago"
+      return `1 year ago${timeSuffix}`
 
     case years > 1:
-      return `${years} years ago`
+      return `${years} years ago${timeSuffix}`
 
     default:
-      return `${days} days ago`
+      return `${days} days ago${timeSuffix}`
   }
-}
-
-/**
- * Get a formatted date string for the current date or a specified number of days ago.
- * @param sub Number of days to subtract from the current date (optional, default is 0)
- * @returns Formatted date string in 'dd/MM/yyyy' format
- */
-export function getDate(sub = 0): string {
-  const date = new Date()
-  date.setDate(date.getDate() - sub)
-  return formatDateToString(date)
-}
-
-/**
- * Format a Date object to a string in 'dd/MM/yyyy' format
- * @param date Date object to format
- * @returns Formatted date string
- */
-function formatDateToString(date: Date): string {
-  const day = String(date.getDate()).padStart(2, "0")
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const year = date.getFullYear()
-  return `${day}/${month}/${year}`
 }
