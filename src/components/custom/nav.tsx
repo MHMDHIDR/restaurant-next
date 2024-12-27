@@ -9,6 +9,7 @@ import { Logo } from "@/components/custom/icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/hooks/use-cart"
+import Notifications from "./notifications"
 import type { Session } from "next-auth"
 
 export default function Nav({
@@ -46,7 +47,10 @@ export default function Nav({
             </Link>
           )}
           {user ? (
-            <AccountNav user={currentUser!} />
+            <>
+              <Notifications />
+              <AccountNav user={currentUser!} />
+            </>
           ) : (
             <Link href="/signin">
               <Button>Sign in</Button>

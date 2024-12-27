@@ -5,7 +5,7 @@ import { menuItemSchema } from "@/app/schemas/menuItem"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
 import { createCaller } from "@/server/api/root"
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { menuItems } from "@/server/db/schema"
 import type { MenuItems } from "@/server/db/schema"
 
@@ -77,7 +77,7 @@ export const menuItemRouter = createTRPCRouter({
       })
     }),
 
-  getMenuItemsByVendorId: protectedProcedure
+  getMenuItemsByVendorId: publicProcedure
     .input(z.object({ vendorId: z.string() }))
     .query(async ({ ctx, input }) => {
       // First get relevant category IDs for the vendor

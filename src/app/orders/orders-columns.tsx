@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button"
 import type { Orders } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
-export const ordersColumns: ColumnDef<Orders>[] = [
+export const customerOrdersColumns: ColumnDef<Orders>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Order Number
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -28,7 +28,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Status
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -53,7 +53,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Total
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -69,7 +69,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Order Time
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => {

@@ -182,6 +182,22 @@ export const orders = createTable("order", {
 })
 export type Orders = typeof orders.$inferSelect
 
+export const notifications = createTable("notification", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // 'ORDER_STATUS', 'SYSTEM', etc.
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+export type Notifications = typeof notifications.$inferSelect
+
 export const orderItems = createTable("order_item", {
   id: varchar("id", { length: 255 })
     .notNull()

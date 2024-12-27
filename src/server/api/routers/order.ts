@@ -5,7 +5,7 @@ import { z } from "zod"
 import { orderItemSchema, orderStatusSchema } from "@/app/schemas/order"
 import { env } from "@/env"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
-import { orderItems, orders } from "@/server/db/schema"
+import { notifications, orderItems, orders } from "@/server/db/schema"
 
 export const orderRouter = createTRPCRouter({
   create: protectedProcedure
@@ -92,6 +92,27 @@ export const orderRouter = createTRPCRouter({
       return { orders: vendorOrders, count }
     }),
 
+  getOrdersByUserId: protectedProcedure.query(async ({ ctx }) => {
+    const where = eq(orders.userId, ctx.session.user.id)
+    const withClause = {
+      orderItems: { with: { menuItem: { columns: { name: true } } } },
+    } //as const
+
+    const [userOrders, [{ count = 0 } = { count: 0 }]] = await Promise.all([
+      ctx.db.query.orders.findMany({
+        where,
+        with: withClause,
+        orderBy: [desc(orders.createdAt)],
+      }),
+      ctx.db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(orders)
+        .where(where),
+    ])
+
+    return { orders: userOrders, count }
+  }),
+
   deleteOrder: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -122,11 +143,21 @@ export const orderRouter = createTRPCRouter({
 
       await ctx.db.update(orders).set({ status: input.status }).where(eq(orders.id, input.id))
 
-      // Prepare email content
+      // Create notification
+      const notificationTitle = `Order ${input.status.toLowerCase().replace(/_/g, " ")}`
       const itemsList = order.orderItems
         .map(item => `${item.quantity}x ${item.menuItem.name}`)
         .join(", ")
 
+      await ctx.db.insert(notifications).values({
+        userId: order.user.id,
+        title: notificationTitle,
+        message: `Your order (${itemsList}) has been ${input.status.toLowerCase().replace(/_/g, " ")}`,
+        type: "ORDER_STATUS",
+        isRead: false,
+      })
+
+      // Prepare email content
       const RESEND = new Resend(env.AUTH_RESEND_KEY)
       let emailSubject = "Order Status Update"
       let emailContent = ""

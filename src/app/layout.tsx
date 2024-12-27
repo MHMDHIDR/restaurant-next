@@ -19,6 +19,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   return (
     <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
+      <head>
+        <meta content="width=device-width, initial-scale=1 maximum-scale=1" name="viewport" />
+        <link href="/logo.svg" rel="icon" type="image/svg+xml" />
+      </head>
       <body>
         <SessionProvider>
           <Providers>

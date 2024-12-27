@@ -51,10 +51,7 @@ export function OrdersContent({ orders }: OrdersContentProps) {
     setStatusDialogOpen(true)
   }
 
-  const ordersWithName = orders.map(order => ({
-    ...order,
-    name: `Order #${order.id}`,
-  }))
+  const ordersWithName = orders.map(order => ({ ...order, name: `Order #${order.id}` }))
 
   const columns = [
     ...ordersColumns,

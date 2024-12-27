@@ -2,6 +2,7 @@
 
 import { IconHome, IconPackage, IconSettings, IconUser } from "@tabler/icons-react"
 import clsx from "clsx"
+import { Package2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignoutButton } from "@/components/custom/signout-button"
@@ -27,6 +28,7 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
   const NAV_ITEMS = [
     { href: "/", icon: IconHome, label: "Home" },
     { href: "/account", icon: IconUser, label: "Account" },
+    { href: "/orders", icon: Package2, label: "Orders" },
     user.role === UserRole.SUPER_ADMIN && {
       href: "/dashboard",
       icon: IconSettings,
