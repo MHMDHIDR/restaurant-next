@@ -35,23 +35,17 @@ declare module "@auth/core/adapters" {
 
 export const authConfig = {
   providers: [
-    GoogleProvider({
-      allowDangerousEmailAccountLinking: true,
-    }),
+    GoogleProvider({ allowDangerousEmailAccountLinking: true }),
     Resend({ name: "Email", from: env.ADMIN_EMAIL }),
   ],
+  pages: { signIn: "/signin", error: "/signin" },
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
-  pages: {
-    signIn: "/signin",
-    error: "/signin",
-  },
   callbacks: {
-    // Modify the signIn callback to handle account linking and user updates
     async signIn({ user, account, profile }) {
       if (account?.provider === "google" && profile) {
         try {
@@ -166,38 +160,6 @@ export const authConfig = {
           vendorStatus: vendor?.status,
         },
       }
-    },
-  },
-  session: {
-    strategy: "database",
-    maxAge: 30 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60,
-  },
-  secret: env.AWS_SECRET,
-  trustHost: true,
-  events: {
-    async session(message) {
-      console.log("session", message)
-    },
-  },
-  cookies: {
-    sessionToken: {
-      name: `${process.env.NODE_ENV === "production" ? "__Secure-" : ""}next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        domain:
-          process.env.NODE_ENV === "production"
-            ? `.${new URL(env.NEXT_PUBLIC_APP_URL).hostname}`
-            : undefined,
-      },
-    },
-  },
-  logger: {
-    error(code, ...message) {
-      console.error(code, message)
     },
   },
 } satisfies NextAuthConfig
