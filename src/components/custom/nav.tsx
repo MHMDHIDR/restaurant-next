@@ -12,17 +12,11 @@ import { useCart } from "@/hooks/use-cart"
 import Notifications from "./notifications"
 import type { Session } from "next-auth"
 
-export default function Nav({
-  user,
-  isHidden,
-}: {
-  user: Session["user"] | undefined
-  isHidden?: boolean
-}) {
+export default function Nav({ isHidden }: { isHidden?: boolean }) {
   isHidden = isHidden ?? false
   const pathname = usePathname()
   const { data: session } = useSession()
-  const currentUser = session?.user ?? user
+  const currentUser = session?.user
   const { items } = useCart()
   const itemCount = items.reduce((total, item) => total + (item.quantity ?? 1), 0)
 
@@ -46,10 +40,10 @@ export default function Nav({
               </Button>
             </Link>
           )}
-          {user ? (
+          {currentUser ? (
             <>
               <Notifications />
-              <AccountNav user={currentUser!} />
+              <AccountNav user={currentUser} />
             </>
           ) : (
             <Link href="/signin">
