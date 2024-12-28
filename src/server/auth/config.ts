@@ -46,7 +46,10 @@ export const authConfig = {
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
-  pages: { signIn: "/sigin" },
+  pages: {
+    signIn: "/signin",
+    error: "/signin",
+  },
   callbacks: {
     // Modify the signIn callback to handle account linking and user updates
     async signIn({ user, account, profile }) {
