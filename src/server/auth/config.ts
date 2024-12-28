@@ -168,4 +168,36 @@ export const authConfig = {
       }
     },
   },
+  session: {
+    strategy: "database",
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+  },
+  secret: env.AWS_SECRET,
+  trustHost: true,
+  events: {
+    async session(message) {
+      console.log("session", message)
+    },
+  },
+  cookies: {
+    sessionToken: {
+      name: `${process.env.NODE_ENV === "production" ? "__Secure-" : ""}next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? `.${new URL(env.NEXT_PUBLIC_APP_URL).hostname}`
+            : undefined,
+      },
+    },
+  },
+  logger: {
+    error(code, ...message) {
+      console.error(code, message)
+    },
+  },
 } satisfies NextAuthConfig
