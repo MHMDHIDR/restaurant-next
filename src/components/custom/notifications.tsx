@@ -13,7 +13,7 @@ import { api } from "@/trpc/react"
 
 export default function Notifications() {
   const { data: session } = useSession()
-  const [favicon, setFavicon] = useState("/favicon.ico")
+  const [favicon, setFavicon] = useState<"/logo.svg" | "/logo-notification.svg">("/logo.svg")
   const [play] = useSound("/notification.mp3")
 
   const { data: notifications, refetch } = api.notification.getAll.useQuery(undefined, {
@@ -32,15 +32,15 @@ export default function Notifications() {
 
   useEffect(() => {
     if (unreadCount > 0) {
-      setFavicon("/favicon-notification.ico")
+      setFavicon("/logo-notification.svg")
       play()
-      document.title = `(${unreadCount}) Restaurant App`
+      document.title = `(${unreadCount}) | Restaurant App`
     } else {
-      setFavicon("/favicon.ico")
+      setFavicon("/logo.svg")
       document.title = "Restaurant App"
     }
 
-    const link = document.querySelector("link[rel='icon']")
+    const link = document.querySelector("link[type='image/svg+xml']")
     if (link) {
       link.setAttribute("href", favicon)
     }
