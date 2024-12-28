@@ -80,7 +80,7 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar items={vendorNavItems} />
       <SidebarInset>
-        <Nav />
+        <Nav user={user} />
         <div className="border-b px-4 py-0">
           <SidebarTrigger className="-ml-1" />
         </div>

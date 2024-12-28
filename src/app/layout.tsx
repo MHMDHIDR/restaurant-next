@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <SessionProvider>
           <Providers>
-            <Nav key={user?.image} isHidden />
+            <Nav user={user} key={user?.image} isHidden />
             <ThemeProvider
               attribute="class"
               defaultTheme={session?.user.theme ?? "light"}
