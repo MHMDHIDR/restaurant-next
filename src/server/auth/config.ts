@@ -162,7 +162,6 @@ export const authConfig = {
         user: {
           ...session.user,
           id: user.id,
-          image: `${env.NEXT_PUBLIC_APP_URL}/logo.svg`,
           role: user.role,
           blurImageDataURL: blurImage,
           hasVendor: !!vendor,

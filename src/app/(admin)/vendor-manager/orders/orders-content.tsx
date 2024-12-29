@@ -14,7 +14,6 @@ import type { Orders } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
 type OrdersContentProps = {
-  vendor: { id: string }
   orders: Orders[]
 }
 

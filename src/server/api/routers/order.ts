@@ -101,6 +101,23 @@ export const orderRouter = createTRPCRouter({
     return { orders: userOrders, count }
   }),
 
+  getAllOrders: protectedProcedure.query(async ({ ctx }) => {
+    const withClause = {
+      user: { columns: { email: true } },
+      orderItems: { with: { menuItem: { columns: { name: true, image: true } } } },
+    }
+
+    const [allOrders, [{ count = 0 } = { count: 0 }]] = await Promise.all([
+      ctx.db.query.orders.findMany({
+        with: withClause,
+        orderBy: [desc(orders.createdAt)],
+      }),
+      ctx.db.select({ count: sql<number>`count(*)::int` }).from(orders),
+    ])
+
+    return { orders: allOrders, count }
+  }),
+
   deleteOrder: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

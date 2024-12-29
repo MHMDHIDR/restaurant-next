@@ -10,5 +10,5 @@ export default async function OrdersPage() {
 
   const { orders } = await api.order.getOrdersByVendorId({ vendorId: vendor.id })
 
-  return <OrdersContent vendor={vendor} orders={orders} />
+  return <OrdersContent orders={orders} />
 }
