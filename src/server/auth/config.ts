@@ -60,10 +60,33 @@ export const authConfig = {
         sameSite: "lax",
         path: "/",
         secure: process.env.NODE_ENV === "production",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? `.${new URL(env.NEXT_PUBLIC_APP_URL).hostname}`
+            : "localhost",
       },
     },
   },
   trustHost: true,
+  events: {
+    async signIn(message) {
+      console.log("Sign in attempt:", message)
+    },
+    async session(message) {
+      console.log("Session event:", message)
+    },
+  },
+  logger: {
+    error: (code, ...message) => {
+      console.error("Auth Error:", code, message)
+    },
+    warn: (code, ...message) => {
+      console.warn("Auth Warning:", code, message)
+    },
+    debug: (code, ...message) => {
+      console.debug("Auth Debug:", code, message)
+    },
+  },
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === "google" && profile) {
