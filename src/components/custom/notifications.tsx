@@ -1,6 +1,5 @@
-import { IconLoader, IconLoader2, IconLoader3 } from "@tabler/icons-react"
 import clsx from "clsx"
-import { Bell, Check, Loader, Loader2, Loader2Icon, LoaderPinwheel } from "lucide-react"
+import { Bell, Check, Loader2 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useCallback, useEffect, useOptimistic, useState, useTransition } from "react"
 import useSound from "use-sound"
