@@ -1,5 +1,12 @@
-export { auth as middleware } from "@/server/auth"
+import { auth } from "@/server/auth"
+
+export default auth(req => {
+  if (!req.auth && req.nextUrl.pathname !== "/signin") {
+    const newUrl = new URL("/signin", req.nextUrl.origin)
+    return Response.redirect(newUrl)
+  }
+})
 
 export const config = {
-  matcher: ["/dashboard/**", "/vendor-manager/**"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 }

@@ -17,10 +17,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const session = await auth()
   const user = session?.user
 
-  console.log("session", session)
-
-  console.log("user", user)
-
   return (
     <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
       <head>
