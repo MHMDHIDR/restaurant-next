@@ -1,6 +1,7 @@
 "use server"
 
 import sharp from "sharp"
+import { env } from "@/env"
 
 /**
  * Get the blur placeholder of an image, used for lazy loading
@@ -8,7 +9,8 @@ import sharp from "sharp"
  * @returns The blur placeholder of the image
  */
 export async function getBlurPlaceholder(imageSrc: string): Promise<string | null> {
-  const response = await fetch(imageSrc)
+  const imageUrl = await getFullUrl(imageSrc)
+  const response = await fetch(imageUrl)
   if (response.status !== 200) return null
 
   const buffer = await response.arrayBuffer()
@@ -18,4 +20,11 @@ export async function getBlurPlaceholder(imageSrc: string): Promise<string | nul
 
   const base64 = `data:image/${info.format};base64,${data.toString("base64")}`
   return base64
+}
+
+export async function getFullUrl(path: string) {
+  if (path.startsWith("http")) return path
+
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path
+  return new URL(cleanPath, env.NEXT_PUBLIC_APP_URL).toString()
 }

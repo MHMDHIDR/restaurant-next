@@ -33,13 +33,18 @@ declare module "@auth/core/adapters" {
   }
 }
 
+const getFullImageUrl = (path: string) => {
+  // If the path is already a full URL (e.g., from Google), return it as is
+  if (path.startsWith("http")) return path
+
+  // Otherwise, ensure the path starts with a slash and combine with base URL
+  const basePath = path.startsWith("/") ? path : `/${path}`
+  return `${env.NEXT_PUBLIC_APP_URL}${basePath}`
+}
+
 export const authConfig = {
   providers: [
-    GoogleProvider({
-      clientId: env.AUTH_GOOGLE_ID,
-      clientSecret: env.AUTH_GOOGLE_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
+    GoogleProvider({ allowDangerousEmailAccountLinking: true }),
     Resend({ name: "Email", from: env.ADMIN_EMAIL }),
   ],
   pages: { signIn: "/signin", error: "/signin" },
@@ -49,44 +54,6 @@ export const authConfig = {
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
-  cookies: {
-    sessionToken: {
-      name:
-        process.env.NODE_ENV === "production"
-          ? "__Secure-authjs.session-token"
-          : "authjs.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        domain:
-          process.env.NODE_ENV === "production"
-            ? `.${new URL(env.NEXT_PUBLIC_APP_URL).hostname}`
-            : "localhost",
-      },
-    },
-  },
-  trustHost: true,
-  events: {
-    async signIn(message) {
-      console.log("Sign in attempt:", message)
-    },
-    async session(message) {
-      console.log("Session event:", message)
-    },
-  },
-  logger: {
-    error: (code, ...message) => {
-      console.error("Auth Error:", code, message)
-    },
-    warn: (code, ...message) => {
-      console.warn("Auth Warning:", code, message)
-    },
-    debug: (code, ...message) => {
-      console.debug("Auth Debug:", code, message)
-    },
-  },
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === "google" && profile) {
@@ -101,7 +68,7 @@ export const authConfig = {
             await db.insert(users).values({
               name: profile.name ?? user.name ?? "Unknown",
               email: profile.email!,
-              image: profile.picture ?? user.image ?? "/logo.svg",
+              image: profile.picture ?? user.image ?? getFullImageUrl("logo.svg"),
               phone: "",
             })
           }
@@ -117,7 +84,7 @@ export const authConfig = {
           if (existingUser && !existingUser.image) {
             await db
               .update(users)
-              .set({ image: profile.picture ?? existingUser.image })
+              .set({ image: profile.picture ?? getFullImageUrl("logo.svg") })
               .where(eq(users.email, user.email!))
           }
 
@@ -165,7 +132,7 @@ export const authConfig = {
             await db.insert(users).values({
               name: username,
               email: user.email,
-              image: `${env.NEXT_PUBLIC_APP_URL}/logo.svg`,
+              image: getFullImageUrl("logo.svg"),
               phone: "",
               status: "ACTIVE",
             } as Users)
@@ -195,6 +162,7 @@ export const authConfig = {
         user: {
           ...session.user,
           id: user.id,
+          image: `${env.NEXT_PUBLIC_APP_URL}/logo.svg`,
           role: user.role,
           blurImageDataURL: blurImage,
           hasVendor: !!vendor,
