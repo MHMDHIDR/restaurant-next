@@ -147,6 +147,7 @@
     stroke-dashoffset: 260.752190248px;
     animation: status-icon-circle 2s linear both infinite;
   }
+
   @keyframes status-icon-circle {
     0% {
       stroke-dasharray: 0, 260.752190248px;
@@ -205,6 +206,15 @@
     }
     100% {
       left: 100%;
+    }
+  }
+
+  @keyframes spin-spinner {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
     }
   }
 }

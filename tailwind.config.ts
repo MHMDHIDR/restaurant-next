@@ -74,6 +74,7 @@ export default {
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "spin-spinner": "spin-spinner 1s linear infinite",
       },
     },
   },

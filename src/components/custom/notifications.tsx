@@ -1,7 +1,8 @@
+import { IconLoader, IconLoader2, IconLoader3 } from "@tabler/icons-react"
 import clsx from "clsx"
-import { Bell, Check } from "lucide-react"
+import { Bell, Check, Loader, Loader2, Loader2Icon, LoaderPinwheel } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useEffect, useOptimistic, useState, useTransition } from "react"
+import { useCallback, useEffect, useOptimistic, useState, useTransition } from "react"
 import useSound from "use-sound"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,18 +22,29 @@ export default function Notifications() {
   const [favicon, setFavicon] = useState<"/logo.svg" | "/logo-notification.svg">("/logo.svg")
   const [play] = useSound("/notification.mp3")
   const [isPending, startTransition] = useTransition()
+  const [isProcessing, setIsProcessing] = useState<Record<string, boolean>>({})
 
   const { data: notifications, refetch } = api.notification.getAll.useQuery(undefined, {
     enabled: !!session?.user,
+    staleTime: 0,
   })
 
   const markAsRead = api.notification.markAsRead.useMutation({
+    onSuccess: () => {
+      void refetch()
+    },
     onError: error => {
       console.error("Failed to mark notification as read:", error)
+    },
+    onSettled: (_, __, variables) => {
+      setIsProcessing(prev => ({ ...prev, [variables.id]: false }))
     },
   })
 
   const markAllAsRead = api.notification.markAllAsRead.useMutation({
+    onSuccess: () => {
+      void refetch()
+    },
     onError: error => {
       console.error("Failed to mark all notifications as read:", error)
     },
@@ -70,21 +82,39 @@ export default function Notifications() {
     }
   }, [unreadCount, favicon, play])
 
-  const handleMarkAsRead = async (notificationId: string) => {
-    startTransition(async () => {
-      addOptimisticNotification({ type: "markAsRead", id: notificationId })
-      markAsRead.mutate({ id: notificationId })
-      await refetch()
-    })
-  }
+  const handleMarkAsRead = useCallback(
+    async (notificationId: string) => {
+      // Prevent double clicks
+      if (isProcessing[notificationId]) return
 
-  const handleMarkAllAsRead = async () => {
-    startTransition(async () => {
+      setIsProcessing(prev => ({ ...prev, [notificationId]: true }))
+
+      startTransition(() => {
+        addOptimisticNotification({ type: "markAsRead", id: notificationId })
+      })
+
+      try {
+        await markAsRead.mutateAsync({ id: notificationId })
+      } catch (error) {
+        console.error("Failed to mark notification as read:", error)
+      }
+    },
+    [isProcessing, addOptimisticNotification, markAsRead],
+  )
+
+  const handleMarkAllAsRead = useCallback(async () => {
+    if (isPending) return
+
+    startTransition(() => {
       addOptimisticNotification({ type: "markAllAsRead" })
-      markAllAsRead.mutate()
-      await refetch()
     })
-  }
+
+    try {
+      await markAllAsRead.mutateAsync()
+    } catch (error) {
+      console.error("Failed to mark all notifications as read:", error)
+    }
+  }, [isPending, addOptimisticNotification, markAllAsRead])
 
   const NotificationContent = ({ notification }: { notification: Notifications }) => {
     if (!notification.isRead) {
@@ -94,14 +124,19 @@ export default function Notifications() {
             <TooltipTrigger asChild>
               <div
                 className={clsx(
-                  `grid grid-cols-[2.5rem_1fr] items-center p-2 bg-primary/5 hover:bg-transparent cursor-pointer group`,
+                  `grid grid-cols-[2.5rem_1fr] items-center p-2 bg-slate-100 hover:bg-slate-50  dark:bg-slate-900 dark:hover:bg-slate-800 transition-colors cursor-pointer group`,
                   {
-                    "opacity-50": isPending,
+                    "opacity-50": isProcessing[notification.id],
+                    "pointer-events-none": isProcessing[notification.id],
                   },
                 )}
                 onClick={() => handleMarkAsRead(notification.id)}
               >
-                <span className="flex translate-y-1.5 bg-blue-500 h-7 w-7 border-[0.5px] border-blue-500/30 bg-blue-500/15 rounded-full p-1 group-hover:border-blue-500/70" />
+                {isProcessing[notification.id] ? (
+                  <Loader2 className="flex translate-y-1.5 text-blue-500 animate-spin-spinner bg-blue-500 h-7 w-7 border-[0.5px] border-blue-500/30 bg-blue-500/15 rounded-full p-1 group-hover:border-blue-500/70" />
+                ) : (
+                  <span className="flex translate-y-1.5 bg-blue-500 h-7 w-7 border-[0.5px] border-blue-500/30 bg-blue-500/15 rounded-full p-1 group-hover:border-blue-500/70" />
+                )}
                 <div className="flex flex-col gap-1">
                   <p className="font-medium">{notification.title}</p>
                   <p className="text-gray-600 dark:text-gray-300">{notification.message}</p>
@@ -163,7 +198,7 @@ export default function Notifications() {
               variant="outline"
               className="m-2"
               disabled={isPending}
-              onClick={handleMarkAllAsRead}
+              onClick={() => void handleMarkAllAsRead()}
             >
               Mark All as Read
             </Button>
