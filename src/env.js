@@ -10,6 +10,8 @@ export const env = createEnv({
     AWS_REGION: z.string().min(1),
     AWS_ACCESS_ID: z.string().min(1),
     AWS_SECRET: z.string().min(1),
+    AUTH_GOOGLE_ID: z.string().min(1),
+    AUTH_GOOGLE_SECRET: z.string().min(1),
     AUTH_RESEND_KEY: z.string(),
     GOOGLE_API_KEY: z.string().min(1),
   },
@@ -24,6 +26,8 @@ export const env = createEnv({
     AWS_REGION: process.env.AWS_REGION,
     AWS_ACCESS_ID: process.env.AWS_ACCESS_ID,
     AWS_SECRET: process.env.AWS_SECRET,
+    AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
+    AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     AUTH_RESEND_KEY: process.env.AUTH_RESEND_KEY,
     GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
 

@@ -35,7 +35,11 @@ declare module "@auth/core/adapters" {
 
 export const authConfig = {
   providers: [
-    GoogleProvider({ allowDangerousEmailAccountLinking: true }),
+    GoogleProvider({
+      clientId: env.AUTH_GOOGLE_ID,
+      clientSecret: env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
     Resend({ name: "Email", from: env.ADMIN_EMAIL }),
   ],
   pages: { signIn: "/signin", error: "/signin" },
@@ -45,6 +49,21 @@ export const authConfig = {
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-authjs.session-token"
+          : "authjs.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
+  trustHost: true,
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === "google" && profile) {
