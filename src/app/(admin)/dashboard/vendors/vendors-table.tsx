@@ -36,6 +36,7 @@ export default function VendorsTable({
       data={vendorsData.items}
       isLoading={isLoading}
       count={count}
+      emptyStateMessage="Sorry, No Vendors Found."
     />
   )
 }

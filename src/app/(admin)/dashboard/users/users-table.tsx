@@ -14,6 +14,7 @@ export default function UsersTable({ users }: { users: (Users & BaseEntity)[] })
     <DataTable<Users & BaseEntity>
       columns={columns as ColumnDef<Users & BaseEntity>[]}
       data={users}
+      emptyStateMessage="Sorry, No Users Found."
     />
   )
 }

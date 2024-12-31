@@ -62,6 +62,7 @@ export function OrdersContent({ orders }: OrdersContentProps) {
       <DataTable<Orders & BaseEntity>
         columns={columns as ColumnDef<Orders & BaseEntity>[]}
         data={ordersWithName}
+        emptyStateMessage="Sorry, No Orders Found."
       />
       <ConfirmationDialog
         open={isDeleteDialogOpen}

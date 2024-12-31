@@ -21,11 +21,12 @@ import type { ColumnDef, Row } from "@tanstack/react-table"
 
 type RowStatus = "inactive" | "deactivated" | "pending" | "active" | "default"
 
-interface DataTableProps<TData extends BaseEntity> {
+type DataTableProps<TData extends BaseEntity> = {
   columns: ColumnDef<TData>[]
   data: TData[]
   isLoading?: boolean
   count?: number
+  emptyStateMessage?: string
 }
 
 export function DataTable<TData extends BaseEntity>({
@@ -33,6 +34,7 @@ export function DataTable<TData extends BaseEntity>({
   data,
   isLoading = false,
   count = 7,
+  emptyStateMessage = "Sorry we couldn't find any data.",
 }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
@@ -119,7 +121,7 @@ export function DataTable<TData extends BaseEntity>({
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 <EmptyState>
                   <p className="mt-4 text-lg text-gray-500 select-none dark:text-gray-400">
-                    Sorry we couldn&apos;t find any data.
+                    {emptyStateMessage}
                   </p>
                 </EmptyState>
               </TableCell>

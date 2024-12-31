@@ -67,6 +67,7 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
       <DataTable<MenuItems & BaseEntity>
         columns={columns as ColumnDef<MenuItems & BaseEntity>[]}
         data={menuItems}
+        emptyStateMessage="Sorry, No Menu Items Found."
       />
       <ConfirmationDialog
         open={isDialogOpen}

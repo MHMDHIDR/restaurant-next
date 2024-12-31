@@ -25,6 +25,8 @@ export function OrdersContent({ orders, count }: OrdersContentProps) {
       <DataTable<Orders & BaseEntity>
         columns={customerOrdersColumns as ColumnDef<Orders & BaseEntity>[]}
         data={ordersWithName}
+        count={count}
+        emptyStateMessage="Sorry, No orders found"
       />
     </div>
   )
