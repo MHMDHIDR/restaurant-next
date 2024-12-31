@@ -16,7 +16,7 @@ import type { ColumnDef } from "@tanstack/react-table"
 
 type MenuItemsTableProps = {
   menuItems: (MenuItems & BaseEntity)[]
-  vendorId: string
+  vendorId?: string
 }
 
 export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
@@ -30,7 +30,7 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
   const utils = api.useUtils()
 
   const { data } = api.menuCategory.getCategoriesByVendorId.useQuery(
-    { vendorId },
+    { vendorId: vendorId ?? "" },
     { enabled: !!vendorId },
   )
   const menuCategories = data?.menuCategories ?? []

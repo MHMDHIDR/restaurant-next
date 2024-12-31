@@ -1,7 +1,8 @@
-export default function Products() {
-  return (
-    <section className="flex items-center justify-center w-full p-3 md:p-12">
-      <h2>Products</h2>
-    </section>
-  )
+import { MenuItemsTable } from "@/app/(admin)/vendor-manager/menu-items/(items)/menu-items-table"
+import { api } from "@/trpc/server"
+
+export default async function Products() {
+  const menuItems = await api.menuItem.getAllMenuItems()
+
+  return <MenuItemsTable menuItems={menuItems} />
 }

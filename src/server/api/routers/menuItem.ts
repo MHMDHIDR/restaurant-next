@@ -77,6 +77,10 @@ export const menuItemRouter = createTRPCRouter({
       })
     }),
 
+  getAllMenuItems: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.menuItems.findMany()
+  }),
+
   getMenuItemsByVendorId: publicProcedure
     .input(z.object({ vendorId: z.string() }))
     .query(async ({ ctx, input }) => {

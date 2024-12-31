@@ -7,7 +7,7 @@ export default async function Vendors() {
   const { items: vendors, count } = await api.vendor.getAll()
 
   return (
-    <div className="max-w-[24rem] sm:max-w-xl md:max-w-2xl lg:max-w-3xl py-4 mx-auto">
+    <div className="container max-w-6xl md:px-3.5 px-2 py-3">
       <Suspense fallback={<LoadingCard renderedSkeletons={count} />}>
         <VendorsTable vendors={vendors} count={count} />
       </Suspense>

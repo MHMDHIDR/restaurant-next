@@ -7,7 +7,7 @@ import { MenuItemsTable } from "./(items)/menu-items-table"
 import { MenuItemForm } from "./(new-item)/menu-item-form"
 import type { MenuCategories, MenuItems } from "@/server/db/schema"
 
-interface MenuItemsContentProps {
+type MenuItemsContentProps = {
   vendor: { id: string }
   categories: MenuCategories[]
   menuItems: MenuItems[]
