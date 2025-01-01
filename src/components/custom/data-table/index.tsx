@@ -94,7 +94,7 @@ export function DataTable<TData extends BaseEntity>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map(row =>
               isLoading ? (
                 <TableRow key={row.id}>

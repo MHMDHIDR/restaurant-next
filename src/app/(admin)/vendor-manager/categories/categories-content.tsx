@@ -7,8 +7,8 @@ import CategoriesTable from "./(categories)/categories-table"
 import { MenuCategoryForm } from "./(new-category)/menu-category-form"
 import type { MenuCategories } from "@/server/db/schema"
 
-interface CategoriesContentProps {
-  vendor: { id: string }
+type CategoriesContentProps = {
+  vendor?: { id: string }
   categories: MenuCategories[]
 }
 
@@ -33,7 +33,7 @@ export default function CategoriesContent({ vendor, categories }: CategoriesCont
     }
   }, [view, searchParams, handleTabChange])
 
-  return (
+  return vendor ? (
     <Tabs
       value={view}
       defaultValue={view}
@@ -51,5 +51,7 @@ export default function CategoriesContent({ vendor, categories }: CategoriesCont
         <MenuCategoryForm vendorId={vendor.id} />
       </TabsContent>
     </Tabs>
+  ) : (
+    <CategoriesTable categories={categories} />
   )
 }

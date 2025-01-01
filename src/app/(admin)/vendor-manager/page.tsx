@@ -13,15 +13,17 @@ export default async function DashboardPage() {
   }
 
   // Fetch menu items and orders
-  const [{ menuItemsCount }, { orders }] = await Promise.all([
-    api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
-    api.order.getOrdersByVendorId({ vendorId: vendor.id }),
-  ])
+  const [{ menuItemsCount }, { menuCategoriesCount }, { orders, count: ordersCount }] =
+    await Promise.all([
+      api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
+      api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
+      api.order.getOrdersByVendorId({ vendorId: vendor.id }),
+    ])
 
   // Organize orders by date
   const ordersCountByDate: { [key: string]: number } = {}
   orders.forEach(order => {
-    const date = new Date(order.createdAt).toLocaleDateString() // Format date as needed
+    const date = new Date(order.createdAt).toLocaleDateString()
     ordersCountByDate[date] = (ordersCountByDate[date] || 0) + 1
   })
 
@@ -39,13 +41,13 @@ export default async function DashboardPage() {
     },
     {
       title: "Orders",
-      value: orders.length, // Total orders count
+      value: ordersCount,
       icon: ShoppingBag,
       href: "/vendor-manager/orders",
     },
     {
       title: "Categories",
-      value: 0, // Assuming you want to keep this stat, set to 0 or fetch as needed
+      value: menuCategoriesCount,
       icon: List,
       href: "/vendor-manager/categories?view=categories",
     },

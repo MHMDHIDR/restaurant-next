@@ -78,7 +78,13 @@ export const menuItemRouter = createTRPCRouter({
     }),
 
   getAllMenuItems: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.query.menuItems.findMany()
+    const items = await ctx.db.query.menuItems.findMany()
+
+    const [{ count = 0 } = { count: 0 }] = await ctx.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(menuItems)
+
+    return { items, count }
   }),
 
   getMenuItemsByVendorId: publicProcedure

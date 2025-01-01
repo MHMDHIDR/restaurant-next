@@ -107,6 +107,15 @@ export const menuCategoryRouter = createTRPCRouter({
       return { success: true, updatedCategory }
     }),
 
+  getAllCategories: protectedProcedure.query(async ({ ctx }) => {
+    const categories = await ctx.db.query.menuCategories.findMany()
+    const [{ count = 0 } = { count: 0 }] = await ctx.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(menuCategories)
+
+    return { menuCategories: categories, count }
+  }),
+
   getCategoriesByVendorId: protectedProcedure
     .input(z.object({ vendorId: z.string() }))
     .query(async ({ ctx, input }) => {

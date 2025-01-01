@@ -2,7 +2,7 @@ import { MenuItemsTable } from "@/app/(admin)/vendor-manager/menu-items/(items)/
 import { api } from "@/trpc/server"
 
 export default async function Products() {
-  const menuItems = await api.menuItem.getAllMenuItems()
+  const { items } = await api.menuItem.getAllMenuItems()
 
-  return <MenuItemsTable menuItems={menuItems} />
+  return <MenuItemsTable menuItems={items} />
 }
