@@ -1,8 +1,9 @@
 "use client"
 
-import { MapPin, Package, Truck } from "lucide-react"
+import { CookingPot, CookingPotIcon, Loader2, MapPin, Package, Package2, Truck } from "lucide-react"
+import Image from "next/image"
 import { useEffect, useState } from "react"
-import { type Orders } from "@/server/db/schema"
+import type { MenuItems, Orders } from "@/server/db/schema"
 
 const orderStatuses = [
   "PENDING",
@@ -13,7 +14,20 @@ const orderStatuses = [
   "DELIVERED",
 ] as const
 
-export function OrderTrackingContent({ order }: { order: Orders }) {
+export function OrderTrackingContent({
+  order,
+}: {
+  order: Orders & {
+    orderItems: {
+      id: string
+      quantity: number
+      totalPrice: number
+      unitPrice: number
+      menuItem: MenuItems
+      specialInstructions: string
+    }[]
+  }
+}) {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
@@ -35,10 +49,9 @@ export function OrderTrackingContent({ order }: { order: Orders }) {
 
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-8">Order #{order.id}</h1>
+      <h1 className="text-3xl font-bold mb-8">Order Details</h1>
 
       <div className="relative">
-        {/* SVG Path */}
         <svg className="w-full h-32" viewBox="0 0 800 160" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id="progressGradient">
@@ -49,7 +62,6 @@ export function OrderTrackingContent({ order }: { order: Orders }) {
             </linearGradient>
           </defs>
 
-          {/* Curved tracking path aligned with markers */}
           <path
             d="M 40 80 C 200 80, 600 30, 760 80"
             stroke="url(#progressGradient)"
@@ -57,14 +69,21 @@ export function OrderTrackingContent({ order }: { order: Orders }) {
             fill="none"
           />
 
-          {/* Moving delivery icon */}
           <g transform={`translate(${iconPos.x}, ${iconPos.y})`}>
             <circle r="15" fill="white" stroke="#22c55e" strokeWidth="2" />
             <g transform="translate(-10, -10) scale(0.8)">
-              {order.status === "OUT_FOR_DELIVERY" ? (
-                <Truck className="text-green-500" />
+              {order.status === "PENDING" ? (
+                <Loader2 className="text-green-500" />
+              ) : order.status === "CONFIRMED" ? (
+                <Package className="text-gray-500" />
               ) : order.status === "PREPARING" ? (
-                <Package className="text-green-500" />
+                <CookingPot className="text-primary" />
+              ) : order.status === "READY_FOR_PICKUP" ? (
+                <Truck className="text-green-500" />
+              ) : order.status === "OUT_FOR_DELIVERY" ? (
+                <Truck className="text-orange-500" />
+              ) : order.status === "DELIVERED" ? (
+                <MapPin className="text-green-500" />
               ) : (
                 <MapPin className="text-green-500" />
               )}
@@ -72,7 +91,6 @@ export function OrderTrackingContent({ order }: { order: Orders }) {
           </g>
         </svg>
 
-        {/* Status markers */}
         <div className="flex justify-between px-8 mt-4">
           {orderStatuses.map((status, index) => {
             const isActive =
@@ -93,9 +111,8 @@ export function OrderTrackingContent({ order }: { order: Orders }) {
         </div>
       </div>
 
-      {/* Order details */}
       <div className="mt-12 bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Order Details</h2>
+        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-gray-600">Delivery Address</p>
@@ -111,6 +128,61 @@ export function OrderTrackingContent({ order }: { order: Orders }) {
               <p className="font-medium">{order.specialInstructions}</p>
             </div>
           )}
+          <div>
+            <p className="text-gray-600">OrderId</p>
+            <p className="text-sm text-gray-600">#{order.id}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-4">Order Details</h2>
+        <div className="space-y-2">
+          <ul className="divide-y divide-gray-100">
+            {order.orderItems.map(item => (
+              <li key={item.id} className="py-4">
+                <div className="flex items-start gap-4">
+                  <div className="relative h-16 w-16 flex-none rounded-lg overflow-hidden">
+                    <Image
+                      src={item.menuItem.image}
+                      alt={item.menuItem.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-auto">
+                    <h4 className="font-medium">{item.menuItem.name}</h4>
+                    <div className="text-sm text-gray-600">
+                      <span>Quantity: {item.quantity}</span>
+                      <span className="mx-2">·</span>
+                      <span>${Number(item.unitPrice).toFixed(2)} each</span>
+                    </div>
+                    {item.specialInstructions && (
+                      <p className="text-sm text-gray-500 mt-1">Note: {item.specialInstructions}</p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">${Number(item.totalPrice).toFixed(2)}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="border-t pt-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span>${Number(order.subtotal).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Delivery Fee</span>
+              <span>${Number(order.deliveryFee).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between font-medium text-base">
+              <span>Total</span>
+              <span>${Number(order.total).toFixed(2)}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
