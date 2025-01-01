@@ -5,19 +5,11 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { AddressInput } from "@/components/custom/AddressInput"
 import { LoadingPage } from "@/components/custom/loading"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import CardDetails from "@/components/ui/card-details"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command"
 import {
   Form,
   FormControl,
@@ -29,7 +21,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
-import { autocomplete } from "@/lib/google"
 import { api } from "@/trpc/react"
 import type { Session } from "next-auth"
 
@@ -48,8 +39,6 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
   const toast = useToast()
   const { items, clearCart } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
-  const [predictions, setPredictions] = useState<{ description: string; place_id: string }[]>([])
-  const [input, setInput] = useState("")
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -73,16 +62,6 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
       setIsProcessing(false)
     },
   })
-
-  useEffect(() => {
-    const fetchPredictions = async () => {
-      const predictions = await autocomplete(input)
-      setPredictions(predictions ?? [])
-    }
-    if (input.length > 2) {
-      void fetchPredictions()
-    }
-  }, [input])
 
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsProcessing(true)
@@ -187,33 +166,10 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
                     control={form.control}
                     name="deliveryAddress"
                     render={({ field }) => (
-                      <FormItem className="flex flex-col">
+                      <FormItem>
                         <FormLabel>Delivery Address</FormLabel>
                         <FormControl>
-                          <Command className="border rounded-md">
-                            <CommandInput
-                              placeholder="Type your address..."
-                              value={input}
-                              onValueChange={setInput}
-                            />
-                            <CommandList>
-                              <CommandEmpty>Start typing to search...</CommandEmpty>
-                              <CommandGroup heading="Suggestions">
-                                {predictions.map(prediction => (
-                                  <CommandItem
-                                    key={prediction.place_id}
-                                    onSelect={() => {
-                                      field.onChange(prediction.description)
-                                      setInput(prediction.description)
-                                    }}
-                                  >
-                                    {prediction.description}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                              <CommandSeparator />
-                            </CommandList>
-                          </Command>
+                          <AddressInput onAddressChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -11,7 +11,6 @@ export const env = createEnv({
     AWS_ACCESS_ID: z.string().min(1),
     AWS_SECRET: z.string().min(1),
     AUTH_RESEND_KEY: z.string(),
-    GOOGLE_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url(),
@@ -25,7 +24,6 @@ export const env = createEnv({
     AWS_ACCESS_ID: process.env.AWS_ACCESS_ID,
     AWS_SECRET: process.env.AWS_SECRET,
     AUTH_RESEND_KEY: process.env.AUTH_RESEND_KEY,
-    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
 
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
