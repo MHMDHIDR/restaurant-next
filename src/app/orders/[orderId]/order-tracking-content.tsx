@@ -1,9 +1,11 @@
 "use client"
 
+import clsx from "clsx"
 import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import type { orderWithOrderItems } from "@/types"
 
@@ -18,7 +20,23 @@ const orderStatuses = [
 
 export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) {
   const [progress, setProgress] = useState(0)
-  const emailInvoice = api.order.emailInvoice.useMutation()
+  const [isSendingInvoice, setIsSendingInvoice] = useState(false)
+  const toast = useToast()
+
+  const emailInvoice = api.order.emailInvoice.useMutation({
+    onMutate: () => {
+      setIsSendingInvoice(true)
+      toast.loading("Sending order invoice...")
+    },
+    onSuccess: async () => {
+      toast.success("Order invoice sent successfully! Please check your email.")
+      setIsSendingInvoice(false)
+    },
+    onError: error => {
+      toast.error(`Failed to send invoice: ${error.message}`)
+      setIsSendingInvoice(false)
+    },
+  })
 
   useEffect(() => {
     const currentIndex = orderStatuses.indexOf(order.status as (typeof orderStatuses)[number])
@@ -107,10 +125,8 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
           <Button
             variant={"pressable"}
             title="Click here to email the invoice of your order."
-            onClick={() => {
-              const sendInvoice = emailInvoice.mutate({ orderId: order.id })
-              console.log(sendInvoice)
-            }}
+            onClick={() => emailInvoice.mutate({ orderId: order.id })}
+            disabled={isSendingInvoice}
           >
             Email Invoice
           </Button>

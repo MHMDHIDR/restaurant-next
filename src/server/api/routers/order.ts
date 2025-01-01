@@ -1,4 +1,3 @@
-import { render } from "@react-email/components"
 import { TRPCError } from "@trpc/server"
 import { desc, eq, sql } from "drizzle-orm"
 import { Resend } from "resend"
@@ -258,14 +257,12 @@ export const orderRouter = createTRPCRouter({
 
       const RESEND = new Resend(env.AUTH_RESEND_KEY)
 
-      const emailHtml = await render(OrderInvoiceEmail({ order }))
-
-      // Send email with invoice
       await RESEND.emails.send({
         from: env.ADMIN_EMAIL,
         to: order.user.email,
+        replyTo: env.ADMIN_EMAIL,
         subject: `Order Invoice #${order.id}`,
-        html: emailHtml,
+        react: OrderInvoiceEmail({ order }),
       })
 
       return { success: true }
