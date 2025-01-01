@@ -22,6 +22,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <head>
         <meta content="width=device-width, initial-scale=1 maximum-scale=1" name="viewport" />
         <link href="/logo.svg" rel="icon" type="image/svg+xml" />
+        <script
+          defer
+          src="https://analytics.technodevlabs.com/script.js"
+          data-website-id="fe55d0ec-b756-4bcc-8e05-4490451bec0a"
+        ></script>
       </head>
       <body>
         <SessionProvider>
