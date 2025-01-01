@@ -21,10 +21,10 @@ export default async function DashboardPage() {
     ])
 
   // Organize orders by date
-  const ordersCountByDate: { [key: string]: number } = {}
+  const ordersCountByDate: Record<string, number> = {}
   orders.forEach(order => {
     const date = new Date(order.createdAt).toLocaleDateString()
-    ordersCountByDate[date] = (ordersCountByDate[date] || 0) + 1
+    ordersCountByDate[date] = (ordersCountByDate[date] ?? 0) + 1
   })
 
   const chartData = {

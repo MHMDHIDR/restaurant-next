@@ -1,6 +1,5 @@
 "use client"
 
-import clsx from "clsx"
 import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
