@@ -1,6 +1,7 @@
 import { List, ShoppingBag, Utensils } from "lucide-react"
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import { AnalyticsCharts } from "@/components/custom/analytics-charts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api } from "@/trpc/server"
 
@@ -11,12 +12,23 @@ export default async function DashboardPage() {
     redirect("/")
   }
 
-  // Fetch menu items and categories
-  const [{ menuItemsCount }, { menuCategoriesCount }, { count: ordersCount }] = await Promise.all([
+  // Fetch menu items and orders
+  const [{ menuItemsCount }, { orders }] = await Promise.all([
     api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
-    api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
     api.order.getOrdersByVendorId({ vendorId: vendor.id }),
   ])
+
+  // Organize orders by date
+  const ordersCountByDate: { [key: string]: number } = {}
+  orders.forEach(order => {
+    const date = new Date(order.createdAt).toLocaleDateString() // Format date as needed
+    ordersCountByDate[date] = (ordersCountByDate[date] || 0) + 1
+  })
+
+  const chartData = {
+    labels: Object.keys(ordersCountByDate), // Dates
+    data: Object.values(ordersCountByDate), // Counts
+  }
 
   const stats = [
     {
@@ -27,13 +39,13 @@ export default async function DashboardPage() {
     },
     {
       title: "Orders",
-      value: ordersCount,
+      value: orders.length, // Total orders count
       icon: ShoppingBag,
       href: "/vendor-manager/orders",
     },
     {
       title: "Categories",
-      value: menuCategoriesCount,
+      value: 0, // Assuming you want to keep this stat, set to 0 or fetch as needed
       icon: List,
       href: "/vendor-manager/categories?view=categories",
     },
@@ -42,6 +54,8 @@ export default async function DashboardPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Restaurant Dashboard</h1>
+      <AnalyticsCharts chartData={chartData} />
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {stats.map(stat => (
           <Link href={stat.href} key={stat.title} className="transition-transform hover:scale-105">
