@@ -1,5 +1,6 @@
 import { ArrowUpDown } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import CopyText from "@/components/custom/copy"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,7 +21,7 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
       return (
         <>
           <CopyText text={row.original.id} className="inline mr-3 w-3.5" />
-          <span>{row.original.id}</span>
+          <Link href={`/orders/${row.original.id}`}>{row.original.id}</Link>
         </>
       )
     },

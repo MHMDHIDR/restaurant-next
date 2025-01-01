@@ -6,7 +6,7 @@ import { OrdersContent } from "./orders-content"
 export default async function OrdersPage() {
   const session = await auth()
   if (!session) {
-    redirect("/sign-in")
+    redirect("/signin")
   }
 
   const userOrders = await api.order.getOrdersByUserId()
