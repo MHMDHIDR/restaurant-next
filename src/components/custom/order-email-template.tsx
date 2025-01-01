@@ -52,9 +52,9 @@ export function OrderInvoiceEmail({ order }: OrderInvoiceEmailProps) {
             <Row>
               <Column>
                 <Img
-                  src={"https://restaurant-app.technodevlabs.com/Logo.svg"}
-                  width="42"
-                  height="42"
+                  src={"https://restaurant-app.technodevlabs.com/logo.png"}
+                  width="79"
+                  height="92"
                   alt="Restaurant Logo"
                   className="rounded-full"
                 />
