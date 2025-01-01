@@ -3,7 +3,9 @@
 import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { orderWithOrderItems } from "@/types"
+import { Button } from "@/components/ui/button"
+import { api } from "@/trpc/react"
+import type { orderWithOrderItems } from "@/types"
 
 const orderStatuses = [
   "PENDING",
@@ -16,6 +18,7 @@ const orderStatuses = [
 
 export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) {
   const [progress, setProgress] = useState(0)
+  const emailInvoice = api.order.emailInvoice.useMutation()
 
   useEffect(() => {
     const currentIndex = orderStatuses.indexOf(order.status as (typeof orderStatuses)[number])
@@ -98,9 +101,25 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
         </div>
       </div>
 
-      <div className="mt-12 bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+      <div className="mt-10 bg-white p-6 rounded-lg shadow">
+        <div className="flex justify-between">
+          <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+          <Button
+            variant={"pressable"}
+            title="Click here to email the invoice of your order."
+            onClick={() => {
+              const sendInvoice = emailInvoice.mutate({ orderId: order.id })
+              console.log(sendInvoice)
+            }}
+          >
+            Email Invoice
+          </Button>
+        </div>
         <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-gray-600">Order Date</p>
+            <p className="font-medium">{new Date(order.createdAt).toLocaleString()}</p>
+          </div>
           <div>
             <p className="text-gray-600">Delivery Address</p>
             <p className="font-medium">{order.deliveryAddress}</p>
@@ -122,7 +141,7 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="mt-2 bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Order Details</h2>
         <div className="space-y-2">
           <ul className="divide-y divide-gray-100">

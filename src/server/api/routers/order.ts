@@ -1,8 +1,10 @@
+import { render } from "@react-email/components"
 import { TRPCError } from "@trpc/server"
 import { desc, eq, sql } from "drizzle-orm"
 import { Resend } from "resend"
 import { z } from "zod"
 import { orderItemSchema, orderStatusSchema } from "@/app/schemas/order"
+import { OrderInvoiceEmail } from "@/components/custom/order-email-template"
 import { env } from "@/env"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { notifications, orderItems, orders } from "@/server/db/schema"
@@ -224,6 +226,46 @@ export const orderRouter = createTRPCRouter({
         to: order.user.email,
         subject: emailSubject,
         html: emailContent,
+      })
+
+      return { success: true }
+    }),
+
+  emailInvoice: protectedProcedure
+    .input(z.object({ orderId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Fetch order with all related data
+      const order = await ctx.db.query.orders.findFirst({
+        where: eq(orders.id, input.orderId),
+        with: {
+          user: true,
+          orderItems: {
+            with: {
+              menuItem: {
+                columns: {
+                  name: true,
+                  price: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      if (!order) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" })
+      }
+
+      const RESEND = new Resend(env.AUTH_RESEND_KEY)
+
+      const emailHtml = await render(OrderInvoiceEmail({ order }))
+
+      // Send email with invoice
+      await RESEND.emails.send({
+        from: env.ADMIN_EMAIL,
+        to: order.user.email,
+        subject: `Order Invoice #${order.id}`,
+        html: emailHtml,
       })
 
       return { success: true }
