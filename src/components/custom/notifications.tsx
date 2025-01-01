@@ -184,7 +184,7 @@ export default function Notifications() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 max-h-[400px] overflow-auto p-0">
+      <DropdownMenuContent className="w-80 max-h-[400px] overflow-auto p-0 scrollbar scrollbar-thumb-slate-600 scrollbar-track-slate-300 scrollbar-thin">
         <div className="grid divide-y-2 text-xs">
           {optimisticNotifications.map(notification => (
             <NotificationContent key={notification.id} notification={notification} />
@@ -195,7 +195,7 @@ export default function Notifications() {
           {unreadCount > 0 && (
             <Button
               variant="outline"
-              className="m-2"
+              className="sticky bottom-0.5 w-full"
               disabled={isPending}
               onClick={() => void handleMarkAllAsRead()}
             >
