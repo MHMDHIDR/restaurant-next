@@ -174,7 +174,7 @@ export const orders = createTable("order", {
   subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
-  deliveryAddress: text("delivery_address"),
+  deliveryAddress: text("delivery_address").notNull(),
   specialInstructions: text("special_instructions"),
   stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),

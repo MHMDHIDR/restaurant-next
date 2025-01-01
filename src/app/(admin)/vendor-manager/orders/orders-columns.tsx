@@ -99,6 +99,23 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     },
   },
   {
+    accessorKey: "deliveryAddress",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Delivery Address
+        <ArrowUpDown className="w-4 h-4 ml-2" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      return (
+        <>
+          <CopyText text={row.original.deliveryAddress} className="inline mr-3 w-3.5" />
+          <span>{row.original.deliveryAddress}</span>
+        </>
+      )
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
