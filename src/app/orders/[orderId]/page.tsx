@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { auth } from "@/server/auth"
 import { api } from "@/trpc/server"
 import { OrderTrackingContent } from "./order-tracking-content"
+import type { orderWithOrderItems } from "@/types"
 
 export default async function OrderTrackingPage({
   params,
@@ -15,7 +16,9 @@ export default async function OrderTrackingPage({
   }
 
   const userOrders = await api.order.getOrdersByUserId()
-  const order = userOrders.orders.find(order => order.id === orderId)
+  const order = userOrders.orders.find(
+    order => order.id === orderId,
+  ) as unknown as orderWithOrderItems
 
   if (!order) {
     redirect("/orders")

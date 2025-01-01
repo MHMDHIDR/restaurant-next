@@ -1,9 +1,9 @@
 "use client"
 
-import { CookingPot, CookingPotIcon, Loader2, MapPin, Package, Package2, Truck } from "lucide-react"
+import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import type { MenuItems, Orders } from "@/server/db/schema"
+import { orderWithOrderItems } from "@/types"
 
 const orderStatuses = [
   "PENDING",
@@ -14,20 +14,7 @@ const orderStatuses = [
   "DELIVERED",
 ] as const
 
-export function OrderTrackingContent({
-  order,
-}: {
-  order: Orders & {
-    orderItems: {
-      id: string
-      quantity: number
-      totalPrice: number
-      unitPrice: number
-      menuItem: MenuItems
-      specialInstructions: string
-    }[]
-  }
-}) {
+export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {

@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import type { VendorNavItems } from "@/types/vendorNavItems"
+import type { VendorNavItems } from "@/types"
 
 export function AppSidebar({ items }: { items: VendorNavItems }) {
   const pathname = usePathname()
