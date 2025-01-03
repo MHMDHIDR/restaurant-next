@@ -5,19 +5,14 @@ import { z } from "zod"
 import { orderItemSchema, orderStatusSchema } from "@/app/schemas/order"
 import { OrderInvoiceEmail } from "@/components/custom/order-email-template"
 import { env } from "@/env"
+import { rateLimiter } from "@/lib/rateLimiter"
 import { PaymentService } from "@/lib/stripe"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { notifications, orderItems, orders } from "@/server/db/schema"
 
 export const orderRouter = createTRPCRouter({
   createPaymentIntent: protectedProcedure
-    .input(
-      z.object({
-        orderId: z.string(),
-        amount: z.number(),
-        vendorId: z.string(),
-      }),
-    )
+    .input(z.object({ orderId: z.string(), amount: z.number(), vendorId: z.string() }))
     .mutation(async ({ input }) => {
       const paymentIntent = await PaymentService.createPaymentIntent({
         id: input.orderId,
@@ -25,9 +20,7 @@ export const orderRouter = createTRPCRouter({
         total: String(input.amount),
       })
 
-      return {
-        clientSecret: paymentIntent.client_secret,
-      }
+      return { clientSecret: paymentIntent.client_secret }
     }),
 
   create: protectedProcedure
@@ -257,6 +250,19 @@ export const orderRouter = createTRPCRouter({
   emailInvoice: protectedProcedure
     .input(z.object({ orderId: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id
+      const ipAddress =
+        ctx.headers.get("x-forwarded-for") || (ctx.headers.get("x-real-ip") as string)
+
+      // Check rate limiting
+      const isAllowed = await rateLimiter({ userId, ipAddress, mins: 20 })
+      if (!isAllowed) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: `You have sent the invoice too many times. Please try again later after 20 minutes.`,
+        })
+      }
+
       // Fetch order with all related data
       const order = await ctx.db.query.orders.findFirst({
         where: eq(orders.id, input.orderId),

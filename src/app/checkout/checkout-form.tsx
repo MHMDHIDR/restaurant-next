@@ -22,15 +22,10 @@ import { StripeCardDetails } from "@/components/ui/stripe-card-details"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
+import type { CartItem } from "@/hooks/use-cart"
 import type { Session } from "next-auth"
 
-// Type for cart items
-interface CartItem {
-  id: string
-  vendorId: string
-  price: number
-  quantity?: number
-}
+type CartCheckoutItems = Omit<CartItem, "image" | "vendorName" | "selectedAddons">
 
 // Zod schema for checkout form
 const checkoutSchema = z.object({
@@ -43,7 +38,7 @@ const checkoutSchema = z.object({
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>
 
-interface CheckoutFormProps {
+type CheckoutFormProps = {
   user: Session["user"]
 }
 
@@ -73,7 +68,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
 
   const createOrder = api.stripe.create.useMutation()
 
-  const calculateOrderTotals = (items: CartItem[]) => {
+  const calculateOrderTotals = (items: CartCheckoutItems[]) => {
     const subtotal = items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0)
     const deliveryFee = 5.0
     const total = subtotal + deliveryFee
@@ -92,7 +87,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
           acc[item.vendorId] = [...(acc[item.vendorId] ?? []), item]
           return acc
         },
-        {} as Record<string, CartItem[]>,
+        {} as Record<string, CartCheckoutItems[]>,
       )
 
       const vendorEntries = Object.entries(ordersByVendor)
@@ -156,11 +151,9 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
     }
   }, [items, router])
 
-  if (items.length === 0) {
-    return <LoadingPage />
-  }
-
-  return (
+  return items.length === 0 ? (
+    <LoadingPage />
+  ) : (
     <div className="grid gap-8 md:grid-cols-3">
       <div className="md:col-span-2">
         <Card>

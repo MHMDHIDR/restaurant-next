@@ -287,6 +287,18 @@ export const verificationTokens = createTable(
   }),
 )
 
+export const rateLimits = createTable("rate_limit", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 255 }).notNull(),
+  ipAddress: varchar("ip_address", { length: 255 }).notNull(),
+  requestCount: integer("request_count").notNull().default(0),
+  lastRequestAt: timestamp("last_request_at").defaultNow().notNull(),
+})
+export type RateLimits = typeof rateLimits.$inferSelect
+
 // Relations
 export const vendorsRelations = relations(vendors, ({ many, one }) => ({
   menuCategories: many(menuCategories),
