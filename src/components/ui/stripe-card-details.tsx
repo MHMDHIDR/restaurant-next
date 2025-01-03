@@ -26,8 +26,8 @@ export function StripeCardDetails({
   onError,
   billingDetails,
 }: PaymentFormProps) {
-  if (!clientSecret) return null
   const { theme } = useTheme()
+  if (!clientSecret) return null
 
   return (
     <Elements
