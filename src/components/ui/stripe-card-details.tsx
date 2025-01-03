@@ -27,7 +27,7 @@ export function StripeCardDetails({
   billingDetails,
 }: PaymentFormProps) {
   if (!clientSecret) return null
-  const { theme } = useTheme() as { theme: "light" | "dark" }
+  const { theme } = useTheme()
 
   return (
     <Elements

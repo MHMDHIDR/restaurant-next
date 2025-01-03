@@ -264,8 +264,7 @@ export const orderRouter = createTRPCRouter({
     .input(z.object({ orderId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id
-      const ipAddress =
-        ctx.headers.get("x-forwarded-for") || (ctx.headers.get("x-real-ip") as string)
+      const ipAddress = ctx.headers.get("x-forwarded-for") ?? ctx.headers.get("x-real-ip")!
 
       // Check rate limiting
       const isAllowed = await rateLimiter({ userId, ipAddress, mins: 20 })
