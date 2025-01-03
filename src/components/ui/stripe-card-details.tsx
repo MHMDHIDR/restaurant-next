@@ -1,5 +1,6 @@
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
+import { useTheme } from "next-themes"
 import { useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -26,9 +27,16 @@ export function StripeCardDetails({
   billingDetails,
 }: PaymentFormProps) {
   if (!clientSecret) return null
+  const { theme } = useTheme() as { theme: "light" | "dark" }
 
   return (
-    <Elements stripe={stripePromise} options={{ clientSecret }}>
+    <Elements
+      stripe={stripePromise}
+      options={{
+        clientSecret,
+        appearance: { theme: theme === "dark" ? "night" : "stripe" },
+      }}
+    >
       <PaymentForm onSuccess={onSuccess} onError={onError} billingDetails={billingDetails} />
     </Elements>
   )
@@ -92,7 +100,7 @@ function PaymentForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Payment Details</h2>
-        <PaymentElement />
+        <PaymentElement options={{}} />
       </div>
 
       {errorMessage && (
