@@ -5,10 +5,31 @@ import { z } from "zod"
 import { orderItemSchema, orderStatusSchema } from "@/app/schemas/order"
 import { OrderInvoiceEmail } from "@/components/custom/order-email-template"
 import { env } from "@/env"
+import { PaymentService } from "@/lib/stripe"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { notifications, orderItems, orders } from "@/server/db/schema"
 
 export const orderRouter = createTRPCRouter({
+  createPaymentIntent: protectedProcedure
+    .input(
+      z.object({
+        orderId: z.string(),
+        amount: z.number(),
+        vendorId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const paymentIntent = await PaymentService.createPaymentIntent({
+        id: input.orderId,
+        vendorId: input.vendorId,
+        total: String(input.amount),
+      })
+
+      return {
+        clientSecret: paymentIntent.client_secret,
+      }
+    }),
+
   create: protectedProcedure
     .input(
       z.object({
@@ -19,6 +40,7 @@ export const orderRouter = createTRPCRouter({
         deliveryFee: z.number(),
         total: z.number(),
         items: z.array(orderItemSchema),
+        paymentIntentId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -35,6 +57,7 @@ export const orderRouter = createTRPCRouter({
             total: input.total.toString(),
             deliveryAddress: input.deliveryAddress,
             specialInstructions: input.specialInstructions,
+            stripePaymentIntentId: input.paymentIntentId,
           })
           .returning()
 
@@ -57,6 +80,7 @@ export const orderRouter = createTRPCRouter({
         return order
       })
     }),
+
   getOrdersByVendorId: protectedProcedure
     .input(z.object({ vendorId: z.string() }))
     .query(async ({ ctx, input }) => {

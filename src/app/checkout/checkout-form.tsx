@@ -9,7 +9,6 @@ import { AddressInput } from "@/components/custom/AddressInput"
 import { LoadingPage } from "@/components/custom/loading"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import CardDetails from "@/components/ui/card-details"
 import {
   Form,
   FormControl,
@@ -19,11 +18,21 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { StripeCardDetails } from "@/components/ui/stripe-card-details"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import type { Session } from "next-auth"
 
+// Type for cart items
+interface CartItem {
+  id: string
+  vendorId: string
+  price: number
+  quantity?: number
+}
+
+// Zod schema for checkout form
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address"),
@@ -34,11 +43,22 @@ const checkoutSchema = z.object({
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>
 
-export default function CheckoutForm({ user }: { user: Session["user"] }) {
+interface CheckoutFormProps {
+  user: Session["user"]
+}
+
+export default function CheckoutForm({ user }: CheckoutFormProps) {
   const router = useRouter()
   const toast = useToast()
   const { items, clearCart } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [billingDetails, setBillingDetails] = useState<{
+    name: string
+    email: string
+    phone: string
+    address: string
+  } | null>(null)
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -51,57 +71,83 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
     },
   })
 
-  const createOrder = api.order.create.useMutation({
-    onSuccess: () => {
-      clearCart()
-      toast.success("Order placed successfully!")
-      router.push("/")
-    },
-    onError: error => {
-      toast.error(error.message)
-      setIsProcessing(false)
-    },
-  })
+  const createOrder = api.stripe.create.useMutation()
 
-  const onSubmit = async (data: CheckoutFormValues) => {
-    setIsProcessing(true)
+  const calculateOrderTotals = (items: CartItem[]) => {
+    const subtotal = items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0)
+    const deliveryFee = 5.0
+    const total = subtotal + deliveryFee
 
-    // Group items by vendor
-    const ordersByVendor = items.reduce(
-      (acc, item) => {
-        if (!item.vendorId) {
-          throw new Error("Item missing vendor ID")
-        }
-        if (!acc[item.vendorId]) {
-          acc[item.vendorId] = []
-        }
-        // only use acc if it is not null or undefined
-        acc[item.vendorId]?.push(item)
-        return acc
-      },
-      {} as Record<string, typeof items>,
-    )
+    return { subtotal, deliveryFee, total }
+  }
 
-    // Create an order for each vendor
-    for (const [vendorId, vendorItems] of Object.entries(ordersByVendor)) {
-      const subtotal = vendorItems.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0)
+  const onSubmit = async (formData: CheckoutFormValues) => {
+    try {
+      setIsProcessing(true)
 
-      await createOrder.mutateAsync({
-        vendorId,
-        deliveryAddress: data.deliveryAddress,
-        specialInstructions: data.specialInstructions,
-        subtotal,
-        deliveryFee: 5.0,
-        total: subtotal + 5.0,
-        items: vendorItems.map(item => ({
-          menuItemId: item.id,
-          quantity: item.quantity ?? 1,
-          unitPrice: item.price,
-          totalPrice: item.price * (item.quantity ?? 1),
-          specialInstructions: "",
-        })),
+      // Group items by vendor
+      const ordersByVendor = items.reduce(
+        (acc, item) => {
+          if (!item.vendorId) throw new Error("Item missing vendor ID")
+          acc[item.vendorId] = [...(acc[item.vendorId] ?? []), item]
+          return acc
+        },
+        {} as Record<string, CartItem[]>,
+      )
+
+      const vendorEntries = Object.entries(ordersByVendor)
+      if (vendorEntries.length === 0) throw new Error("No vendor items found")
+
+      // Create orders for all vendors
+      const orders = await Promise.all(
+        vendorEntries.map(async ([vendorId, vendorItems]) => {
+          const { subtotal, deliveryFee, total } = calculateOrderTotals(vendorItems)
+          return createOrder.mutateAsync({
+            vendorId,
+            deliveryAddress: formData.deliveryAddress,
+            specialInstructions: formData.specialInstructions,
+            subtotal,
+            deliveryFee,
+            total,
+            items: vendorItems.map(item => ({
+              menuItemId: item.id,
+              quantity: item.quantity ?? 1,
+              unitPrice: item.price,
+              totalPrice: item.price * (item.quantity ?? 1),
+              specialInstructions: "",
+            })),
+          })
+        }),
+      )
+
+      setBillingDetails({
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.deliveryAddress,
       })
+
+      if (orders.length > 0 && orders[0]?.paymentIntent) {
+        setClientSecret(orders[0].paymentIntent.clientSecret)
+      } else {
+        // Handle the case where there are no orders or paymentIntent is undefined
+        toast.error("Failed to retrieve payment information.")
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to process order")
+      setIsProcessing(false)
     }
+  }
+
+  const handlePaymentSuccess = async () => {
+    clearCart()
+    toast.success("Order placed successfully!")
+    router.push("/order-confirmation")
+  }
+
+  const handlePaymentError = (error: Error) => {
+    toast.error(error.message)
+    setIsProcessing(false)
   }
 
   useEffect(() => {
@@ -110,39 +156,69 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
     }
   }, [items, router])
 
-  return items.length === 0 ? (
-    <LoadingPage />
-  ) : (
+  if (items.length === 0) {
+    return <LoadingPage />
+  }
+
+  return (
     <div className="grid gap-8 md:grid-cols-3">
       <div className="md:col-span-2">
         <Card>
           <CardContent className="p-6">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Delivery Information</h2>
-                  <FormField
-                    control={form.control}
-                    name="fullName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} readOnly />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid gap-4 md:grid-cols-2">
+            {!clientSecret || !billingDetails ? (
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold">Delivery Information</h2>
                     <FormField
                       control={form.control}
-                      name="email"
+                      name="fullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>Full Name</FormLabel>
                           <FormControl>
-                            <Input {...field} type="email" readOnly />
+                            <Input {...field} readOnly />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" readOnly />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="deliveryAddress"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Delivery Address</FormLabel>
+                          <FormControl>
+                            <AddressInput onAddressChange={field.onChange} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -150,10 +226,10 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
                     />
                     <FormField
                       control={form.control}
-                      name="phone"
+                      name="specialInstructions"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone</FormLabel>
+                          <FormLabel>Special Instructions (Optional)</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -162,44 +238,20 @@ export default function CheckoutForm({ user }: { user: Session["user"] }) {
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="deliveryAddress"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Delivery Address</FormLabel>
-                        <FormControl>
-                          <AddressInput onAddressChange={field.onChange} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="specialInstructions"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Special Instructions (Optional)</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Payment Information</h2>
-                  <CardDetails />
-                </div>
-
-                <Button type="submit" className="w-full" disabled={isProcessing}>
-                  {isProcessing ? "Processing..." : "Place Order"}
-                </Button>
-              </form>
-            </Form>
+                  <Button type="submit" className="w-full" disabled={isProcessing}>
+                    {isProcessing ? "Processing..." : "Continue to Payment"}
+                  </Button>
+                </form>
+              </Form>
+            ) : (
+              <StripeCardDetails
+                clientSecret={clientSecret}
+                onSuccess={handlePaymentSuccess}
+                onError={handlePaymentError}
+                billingDetails={billingDetails}
+              />
+            )}
           </CardContent>
         </Card>
       </div>
