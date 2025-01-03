@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { isValidPhoneNumber } from "libphonenumber-js"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -31,7 +32,9 @@ type CartCheckoutItems = Omit<CartItem, "image" | "vendorName" | "selectedAddons
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Valid phone number is required"),
+  phone: z.string().refine(isValidPhoneNumber, {
+    message: "Please Provide a Valid Phone Number",
+  }),
   deliveryAddress: z.string().min(5, "Delivery address is required"),
   specialInstructions: z.string().optional(),
 })
@@ -170,7 +173,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
                         <FormItem>
                           <FormLabel>Full Name</FormLabel>
                           <FormControl>
-                            <Input {...field} readOnly />
+                            <Input {...field} readOnly disabled />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -184,7 +187,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
                           <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                              <Input {...field} type="email" readOnly />
+                              <Input {...field} type="email" readOnly disabled />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -197,7 +200,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input type="tel" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
