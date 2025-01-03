@@ -146,6 +146,19 @@ export const orderRouter = createTRPCRouter({
       return { success: true }
     }),
 
+  deleteBulkOrders: protectedProcedure
+    .input(z.object({ ids: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      const { ids } = input
+
+      for (const id of ids) {
+        await ctx.db.delete(orderItems).where(eq(orderItems.orderId, id))
+        await ctx.db.delete(orders).where(eq(orders.id, id))
+      }
+
+      return { success: true }
+    }),
+
   updateOrderStatus: protectedProcedure
     .input(
       z.object({

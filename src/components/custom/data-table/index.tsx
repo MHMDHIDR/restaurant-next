@@ -1,12 +1,12 @@
-"use client"
-
 import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { useEffect, useState } from "react"
 import EmptyState from "@/components/custom/empty-state"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
   TableBody,
@@ -17,16 +17,17 @@ import {
 } from "@/components/ui/table"
 import { LoadingCard } from "./loading"
 import type { BaseEntity } from "./base-columns"
-import type { ColumnDef, Row } from "@tanstack/react-table"
+import type { ColumnDef, Row, RowSelectionState } from "@tanstack/react-table"
 
 type RowStatus = "inactive" | "deactivated" | "pending" | "active" | "default"
 
 type DataTableProps<TData extends BaseEntity> = {
   columns: ColumnDef<TData>[]
   data: TData[]
+  onRowSelection: (selectedRows: TData[]) => void
+  emptyStateMessage?: string
   isLoading?: boolean
   count?: number
-  emptyStateMessage?: string
 }
 
 export function DataTable<TData extends BaseEntity>({
@@ -35,13 +36,49 @@ export function DataTable<TData extends BaseEntity>({
   isLoading = false,
   count = 7,
   emptyStateMessage = "Sorry we couldn't find any data.",
+  onRowSelection,
 }: DataTableProps<TData>) {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+
+  const selectionColumn: ColumnDef<TData> = {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={value => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  }
+
+  const allColumns = [selectionColumn, ...columns]
+
   const table = useReactTable({
     data,
-    columns,
+    columns: allColumns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    onRowSelectionChange: setRowSelection,
+    state: { rowSelection },
   })
+
+  useEffect(() => {
+    if (onRowSelection) {
+      const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
+      onRowSelection(selectedRows)
+    }
+  }, [rowSelection, table, onRowSelection])
 
   const getRowStatus = (row: Row<TData>): RowStatus => {
     const original = row.original as {
