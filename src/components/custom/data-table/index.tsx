@@ -4,6 +4,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { useSession } from "next-auth/react"
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import EmptyState from "@/components/custom/empty-state"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -15,6 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { checkRoleAccess } from "@/lib/check-role-access"
+import { UserRole } from "@/server/db/schema"
 import { LoadingCard } from "./loading"
 import type { BaseEntity } from "./base-columns"
 import type { ColumnDef, Row, RowSelectionState } from "@tanstack/react-table"
@@ -24,7 +28,7 @@ type RowStatus = "inactive" | "deactivated" | "pending" | "active" | "default"
 type DataTableProps<TData extends BaseEntity> = {
   columns: ColumnDef<TData>[]
   data: TData[]
-  onRowSelection: (selectedRows: TData[]) => void
+  onRowSelection?: (selectedRows: TData[]) => void
   emptyStateMessage?: string
   isLoading?: boolean
   count?: number
@@ -39,6 +43,10 @@ export function DataTable<TData extends BaseEntity>({
   onRowSelection,
 }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const { data: session } = useSession()
+  const pathname = usePathname()
+  const ALLOWED_ROLES = [UserRole.SUPER_ADMIN, UserRole.VENDOR_ADMIN] as const
+  const MANAGING_PATHS = ["/dashboard", "/vendor-manager"]
 
   const selectionColumn: ColumnDef<TData> = {
     id: "select",
@@ -62,7 +70,13 @@ export function DataTable<TData extends BaseEntity>({
     enableHiding: false,
   }
 
-  const allColumns = [selectionColumn, ...columns]
+  const allColumns = [
+    checkRoleAccess(session?.user?.role, ALLOWED_ROLES) &&
+    MANAGING_PATHS.some(path => pathname.includes(path))
+      ? selectionColumn
+      : null,
+    ...columns,
+  ].filter(Boolean) as ColumnDef<TData>[]
 
   const table = useReactTable({
     data,

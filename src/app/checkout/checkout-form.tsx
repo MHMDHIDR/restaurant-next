@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isValidPhoneNumber } from "libphonenumber-js"
+import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -33,7 +34,7 @@ const checkoutSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().refine(isValidPhoneNumber, {
-    message: "Please Provide a Valid Phone Number",
+    message: "Please Provide a Valid Phone Number, +countryCode: (e.g: +44 XXXXXXXXX)",
   }),
   deliveryAddress: z.string().min(5, "Delivery address is required"),
   specialInstructions: z.string().optional(),
@@ -140,7 +141,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
   const handlePaymentSuccess = async () => {
     clearCart()
     toast.success("Order placed successfully!")
-    router.push("/order-confirmation")
+    router.push("/orders")
   }
 
   const handlePaymentError = (error: Error) => {
@@ -149,7 +150,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
   }
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (!items) {
       router.push("/cart")
     }
   }, [items, router])
@@ -200,7 +201,11 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input type="tel" {...field} />
+                              <Input
+                                type="tel"
+                                {...field}
+                                placeholder="+countryCode: (e.g: +44 XXXXXXXXX)"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -236,7 +241,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
                   </div>
 
                   <Button type="submit" className="w-full" disabled={isProcessing}>
-                    {isProcessing ? "Processing..." : "Continue to Payment"}
+                    {isProcessing ? <Loader2 className="w-4 h-4" /> : "Continue to Payment"}
                   </Button>
                 </form>
               </Form>
