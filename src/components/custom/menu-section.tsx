@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
 import type { MenuItems, Vendors } from "@/server/db/schema"
 
-interface MenuSectionProps {
+type MenuSectionProps = {
   vendor: Vendors
   menuItems: MenuItems[]
 }

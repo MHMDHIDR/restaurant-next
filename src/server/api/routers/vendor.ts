@@ -4,6 +4,7 @@ import { Resend } from "resend"
 import { z } from "zod"
 import { vendorFormSchema, vendorStatus } from "@/app/schemas/vendor"
 import { env } from "@/env"
+import { createSlug } from "@/lib/create-slug"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { UserRole, users, vendors } from "@/server/db/schema"
 
@@ -27,6 +28,7 @@ export const vendorRouter = createTRPCRouter({
         .insert(vendors)
         .values({
           ...input,
+          slug: createSlug(input.name),
           addedById: ctx.session.user.id,
           latitude: input.latitude.toString(),
           longitude: input.longitude.toString(),
@@ -174,6 +176,34 @@ export const vendorRouter = createTRPCRouter({
 
     return vendor
   }),
+
+  getBySlug: publicProcedure
+    .input(z.object({ slug: z.string(), getItems: z.boolean().default(false) }))
+    .query(async ({ ctx, input }) => {
+      const vendor = await ctx.db.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.slug, input.slug),
+      })
+
+      if (!vendor) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
+      }
+
+      if (input.getItems) {
+        // First get relevant category IDs for the vendor
+        const categories = await ctx.db.query.menuCategories.findMany({
+          where: (categories, { eq }) => eq(categories.vendorId, vendor.id),
+          columns: { id: true },
+        })
+        const categoryIds = categories.map(cat => cat.id)
+
+        const menuItems = await ctx.db.query.menuItems.findMany({
+          where: (items, { inArray }) => inArray(items.categoryId, categoryIds),
+        })
+        return { ...vendor, menuItems }
+      } else {
+        return { ...vendor, menuItems: [] }
+      }
+    }),
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
     const vendor = await ctx.db.query.vendors.findFirst({
