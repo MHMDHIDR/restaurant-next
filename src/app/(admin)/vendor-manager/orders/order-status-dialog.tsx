@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { orderStatusSchema } from "@/app/schemas/order"
@@ -29,7 +30,7 @@ const formSchema = z.object({
   status: orderStatusSchema,
 })
 
-interface OrderStatusDialogProps {
+type OrderStatusDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   order: Orders
@@ -50,43 +51,56 @@ export function OrderStatusDialog({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      status: order.status,
-    },
+    defaultValues: { status: order.status },
   })
 
+  // Get the latest data from TRPC cache
+  const orders = utils.order.getOrdersByVendorId.getData()
+  const currentOrder = orders?.orders.find(currentOrder => currentOrder.id === order.id)
+
+  useEffect(() => {
+    if (open && currentOrder) {
+      // Always use the most up-to-date status from the server
+      form.reset({ status: currentOrder.status })
+    }
+  }, [open, currentOrder, form])
+
   const { mutate: updateOrderStatus } = api.order.updateOrderStatus.useMutation({
-    onSuccess: async () => {
+    onMutate: async ({ status }) => {
+      // Optimistically update the form value
+      form.reset({ status })
+    },
+    onSuccess: async (_, variables) => {
       toast.success(
         isMultiple
           ? `${selectedOrders.length} orders updated successfully`
           : "Order status updated successfully",
       )
+
+      // Force a form reset with the new status
+      form.reset({ status: variables.status })
+
+      // Invalidate the query to refresh the data
       await utils.order.getOrdersByVendorId.invalidate()
       router.refresh()
       onOpenChange(false)
-      form.reset()
     },
     onError: error => {
       toast.error(`Failed to update order status: ${error.message}`)
+      // Reset form to the current order status on error
+      if (currentOrder) {
+        form.reset({ status: currentOrder.status })
+      }
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (isMultiple && selectedOrders) {
-      // Update all selected orders
       for (const selectedOrder of selectedOrders) {
-        updateOrderStatus({
-          id: selectedOrder.id,
-          status: values.status,
-        })
+        updateOrderStatus({ id: selectedOrder.id, status: values.status })
       }
     } else {
-      // Update single order
-      updateOrderStatus({
-        id: order.id,
-        status: values.status,
-      })
+      updateOrderStatus({ id: order.id, status: values.status })
     }
   }
 
@@ -112,7 +126,7 @@ export function OrderStatusDialog({
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                       className="flex flex-col space-y-1"
                     >
                       {Object.entries({

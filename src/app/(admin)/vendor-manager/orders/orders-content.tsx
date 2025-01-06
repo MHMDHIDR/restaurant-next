@@ -76,9 +76,11 @@ export function OrdersContent({ orders }: OrdersContentProps) {
 
   const handleBulkStatusClick = () => {
     if (selectedOrders.length > 0) {
-      // We'll use the first selected order as a template for the status dialog
-      setSelectedOrder(selectedOrders[0]!)
-      setStatusDialogOpen(true)
+      const firstOrder = selectedOrders[0]
+      if (firstOrder) {
+        setSelectedOrder(firstOrder)
+        setStatusDialogOpen(true)
+      }
     }
   }
 
