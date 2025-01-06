@@ -52,7 +52,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
           alt={item.name}
           width={300}
           height={192}
-          className="w-full object-cover aspect-square"
+          className="w-full object-contain"
         />
       </div>
       <CardHeader>

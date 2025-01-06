@@ -22,7 +22,6 @@ export default function CartPage() {
         <LoadingPage />
       ) : items.length === 0 ? (
         <div className="container mx-auto px-4 py-8">
-          <h1 className="mb-8 text-2xl font-bold">Your Cart</h1>
           <div className="text-center">
             <p className="mb-4 text-gray-600">Your cart is empty</p>
             <Link href="/">
