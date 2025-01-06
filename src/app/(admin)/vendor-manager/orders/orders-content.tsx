@@ -74,6 +74,14 @@ export function OrdersContent({ orders }: OrdersContentProps) {
     setStatusDialogOpen(true)
   }
 
+  const handleBulkStatusClick = () => {
+    if (selectedOrders.length > 0) {
+      // We'll use the first selected order as a template for the status dialog
+      setSelectedOrder(selectedOrders[0]!)
+      setStatusDialogOpen(true)
+    }
+  }
+
   const handleConfirmDelete = async () => {
     if (selectedOrder) {
       deleteOrder({ id: selectedOrder.id })
@@ -105,20 +113,25 @@ export function OrdersContent({ orders }: OrdersContentProps) {
         description={
           selectedOrder
             ? "Are you sure you want to delete this order? This action cannot be undone."
-            : `Are you sure you want to delete ${selectedOrders.length} ${orders.length > 1 ? "orders" : "order"} This action cannot be undone.`
+            : `Are you sure you want to delete ${selectedOrders.length} ${
+                selectedOrders.length > 1 ? "orders" : "order"
+              }? This action cannot be undone.`
         }
         buttonText="Delete"
         buttonClass="bg-destructive hover:bg-destructive/90"
         onConfirm={handleConfirmDelete}
       />
       {selectedOrders.length > 0 && (
-        <div className="mt-2 flex justify-start">
+        <div className="mt-2 flex items-center gap-2">
           <Button
             variant="destructive"
             onClick={handleBulkDeleteClick}
             className="flex items-center gap-2"
           >
             Delete Selected ({selectedOrders.length})
+          </Button>
+          <Button onClick={handleBulkStatusClick} className="flex items-center gap-2">
+            Update Status ({selectedOrders.length})
           </Button>
         </div>
       )}
@@ -127,6 +140,8 @@ export function OrdersContent({ orders }: OrdersContentProps) {
           open={isStatusDialogOpen}
           onOpenChange={setStatusDialogOpen}
           order={selectedOrder}
+          isMultiple={selectedOrders.length > 1}
+          selectedOrders={selectedOrders}
         />
       )}
     </div>
