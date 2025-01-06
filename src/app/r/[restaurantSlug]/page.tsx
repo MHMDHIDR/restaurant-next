@@ -2,9 +2,9 @@ import { TRPCError } from "@trpc/server"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { env } from "@/env"
-import { Vendors } from "@/server/db/schema"
 import { api } from "@/trpc/server"
 import RestaurantMenuItem from "./restaurant-menu-item"
+import type { Vendors } from "@/server/db/schema"
 import type { Metadata } from "next"
 
 export async function generateMetadata({
@@ -48,8 +48,10 @@ export default async function RestaurantPage({
 
   const vendor = await api.vendor
     .getBySlug({ slug: restaurantSlug, getItems: true })
-    .catch(error => {
-      if (error.code === "NOT_FOUND") notFound()
+    .catch((error: unknown) => {
+      if (error instanceof TRPCError && error.code === "NOT_FOUND") {
+        notFound()
+      }
       throw error
     })
 
