@@ -51,13 +51,15 @@ export default async function Home() {
               <div key={vendor.id}>
                 <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
                 <div className="grid gap-6 md:grid-cols-3">
-                  {vendor.menuItems.map(item => (
-                    <RestaurantMenuItem
-                      key={item.id}
-                      item={item}
-                      vendor={{ id: vendor.id, name: vendor.name }}
-                    />
-                  ))}
+                  {vendor.menuItems
+                    .filter(item => item.isAvailable)
+                    .map(item => (
+                      <RestaurantMenuItem
+                        key={item.id}
+                        item={item}
+                        vendor={{ id: vendor.id, name: vendor.name }}
+                      />
+                    ))}
                 </div>
               </div>
             ))}
