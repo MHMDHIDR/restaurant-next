@@ -151,7 +151,7 @@ export const menuItemRouter = createTRPCRouter({
       if (fileKeys.length > 0) {
         for (const fileKey of fileKeys) {
           const caller = createCaller(ctx)
-          await caller.S3.deleteFile({ fileName: fileKey as string })
+          await caller.S3.deleteFile({ fileName: fileKey! })
         }
       }
 
