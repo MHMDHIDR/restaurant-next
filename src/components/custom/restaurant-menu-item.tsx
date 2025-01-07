@@ -85,7 +85,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
           <DialogDescription asChild>
             <div>
               <div className="flex flex-col gap-2 justify-between">
-                <strong className="text-sm text-muted-foreground">
+                <strong className="text-sm text-green-600">
                   {DEFAULT_CURRENCY_SYMBOL}
                   {Number(item.price).toFixed(2)}
                 </strong>
@@ -120,9 +120,11 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
                       })
                     }}
                   />
-                  <span className="text-sm">
-                    {addon.toppingName} (+{DEFAULT_CURRENCY_SYMBOL}
-                    {addon.toppingPrice.toFixed(2)})
+                  <span className="text-sm space-x-1">
+                    <span>{addon.toppingName}</span>
+                    <span className="text-green-600">
+                      (+{DEFAULT_CURRENCY_SYMBOL} {addon.toppingPrice.toFixed(2)})
+                    </span>
                   </span>
                 </label>
               ))}

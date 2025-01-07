@@ -140,7 +140,7 @@ export const menuItems = createTable("menu_item", {
   description: text("description").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   image: varchar("image", { length: 255 }).notNull(),
-  isAvailable: boolean("is_available").default(true),
+  isAvailable: boolean("is_available").default(true).notNull(),
   preparationTime: integer("preparation_time").notNull(),
   allergens: json("allergens").$type<string[]>().notNull(),
   nutritionalInfo: json("nutritional_info")

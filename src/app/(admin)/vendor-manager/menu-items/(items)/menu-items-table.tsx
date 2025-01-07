@@ -9,6 +9,7 @@ import { ConfirmationDialog } from "@/components/custom/data-table/confirmation-
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
+import { MenuAvailabilityDialog } from "./menu-availability-dialog"
 import { MenuItemEdit } from "./menu-item-edit"
 import { menuItemsColumns } from "./menu-items-columns"
 import type { BaseEntity } from "@/components/custom/data-table/base-columns"
@@ -22,6 +23,7 @@ type MenuItemsTableProps = {
 
 export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
   const [isDialogOpen, setDialogOpen] = useState(false)
+  const [isAvailabilityDialogOpen, setAvailabilityDialogOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItems | null>(null)
   const [selectedMenuItems, setSelectedMenuItems] = useState<MenuItems[]>([])
@@ -79,6 +81,16 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
     setIsEditOpen(true)
   }
 
+  const handleBulkAvailabilityClick = () => {
+    if (selectedMenuItems.length > 0) {
+      const firstItem = selectedMenuItems[0]
+      if (firstItem) {
+        setSelectedMenuItem(firstItem)
+        setAvailabilityDialogOpen(true)
+      }
+    }
+  }
+
   const handleConfirmDelete = async () => {
     if (selectedMenuItem) {
       deleteMenuItem({ id: selectedMenuItem.id })
@@ -124,6 +136,9 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
           >
             Delete Selected ({selectedMenuItems.length})
           </Button>
+          <Button onClick={handleBulkAvailabilityClick} className="flex items-center gap-2">
+            Update Availability ({selectedMenuItems.length})
+          </Button>
         </div>
       )}
       {selectedMenuItem && (
@@ -132,6 +147,15 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
           onOpenChange={setIsEditOpen}
           menuCategories={menuCategories}
           menuItem={selectedMenuItem}
+        />
+      )}
+      {selectedMenuItem && (
+        <MenuAvailabilityDialog
+          open={isAvailabilityDialogOpen}
+          onOpenChange={setAvailabilityDialogOpen}
+          menuItem={selectedMenuItem}
+          isMultiple={selectedMenuItems.length > 1}
+          selectedItems={selectedMenuItems}
         />
       )}
     </>
