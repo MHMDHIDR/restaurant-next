@@ -1,6 +1,6 @@
 import { IconMapPin, IconSearch } from "@tabler/icons-react"
-import { MenuSection } from "@/components/custom/menu-section"
 import { RestaurantCard } from "@/components/custom/restaurant-card"
+import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { api } from "@/trpc/server"
 
 export default async function Home() {
@@ -46,7 +46,18 @@ export default async function Home() {
         <h2 className="mb-6 text-2xl font-semibold">Popular Menu Items</h2>
         <div className="space-y-8">
           {vendorsWithMenus.map(vendor => (
-            <MenuSection key={vendor.id} vendor={vendor} menuItems={vendor.menuItems} />
+            <div key={vendor.id}>
+              <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
+              <div className="grid gap-6 md:grid-cols-3">
+                {vendor.menuItems.map(item => (
+                  <RestaurantMenuItem
+                    key={item.id}
+                    item={item}
+                    vendor={{ id: vendor.id, name: vendor.name }}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>

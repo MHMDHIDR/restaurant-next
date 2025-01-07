@@ -82,21 +82,23 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{item.name}</DialogTitle>
-          <DialogDescription>
-            <div className="flex flex-col gap-2 justify-between">
-              <strong className="text-sm text-muted-foreground">
-                {DEFAULT_CURRENCY_SYMBOL}
-                {Number(item.price).toFixed(2)}
-              </strong>
-              <p>{item.description}</p>
+          <DialogDescription asChild>
+            <div>
+              <div className="flex flex-col gap-2 justify-between">
+                <strong className="text-sm text-muted-foreground">
+                  {DEFAULT_CURRENCY_SYMBOL}
+                  {Number(item.price).toFixed(2)}
+                </strong>
+                <p>{item.description}</p>
+              </div>
+              <Image
+                src={item.image}
+                alt={item.name}
+                width={300}
+                height={192}
+                className="w-full max-h-72 object-cover rounded-md shadow mt-2"
+              />
             </div>
-            <Image
-              src={item.image}
-              alt={item.name}
-              width={300}
-              height={192}
-              className="w-full max-h-72 object-cover rounded-md shadow mt-2"
-            />
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="!flex-col">

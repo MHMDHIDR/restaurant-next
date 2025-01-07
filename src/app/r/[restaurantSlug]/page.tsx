@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { env } from "@/env"
 import { api } from "@/trpc/server"
-import RestaurantMenuItem from "./restaurant-menu-item"
 import type { Vendors } from "@/server/db/schema"
 import type { Metadata } from "next"
 
