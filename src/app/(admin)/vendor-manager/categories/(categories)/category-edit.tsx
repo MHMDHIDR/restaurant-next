@@ -24,7 +24,7 @@ import { api } from "@/trpc/react"
 import type { MenuCategoryFormValues } from "@/app/schemas/menuCategory"
 import type { MenuCategories } from "@/server/db/schema"
 
-interface CategoryEditProps {
+type CategoryEditProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   category: MenuCategories

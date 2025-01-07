@@ -1,7 +1,7 @@
 import React, { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 
-interface FileUploadProps {
+type FileUploadProps = {
   onFilesSelected: (files: Array<File>) => void
   disabled?: boolean
 }

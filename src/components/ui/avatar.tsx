@@ -17,14 +17,16 @@ const Avatar = React.forwardRef<
 ))
 Avatar.displayName = AvatarPrimitive.Root.displayName
 
-interface AvatarImageProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>, "src"> {
+type AvatarImageProps = Omit<
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>,
+  "src"
+> & {
   src: string
   blurDataURL?: string
 }
 
 const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
+  React.ComponentRef<typeof AvatarPrimitive.Image>,
   AvatarImageProps
 >(({ className, src, blurDataURL, alt }, ref) => (
   <Image

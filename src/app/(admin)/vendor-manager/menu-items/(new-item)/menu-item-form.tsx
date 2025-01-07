@@ -33,7 +33,7 @@ import { api } from "@/trpc/react"
 import type { MenuItemFormValues } from "@/app/schemas/menuItem"
 import type { MenuCategories } from "@/server/db/schema"
 
-interface MenuItemFormProps {
+type MenuItemFormProps = {
   vendorId: string
   categories: MenuCategories[]
 }

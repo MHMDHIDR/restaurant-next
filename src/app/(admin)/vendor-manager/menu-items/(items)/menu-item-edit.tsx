@@ -33,7 +33,7 @@ import { api } from "@/trpc/react"
 import type { MenuItemFormValues } from "@/app/schemas/menuItem"
 import type { MenuCategories, MenuItems } from "@/server/db/schema"
 
-interface MenuItemEditProps {
+type MenuItemEditProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   menuItem: MenuItems
