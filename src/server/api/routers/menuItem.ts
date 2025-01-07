@@ -92,7 +92,8 @@ export const menuItemRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       // First get relevant category IDs for the vendor
       const categories = await ctx.db.query.menuCategories.findMany({
-        where: (categories, { eq }) => eq(categories.vendorId, input.vendorId),
+        where: (categories, { eq, and }) =>
+          and(eq(categories.vendorId, input.vendorId), eq(categories.isActive, true)),
         columns: { id: true },
       })
       const categoryIds = categories.map(cat => cat.id)
