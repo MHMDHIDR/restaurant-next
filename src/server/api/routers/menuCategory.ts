@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { eq, sql } from "drizzle-orm"
+import { eq, inArray, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { menuCategorySchema, updateCategorySchema } from "@/app/schemas/menuCategory"
@@ -157,6 +157,33 @@ export const menuCategoryRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(menuCategories).where(eq(menuCategories.id, input.id))
+      return { success: true }
+    }),
+
+  deleteBulkCategories: protectedProcedure
+    .input(z.object({ ids: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      const categoriesToDelete = await ctx.db.query.menuCategories.findMany({
+        where: (menuCategories, { inArray }) => inArray(menuCategories.id, input.ids),
+      })
+
+      if (categoriesToDelete.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Categories not found" })
+      }
+
+      // Delete images from S3
+      const fileKeys = categoriesToDelete
+        .map(cat => (cat.image ? extractS3FileName(cat.image) : null))
+        .filter(Boolean)
+
+      if (fileKeys.length > 0) {
+        const caller = createCaller(ctx)
+        for (const fileKey of fileKeys) {
+          await caller.S3.deleteFile({ fileName: fileKey! })
+        }
+      }
+
+      await ctx.db.delete(menuCategories).where(inArray(menuCategories.id, input.ids))
       return { success: true }
     }),
 })

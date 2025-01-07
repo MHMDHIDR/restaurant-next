@@ -16,7 +16,7 @@ type ConfirmationDialogProps = {
   description: string
   buttonText: string
   buttonClass?: string
-  onConfirm: () => Promise<void>
+  onConfirm: () => void
 }
 
 export function ConfirmationDialog({
