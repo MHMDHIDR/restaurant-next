@@ -6,6 +6,7 @@ import { DataTable } from "@/components/custom/data-table"
 import { createActionsColumn } from "@/components/custom/data-table/actions-column"
 import { baseColumns } from "@/components/custom/data-table/base-columns"
 import { ConfirmationDialog } from "@/components/custom/data-table/confirmation-dialog"
+import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import { MenuItemEdit } from "./menu-item-edit"
@@ -21,9 +22,9 @@ type MenuItemsTableProps = {
 
 export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
   const [isDialogOpen, setDialogOpen] = useState(false)
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItems | null>(null)
+  const [selectedMenuItems, setSelectedMenuItems] = useState<MenuItems[]>([])
 
   const router = useRouter()
   const toast = useToast()
@@ -46,14 +47,45 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
     },
   })
 
+  const { mutate: deleteBulkMenuItems } = api.menuItem.deleteBulkMenuItems.useMutation({
+    onSuccess: async () => {
+      toast.success("Menu Items deleted successfully")
+      await utils.menuItem.getMenuItems.invalidate()
+      router.refresh()
+      setSelectedMenuItems([])
+    },
+    onError: error => {
+      toast.error(`Failed to delete orders: ${error.message}`)
+    },
+  })
+
   const handleDeleteClick = (id: string) => {
-    setSelectedItemId(id)
-    setDialogOpen(true)
+    const menuItem = menuItems.find(menuItem => menuItem.id === id)
+    if (menuItem) {
+      setSelectedMenuItem(menuItem)
+      setDialogOpen(true)
+    }
+  }
+
+  const handleBulkDeleteClick = () => {
+    if (selectedMenuItems.length > 0) {
+      setSelectedMenuItem(null)
+      setDialogOpen(true)
+    }
   }
 
   const handleEditClick = (menuItem: MenuItems & BaseEntity) => {
     setSelectedMenuItem(menuItem)
     setIsEditOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (selectedMenuItem) {
+      deleteMenuItem({ id: selectedMenuItem.id })
+    } else if (selectedMenuItems.length > 0) {
+      deleteBulkMenuItems({ ids: selectedMenuItems.map(menuItem => menuItem.id) })
+    }
+    setDialogOpen(false)
   }
 
   const columns = [
@@ -67,21 +99,33 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
       <DataTable<MenuItems & BaseEntity>
         columns={columns as ColumnDef<MenuItems & BaseEntity>[]}
         data={menuItems}
+        onRowSelection={setSelectedMenuItems}
         emptyStateMessage="Sorry, No Menu Items Found."
       />
       <ConfirmationDialog
         open={isDialogOpen}
         onOpenChange={setDialogOpen}
         title="Confirm Deletion"
-        description="Are you sure you want to delete this menu item?"
+        description={`${
+          selectedMenuItems.length > 0
+            ? `Are you sure you want to delete these ${selectedMenuItems.length} menu items?`
+            : "Are you sure you want to delete this menu item?"
+        } This action cannot be undone.`}
         buttonText="Delete"
-        onConfirm={async () => {
-          if (selectedItemId) {
-            deleteMenuItem({ id: selectedItemId })
-            setDialogOpen(false)
-          }
-        }}
+        buttonClass="bg-destructive hover:bg-destructive/90"
+        onConfirm={handleConfirmDelete}
       />
+      {selectedMenuItems.length > 0 && (
+        <div className="mt-2 flex items-center gap-2">
+          <Button
+            variant="destructive"
+            onClick={handleBulkDeleteClick}
+            className="flex items-center gap-2"
+          >
+            Delete Selected ({selectedMenuItems.length})
+          </Button>
+        </div>
+      )}
       {selectedMenuItem && (
         <MenuItemEdit
           open={isEditOpen}

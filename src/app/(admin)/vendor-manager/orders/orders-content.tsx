@@ -113,11 +113,9 @@ export function OrdersContent({ orders }: OrdersContentProps) {
         onOpenChange={setDeleteDialogOpen}
         title={selectedOrder ? "Delete Order" : "Delete Selected Orders"}
         description={
-          selectedOrder
-            ? "Are you sure you want to delete this order? This action cannot be undone."
-            : `Are you sure you want to delete ${selectedOrders.length} ${
-                selectedOrders.length > 1 ? "orders" : "order"
-              }? This action cannot be undone.`
+          selectedOrders.length > 0
+            ? `Are you sure you want to delete these ${selectedOrders.length} orders? This action cannot be undone.`
+            : "Are you sure you want to delete this order? This action cannot be undone."
         }
         buttonText="Delete"
         buttonClass="bg-destructive hover:bg-destructive/90"

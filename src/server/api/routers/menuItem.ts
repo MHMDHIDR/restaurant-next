@@ -135,6 +135,31 @@ export const menuItemRouter = createTRPCRouter({
       return { success: true }
     }),
 
+  deleteBulkMenuItems: protectedProcedure
+    .input(z.object({ ids: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      const menuItemsToDelete = await ctx.db.query.menuItems.findMany({
+        where: (menuItems, { inArray }) => inArray(menuItems.id, input.ids),
+      })
+
+      if (menuItemsToDelete.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Menu items not found" })
+      }
+
+      // Delete the images from S3 if they exist
+      const fileKeys = menuItemsToDelete.map(item => extractS3FileName(item.image)).filter(Boolean)
+      if (fileKeys.length > 0) {
+        for (const fileKey of fileKeys) {
+          const caller = createCaller(ctx)
+          await caller.S3.deleteFile({ fileName: fileKey as string })
+        }
+      }
+
+      await ctx.db.delete(menuItems).where(inArray(menuItems.id, input.ids))
+
+      return { success: true }
+    }),
+
   updateMenuItem: protectedProcedure
     .input(updateMenuItemSchema)
     .mutation(async ({ ctx, input }) => {
