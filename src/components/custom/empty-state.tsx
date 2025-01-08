@@ -1,17 +1,21 @@
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 export default function EmptyState({
   children,
   isSmall,
+  className,
 }: {
   isSmall?: boolean
   children: React.ReactNode
+  className?: string
 }) {
   return (
     <div
-      className={`flex flex-col items-center justify-center ${
-        isSmall ? "gap-y-4 py-4" : "gap-y-10 py-10"
-      }`}
+      className={cn(
+        `flex flex-col items-center justify-center ${isSmall ? "gap-y-4 py-4" : "gap-y-10 py-10"}`,
+        className,
+      )}
     >
       <Image
         alt="Empty State"

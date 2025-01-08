@@ -15,7 +15,7 @@ export default async function DashboardPage() {
   // Fetch menu items and orders
   const [{ menuItemsCount }, { menuCategoriesCount }, { orders, count: ordersCount }] =
     await Promise.all([
-      api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
+      api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id, addedById: vendor.addedById }),
       api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
       api.order.getOrdersByVendorId({ vendorId: vendor.id }),
     ])

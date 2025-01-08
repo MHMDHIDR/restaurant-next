@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import EmptyState from "@/components/custom/empty-state"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { env } from "@/env"
 import { api } from "@/trpc/server"
@@ -77,13 +78,21 @@ export default async function RestaurantPage({
       </section>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {vendor.menuItems.map(item => (
-          <RestaurantMenuItem
-            key={item.id}
-            item={item}
-            vendor={{ id: vendor.id, name: vendor.name }}
-          />
-        ))}
+        {vendor.menuItemsCount === 0 ? (
+          <EmptyState className="col-span-full">
+            <p className="mt-4 text-lg text-gray-500 select-none dark:text-gray-400">
+              This Restaurant has no menu items yet.
+            </p>
+          </EmptyState>
+        ) : (
+          vendor.menuItems.map(item => (
+            <RestaurantMenuItem
+              key={item.id}
+              item={item}
+              vendor={{ id: vendor.id, name: vendor.name }}
+            />
+          ))
+        )}
       </div>
     </div>
   )

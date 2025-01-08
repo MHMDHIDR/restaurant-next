@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { eq, inArray, sql } from "drizzle-orm"
+import { and, eq, inArray, sql } from "drizzle-orm"
 import { z } from "zod"
 import { menuItemSchema } from "@/app/schemas/menuItem"
 import { createSlug } from "@/lib/create-slug"
@@ -88,7 +88,7 @@ export const menuItemRouter = createTRPCRouter({
   }),
 
   getMenuItemsByVendorId: publicProcedure
-    .input(z.object({ vendorId: z.string() }))
+    .input(z.object({ vendorId: z.string(), addedById: z.string() }))
     .query(async ({ ctx, input }) => {
       // First get relevant category IDs for the vendor
       const categories = await ctx.db.query.menuCategories.findMany({
@@ -98,15 +98,28 @@ export const menuItemRouter = createTRPCRouter({
       })
       const categoryIds = categories.map(cat => cat.id)
 
-      // Then get menu items for these categories
+      // Determine if user should see all items
+      const isUserSuperAdmin = ctx.session?.user.role === "SUPER_ADMIN"
+      const isUserVendorAdmin =
+        ctx.session?.user.role === "VENDOR_ADMIN" && input.addedById === ctx.session?.user.id
+
+      // Create the where condition based on user role
+      const baseCondition = inArray(menuItems.categoryId, categoryIds)
+      const whereCondition =
+        isUserSuperAdmin || isUserVendorAdmin
+          ? baseCondition
+          : and(baseCondition, eq(menuItems.isAvailable, true))
+
+      // Then get menu items for these categories using the condition
       const items = await ctx.db.query.menuItems.findMany({
-        where: (items, { inArray }) => inArray(items.categoryId, categoryIds),
+        where: whereCondition,
       })
 
+      // Use the same condition for the count query
       const [{ count: menuItemsCount = 0 } = { count: 0 }] = await ctx.db
         .select({ count: sql<number>`count(*)::int` })
         .from(menuItems)
-        .where(inArray(menuItems.categoryId, categoryIds))
+        .where(whereCondition)
 
       return { items, menuItemsCount }
     }),

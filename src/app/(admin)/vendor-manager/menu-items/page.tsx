@@ -18,7 +18,7 @@ export default async function MenuItemsPage() {
     // Use Promise.all to fetch data in parallel
     const [{ menuCategories }, { items }] = await Promise.all([
       api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
-      api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id }),
+      api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id, addedById: vendor.addedById }),
     ])
 
     return <MenuItemsContent vendor={vendor} categories={menuCategories} menuItems={items} />

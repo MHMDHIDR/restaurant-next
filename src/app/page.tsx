@@ -8,8 +8,11 @@ export default async function Home() {
 
   const vendorsWithMenus = await Promise.all(
     vendors.map(async vendor => {
-      const menuItems = await api.menuItem.getMenuItemsByVendorId({ vendorId: vendor.id })
-      return { ...vendor, menuItems: menuItems.items, menuItemsCount: menuItems.menuItemsCount }
+      const menuItems = await api.menuItem.getMenuItemsByVendorId({
+        vendorId: vendor.id,
+        addedById: vendor.addedById,
+      })
+      return { ...vendor, menuItems: menuItems.items }
     }),
   )
 
@@ -45,24 +48,20 @@ export default async function Home() {
       <section className="mb-12">
         <h2 className="mb-6 text-2xl font-semibold">Popular Menu Items</h2>
         <div className="space-y-8">
-          {vendorsWithMenus
-            .filter(vendor => vendor.menuItemsCount > 0)
-            .map(vendor => (
-              <div key={vendor.id}>
-                <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
-                <div className="grid gap-6 md:grid-cols-3">
-                  {vendor.menuItems
-                    .filter(item => item.isAvailable)
-                    .map(item => (
-                      <RestaurantMenuItem
-                        key={item.id}
-                        item={item}
-                        vendor={{ id: vendor.id, name: vendor.name }}
-                      />
-                    ))}
-                </div>
+          {vendorsWithMenus.map(vendor => (
+            <div key={vendor.id}>
+              <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
+              <div className="grid gap-6 md:grid-cols-3">
+                {vendor.menuItems.map(item => (
+                  <RestaurantMenuItem
+                    key={item.id}
+                    item={item}
+                    vendor={{ id: vendor.id, name: vendor.name }}
+                  />
+                ))}
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       </section>
     </div>

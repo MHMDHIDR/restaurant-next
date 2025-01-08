@@ -5,8 +5,15 @@ import { z } from "zod"
 import { vendorFormSchema, vendorStatus } from "@/app/schemas/vendor"
 import { env } from "@/env"
 import { createSlug } from "@/lib/create-slug"
+import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
-import { UserRole, users, vendors } from "@/server/db/schema"
+import { UserRole, users, Vendors, vendors } from "@/server/db/schema"
+import { RouterOutputs } from "@/trpc/react"
+
+type VendorWithMenuItems = Vendors & {
+  menuItems: RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"]
+  menuItemsCount: number
+}
 
 export const vendorRouter = createTRPCRouter({
   create: protectedProcedure
@@ -179,7 +186,7 @@ export const vendorRouter = createTRPCRouter({
 
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string(), getItems: z.boolean().default(false) }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<VendorWithMenuItems> => {
       const vendor = await ctx.db.query.vendors.findFirst({
         where: (vendors, { eq }) => eq(vendors.slug, input.slug),
       })
@@ -189,19 +196,25 @@ export const vendorRouter = createTRPCRouter({
       }
 
       if (input.getItems) {
-        // First get relevant category IDs for the vendor
-        const categories = await ctx.db.query.menuCategories.findMany({
-          where: (categories, { eq }) => eq(categories.vendorId, vendor.id),
-          columns: { id: true },
-        })
-        const categoryIds = categories.map(cat => cat.id)
+        // Create a strongly-typed caller
+        const caller = createCaller(ctx)
 
-        const menuItems = await ctx.db.query.menuItems.findMany({
-          where: (items, { inArray }) => inArray(items.categoryId, categoryIds),
+        // Check if menuItem router exists and get items
+        if (!caller.menuItem) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Menu item router not found",
+          })
+        }
+
+        const { items: menuItems, menuItemsCount } = await caller.menuItem.getMenuItemsByVendorId({
+          vendorId: vendor.id,
+          addedById: vendor.addedById,
         })
-        return { ...vendor, menuItems }
+
+        return { ...vendor, menuItems, menuItemsCount }
       } else {
-        return { ...vendor, menuItems: [] }
+        return { ...vendor, menuItems: [], menuItemsCount: 0 }
       }
     }),
 
