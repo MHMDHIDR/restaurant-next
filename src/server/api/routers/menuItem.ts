@@ -61,6 +61,7 @@ export const menuItemRouter = createTRPCRouter({
         allergens: input.allergens,
         nutritionalInfo: input.nutritionalInfo,
         addons: input.addons ?? [],
+        updatedAt: new Date(),
       }
 
       const [createdItem] = await tx.insert(menuItems).values(dbInput).returning()

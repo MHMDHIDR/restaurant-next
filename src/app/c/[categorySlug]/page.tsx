@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
-import { MenuCategories } from "@/server/db/schema"
 import { api } from "@/trpc/server"
+import type { MenuCategories } from "@/server/db/schema"
 
 export default async function CategoryPage({
   params,
