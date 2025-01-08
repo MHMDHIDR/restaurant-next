@@ -1,10 +1,15 @@
 import { IconMapPin, IconSearch } from "@tabler/icons-react"
+import Link from "next/link"
+import { CategoriesGrid } from "@/components/custom/categories"
 import { RestaurantCard } from "@/components/custom/restaurant-card"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
+import { Badge } from "@/components/ui/badge"
 import { api } from "@/trpc/server"
 
 export default async function Home() {
   const { items: vendors } = await api.vendor.getFeatured({ status: "ACTIVE", limit: 3 })
+  const { menuCategories } = await api.menuCategory.getAllCategories({ hasItems: true })
+  const activeCategories = menuCategories.filter(category => category.isActive)
 
   const vendorsWithMenus = await Promise.all(
     vendors.map(async vendor => {
@@ -43,6 +48,16 @@ export default async function Home() {
             <RestaurantCard key={vendor.id} vendor={vendor} />
           ))}
         </div>
+      </section>
+
+      <section className="mb-12">
+        <h2 className="mb-6 text-2xl font-semibold space-x-3">
+          <span>Popular Categories</span>
+          <Link href="/c">
+            <Badge>view all</Badge>
+          </Link>
+        </h2>
+        <CategoriesGrid categories={activeCategories} columns={3} limit={6} />
       </section>
 
       {vendorsWithMenus.some(vendor => vendor.menuItemsCount > 0) && (

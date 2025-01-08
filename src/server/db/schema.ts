@@ -157,6 +157,7 @@ export const menuItems = createTable("menu_item", {
       toppingPrice: number
     }[]
   >(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 export type MenuItems = typeof menuItems.$inferSelect
 

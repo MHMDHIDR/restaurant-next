@@ -1,13 +1,13 @@
 import { TRPCError } from "@trpc/server"
-import { eq, inArray, sql } from "drizzle-orm"
+import { desc, eq, inArray, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { menuCategorySchema, updateCategorySchema } from "@/app/schemas/menuCategory"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
 import { createCaller } from "@/server/api/root"
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
-import { menuCategories } from "@/server/db/schema"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
+import { menuCategories, menuItems, vendors } from "@/server/db/schema"
 
 export const menuCategoryRouter = createTRPCRouter({
   createWithImage: protectedProcedure
@@ -107,14 +107,39 @@ export const menuCategoryRouter = createTRPCRouter({
       return { success: true, updatedCategory }
     }),
 
-  getAllCategories: protectedProcedure.query(async ({ ctx }) => {
-    const categories = await ctx.db.query.menuCategories.findMany()
-    const [{ count = 0 } = { count: 0 }] = await ctx.db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(menuCategories)
+  getAllCategories: publicProcedure
+    .input(z.object({ hasItems: z.boolean().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      if (input?.hasItems) {
+        // Get categories that have at least one menu item
+        const categoriesWithItems = await ctx.db
+          .select({
+            id: menuCategories.id,
+            name: menuCategories.name,
+            description: menuCategories.description,
+            image: menuCategories.image,
+            isActive: menuCategories.isActive,
+            slug: menuCategories.slug,
+            sortOrder: menuCategories.sortOrder,
+            itemCount: sql<number>`count(${menuItems.id})::int`,
+          })
+          .from(menuCategories)
+          .where(eq(menuCategories.isActive, true))
+          .innerJoin(menuItems, eq(menuItems.categoryId, menuCategories.id))
+          .groupBy(menuCategories.id)
+          .having(sql`count(${menuItems.id}) > 0`)
 
-    return { menuCategories: categories, count }
-  }),
+        return { menuCategories: categoriesWithItems }
+      }
+
+      // Get all categories without checking for items
+      const categories = await ctx.db.query.menuCategories.findMany()
+      const [{ count = 0 } = { count: 0 }] = await ctx.db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(menuCategories)
+
+      return { menuCategories: categories, count }
+    }),
 
   getCategoriesByVendorId: protectedProcedure
     .input(z.object({ vendorId: z.string() }))
@@ -185,5 +210,30 @@ export const menuCategoryRouter = createTRPCRouter({
 
       await ctx.db.delete(menuCategories).where(inArray(menuCategories.id, input.ids))
       return { success: true }
+    }),
+
+  getMenuItemsByCategorySlug: publicProcedure
+    .input(z.object({ categorySlug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const category = await ctx.db.query.menuCategories.findFirst({
+        where: (categories, { eq }) => eq(categories.slug, input.categorySlug),
+      })
+
+      if (!category) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Category not found" })
+      }
+
+      const items = await ctx.db
+        .select({
+          menuItem: menuItems,
+          vendor: { id: vendors.id, name: vendors.name },
+        })
+        .from(menuItems)
+        .innerJoin(menuCategories, eq(menuItems.categoryId, menuCategories.id))
+        .innerJoin(vendors, eq(menuCategories.vendorId, vendors.id))
+        .where(eq(menuCategories.id, category.id))
+        .orderBy(desc(menuItems.updatedAt))
+
+      return { category, items }
     }),
 })
