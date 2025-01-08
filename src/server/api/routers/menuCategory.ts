@@ -121,6 +121,7 @@ export const menuCategoryRouter = createTRPCRouter({
             isActive: menuCategories.isActive,
             slug: menuCategories.slug,
             sortOrder: menuCategories.sortOrder,
+            vendorId: menuCategories.vendorId,
             itemCount: sql<number>`count(${menuItems.id})::int`,
           })
           .from(menuCategories)
@@ -215,25 +216,43 @@ export const menuCategoryRouter = createTRPCRouter({
   getMenuItemsByCategorySlug: publicProcedure
     .input(z.object({ categorySlug: z.string() }))
     .query(async ({ ctx, input }) => {
-      const category = await ctx.db.query.menuCategories.findFirst({
+      // First, find all categories with the given slug
+      const categories = await ctx.db.query.menuCategories.findMany({
         where: (categories, { eq }) => eq(categories.slug, input.categorySlug),
       })
 
-      if (!category) {
+      if (!categories || categories.length === 0) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Category not found" })
       }
 
+      // Get all category IDs
+      const categoryIds = categories.map(cat => cat.id)
+
+      // Get all menu items from all matching categories
       const items = await ctx.db
         .select({
           menuItem: menuItems,
-          vendor: { id: vendors.id, name: vendors.name },
+          vendor: {
+            id: vendors.id,
+            name: vendors.name,
+            slug: vendors.slug,
+            logo: vendors.logo,
+          },
         })
         .from(menuItems)
         .innerJoin(menuCategories, eq(menuItems.categoryId, menuCategories.id))
         .innerJoin(vendors, eq(menuCategories.vendorId, vendors.id))
-        .where(eq(menuCategories.id, category.id))
+        .where(inArray(menuCategories.id, categoryIds))
         .orderBy(desc(menuItems.updatedAt))
 
-      return { category, items }
+      // Use the first category for basic category info since they all have the same name/slug
+      // So we can get the category name, description, etc. from the first category
+      const categoryInfo = categories[0]
+
+      return {
+        category: categoryInfo,
+        items,
+        vendorCount: new Set(items.map(item => item.vendor.id)).size,
+      }
     }),
 })

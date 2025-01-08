@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -24,6 +25,7 @@ type RestaurantMenuItemProps = {
   vendor: {
     id: string
     name: string
+    slug?: string
   }
 }
 
@@ -56,7 +58,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="relative h-48 max-h-48 w-full overflow-y-clip cursor-pointer">
+        <div className="relative h-48 max-h-48 w-full cursor-pointer select-none">
           <Image
             src={item.image}
             alt={item.name}
@@ -77,6 +79,14 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
               {Number(item.price).toFixed(2)}
             </span>
           </div>
+          {vendor.slug && (
+            <Link className="text-muted-foreground group" href={`/r/${vendor.slug}`}>
+              By{" "}
+              <strong className="text-primary border-b-2 border-b-current group-hover:border-b-4 transition-all">
+                {vendor.name}
+              </strong>
+            </Link>
+          )}
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

@@ -1,4 +1,5 @@
 import { IconMapPin, IconSearch } from "@tabler/icons-react"
+import { StoreIcon } from "lucide-react"
 import Link from "next/link"
 import { CategoriesGrid } from "@/components/custom/categories"
 import { RestaurantCard } from "@/components/custom/restaurant-card"
@@ -57,7 +58,7 @@ export default async function Home() {
             <Badge>view all</Badge>
           </Link>
         </h2>
-        <CategoriesGrid categories={activeCategories} columns={3} limit={6} />
+        <CategoriesGrid categories={activeCategories} limit={6} />
       </section>
 
       {vendorsWithMenus.some(vendor => vendor.menuItemsCount > 0) && (
@@ -68,7 +69,6 @@ export default async function Home() {
               .filter(vendor => vendor.menuItemsCount > 0)
               .map(vendor => (
                 <div key={vendor.id}>
-                  <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
                   <div className="grid gap-6 md:grid-cols-3">
                     {vendor.menuItems.map(item => (
                       <RestaurantMenuItem
@@ -78,6 +78,12 @@ export default async function Home() {
                       />
                     ))}
                   </div>
+                  <Link href={`/r/${vendor.slug}`}>
+                    <h3 className="mt-2 font-semibold items-center flex gap-x-1.5 select-none rounded-sm bg-primary/50 p-1 w-fit shadow hover:bg-primary/70">
+                      <StoreIcon className="w-4 h-4" />
+                      {vendor.name}
+                    </h3>
+                  </Link>
                 </div>
               ))}
           </div>

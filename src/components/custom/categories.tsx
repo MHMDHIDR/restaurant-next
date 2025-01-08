@@ -39,7 +39,7 @@ export function CategoriesGrid({ categories, columns = 3, limit }: CategoriesGri
             <CardHeader>
               <CardTitle>{category.name}</CardTitle>
               {category.description && (
-                <CardContent className="px-0">
+                <CardContent className="p-0">
                   <p className="line-clamp-2 text-sm text-muted-foreground">
                     {category.description}
                   </p>
