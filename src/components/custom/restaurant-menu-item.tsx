@@ -80,7 +80,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
             </span>
           </div>
           {vendor.slug && (
-            <Link className="text-muted-foreground group" href={`/r/${vendor.slug}`}>
+            <Link className="text-muted-foreground group text-sm" href={`/r/${vendor.slug}`}>
               By{" "}
               <strong className="text-primary border-b-2 border-b-current group-hover:border-b-4 transition-all">
                 {vendor.name}
