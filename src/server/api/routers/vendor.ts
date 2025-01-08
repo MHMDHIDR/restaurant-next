@@ -7,8 +7,9 @@ import { env } from "@/env"
 import { createSlug } from "@/lib/create-slug"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
-import { UserRole, users, Vendors, vendors } from "@/server/db/schema"
-import { RouterOutputs } from "@/trpc/react"
+import { UserRole, users, vendors } from "@/server/db/schema"
+import type { Vendors } from "@/server/db/schema"
+import type { RouterOutputs } from "@/trpc/react"
 
 type VendorWithMenuItems = Vendors & {
   menuItems: RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"]
