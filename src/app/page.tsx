@@ -12,7 +12,7 @@ export default async function Home() {
         vendorId: vendor.id,
         addedById: vendor.addedById,
       })
-      return { ...vendor, menuItems: menuItems.items }
+      return { ...vendor, menuItems: menuItems.items, menuItemsCount: menuItems.menuItemsCount }
     }),
   )
 
@@ -45,25 +45,29 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mb-12">
-        <h2 className="mb-6 text-2xl font-semibold">Popular Menu Items</h2>
-        <div className="space-y-8">
-          {vendorsWithMenus.map(vendor => (
-            <div key={vendor.id}>
-              <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
-              <div className="grid gap-6 md:grid-cols-3">
-                {vendor.menuItems.map(item => (
-                  <RestaurantMenuItem
-                    key={item.id}
-                    item={item}
-                    vendor={{ id: vendor.id, name: vendor.name }}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {vendorsWithMenus.some(vendor => vendor.menuItemsCount > 0) && (
+        <section className="mb-12">
+          <h2 className="mb-6 text-2xl font-semibold">Popular Menu Items</h2>
+          <div className="space-y-8">
+            {vendorsWithMenus
+              .filter(vendor => vendor.menuItemsCount > 0)
+              .map(vendor => (
+                <div key={vendor.id}>
+                  <h3 className="mb-4 text-xl font-semibold">{vendor.name}</h3>
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {vendor.menuItems.map(item => (
+                      <RestaurantMenuItem
+                        key={item.id}
+                        item={item}
+                        vendor={{ id: vendor.id, name: vendor.name }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
