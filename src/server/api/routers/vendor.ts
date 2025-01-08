@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { and, eq, sql } from "drizzle-orm"
+import { and, desc, eq, sql } from "drizzle-orm"
 import { Resend } from "resend"
 import { z } from "zod"
 import { vendorFormSchema, vendorStatus } from "@/app/schemas/vendor"
@@ -7,7 +7,7 @@ import { env } from "@/env"
 import { createSlug } from "@/lib/create-slug"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
-import { UserRole, users, vendors } from "@/server/db/schema"
+import { orders, UserRole, users, vendors } from "@/server/db/schema"
 import type { Vendors } from "@/server/db/schema"
 import type { RouterOutputs } from "@/trpc/react"
 
@@ -246,7 +246,7 @@ export const vendorRouter = createTRPCRouter({
       const items = await ctx.db.query.vendors.findMany({
         with: { assignedUser: true },
         where,
-        limit: limit + 1,
+        limit,
         offset: cursor,
         orderBy: (vendors, { desc }) => [desc(vendors.createdAt)],
       })
@@ -258,5 +258,85 @@ export const vendorRouter = createTRPCRouter({
         .limit(limit + 1)
 
       return { items, count }
+    }),
+
+  /**
+   * This procedure gets featured vendors which is the the top vendors based on the number of orders they have received
+   */
+  getFeatured: publicProcedure
+    .input(
+      z
+        .object({
+          status: vendorStatus.optional(),
+          limit: z.number().min(1).max(100).default(10),
+          cursor: z.number().default(0),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input?.limit ?? 10
+      const cursor = input?.cursor ?? 0
+      const status = input?.status
+
+      // Base where condition for vendor status
+      const baseCondition = status ? and(eq(vendors.status, status)) : undefined
+
+      // Query to get vendors with their order counts
+      const items = await ctx.db
+        .select({
+          id: vendors.id,
+          name: vendors.name,
+          slug: vendors.slug,
+          description: vendors.description,
+          logo: vendors.logo,
+          coverImage: vendors.coverImage,
+          status: vendors.status,
+          address: vendors.address,
+          city: vendors.city,
+          state: vendors.state,
+          postalCode: vendors.postalCode,
+          phone: vendors.phone,
+          email: vendors.email,
+          latitude: vendors.latitude,
+          longitude: vendors.longitude,
+          openingHours: vendors.openingHours,
+          cuisineTypes: vendors.cuisineTypes,
+          deliveryRadius: vendors.deliveryRadius,
+          minimumOrder: vendors.minimumOrder,
+          averageRating: vendors.averageRating,
+          addedById: vendors.addedById,
+          createdAt: vendors.createdAt,
+          updatedAt: vendors.updatedAt,
+          deletedAt: vendors.deletedAt,
+          suspendedAt: vendors.suspendedAt,
+          stripeAccountId: vendors.stripeAccountId,
+          orderCount: sql<number>`COUNT(${orders.id})::int`,
+          totalRevenue: sql<string>`COALESCE(SUM(${orders.total})::text, '0')`,
+        })
+        .from(vendors)
+        .leftJoin(orders, eq(vendors.id, orders.vendorId))
+        .where(and(sql`${vendors.deletedAt} IS NULL`, baseCondition))
+        .groupBy(vendors.id)
+        .orderBy(sql`COUNT(${orders.id}) DESC`, desc(vendors.averageRating))
+        .limit(limit)
+        .offset(cursor)
+
+      // Get total count of vendors that match the criteria
+      const countQuery = await ctx.db
+        .select({
+          count: sql<number>`COUNT(DISTINCT ${vendors.id})::int`,
+        })
+        .from(vendors)
+        .where(and(sql`${vendors.deletedAt} IS NULL`, baseCondition))
+
+      const count = countQuery[0]?.count ?? 0
+
+      // Enhance the items with additional metrics
+      const enhancedItems = items.map(item => ({
+        ...item,
+        metrics: { orderCount: item.orderCount, totalRevenue: parseFloat(item.totalRevenue) },
+      }))
+
+      return { items: enhancedItems, count }
     }),
 })

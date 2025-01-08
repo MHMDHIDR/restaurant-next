@@ -4,7 +4,7 @@ import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { api } from "@/trpc/server"
 
 export default async function Home() {
-  const { items: vendors } = await api.vendor.getAll({ status: "ACTIVE", limit: 6 })
+  const { items: vendors } = await api.vendor.getFeatured({ status: "ACTIVE", limit: 3 })
 
   const vendorsWithMenus = await Promise.all(
     vendors.map(async vendor => {
