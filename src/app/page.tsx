@@ -1,9 +1,9 @@
-import { IconMapPin, IconSearch } from "@tabler/icons-react"
 import { StoreIcon } from "lucide-react"
 import Link from "next/link"
 import { CategoriesGrid } from "@/components/custom/categories"
 import { RestaurantCard } from "@/components/custom/restaurant-card"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
+import { SearchBar } from "@/components/custom/search"
 import { Badge } from "@/components/ui/badge"
 import { api } from "@/trpc/server"
 
@@ -28,18 +28,7 @@ export default async function Home() {
         <h1 className="mb-4 text-4xl font-bold leading-loose md:leading-10">
           Discover Delicious Restaurants Near You
         </h1>
-        <div className="flex items-center max-w-xl p-1 pl-2 mx-auto bg-gray-100 rounded-full">
-          <IconMapPin className="mr-2 text-gray-500" />
-          <input
-            type="text"
-            placeholder="Enter your address"
-            className="flex-grow text-lg text-black bg-transparent outline-none"
-          />
-          <button className="flex items-center px-4 py-2 text-white rounded-full bg-primary">
-            <IconSearch className="mr-2" size={20} />
-            Search
-          </button>
-        </div>
+        <SearchBar />
       </section>
 
       <section className="mb-12">

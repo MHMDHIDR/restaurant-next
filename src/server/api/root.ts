@@ -7,6 +7,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc"
 import { notificationRouter } from "./routers/notification"
 import { orderRouter } from "./routers/order"
 import { S3Router } from "./routers/s3"
+import { searchRouter } from "./routers/search"
 import { stripeRouter } from "./routers/stripe"
 
 /**
@@ -24,6 +25,7 @@ export const appRouter = createTRPCRouter({
   order: orderRouter,
   notification: notificationRouter,
   stripe: stripeRouter,
+  search: searchRouter,
 })
 
 // export type definition of API
