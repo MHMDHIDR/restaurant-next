@@ -21,7 +21,7 @@ type MenuItemsTableProps = {
   vendorId?: string
 }
 
-export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
+export function MenuItemsTable({ menuItems }: MenuItemsTableProps) {
   const [isDialogOpen, setDialogOpen] = useState(false)
   const [isAvailabilityDialogOpen, setAvailabilityDialogOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)

@@ -31,7 +31,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import type { MenuItemFormValues } from "@/app/schemas/menuItem"
-import type { MenuCategories, MenuItems } from "@/server/db/schema"
+import type { MenuItems } from "@/server/db/schema"
 
 type MenuItemEditProps = {
   open: boolean
@@ -47,7 +47,7 @@ export function MenuItemEdit({ open, onOpenChange, menuItem }: MenuItemEditProps
   const utils = api.useUtils()
 
   // Fetch categories for this menu item's vendor
-  const { data: categoriesData } = api.menuCategory.getCategoriesByMenuItemId.useQuery(
+  const { data: categoriesData, isLoading } = api.menuCategory.getCategoriesByMenuItemId.useQuery(
     { menuItemId: menuItem.id },
     { enabled: open }, // Only fetch when dialog is open
   )
@@ -205,7 +205,9 @@ export function MenuItemEdit({ open, onOpenChange, menuItem }: MenuItemEditProps
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {menuCategories ? (
+                      {isLoading ? (
+                        <SelectItem value={"loading"}>Loading...</SelectItem>
+                      ) : menuCategories ? (
                         menuCategories.map(category => (
                           <SelectItem key={category.id} value={category.id}>
                             {category.name}
