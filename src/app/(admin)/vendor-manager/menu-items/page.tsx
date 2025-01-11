@@ -10,11 +10,6 @@ export default async function MenuItemsPage() {
   }
 
   try {
-    const vendor = await api.vendor.getBySessionUser()
-    if (!vendor) {
-      redirect("/")
-    }
-
     // Use Promise.all to fetch data in parallel
     const [{ menuCategories }, { items }] = await Promise.all([
       api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),

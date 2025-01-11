@@ -157,6 +157,27 @@ export const menuCategoryRouter = createTRPCRouter({
       return { menuCategories: categories, menuCategoriesCount: count }
     }),
 
+  getCategoriesByMenuItemId: protectedProcedure
+    .input(z.object({ menuItemId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // First get the menu item to find its category and vendor
+      const menuItem = await ctx.db.query.menuItems.findFirst({
+        where: (items, { eq }) => eq(items.id, input.menuItemId),
+        with: { category: { columns: { vendorId: true } } },
+      })
+
+      if (!menuItem?.category?.vendorId) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Menu item or vendor not found" })
+      }
+
+      // Then get all categories for this vendor
+      const categories = await ctx.db.query.menuCategories.findMany({
+        where: (categories, { eq }) => eq(categories.vendorId, menuItem.category.vendorId),
+      })
+
+      return { menuCategories: categories }
+    }),
+
   deleteCategoryWithImage: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

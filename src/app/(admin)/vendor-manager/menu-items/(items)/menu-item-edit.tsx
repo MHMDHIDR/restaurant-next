@@ -37,15 +37,21 @@ type MenuItemEditProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   menuItem: MenuItems
-  menuCategories: MenuCategories[]
 }
 
-export function MenuItemEdit({ open, onOpenChange, menuItem, menuCategories }: MenuItemEditProps) {
+export function MenuItemEdit({ open, onOpenChange, menuItem }: MenuItemEditProps) {
   const toast = useToast()
   const router = useRouter()
   const [files, setFiles] = useState<Array<File>>([])
   const [isUploading, setIsUploading] = useState(false)
   const utils = api.useUtils()
+
+  // Fetch categories for this menu item's vendor
+  const { data: categoriesData } = api.menuCategory.getCategoriesByMenuItemId.useQuery(
+    { menuItemId: menuItem.id },
+    { enabled: open }, // Only fetch when dialog is open
+  )
+  const menuCategories = categoriesData?.menuCategories ?? []
 
   const optimizeImageMutation = api.optimizeImage.optimizeImage.useMutation()
   const uploadFilesMutation = api.S3.uploadFiles.useMutation()

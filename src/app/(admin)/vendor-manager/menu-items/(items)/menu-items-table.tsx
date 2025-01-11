@@ -32,12 +32,6 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
   const toast = useToast()
   const utils = api.useUtils()
 
-  const { data } = api.menuCategory.getCategoriesByVendorId.useQuery(
-    { vendorId: vendorId ?? "" },
-    { enabled: !!vendorId },
-  )
-  const menuCategories = data?.menuCategories ?? []
-
   const { mutate: deleteMenuItem } = api.menuItem.deleteMenuItem.useMutation({
     onSuccess: async () => {
       toast.success("Menu item deleted successfully")
@@ -142,12 +136,7 @@ export function MenuItemsTable({ menuItems, vendorId }: MenuItemsTableProps) {
         </div>
       )}
       {selectedMenuItem && (
-        <MenuItemEdit
-          open={isEditOpen}
-          onOpenChange={setIsEditOpen}
-          menuCategories={menuCategories}
-          menuItem={selectedMenuItem}
-        />
+        <MenuItemEdit open={isEditOpen} onOpenChange={setIsEditOpen} menuItem={selectedMenuItem} />
       )}
       {selectedMenuItem && (
         <MenuAvailabilityDialog
