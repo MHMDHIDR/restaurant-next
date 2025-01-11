@@ -18,7 +18,7 @@ type OptimisticAction = { type: "markAsRead"; id: string } | { type: "markAllAsR
 
 export default function Notifications() {
   const { data: session } = useSession()
-  const [favicon, setFavicon] = useState<"/logo.svg" | "/logo-notification.svg">("/logo.svg")
+  const [_favicon, setFavicon] = useState<"/logo.svg" | "/logo-notification.svg">("/logo.svg")
   const [play] = useSound("/notification.mp3")
   const [isPending, startTransition] = useTransition()
   const [isProcessing, setIsProcessing] = useState<Record<string, boolean>>({})
