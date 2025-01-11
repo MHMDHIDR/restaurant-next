@@ -3,8 +3,12 @@ import { RestaurantCard } from "@/components/custom/restaurant-card"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { api } from "@/trpc/server"
 
-export default async function SearchPage({ searchParams }: { searchParams: { search?: string } }) {
-  const query = searchParams.search ?? ""
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>
+}) {
+  const query = (await searchParams).search ?? ""
   const { vendors, categories, menuItems } = await api.search.search({ query })
 
   return (
