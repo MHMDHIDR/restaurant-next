@@ -1,3 +1,4 @@
+import { IconCategory2 } from "@tabler/icons-react"
 import { ChefHatIcon, Home, LineChart, Package, ShoppingCart, Users } from "lucide-react"
 import { notFound } from "next/navigation"
 import Nav from "@/components/custom/nav"
@@ -40,6 +41,11 @@ export default async function DashboardLayout({
             title: "Products",
             url: "/dashboard/products",
             icon: <Package className="w-4 h-4" />,
+          },
+          {
+            title: "Categories",
+            url: "/dashboard/categories?view=categories",
+            icon: <IconCategory2 className="w-4 h-4" />,
           },
           {
             title: "Users",

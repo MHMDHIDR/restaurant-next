@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { Bell, Check, Loader2 } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useCallback, useEffect, useOptimistic, useState, useTransition } from "react"
+import { useCallback, useEffect, useOptimistic, useRef, useState, useTransition } from "react"
 import useSound from "use-sound"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,11 +22,15 @@ export default function Notifications() {
   const [play] = useSound("/notification.mp3")
   const [isPending, startTransition] = useTransition()
   const [isProcessing, setIsProcessing] = useState<Record<string, boolean>>({})
+  const prevNotificationsRef = useRef<Notifications[]>([])
 
   const { data: notifications, refetch } = api.notification.getAll.useQuery(undefined, {
     enabled: !!session?.user,
-    staleTime: 0,
+    staleTime: 1000 * 60 * 2, // Cache for 2 minutes
+    refetchInterval: 1000 * 60 * 2, // Refetch every 2 minutes
   })
+
+  const markSoundPlayed = api.notification.markSoundPlayed.useMutation()
 
   const markAsRead = api.notification.markAsRead.useMutation({
     onSuccess: () => {
@@ -65,21 +69,40 @@ export default function Notifications() {
 
   const unreadCount = optimisticNotifications.filter(n => !n.isRead).length ?? 0
 
+  // Handle sound playing
   useEffect(() => {
-    if (unreadCount > 0) {
-      setFavicon("/logo-notification.svg")
+    if (!notifications) return
+
+    const unplayedNotifications = notifications.filter(n => !n.soundPlayed && !n.isRead)
+    const prevUnplayedCount = prevNotificationsRef.current.filter(
+      n => !n.soundPlayed && !n.isRead,
+    ).length
+
+    if (unplayedNotifications.length > prevUnplayedCount) {
       play()
-      document.title = `(${unreadCount}) | Restaurant App`
-    } else {
-      setFavicon("/logo.svg")
-      document.title = "Restaurant App"
+      void markSoundPlayed.mutateAsync({
+        ids: unplayedNotifications.map(n => n.id),
+      })
     }
+
+    prevNotificationsRef.current = notifications
+  }, [notifications, play, markSoundPlayed])
+
+  // Handle favicon and title updates
+  useEffect(() => {
+    if (!notifications) return
+
+    const hasUnread = notifications.some(n => !n.isRead)
+    const newFavicon = hasUnread ? "/logo-notification.svg" : "/logo.svg"
+
+    setFavicon(newFavicon)
+    document.title = hasUnread ? `(${unreadCount}) | Restaurant App` : "Restaurant App"
 
     const link = document.querySelector("link[type='image/svg+xml']")
     if (link) {
-      link.setAttribute("href", favicon)
+      link.setAttribute("href", newFavicon)
     }
-  }, [unreadCount, favicon, play])
+  }, [notifications, unreadCount])
 
   const handleMarkAsRead = useCallback(
     async (notificationId: string) => {
@@ -184,7 +207,7 @@ export default function Notifications() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 max-h-[400px] overflow-auto p-0 scrollbar scrollbar-thumb-slate-600 scrollbar-track-slate-300 scrollbar-thin">
+      <DropdownMenuContent className="w-80 max-h-[400px] overflow-auto p-0 scrollbar-thumb-slate-600 scrollbar-track-slate-300 scrollbar-thin">
         <div className="grid divide-y-2 text-xs">
           {optimisticNotifications.map(notification => (
             <NotificationContent key={notification.id} notification={notification} />

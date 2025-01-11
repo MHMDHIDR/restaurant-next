@@ -196,6 +196,7 @@ export const notifications = createTable("notification", {
   message: text("message").notNull(),
   type: varchar("type", { length: 50 }).notNull(),
   isRead: boolean("is_read").default(false),
+  soundPlayed: boolean("sound_played").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 export type Notifications = typeof notifications.$inferSelect
