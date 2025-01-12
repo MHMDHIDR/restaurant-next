@@ -8,14 +8,18 @@ import { env } from "@/env"
  * @param imageSrc The source of the image
  * @returns The blur placeholder of the image
  */
-export async function getBlurPlaceholder(imageSrc: string): Promise<string | null> {
+export async function getBlurPlaceholder(
+  imageSrc: string,
+  width = 10,
+  height = 10,
+): Promise<string | null> {
   const imageUrl = await getFullUrl(imageSrc)
   const response = await fetch(imageUrl)
   if (response.status !== 200) return null
 
   const buffer = await response.arrayBuffer()
   const { data, info } = await sharp(buffer)
-    .resize(10, 10, { fit: "inside" })
+    .resize(width, height, { fit: "inside" })
     .toBuffer({ resolveWithObject: true })
 
   const base64 = `data:image/${info.format};base64,${data.toString("base64")}`

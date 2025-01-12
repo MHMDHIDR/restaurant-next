@@ -70,9 +70,10 @@ export default async function RestaurantPage({
         <Image
           src={vendor.coverImage}
           alt={`${vendor.name} cover`}
+          className="object-cover"
+          placeholder={vendor.blurCoverImage ? "blur" : "empty"}
+          blurDataURL={vendor.blurCoverImage!}
           fill
-          className="object-cover fixed"
-          priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-white/75 dark:via-black/75 to-transparent" />
         <div className="container relative h-full px-2 mx-auto max-w-screen-xl">

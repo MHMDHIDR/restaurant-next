@@ -6,6 +6,7 @@ import { vendorFormSchema, vendorStatus } from "@/app/schemas/vendor"
 import { env } from "@/env"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
+import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { orders, UserRole, users, vendors } from "@/server/db/schema"
@@ -15,6 +16,7 @@ import type { RouterOutputs } from "@/trpc/react"
 type VendorWithMenuItems = Vendors & {
   menuItems: RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"]
   menuItemsCount: number
+  blurCoverImage: string | null
 }
 
 export const vendorRouter = createTRPCRouter({
@@ -218,6 +220,8 @@ export const vendorRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
       }
 
+      const blurCoverImage = await getBlurPlaceholder(vendor.coverImage, 300, 90)
+
       if (input.getItems) {
         const caller = createCaller(ctx)
         if (!caller.menuItem) {
@@ -232,10 +236,10 @@ export const vendorRouter = createTRPCRouter({
           addedById: vendor.addedById,
         })
 
-        return { ...vendor, menuItems, menuItemsCount }
+        return { ...vendor, blurCoverImage, menuItems, menuItemsCount }
       }
 
-      return { ...vendor, menuItems: [], menuItemsCount: 0 }
+      return { ...vendor, blurCoverImage, menuItems: [], menuItemsCount: 0 }
     }),
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
