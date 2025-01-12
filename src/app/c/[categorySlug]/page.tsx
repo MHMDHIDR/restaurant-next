@@ -28,6 +28,9 @@ export default async function CategoryPage({
       </div>
     )
   } catch (error) {
-    notFound()
+    if (error instanceof Error) {
+      console.error(error)
+    }
+    return notFound()
   }
 }
