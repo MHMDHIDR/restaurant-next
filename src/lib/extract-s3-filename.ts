@@ -10,7 +10,8 @@ export function extractS3FileName(url: string): string | null {
     const pathParts = parsedUrl.pathname.slice(1).split("/")
     // Join all parts after the bucket name to get the file key
     const fileKey = pathParts.slice(1).join("/")
-    return fileKey || null
+    const decodedKey = decodeURI(fileKey) //doing this because if the key has spaces and we need to remove the %20
+    return decodedKey || null
   } catch (error) {
     console.error("Failed to parse S3 URL:", error)
     return null

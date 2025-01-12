@@ -87,6 +87,7 @@ export function VendorApplicationForm({
     resolver: zodResolver(vendorFormSchema),
     defaultValues: {
       ...vendor,
+      id: vendor?.id,
       name: vendor?.name ?? "",
       logo: vendor?.logo ?? "",
       coverImage: vendor?.coverImage ?? "",
@@ -100,7 +101,9 @@ export function VendorApplicationForm({
       postalCode: vendor?.postalCode ?? "",
       minimumOrder: Number(vendor?.minimumOrder ?? 0),
       deliveryRadius: Number(vendor?.deliveryRadius ?? 0),
-      addedById: session?.user?.id ?? "", // Add this line to provide addedById
+      addedById: session?.user?.id ?? "",
+      description: vendor?.description ?? "",
+      phone: vendor?.phone ?? "",
       openingHours: vendor?.openingHours ?? {
         Monday: { open: "09:00", close: "17:00" },
         Tuesday: { open: "09:00", close: "17:00" },
@@ -110,6 +113,7 @@ export function VendorApplicationForm({
         Saturday: { open: "09:00", close: "17:00" },
         Sunday: { open: "09:00", close: "17:00" },
       },
+      cuisineTypes: vendor?.cuisineTypes ?? [],
     },
   })
 
@@ -154,7 +158,6 @@ export function VendorApplicationForm({
     onSuccess: async data => {
       if (!data) return
       toast.success("Vendor application submitted successfully!")
-
       router.refresh()
     },
     onError: error => {
@@ -170,6 +173,7 @@ export function VendorApplicationForm({
     },
     onError: error => {
       toast.error(`Failed to update vendor: ${error.message}`)
+      setIsSubmitting(false)
     },
   })
 
@@ -177,6 +181,7 @@ export function VendorApplicationForm({
     setIsSubmitting(true)
     if (!coverFiles.length && !data.coverImage) {
       toast.error("Cover image is required")
+      setIsSubmitting(false)
       return
     }
 
@@ -198,54 +203,28 @@ export function VendorApplicationForm({
       const vendorData = {
         ...data,
         id: vendorId,
-        latitude: data.latitude || 51.5074, // Default to London coordinates
+        latitude: data.latitude || 51.5074,
         longitude: data.longitude || -0.1278,
         logo: logoUrl,
         coverImage: coverUrl,
       }
 
-      createVendorMutation.mutate(vendorData)
+      if (isEditing) {
+        await editVendorMutation.mutateAsync(vendorData)
+      } else {
+        await createVendorMutation.mutateAsync(vendorData)
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An unexpected error occurred")
+    } finally {
+      setIsUploading(false)
       setIsSubmitting(false)
-    } finally {
-      setIsUploading(false)
-    }
-  }
-
-  const onSubmitEdit = async (data: VendorFormValues) => {
-    setIsUploading(true)
-    try {
-      let logoUrl = data.logo
-      let coverUrl = data.coverImage
-
-      if (logoFiles.length > 0) {
-        const uploadedLogoUrl = await optimizeAndUploadImage(logoFiles[0]!, "logo")
-        if (uploadedLogoUrl) logoUrl = uploadedLogoUrl
-      }
-
-      if (coverFiles.length > 0) {
-        const uploadedCoverUrl = await optimizeAndUploadImage(coverFiles[0]!, "cover")
-        if (uploadedCoverUrl) coverUrl = uploadedCoverUrl
-      }
-
-      const vendorData = {
-        ...data,
-        logo: logoUrl,
-        coverImage: coverUrl,
-      }
-
-      editVendorMutation.mutate(vendorData)
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An unexpected error occurred")
-    } finally {
-      setIsUploading(false)
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(isEditing ? onSubmitEdit : onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           <FormField
             control={form.control}

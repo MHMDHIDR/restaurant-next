@@ -9,7 +9,7 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
       <Card className="overflow-hidden transition-shadow hover:shadow-lg">
         <div className="relative h-48 max-h-48 w-full overflow-y-clip">
           <Image
-            src={vendor.coverImage}
+            src={vendor.logo}
             alt={vendor.name}
             width={300}
             height={192}
@@ -33,9 +33,6 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <p className="line-clamp-2 text-sm text-muted-foreground">{vendor.description}</p>
-        </CardContent>
       </Card>
     </Link>
   )

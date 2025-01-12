@@ -36,7 +36,7 @@ export default async function DashboardLayout({
           },
           {
             title: "Vendor Details",
-            url: "/vendor-details",
+            url: "/vendor-manager/vendor-details",
             icon: <Store className="w-4 h-4" />,
           },
         ],
