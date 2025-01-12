@@ -9,8 +9,9 @@ import { api } from "@/trpc/server"
 
 export default async function Home() {
   const { items: vendors } = await api.vendor.getFeatured({ status: "ACTIVE", limit: 3 })
-  const { menuCategories } = await api.menuCategory.getAllCategories({ hasItems: true })
-  const activeCategories = menuCategories.filter(category => category.isActive)
+  const { menuCategories: activeCategories } = await api.menuCategory.getAllCategories({
+    hasItems: true,
+  })
 
   const vendorsWithMenus = await Promise.all(
     vendors.map(async vendor => {

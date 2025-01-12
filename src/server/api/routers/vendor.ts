@@ -189,7 +189,8 @@ export const vendorRouter = createTRPCRouter({
     .input(z.object({ slug: z.string(), getItems: z.boolean().default(false) }))
     .query(async ({ ctx, input }): Promise<VendorWithMenuItems> => {
       const vendor = await ctx.db.query.vendors.findFirst({
-        where: (vendors, { eq }) => eq(vendors.slug, input.slug),
+        where: (vendors, { eq, and }) =>
+          and(eq(vendors.slug, input.slug), eq(vendors.status, "ACTIVE")),
       })
 
       if (!vendor) {

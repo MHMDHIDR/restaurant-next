@@ -2,7 +2,7 @@ import { IconLoader2 } from "@tabler/icons-react"
 import { CircleHelp } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { FileUpload } from "@/components/custom/file-upload"
 import { Button } from "@/components/ui/button"
@@ -49,6 +49,18 @@ export function CategoryEdit({ open, onOpenChange, category }: CategoryEditProps
       sortOrder: category.sortOrder ?? 0,
     },
   })
+
+  // Reset form values when category changes
+  useEffect(() => {
+    form.reset({
+      name: category.name,
+      description: category.description ?? "",
+      image: category.image ?? "",
+      isActive: category.isActive ?? true,
+      sortOrder: category.sortOrder ?? 0,
+    })
+    setFiles([])
+  }, [category, form])
 
   const handleFilesSelected = (selectedFiles: Array<File>) => {
     setFiles(selectedFiles)

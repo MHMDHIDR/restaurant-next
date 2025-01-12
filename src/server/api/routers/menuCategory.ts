@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { desc, eq, inArray, sql } from "drizzle-orm"
+import { and, desc, eq, inArray, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { menuCategorySchema, updateCategorySchema } from "@/app/schemas/menuCategory"
@@ -111,7 +111,7 @@ export const menuCategoryRouter = createTRPCRouter({
     .input(z.object({ hasItems: z.boolean().optional() }).optional())
     .query(async ({ ctx, input }) => {
       if (input?.hasItems) {
-        // Get categories that have at least one menu item
+        // Get categories that have at least one menu item and belong to active vendors
         const categoriesWithItems = await ctx.db
           .select({
             id: menuCategories.id,
@@ -127,8 +127,12 @@ export const menuCategoryRouter = createTRPCRouter({
           .from(menuCategories)
           .where(eq(menuCategories.isActive, true))
           .innerJoin(menuItems, eq(menuItems.categoryId, menuCategories.id))
+          .innerJoin(
+            vendors,
+            and(eq(menuCategories.vendorId, vendors.id), eq(vendors.status, "ACTIVE")),
+          )
           .groupBy(menuCategories.id)
-          .having(sql`count(${menuItems.id}) > 0`)
+          .having(sql`count(${menuItems.id}) > 0`) // this will filter out categories with no items
 
         return { menuCategories: categoriesWithItems }
       }
@@ -237,10 +241,24 @@ export const menuCategoryRouter = createTRPCRouter({
   getMenuItemsByCategorySlug: publicProcedure
     .input(z.object({ categorySlug: z.string() }))
     .query(async ({ ctx, input }) => {
-      // First, find all categories with the given slug
-      const categories = await ctx.db.query.menuCategories.findMany({
-        where: (categories, { eq }) => eq(categories.slug, input.categorySlug),
-      })
+      // Get categories that have at least one menu item and belong to active vendors
+      const categories = await ctx.db
+        .select({
+          id: menuCategories.id,
+          name: menuCategories.name,
+          description: menuCategories.description,
+          image: menuCategories.image,
+          isActive: menuCategories.isActive,
+          slug: menuCategories.slug,
+          sortOrder: menuCategories.sortOrder,
+          vendorId: menuCategories.vendorId,
+        })
+        .from(menuCategories)
+        .innerJoin(
+          vendors,
+          and(eq(menuCategories.vendorId, vendors.id), eq(vendors.status, "ACTIVE")),
+        )
+        .where(eq(menuCategories.slug, input.categorySlug))
 
       if (!categories || categories.length === 0) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Category not found" })
@@ -262,12 +280,14 @@ export const menuCategoryRouter = createTRPCRouter({
         })
         .from(menuItems)
         .innerJoin(menuCategories, eq(menuItems.categoryId, menuCategories.id))
-        .innerJoin(vendors, eq(menuCategories.vendorId, vendors.id))
+        .innerJoin(
+          vendors,
+          and(eq(menuCategories.vendorId, vendors.id), eq(vendors.status, "ACTIVE")),
+        )
         .where(inArray(menuCategories.id, categoryIds))
         .orderBy(desc(menuItems.updatedAt))
 
       // Use the first category for basic category info since they all have the same name/slug
-      // So we can get the category name, description, etc. from the first category
       const categoryInfo = categories[0]
 
       return {

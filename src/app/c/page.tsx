@@ -2,8 +2,9 @@ import { CategoriesGrid } from "@/components/custom/categories"
 import { api } from "@/trpc/server"
 
 export default async function CategoriesPage() {
-  const { menuCategories } = await api.menuCategory.getAllCategories({ hasItems: true })
-  const activeCategories = menuCategories.filter(category => category.isActive)
+  const { menuCategories: activeCategories } = await api.menuCategory.getAllCategories({
+    hasItems: true,
+  })
 
   return (
     <div className="container px-2 py-12 mx-auto max-w-screen-lg">
