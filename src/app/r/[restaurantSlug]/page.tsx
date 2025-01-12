@@ -57,42 +57,58 @@ export default async function RestaurantPage({
     })
 
   return (
-    <div className="container px-2 py-12 mx-auto max-w-screen-xl">
-      <section className="mb-12">
-        <h1 className="mb-4 text-4xl font-bold leading-loose md:leading-10">{vendor.name}</h1>
-        <div className="flex items-center gap-3">
-          <div className="relative w-36">
-            <Image
-              src={vendor.logo}
-              alt={`${vendor.name} logo`}
-              width={128}
-              height={128}
-              className="object-contain shadow-md rounded-md"
-            />
-          </div>
-          <div>
-            <p className="text-muted-foreground">{vendor.cuisineTypes.join(", ")}</p>
-            <p className="text-muted-foreground">{vendor.description}</p>
+    <div>
+      <section className="relative w-full h-[300px] mb-20">
+        <Image
+          src={vendor.coverImage}
+          alt={`${vendor.name} cover`}
+          fill
+          className="object-cover fixed"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent" />
+        <div className="container relative h-full px-2 mx-auto max-w-screen-xl">
+          <div className="absolute bottom-8">
+            <h1 className="mb-4 text-3xl font-bold text-white leading-loose md:leading-10 select-none">
+              {vendor.name}
+            </h1>
+            <div className="flex items-center gap-3">
+              <div className="relative w-36">
+                <Image
+                  src={vendor.logo}
+                  alt={`${vendor.name} logo`}
+                  width={128}
+                  height={128}
+                  className="object-contain shadow-md rounded-md"
+                />
+              </div>
+              <div className="select-none text-white">
+                <p className="opacity-90">{vendor.cuisineTypes.join(", ")}</p>
+                <p className="opacity-90">{vendor.description}</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {vendor.menuItemsCount === 0 ? (
-          <EmptyState className="col-span-full">
-            <p className="mt-4 text-lg text-gray-500 select-none dark:text-gray-400">
-              This Restaurant has no menu items yet.
-            </p>
-          </EmptyState>
-        ) : (
-          vendor.menuItems.map(item => (
-            <RestaurantMenuItem
-              key={item.id}
-              item={item}
-              vendor={{ id: vendor.id, name: vendor.name }}
-            />
-          ))
-        )}
+      <div className="container px-2 py-12 mx-auto max-w-screen-xl">
+        <div className="grid gap-6 md:grid-cols-3">
+          {vendor.menuItemsCount === 0 ? (
+            <EmptyState className="col-span-full">
+              <p className="mt-4 text-lg text-gray-500 select-none dark:text-gray-400">
+                This Restaurant has no menu items yet.
+              </p>
+            </EmptyState>
+          ) : (
+            vendor.menuItems.map(item => (
+              <RestaurantMenuItem
+                key={item.id}
+                item={item}
+                vendor={{ id: vendor.id, name: vendor.name }}
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   )

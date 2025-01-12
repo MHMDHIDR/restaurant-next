@@ -28,12 +28,14 @@ export default function Nav({
 
   return (pathname.includes("/dashboard") || pathname.includes("/vendor-manager")) &&
     isHidden ? null : (
-    <header className="mx-auto w-full border-b shadow-sm">
-      <div className="flex items-center justify-between p-1.5">
+    <header className="w-full border-b shadow-sm">
+      <div className="flex items-center justify-between p-1.5 max-w-screen-xl mx-auto">
         <Link href="/" className="flex select-none gap-x-2 text-xl font-bold text-primary">
           <Logo className="mx-auto h-7 w-7 stroke-1 stroke-current" />
-          Restaurant
-          <span className="text-black">App</span>
+          <span className="hidden sm:inline-flex">
+            Restaurant
+            <span className="text-black">App</span>
+          </span>
         </Link>
         <nav className="flex items-center gap-4">
           {itemCount > 0 && (
