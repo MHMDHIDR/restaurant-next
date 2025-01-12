@@ -18,7 +18,6 @@ type OptimisticAction = { type: "markAsRead"; id: string } | { type: "markAllAsR
 
 export default function Notifications() {
   const { data: session } = useSession()
-  const [_favicon, setFavicon] = useState<"/logo.svg" | "/logo-notification.svg">("/logo.svg")
   const [play] = useSound("/notification.mp3")
   const [isPending, startTransition] = useTransition()
   const [isProcessing, setIsProcessing] = useState<Record<string, boolean>>({})
@@ -95,7 +94,6 @@ export default function Notifications() {
     const hasUnread = notifications.some(n => !n.isRead)
     const newFavicon = hasUnread ? "/logo-notification.svg" : "/logo.svg"
 
-    setFavicon(newFavicon)
     document.title = hasUnread ? `(${unreadCount}) | Restaurant App` : "Restaurant App"
 
     const link = document.querySelector("link[type='image/svg+xml']")

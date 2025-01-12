@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardHeader } from "@/components/ui/card"
 import type { Vendors } from "@/server/db/schema"
 
 export function RestaurantCard({ vendor }: { vendor: Vendors }) {
