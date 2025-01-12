@@ -38,13 +38,19 @@ export function AppSidebar({ items }: { items: VendorNavItems }) {
       <SidebarContent className="select-none">
         {items.navMain.map(item => (
           <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {item.icon}
+              {item.title}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items?.map(subItem => (
                   <SidebarMenuItem key={subItem.title}>
                     <SidebarMenuButton asChild isActive={isActive(subItem.url)}>
-                      <Link href={subItem.url}>{subItem.title}</Link>
+                      <Link href={subItem.url}>
+                        {subItem.icon}
+                        {subItem.title}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

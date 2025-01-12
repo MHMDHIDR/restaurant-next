@@ -1,5 +1,12 @@
-import { IconCategory2 } from "@tabler/icons-react"
-import { Package, ShoppingCart } from "lucide-react"
+import {
+  Grid2X2,
+  Grid2x2Plus,
+  Package,
+  PackagePlus,
+  Settings,
+  ShoppingCart,
+  Store,
+} from "lucide-react"
 import { notFound } from "next/navigation"
 import Nav from "@/components/custom/nav"
 import { AppSidebar } from "@/components/ui/app-sidebar"
@@ -25,6 +32,12 @@ export default async function DashboardLayout({
           {
             title: "Dashboard",
             url: "/vendor-manager",
+            icon: <Settings className="w-4 h-4" />,
+          },
+          {
+            title: "Vendor Details",
+            url: "/vendor-details",
+            icon: <Store className="w-4 h-4" />,
           },
         ],
       },
@@ -46,12 +59,12 @@ export default async function DashboardLayout({
           {
             title: "Items",
             url: "/vendor-manager/menu-items?view=items",
-            icon: <Package className="w-4 h-4" />,
+            icon: <Grid2X2 className="w-4 h-4" />,
           },
           {
             title: "New Menu Item",
             url: "/vendor-manager/menu-items?view=new-item",
-            icon: <Package className="w-4 h-4" />,
+            icon: <Grid2x2Plus className="w-4 h-4" />,
           },
         ],
       },
@@ -62,12 +75,12 @@ export default async function DashboardLayout({
           {
             title: "All Categories",
             url: "/vendor-manager/categories?view=categories",
-            icon: <IconCategory2 className="w-4 h-4" />,
+            icon: <Package className="w-4 h-4" />,
           },
           {
             title: "Create",
             url: "/vendor-manager/categories?view=new-category",
-            icon: <IconCategory2 className="w-4 h-4" />,
+            icon: <PackagePlus className="w-4 h-4" />,
           },
         ],
       },
