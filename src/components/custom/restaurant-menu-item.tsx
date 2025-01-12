@@ -58,13 +58,13 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="relative h-48 max-h-48 w-full cursor-pointer select-none">
+        <div className="relative h-48 max-h-48 w-full cursor-pointer rounded-md select-none overflow-clip">
           <Image
             src={item.image}
             alt={item.name}
             width={300}
             height={192}
-            className="w-full h-full object-cover rounded-md shadow-sm hover:shadow-lg transition-shadow"
+            className="w-full h-auto object-cover shadow-sm hover:shadow-lg transition-shadow"
           />
           <div
             className={
