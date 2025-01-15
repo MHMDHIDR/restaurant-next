@@ -49,12 +49,14 @@ function generatePaginationItems(currentPage: number, totalPages: number) {
   return items
 }
 
-export default async function CategoriesPage(props: {
+export default async function CategoriesPage({
+  searchParams,
+}: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const searchParams = await props.searchParams
-  const page = searchParams?.page ? Number(searchParams.page) : 1
-  const limit = searchParams?.limit ? Number(searchParams.limit) : ITEMS_PER_PAGE
+  const searchParamsProp = await searchParams
+  const page = searchParamsProp?.page ? Number(searchParamsProp.page) : 1
+  const limit = searchParamsProp?.limit ? Number(searchParamsProp.limit) : ITEMS_PER_PAGE
 
   const { menuCategories: activeCategories, pagination: paginationInfo } =
     await api.menuCategory.getAllCategories({ hasItems: true, searchParams: { page, limit } })

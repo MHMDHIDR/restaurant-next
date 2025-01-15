@@ -5,8 +5,18 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import EmptyState from "@/components/custom/empty-state"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { env } from "@/env"
 import { checkRoleAccess } from "@/lib/check-role-access"
+import { ITEMS_PER_PAGE } from "@/lib/constants"
 import { auth } from "@/server/auth"
 import { UserRole } from "@/server/db/schema"
 import { api } from "@/trpc/server"
@@ -45,24 +55,71 @@ export async function generateMetadata({
   }
 }
 
+// Helper function to generate pagination items
+function generatePaginationItems(currentPage: number, totalPages: number) {
+  const items: Array<number | "ellipsis-start" | "ellipsis-end"> = []
+  const maxVisiblePages = 5
+
+  if (totalPages <= maxVisiblePages) {
+    // Show all pages if total pages is less than or equal to maxVisiblePages
+    for (let i = 1; i <= totalPages; i++) {
+      items.push(i)
+    }
+  } else {
+    // Always show first page
+    items.push(1)
+
+    if (currentPage > 3) {
+      items.push("ellipsis-start")
+    }
+
+    // Show pages around current page
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(totalPages - 1, currentPage + 1);
+      i++
+    ) {
+      items.push(i)
+    }
+
+    if (currentPage < totalPages - 2) {
+      items.push("ellipsis-end")
+    }
+
+    // Always show last page
+    items.push(totalPages)
+  }
+
+  return items
+}
+
 export default async function RestaurantPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ restaurantSlug: Vendors["slug"] }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const { restaurantSlug } = await params
+  const searchParamsProp = await searchParams
+  const page = searchParamsProp?.page ? Number(searchParamsProp.page) : 1
+  const limit = searchParamsProp?.limit ? Number(searchParamsProp.limit) : ITEMS_PER_PAGE
+
+  console.log({ page, limit })
+
   const session = await auth()
   const user = session?.user
   const ALLOWED_ROLES = [UserRole.SUPER_ADMIN] as const
 
   const vendor = await api.vendor
-    .getBySlug({ slug: restaurantSlug, getItems: true })
+    .getBySlug({ slug: restaurantSlug, getItems: true, searchParams: { page, limit } })
     .catch((error: unknown) => {
       if (error instanceof TRPCError && error.code === "NOT_FOUND") {
         notFound()
       }
       throw error
     })
+  const { pagination: paginationInfo } = vendor
 
   return (
     <div>
@@ -137,6 +194,60 @@ export default async function RestaurantPage({
           )}
         </div>
       </div>
+
+      {paginationInfo && paginationInfo.totalPages > 1 && (
+        <div className="mt-10">
+          <Pagination>
+            <PaginationContent>
+              {/* Previous button */}
+              <PaginationItem>
+                <PaginationPrevious
+                  href={
+                    paginationInfo.hasPreviousPage
+                      ? `/r/${restaurantSlug}?page=${paginationInfo.previousPage}&limit=${paginationInfo.pageSize}`
+                      : undefined
+                  }
+                  aria-disabled={!paginationInfo.hasPreviousPage}
+                  disabled={!paginationInfo.hasPreviousPage}
+                />
+              </PaginationItem>
+
+              {/* Page numbers */}
+              {generatePaginationItems(paginationInfo.currentPage, paginationInfo.totalPages).map(
+                (item, index) => (
+                  <PaginationItem key={`${item}-${index}`}>
+                    {item === "ellipsis-start" || item === "ellipsis-end" ? (
+                      <PaginationEllipsis />
+                    ) : (
+                      <PaginationLink
+                        href={`/r/${restaurantSlug}?page=${item}&limit=${paginationInfo.pageSize}`}
+                        isActive={item === paginationInfo.currentPage}
+                        aria-disabled={item === paginationInfo.currentPage}
+                        disabled={item === paginationInfo.currentPage}
+                      >
+                        {item}
+                      </PaginationLink>
+                    )}
+                  </PaginationItem>
+                ),
+              )}
+
+              {/* Next button */}
+              <PaginationItem>
+                <PaginationNext
+                  href={
+                    paginationInfo.hasNextPage
+                      ? `/r/${restaurantSlug}?page=${paginationInfo.nextPage}&limit=${paginationInfo.pageSize}`
+                      : undefined
+                  }
+                  aria-disabled={!paginationInfo.hasNextPage}
+                  disabled={!paginationInfo.hasNextPage}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   )
 }

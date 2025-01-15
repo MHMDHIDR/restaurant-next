@@ -24,7 +24,7 @@ export interface PaginationParams {
  * @property items.start - Start index of items on the current page
  * @property items.end - End index of items on the current page
  */
-export interface PaginationResult {
+export type PaginationResult = {
   currentPage: number
   totalPages: number
   pageSize: number

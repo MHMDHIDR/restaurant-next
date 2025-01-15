@@ -2,8 +2,10 @@ import { TRPCError } from "@trpc/server"
 import { and, eq, inArray, sql } from "drizzle-orm"
 import { z } from "zod"
 import { menuItemSchema } from "@/app/schemas/menuItem"
+import { ITEMS_PER_PAGE } from "@/lib/constants"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
+import { pagination } from "@/lib/pagination"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { menuItems } from "@/server/db/schema"
@@ -89,7 +91,15 @@ export const menuItemRouter = createTRPCRouter({
   }),
 
   getMenuItemsByVendorId: publicProcedure
-    .input(z.object({ vendorId: z.string(), addedById: z.string() }))
+    .input(
+      z.object({
+        vendorId: z.string(),
+        addedById: z.string(),
+        searchParams: z
+          .object({ page: z.number().optional(), limit: z.number().optional() })
+          .optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       // First get relevant category IDs for the vendor
       const categories = await ctx.db.query.menuCategories.findMany({
@@ -111,18 +121,36 @@ export const menuItemRouter = createTRPCRouter({
           ? baseCondition
           : and(baseCondition, eq(menuItems.isAvailable, true))
 
-      // Then get menu items for these categories using the condition
-      const items = await ctx.db.query.menuItems.findMany({
-        where: whereCondition,
-      })
-
-      // Use the same condition for the count query
-      const [{ count: menuItemsCount = 0 } = { count: 0 }] = await ctx.db
+      // Get total count first
+      const [{ count = 0 } = { count: 0 }] = await ctx.db
         .select({ count: sql<number>`count(*)::int` })
         .from(menuItems)
         .where(whereCondition)
 
-      return { items, menuItemsCount }
+      // If no searchParams provided, return all results without pagination
+      if (!input?.searchParams?.page && !input?.searchParams?.limit) {
+        const items = await ctx.db.query.menuItems.findMany({
+          where: whereCondition,
+        })
+        return { items, count }
+      }
+
+      // Handle pagination when searchParams is provided
+      const page = input.searchParams?.page ?? 1
+      const limit = input.searchParams?.limit ?? ITEMS_PER_PAGE
+      const paginationData = pagination.calculate({ page, limit, totalItems: count })
+
+      const paginatedItems = await ctx.db.query.menuItems.findMany({
+        where: whereCondition,
+        limit: paginationData.pageSize,
+        offset: paginationData.offset,
+      })
+
+      return {
+        items: paginatedItems,
+        count,
+        pagination: paginationData,
+      }
     }),
 
   deleteMenuItem: protectedProcedure

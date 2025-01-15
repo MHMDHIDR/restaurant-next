@@ -7,6 +7,7 @@ import { env } from "@/env"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
 import { getBlurPlaceholder } from "@/lib/optimize-image"
+import { PaginationResult } from "@/lib/pagination"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { orders, UserRole, users, vendors } from "@/server/db/schema"
@@ -17,6 +18,7 @@ type VendorWithMenuItems = Vendors & {
   menuItems: RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"]
   menuItemsCount: number
   blurCoverImage: string | null
+  pagination: PaginationResult | undefined
 }
 
 export const vendorRouter = createTRPCRouter({
@@ -209,7 +211,15 @@ export const vendorRouter = createTRPCRouter({
   }),
 
   getBySlug: publicProcedure
-    .input(z.object({ slug: z.string(), getItems: z.boolean().default(false) }))
+    .input(
+      z.object({
+        slug: z.string(),
+        getItems: z.boolean().default(false),
+        searchParams: z
+          .object({ page: z.number().optional(), limit: z.number().optional() })
+          .optional(),
+      }),
+    )
     .query(async ({ ctx, input }): Promise<VendorWithMenuItems> => {
       const vendor = await ctx.db.query.vendors.findFirst({
         where: (vendors, { eq, and }) =>
@@ -231,15 +241,20 @@ export const vendorRouter = createTRPCRouter({
           })
         }
 
-        const { items: menuItems, menuItemsCount } = await caller.menuItem.getMenuItemsByVendorId({
+        const {
+          items: menuItems,
+          count: menuItemsCount,
+          pagination,
+        } = await caller.menuItem.getMenuItemsByVendorId({
           vendorId: vendor.id,
           addedById: vendor.addedById,
+          searchParams: input.searchParams,
         })
 
-        return { ...vendor, blurCoverImage, menuItems, menuItemsCount }
+        return { ...vendor, blurCoverImage, menuItems, pagination, menuItemsCount }
       }
 
-      return { ...vendor, blurCoverImage, menuItems: [], menuItemsCount: 0 }
+      return { ...vendor, blurCoverImage, menuItems: [], pagination: undefined, menuItemsCount: 0 }
     }),
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
