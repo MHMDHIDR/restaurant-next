@@ -106,7 +106,7 @@ export default async function RestaurantPage({
                   alt={`${vendor.name} logo`}
                   width={128}
                   height={128}
-                  className="object-contain shadow-md rounded-md"
+                  className="object-contain shadow-md rounded-md w-full"
                 />
               </div>
               <div className="select-none">
