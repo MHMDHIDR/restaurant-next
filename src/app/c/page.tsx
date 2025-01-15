@@ -52,7 +52,7 @@ function generatePaginationItems(currentPage: number, totalPages: number) {
 export default async function CategoriesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const searchParamsProp = await searchParams
   const page = searchParamsProp?.page ? Number(searchParamsProp.page) : 1

@@ -2,7 +2,8 @@ import { IconChevronLeft, IconChevronRight, IconDots } from "@tabler/icons-react
 import Link from "next/link"
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Button, ButtonProps, buttonVariants } from "./button"
+import { Button, buttonVariants } from "./button"
+import type { ButtonProps } from "./button"
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -48,7 +49,7 @@ const PaginationLink = ({
     <Link
       aria-current={isActive ? "page" : undefined}
       {...props}
-      href={props.href || ""}
+      href={props.href ?? ""}
       className={cn(buttonVariants({ variant: "ghost" }), disabled ? "pointer-events-none" : "")}
     >
       {props.children}
@@ -68,7 +69,7 @@ const PaginationPrevious = ({
     {...props}
   >
     <IconChevronLeft className="h-4 w-4 rtl:rotate-180" />
-    <span>{props.label || "Previous"}</span>
+    <span>{props.label ?? "Previous"}</span>
   </PaginationLink>
 )
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -80,7 +81,7 @@ const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof Pag
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    <span>{props.label || "Next"}</span>
+    <span>{props.label ?? "Next"}</span>
     <IconChevronRight className="h-4 w-4 rtl:rotate-180" />
   </PaginationLink>
 )

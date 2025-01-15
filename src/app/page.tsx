@@ -19,7 +19,7 @@ export default async function Home() {
         vendorId: vendor.id,
         addedById: vendor.addedById,
       })
-      return { ...vendor, menuItems: menuItems.items, menuItemsCount: menuItems.menuItemsCount }
+      return { ...vendor, menuItems: menuItems.items, menuItemsCount: menuItems.count }
     }),
   )
 

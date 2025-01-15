@@ -98,7 +98,7 @@ export default async function RestaurantPage({
   searchParams,
 }: {
   params: Promise<{ restaurantSlug: Vendors["slug"] }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { restaurantSlug } = await params
   const searchParamsProp = await searchParams
@@ -196,7 +196,7 @@ export default async function RestaurantPage({
       </div>
 
       {paginationInfo && paginationInfo.totalPages > 1 && (
-        <div className="mt-10">
+        <div className="my-10">
           <Pagination>
             <PaginationContent>
               {/* Previous button */}
