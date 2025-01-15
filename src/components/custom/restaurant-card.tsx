@@ -29,7 +29,9 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
             </div>
             <div>
               <h3 className="font-semibold">{vendor.name}</h3>
-              <p className="text-sm text-muted-foreground">{vendor.cuisineTypes.join(", ")}</p>
+              <p className="text-sm text-muted-foreground">
+                {vendor.cuisineTypes.slice(0, 2).join(", ") + (vendor.cuisineTypes.length > 2 ? ", ...Other" : "")}
+              </p>
             </div>
           </div>
         </CardHeader>
