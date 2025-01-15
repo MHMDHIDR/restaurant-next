@@ -3,8 +3,10 @@ import { and, desc, eq, inArray, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { menuCategorySchema, updateCategorySchema } from "@/app/schemas/menuCategory"
+import { ITEMS_PER_PAGE } from "@/lib/constants"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
+import { pagination } from "@/lib/pagination"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { menuCategories, menuItems, vendors } from "@/server/db/schema"
@@ -108,11 +110,63 @@ export const menuCategoryRouter = createTRPCRouter({
     }),
 
   getAllCategories: publicProcedure
-    .input(z.object({ hasItems: z.boolean().optional() }).optional())
+    .input(
+      z
+        .object({
+          hasItems: z.boolean().optional(),
+          searchParams: z
+            .object({ page: z.number().optional(), limit: z.number().optional() })
+            .optional(),
+        })
+        .optional(),
+    )
     .query(async ({ ctx, input }) => {
       if (input?.hasItems) {
-        // Get categories that have at least one menu item and belong to active vendors
-        const categoriesWithItems = await ctx.db
+        // Get total count first for categories with items
+        const [{ count = 0 } = { count: 0 }] = await ctx.db
+          .select({ count: sql<number>`count(distinct ${menuCategories.id})::int` })
+          .from(menuCategories)
+          .where(eq(menuCategories.isActive, true))
+          .innerJoin(menuItems, eq(menuItems.categoryId, menuCategories.id))
+          .innerJoin(
+            vendors,
+            and(eq(menuCategories.vendorId, vendors.id), eq(vendors.status, "ACTIVE")),
+          )
+          .having(sql`count(${menuItems.id}) > 0`)
+
+        // If no searchParams provided, return all results without pagination
+        if (!input?.searchParams?.page && !input?.searchParams?.limit) {
+          const categoriesWithItems = await ctx.db
+            .select({
+              id: menuCategories.id,
+              name: menuCategories.name,
+              description: menuCategories.description,
+              image: menuCategories.image,
+              isActive: menuCategories.isActive,
+              slug: menuCategories.slug,
+              sortOrder: menuCategories.sortOrder,
+              vendorId: menuCategories.vendorId,
+              itemCount: sql<number>`count(${menuItems.id})::int`,
+            })
+            .from(menuCategories)
+            .where(eq(menuCategories.isActive, true))
+            .innerJoin(menuItems, eq(menuItems.categoryId, menuCategories.id))
+            .innerJoin(
+              vendors,
+              and(eq(menuCategories.vendorId, vendors.id), eq(vendors.status, "ACTIVE")),
+            )
+            .groupBy(menuCategories.id)
+            .having(sql`count(${menuItems.id}) > 0`)
+
+          return { menuCategories: categoriesWithItems, count }
+        }
+
+        // Handle pagination
+        const page = input.searchParams?.page ?? 1
+        const limit = input.searchParams?.limit ?? ITEMS_PER_PAGE
+        const paginationData = pagination.calculate({ page, limit, totalItems: count })
+
+        const paginatedCategoriesWithItems = await ctx.db
           .select({
             id: menuCategories.id,
             name: menuCategories.name,
@@ -132,18 +186,43 @@ export const menuCategoryRouter = createTRPCRouter({
             and(eq(menuCategories.vendorId, vendors.id), eq(vendors.status, "ACTIVE")),
           )
           .groupBy(menuCategories.id)
-          .having(sql`count(${menuItems.id}) > 0`) // this will filter out categories with no items
+          .having(sql`count(${menuItems.id}) > 0`)
+          .limit(paginationData.pageSize)
+          .offset(paginationData.offset)
 
-        return { menuCategories: categoriesWithItems }
+        return {
+          menuCategories: paginatedCategoriesWithItems,
+          count,
+          pagination: paginationData,
+        }
       }
 
-      // Get all categories without checking for items
-      const categories = await ctx.db.query.menuCategories.findMany()
+      // Get total count first
       const [{ count = 0 } = { count: 0 }] = await ctx.db
         .select({ count: sql<number>`count(*)::int` })
         .from(menuCategories)
 
-      return { menuCategories: categories, count }
+      // If no searchParams provided, return all results without pagination
+      if (!input?.searchParams?.page && !input?.searchParams?.limit) {
+        const categories = await ctx.db.query.menuCategories.findMany()
+        return { menuCategories: categories, count }
+      }
+
+      // Handle pagination when searchParams is provided
+      const page = input.searchParams?.page ?? 1
+      const limit = input.searchParams?.limit ?? ITEMS_PER_PAGE
+      const paginationData = pagination.calculate({ page, limit, totalItems: count })
+
+      const paginatedCategories = await ctx.db.query.menuCategories.findMany({
+        limit: paginationData.pageSize,
+        offset: paginationData.offset,
+      })
+
+      return {
+        menuCategories: paginatedCategories,
+        count,
+        pagination: paginationData,
+      }
     }),
 
   getCategoriesByVendorId: protectedProcedure
