@@ -14,6 +14,7 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
             width={300}
             height={192}
             className="h-full w-80 object-cover"
+            priority
           />
         </div>
         <CardHeader>
