@@ -1,10 +1,13 @@
 "use client"
 
 import { IconMapPin, IconSearch } from "@tabler/icons-react"
+import clsx from "clsx"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function SearchBar() {
+  const isMobile = useIsMobile()
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -23,17 +26,24 @@ export function SearchBar() {
       <IconMapPin className="mr-2 text-gray-500" />
       <input
         type="text"
-        placeholder="Search for restaurants, dishes, or cuisines"
-        className="flex-grow text-lg text-black bg-transparent outline-none"
+        placeholder={
+          isMobile
+            ? "Search for restaurants, and more..."
+            : "Search for dishes, restaurants, cuisines, and more..."
+        }
+        className={clsx("flex-grow outline-0 bg-transparent", {
+          "text-sm": isMobile,
+          "text-lg": !isMobile,
+        })}
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
       />
       <button
         type="submit"
-        className="flex items-center px-4 py-2 text-white rounded-full bg-primary"
+        className="flex items-center px-2.5 py-1.5 text-white rounded-full bg-primary hover:bg-primary-dark transition-colors"
       >
-        <IconSearch className="mr-2" size={20} />
-        Search
+        <IconSearch className="mr-1" size={20} />
+        <span className="hidden sm:inline-flex">Search</span>
       </button>
     </form>
   )
