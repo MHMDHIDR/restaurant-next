@@ -88,7 +88,7 @@ export default function CategoriesTable({
   }
 
   const columns = [
-    ...baseColumns,
+    ...baseColumns(),
     ...categoriesColumns,
     createActionsColumn<MenuCategories & BaseEntity>(handleDeleteClick, handleEditClick),
   ]

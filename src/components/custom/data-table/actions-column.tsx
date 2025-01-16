@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import type { BaseEntity } from "./base-columns"
+import type { ColumnDef } from "@tanstack/react-table"
 
 type ActionCellProps<T extends BaseEntity> = {
   row: T
@@ -42,10 +43,8 @@ export function ActionCell<T extends BaseEntity>({ row, onDelete, onEdit }: Acti
 export const createActionsColumn = <T extends BaseEntity>(
   onDelete: (id: string) => void,
   onEdit?: (row: T) => void,
-) => ({
+): ColumnDef<T> => ({
   accessorKey: "actions",
   header: "Actions",
-  cell: ({ row }: { row: { original: T } }) => (
-    <ActionCell row={row.original} onDelete={onDelete} onEdit={onEdit} />
-  ),
+  cell: ({ row }) => <ActionCell row={row.original} onDelete={onDelete} onEdit={onEdit} />,
 })

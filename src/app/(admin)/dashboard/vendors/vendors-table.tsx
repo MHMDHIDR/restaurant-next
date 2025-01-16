@@ -90,7 +90,7 @@ export default function VendorsTable({
     router.refresh()
   }, [vendorsData, router])
 
-  const columns = [...baseColumns, ...vendorsColumns]
+  const columns = [...baseColumns(), ...vendorsColumns]
 
   return (
     <>

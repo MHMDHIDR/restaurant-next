@@ -7,13 +7,13 @@ export type BaseEntity = {
   name: string
 }
 
-export const baseColumns: ColumnDef<BaseEntity>[] = [
+export const baseColumns = <T extends BaseEntity>(): ColumnDef<T>[] => [
   {
     accessorKey: "name",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Name
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     id: "base_name",

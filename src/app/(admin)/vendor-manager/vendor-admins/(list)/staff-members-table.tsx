@@ -11,9 +11,11 @@ import { api } from "@/trpc/react"
 import { staffMembersColumns } from "./staff-members-columns"
 import type { BaseEntity } from "@/components/custom/data-table/base-columns"
 import type { Users } from "@/server/db/schema"
+import type { ColumnDef } from "@tanstack/react-table"
 
+type StaffMember = Users & BaseEntity
 type StaffMembersTableProps = {
-  staffMembers: (Users & BaseEntity)[]
+  staffMembers: StaffMember[]
   vendorId: string
 }
 
@@ -51,15 +53,15 @@ export function StaffMembersTable({ staffMembers, vendorId }: StaffMembersTableP
     setDialogOpen(false)
   }
 
-  const columns = [
-    ...baseColumns,
+  const columns: ColumnDef<StaffMember>[] = [
+    ...baseColumns<StaffMember>(),
     ...staffMembersColumns,
-    createActionsColumn<Users & BaseEntity>(handleDeleteClick),
+    createActionsColumn<StaffMember>(id => handleDeleteClick(id)),
   ]
 
   return (
     <>
-      <DataTable<Users & BaseEntity>
+      <DataTable<StaffMember>
         columns={columns}
         data={staffMembers}
         emptyStateMessage="No staff members found."

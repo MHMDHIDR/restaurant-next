@@ -8,7 +8,7 @@ import type { Users } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
 export default function UsersTable({ users }: { users: (Users & BaseEntity)[] }) {
-  const columns = [...baseColumns, ...userColumns]
+  const columns = [...baseColumns(), ...userColumns]
 
   return (
     <DataTable<Users & BaseEntity>

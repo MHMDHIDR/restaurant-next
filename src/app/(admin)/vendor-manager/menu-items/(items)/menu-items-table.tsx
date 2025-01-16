@@ -95,7 +95,7 @@ export function MenuItemsTable({ menuItems }: MenuItemsTableProps) {
   }
 
   const columns = [
-    ...baseColumns,
+    ...baseColumns(),
     ...menuItemsColumns,
     createActionsColumn<MenuItems & BaseEntity>(handleDeleteClick, handleEditClick),
   ]

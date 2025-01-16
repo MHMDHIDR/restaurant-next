@@ -1,7 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { and, eq, inArray, sql } from "drizzle-orm"
-import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+import { eq, inArray, sql } from "drizzle-orm"
 import { Resend } from "resend"
 import { z } from "zod"
 import { env } from "@/env"
