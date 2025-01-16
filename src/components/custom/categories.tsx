@@ -33,7 +33,8 @@ export function CategoriesGrid({ categories, columns = 3, limit }: CategoriesGri
                 alt={category.name}
                 width={300}
                 height={192}
-                className="w-full object-cover aspect-square"
+                className="h-full w-80 object-cover"
+                priority
               />
             </div>
             <CardHeader>

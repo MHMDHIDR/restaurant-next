@@ -13,7 +13,7 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
             alt={vendor.name}
             width={300}
             height={192}
-            className="w-full object-cover aspect-square"
+            className="h-full w-80 object-cover"
           />
         </div>
         <CardHeader>
@@ -30,7 +30,8 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
             <div>
               <h3 className="font-semibold">{vendor.name}</h3>
               <p className="text-sm text-muted-foreground">
-                {vendor.cuisineTypes.slice(0, 2).join(", ") + (vendor.cuisineTypes.length > 2 ? ", ...Other" : "")}
+                {vendor.cuisineTypes.slice(0, 2).join(", ") +
+                  (vendor.cuisineTypes.length > 2 ? ", ...Other" : "")}
               </p>
             </div>
           </div>
