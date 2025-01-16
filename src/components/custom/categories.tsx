@@ -31,9 +31,9 @@ export function CategoriesGrid({ categories, columns = 3, limit }: CategoriesGri
               <Image
                 src={category.image ?? "/placeholder.jpg"}
                 alt={category.name}
-                width={300}
-                height={192}
-                className="h-full w-80 object-cover"
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                fill
                 priority
               />
             </div>

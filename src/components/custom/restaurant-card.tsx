@@ -11,9 +11,9 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
           <Image
             src={vendor.logo}
             alt={vendor.name}
-            width={300}
-            height={192}
-            className="h-full w-80 object-cover"
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+            fill
             priority
           />
         </div>
