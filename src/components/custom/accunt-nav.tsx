@@ -34,8 +34,8 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
       icon: IconSettings,
       label: "Dashboard",
     },
-    // Show vendor management link if user is VENDOR_ADMIN and has a vendor
-    checkRoleAccess(user.role, [UserRole.VENDOR_ADMIN]) && user.hasVendor
+    // Show vendor management link if user is VENDOR_ADMIN or VENDOR_STAFF and has a vendor
+    checkRoleAccess(user.role, [UserRole.VENDOR_ADMIN, UserRole.VENDOR_STAFF]) && user.hasVendor
       ? {
           href: "/vendor-manager",
           icon: IconPackage,

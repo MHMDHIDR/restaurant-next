@@ -11,7 +11,7 @@ import type { BaseEntity } from "./base-columns"
 type ActionCellProps<T extends BaseEntity> = {
   row: T
   onDelete: (id: string) => void
-  onEdit: (row: T) => void
+  onEdit?: (row: T) => void
 }
 
 export function ActionCell<T extends BaseEntity>({ row, onDelete, onEdit }: ActionCellProps<T>) {
@@ -24,10 +24,12 @@ export function ActionCell<T extends BaseEntity>({ row, onDelete, onEdit }: Acti
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rtl:rtl">
-        <DropdownMenuItem onClick={() => onEdit(row)}>
-          <Edit className="mr-0.5 h-4 w-4" />
-          Edit
-        </DropdownMenuItem>
+        {onEdit && (
+          <DropdownMenuItem onClick={() => onEdit(row)}>
+            <Edit className="mr-0.5 h-4 w-4" />
+            Edit
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem className="text-red-600" onClick={() => onDelete(row.id)}>
           <Trash className="mr-0.5 h-4 w-4" />
           Delete
@@ -39,7 +41,7 @@ export function ActionCell<T extends BaseEntity>({ row, onDelete, onEdit }: Acti
 
 export const createActionsColumn = <T extends BaseEntity>(
   onDelete: (id: string) => void,
-  onEdit: (row: T) => void,
+  onEdit?: (row: T) => void,
 ) => ({
   accessorKey: "actions",
   header: "Actions",

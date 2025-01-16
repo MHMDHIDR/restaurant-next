@@ -103,6 +103,7 @@ export const vendors = createTable("vendor", {
   minimumOrder: numeric("minimum_order", { precision: 10, scale: 2 }).notNull(),
   averageRating: decimal("average_rating", { precision: 3, scale: 2 }).notNull().default("0.00"),
   stripeAccountId: varchar("stripe_account_id", { length: 255 }).notNull().default(""),
+  admins: json("admins").$type<{ id: string }[]>().notNull().default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   deletedAt: timestamp("deleted_at"),

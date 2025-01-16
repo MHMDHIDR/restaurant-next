@@ -178,7 +178,7 @@ export function DataTable<TData extends BaseEntity>({
             )
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length + 1} className="h-24 text-center">
                 <EmptyState>
                   <p className="mt-4 text-lg text-gray-500 select-none dark:text-gray-400">
                     {emptyStateMessage}

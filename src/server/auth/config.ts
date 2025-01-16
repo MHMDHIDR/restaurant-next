@@ -1,5 +1,5 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { type DefaultSession, type NextAuthConfig } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import Resend from "next-auth/providers/resend"
@@ -157,6 +157,15 @@ export const authConfig = {
         where: eq(vendors.addedById, user.id),
       })
 
+      let vendorResult = vendor
+      if (!vendor) {
+        // Check if user is in admins array
+        const vendorWithAdmin = await db.query.vendors.findFirst({
+          where: sql`${vendors.admins}::jsonb @> ${JSON.stringify([{ id: user.id }])}::jsonb`,
+        })
+        vendorResult = vendorWithAdmin
+      }
+
       return {
         ...session,
         user: {
@@ -164,9 +173,9 @@ export const authConfig = {
           id: user.id,
           role: user.role,
           blurImageDataURL: blurImage,
-          hasVendor: !!vendor,
-          vendorId: vendor?.id,
-          vendorStatus: vendor?.status,
+          hasVendor: !!vendorResult,
+          vendorId: vendorResult?.id,
+          vendorStatus: vendorResult?.status,
         },
       }
     },

@@ -259,9 +259,17 @@ export const vendorRouter = createTRPCRouter({
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {
     const vendor = await ctx.db.query.vendors.findFirst({
-      where: (vendors, { eq }) => eq(vendors.addedById, ctx.session.user.id),
+      where: eq(vendors.addedById, ctx.session.user.id),
     })
-    return vendor ?? null
+
+    if (!vendor) {
+      const vendorWithAdmin = await ctx.db.query.vendors.findFirst({
+        where: sql`${vendors.admins}::jsonb @> ${JSON.stringify([{ id: ctx.session.user.id }])}::jsonb`,
+      })
+      return vendorWithAdmin ?? null
+    }
+
+    return vendor
   }),
 
   getAll: publicProcedure
@@ -343,6 +351,7 @@ export const vendorRouter = createTRPCRouter({
           deletedAt: vendors.deletedAt,
           suspendedAt: vendors.suspendedAt,
           stripeAccountId: vendors.stripeAccountId,
+          admins: vendors.admins,
           orderCount: sql<number>`COUNT(${orders.id})::int`,
           totalRevenue: sql<string>`COALESCE(SUM(${orders.total})::text, '0')`,
         })

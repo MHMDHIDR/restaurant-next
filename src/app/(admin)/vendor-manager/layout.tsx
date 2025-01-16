@@ -1,6 +1,7 @@
 import {
   Grid2X2,
   Grid2x2Plus,
+  LayoutDashboard,
   Package,
   PackagePlus,
   Settings,
@@ -21,7 +22,11 @@ export default async function DashboardLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth()
   const user = session?.user
-  const ALLOWED_ROLES = [UserRole.SUPER_ADMIN, UserRole.VENDOR_ADMIN] as const
+  const ALLOWED_ROLES = [
+    UserRole.SUPER_ADMIN,
+    UserRole.VENDOR_ADMIN,
+    UserRole.VENDOR_STAFF,
+  ] as const
 
   const vendorNavItems: VendorNavItems = {
     navMain: [
@@ -38,6 +43,11 @@ export default async function DashboardLayout({
             title: "Vendor Details",
             url: "/vendor-manager/vendor-details",
             icon: <Store className="w-4 h-4" />,
+          },
+          {
+            title: "Vendor Admins",
+            url: "/vendor-manager/vendor-admins",
+            icon: <LayoutDashboard className="w-4 h-4" />,
           },
         ],
       },
