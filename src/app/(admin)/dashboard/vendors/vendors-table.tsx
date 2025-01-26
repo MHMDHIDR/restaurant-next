@@ -21,21 +21,22 @@ import type { Users, Vendors } from "@/server/db/schema"
 import type { RouterOutputs } from "@/trpc/react"
 import type { ColumnDef } from "@tanstack/react-table"
 
-export default function VendorsTable({
-  vendors: initialVendors,
-  count,
-}: {
-  vendors: (Vendors & BaseEntity & { assignedUser: Users })[]
+type Vendor = RouterOutputs["vendor"]["getAll"]["items"][number]
+
+interface VendorsTableProps {
+  vendors: Vendor[]
   count: number
-}) {
-  const [selectedVendors, setSelectedVendors] = useState<(Vendors & BaseEntity)[]>([])
+}
+
+export function VendorsTable({ vendors, count }: VendorsTableProps) {
+  const [selectedVendors, setSelectedVendors] = useState<Vendor[]>([])
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const router = useRouter()
   const toast = useToast()
   const utils = api.useUtils()
 
   const { data: vendorsData, isLoading } = api.vendor.getAll.useQuery(undefined, {
-    initialData: { items: initialVendors, count },
+    initialData: { items: vendors, count },
     refetchOnMount: true,
   })
 
@@ -95,8 +96,8 @@ export default function VendorsTable({
 
   return (
     <>
-      <DataTable<Vendors & BaseEntity>
-        columns={columns as ColumnDef<Vendors & BaseEntity>[]}
+      <DataTable<Vendor>
+        columns={columns as ColumnDef<Vendor>[]}
         data={vendorsData.items}
         isLoading={isLoading}
         count={count}

@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import { LoadingCard } from "@/components/custom/data-table/loading"
 import { api } from "@/trpc/server"
 import { PayoutButton } from "./payout-button"
-import VendorsTable from "./vendors-table"
+import { VendorsTable } from "./vendors-table"
 
 export default async function Vendors() {
   const { items: vendors, count } = await api.vendor.getAll()

@@ -288,23 +288,63 @@ export const vendorRouter = createTRPCRouter({
       const cursor = input?.cursor ?? 0
       const status = input?.status
 
-      const where = status ? and(eq(vendors.status, status)) : undefined
+      const baseCondition = status ? and(eq(vendors.status, status)) : undefined
 
-      const items = await ctx.db.query.vendors.findMany({
-        with: { assignedUser: true },
-        where,
-        limit,
-        offset: cursor,
-        orderBy: (vendors, { desc }) => [desc(vendors.createdAt)],
-      })
-
-      const [{ count = 0 } = { count: 0 }] = await ctx.db
-        .select({ count: sql<number>`count(*)::int` })
+      const items = await ctx.db
+        .select({
+          id: vendors.id,
+          name: vendors.name,
+          slug: vendors.slug,
+          description: vendors.description,
+          logo: vendors.logo,
+          coverImage: vendors.coverImage,
+          status: vendors.status,
+          address: vendors.address,
+          city: vendors.city,
+          state: vendors.state,
+          postalCode: vendors.postalCode,
+          phone: vendors.phone,
+          email: vendors.email,
+          latitude: vendors.latitude,
+          longitude: vendors.longitude,
+          openingHours: vendors.openingHours,
+          cuisineTypes: vendors.cuisineTypes,
+          deliveryRadius: vendors.deliveryRadius,
+          minimumOrder: vendors.minimumOrder,
+          averageRating: vendors.averageRating,
+          addedById: vendors.addedById,
+          createdAt: vendors.createdAt,
+          updatedAt: vendors.updatedAt,
+          deletedAt: vendors.deletedAt,
+          suspendedAt: vendors.suspendedAt,
+          stripeAccountId: vendors.stripeAccountId,
+          admins: vendors.admins,
+          orderCount: sql<number>`COUNT(${orders.id})::int`,
+          totalRevenue: sql<string>`COALESCE(SUM(${orders.total})::text, '0')`,
+        })
         .from(vendors)
-        .where(where)
-        .limit(limit + 1)
+        .leftJoin(orders, eq(vendors.id, orders.vendorId))
+        .where(and(sql`${vendors.deletedAt} IS NULL`, baseCondition))
+        .groupBy(vendors.id)
+        .orderBy(desc(vendors.createdAt))
+        .limit(limit)
+        .offset(cursor)
 
-      return { items, count }
+      const countQuery = await ctx.db
+        .select({
+          count: sql<number>`COUNT(DISTINCT ${vendors.id})::int`,
+        })
+        .from(vendors)
+        .where(and(sql`${vendors.deletedAt} IS NULL`, baseCondition))
+
+      const count = countQuery[0]?.count ?? 0
+
+      const enhancedItems = items.map(item => ({
+        ...item,
+        metrics: { orderCount: item.orderCount, totalRevenue: parseFloat(item.totalRevenue) },
+      }))
+
+      return { items: enhancedItems, count }
     }),
 
   getFeatured: publicProcedure

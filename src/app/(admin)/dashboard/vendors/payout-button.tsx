@@ -38,7 +38,7 @@ export function PayoutButton({ vendors }: { vendors: Vendor[] }) {
 
     const payouts = eligibleVendors.map(vendor => ({
       stripeAccountId: vendor.stripeAccountId!,
-      amount: 100, // Set minimum amount to $1 (100 pence)
+      amount: vendor.metrics?.totalRevenue ?? 0,
     }))
 
     processPayoutsMutation.mutate({ payouts })

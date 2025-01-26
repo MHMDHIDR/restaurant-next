@@ -1,4 +1,4 @@
-import { List, ShoppingBag, Utensils } from "lucide-react"
+import { List, PoundSterling, ShoppingBag, Utensils } from "lucide-react"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { AnalyticsCharts } from "@/components/custom/analytics-charts"
@@ -19,6 +19,9 @@ export default async function DashboardPage() {
       api.menuCategory.getCategoriesByVendorId({ vendorId: vendor.id }),
       api.order.getOrdersByVendorId({ vendorId: vendor.id }),
     ])
+
+  // Calculate total revenue for this vendor
+  const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total), 0)
 
   // Organize orders by date
   const ordersCountByDate: Record<string, number> = {}
@@ -50,6 +53,12 @@ export default async function DashboardPage() {
       value: menuCategoriesCount,
       icon: List,
       href: "/vendor-manager/categories?view=categories",
+    },
+    {
+      title: "Total Revenue",
+      value: `$${totalRevenue.toFixed(2)}`,
+      icon: PoundSterling,
+      href: "/vendor-manager/orders",
     },
   ]
 

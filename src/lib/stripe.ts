@@ -119,13 +119,25 @@ export class PaymentService {
     try {
       const vendor = await stripe.accounts.retrieve(vendorId)
 
+      // First transfer the funds to the connected account
       const transfer = await stripe.transfers.create({
         amount: Math.round(amount * 100), // Convert to pence
         currency: "gbp",
         destination: vendor.id,
       })
 
-      return transfer
+      // Then create a payout to move funds from Stripe balance to bank account
+      const payout = await stripe.payouts.create(
+        {
+          amount: Math.round(amount * 100),
+          currency: "gbp",
+        },
+        {
+          stripeAccount: vendor.id, // This creates the payout on the connected account
+        },
+      )
+
+      return { transfer, payout }
     } catch (error) {
       console.error("Error creating payout:", error)
       throw error
@@ -136,18 +148,19 @@ export class PaymentService {
   static async processBatchPayouts(payouts: Array<{ vendorId: string; amount: number }>) {
     const results = []
 
-    for (const payout of payouts) {
+    for (const payoutRequest of payouts) {
       try {
-        const transfer = await this.createPayout(payout.vendorId, payout.amount)
+        const result = await this.createPayout(payoutRequest.vendorId, payoutRequest.amount)
         results.push({
           success: true,
-          vendorId: payout.vendorId,
-          transferId: transfer.id,
+          vendorId: payoutRequest.vendorId,
+          transferId: result.transfer.id,
+          payoutId: result.payout.id,
         })
       } catch (error) {
         results.push({
           success: false,
-          vendorId: payout.vendorId,
+          vendorId: payoutRequest.vendorId,
           error: error instanceof Error ? error.message : "Unknown error",
         })
       }

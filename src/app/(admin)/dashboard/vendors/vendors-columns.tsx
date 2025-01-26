@@ -15,7 +15,7 @@ import { api } from "@/trpc/react"
 import type { RouterOutputs } from "@/trpc/react"
 import type { ColumnDef } from "@tanstack/react-table"
 
-type Vendor = RouterOutputs["vendor"]["getFeatured"]["items"][number]
+type Vendor = RouterOutputs["vendor"]["getAll"]["items"][number]
 
 // Wrapper component to handle router and mutation logic
 const VendorActionsCell: React.FC<{ vendor: Vendor }> = ({ vendor }) => {
@@ -29,7 +29,7 @@ const VendorActionsCell: React.FC<{ vendor: Vendor }> = ({ vendor }) => {
   const updateVendorMutation = api.vendor.update.useMutation({
     onSuccess: async () => {
       toast.success("Vendor updated successfully")
-      await utils.vendor.getFeatured.invalidate()
+      await utils.vendor.getAll.invalidate()
       router.refresh()
     },
     onError: error => {
