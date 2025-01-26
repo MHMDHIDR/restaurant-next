@@ -19,10 +19,7 @@ type Vendor = RouterOutputs["vendor"]["getAll"]["items"][number]
 const VendorActionsCell: React.FC<{ vendor: Vendor }> = ({ vendor }) => {
   const router = useRouter()
   const toast = useToast()
-
   const utils = api.useUtils()
-  const status = vendor.status
-  const isSuspended = vendor.suspendedAt !== null
 
   const updateVendorMutation = api.vendor.update.useMutation({
     onSuccess: async () => {
