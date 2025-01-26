@@ -37,7 +37,7 @@ export function PayoutButton({ vendors }: { vendors: Vendor[] }) {
     }
 
     const payouts = eligibleVendors.map(vendor => ({
-      stripeAccountId: vendor.stripeAccountId!,
+      stripeAccountId: vendor.stripeAccountId,
       amount: vendor.metrics?.totalRevenue ?? 0,
     }))
 

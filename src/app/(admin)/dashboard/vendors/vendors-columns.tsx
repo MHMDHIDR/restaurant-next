@@ -1,5 +1,4 @@
-import { ArrowUpDown, Ban, Check, CheckCircle, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
-import Link from "next/link"
+import { ArrowUpDown, Ban, CheckCircle, MoreHorizontal } from "lucide-react"
 import { useRouter } from "next/navigation"
 import React from "react"
 import { Button } from "@/components/ui/button"
@@ -7,7 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"

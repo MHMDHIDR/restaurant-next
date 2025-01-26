@@ -16,8 +16,6 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import { vendorsColumns } from "./vendors-columns"
-import type { BaseEntity } from "@/components/custom/data-table/base-columns"
-import type { Users, Vendors } from "@/server/db/schema"
 import type { RouterOutputs } from "@/trpc/react"
 import type { ColumnDef } from "@tanstack/react-table"
 

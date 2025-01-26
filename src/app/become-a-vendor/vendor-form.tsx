@@ -256,11 +256,6 @@ export function VendorApplicationForm({
 
     try {
       if (!vendor.stripeAccountId) {
-        // Create Stripe account first
-        const { stripeAccountId } = await createStripeAccountMutation.mutateAsync({
-          vendorId: vendorId,
-        })
-
         // Get account link for the new account
         const accountLink = await getStripeAccountLinkMutation.mutateAsync({
           vendorId: vendorId,
