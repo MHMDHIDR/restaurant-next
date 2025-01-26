@@ -43,6 +43,7 @@ export const vendorFormSchema = z.object({
   cuisineTypes: z.array(z.string()).min(1, "Select at least one cuisine type"),
   deliveryRadius: z.number().min(1, "Delivery radius must be at least 1km"),
   minimumOrder: z.number().min(0, "Minimum order must be at least 0"),
+  stripeAccountId: z.string().optional(),
 })
 
 export type VendorFormValues = z.infer<typeof vendorFormSchema>

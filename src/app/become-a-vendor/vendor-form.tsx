@@ -2,12 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
+import { Loader2 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { vendorFormSchema } from "@/app/schemas/vendor"
+import { LoadingCard } from "@/components/custom/data-table/loading"
 import { FileUpload } from "@/components/custom/file-upload"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -72,6 +74,7 @@ export function VendorApplicationForm({
 }) {
   const router = useRouter()
   const toast = useToast()
+  const searchParams = useSearchParams()
 
   const [logoFiles, setLogoFiles] = useState<Array<File>>([])
   const [coverFiles, setCoverFiles] = useState<Array<File>>([])
@@ -82,6 +85,10 @@ export function VendorApplicationForm({
 
   const optimizeImageMutation = api.optimizeImage.optimizeImage.useMutation()
   const uploadFilesMutation = api.S3.uploadFiles.useMutation()
+  const createStripeAccountMutation = api.vendor.createStripeAccount.useMutation()
+  const getStripeAccountLinkMutation = api.vendor.getStripeAccountLink.useMutation()
+  const { data: stripeAccountStatus, isLoading: isLoadingStripeAccount } =
+    api.vendor.getStripeAccountStatus.useQuery({ vendorId }, { enabled: !!vendor?.stripeAccountId })
 
   const form = useForm<VendorFormValues>({
     resolver: zodResolver(vendorFormSchema),
@@ -221,6 +228,63 @@ export function VendorApplicationForm({
       setIsSubmitting(false)
     }
   }
+
+  // Handle Stripe Connect setup
+  const handleStripeSetup = async () => {
+    if (!vendorId) {
+      toast.error("Vendor ID is required")
+      return
+    }
+
+    if (!vendor) {
+      toast.error("Please save your vendor details first")
+      return
+    }
+
+    if (
+      !vendor.name ||
+      !vendor.email ||
+      !vendor.phone ||
+      !vendor.address ||
+      !vendor.city ||
+      !vendor.state ||
+      !vendor.postalCode
+    ) {
+      toast.error("Please complete your business details before setting up Stripe")
+      return
+    }
+
+    try {
+      if (!vendor.stripeAccountId) {
+        // Create Stripe account first
+        const { stripeAccountId } = await createStripeAccountMutation.mutateAsync({
+          vendorId: vendorId,
+        })
+
+        // Get account link for the new account
+        const accountLink = await getStripeAccountLinkMutation.mutateAsync({
+          vendorId: vendorId,
+        })
+        window.location.href = accountLink.url
+      } else {
+        // Get account link for existing account
+        const accountLink = await getStripeAccountLinkMutation.mutateAsync({
+          vendorId: vendorId,
+        })
+        window.location.href = accountLink.url
+      }
+    } catch (error) {
+      console.error("Stripe setup error:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to setup Stripe Connect")
+    }
+  }
+
+  // Handle refresh from Stripe Connect
+  useEffect(() => {
+    if (searchParams.get("refresh") === "true") {
+      router.replace("/vendor-manager/vendor-details")
+    }
+  }, [searchParams, router])
 
   return (
     <Form {...form}>
@@ -589,6 +653,49 @@ export function VendorApplicationForm({
             )}
           />
         )}
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div>
+              <h3 className="text-lg font-semibold">Stripe Connect Status</h3>
+              <div className="text-sm text-muted-foreground">
+                {!vendor?.stripeAccountId ? (
+                  "Setup your Stripe account to receive payments"
+                ) : isLoadingStripeAccount ? (
+                  <LoadingCard renderedSkeletons={1} className="h-4" />
+                ) : stripeAccountStatus?.isEnabled ? (
+                  "Your Stripe account is fully setup"
+                ) : (
+                  "Complete your Stripe account setup"
+                )}
+              </div>
+            </div>
+            <Button
+              type="button"
+              onClick={handleStripeSetup}
+              disabled={
+                createStripeAccountMutation.isPending || getStripeAccountLinkMutation.isPending
+              }
+            >
+              {createStripeAccountMutation.isPending || getStripeAccountLinkMutation.isPending ? (
+                <>
+                  <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Setting up...
+                </>
+              ) : isLoadingStripeAccount ? (
+                <>
+                  <Loader2 className="animate-spin h-7 w-7" /> Getting Information
+                </>
+              ) : !vendor?.stripeAccountId ? (
+                "Setup Stripe Account"
+              ) : stripeAccountStatus?.isEnabled ? (
+                "View Stripe Dashboard"
+              ) : (
+                "Complete Setup"
+              )}
+            </Button>
+          </div>
+        </div>
 
         <Button type="submit" className="w-full md:w-auto" disabled={isSubmitting}>
           {isSubmitting ? (

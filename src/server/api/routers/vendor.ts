@@ -7,6 +7,7 @@ import { env } from "@/env"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
 import { getBlurPlaceholder } from "@/lib/optimize-image"
+import { PaymentService } from "@/lib/stripe"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
 import { orders, UserRole, users, vendors } from "@/server/db/schema"
@@ -378,5 +379,127 @@ export const vendorRouter = createTRPCRouter({
       }))
 
       return { items: enhancedItems, count }
+    }),
+
+  createStripeAccount: protectedProcedure
+    .input(z.object({ vendorId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const vendor = await ctx.db.query.vendors.findFirst({
+          where: (vendors, { eq }) => eq(vendors.id, input.vendorId),
+        })
+
+        if (!vendor) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
+        }
+
+        if (vendor.stripeAccountId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Vendor already has a Stripe account",
+          })
+        }
+
+        // Validate required fields
+        if (
+          !vendor.email ||
+          !vendor.name ||
+          !vendor.phone ||
+          !vendor.address ||
+          !vendor.city ||
+          !vendor.state ||
+          !vendor.postalCode
+        ) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Missing required vendor information",
+          })
+        }
+
+        console.log("Creating Stripe account for vendor:", {
+          id: vendor.id,
+          email: vendor.email,
+          name: vendor.name,
+        })
+
+        try {
+          const stripeAccount = await PaymentService.createConnectAccount({
+            email: vendor.email,
+            name: vendor.name,
+            phone: vendor.phone,
+            address: vendor.address,
+            city: vendor.city,
+            state: vendor.state,
+            postalCode: vendor.postalCode,
+          })
+
+          console.log("Stripe account created:", stripeAccount.id)
+
+          const result = await ctx.db
+            .update(vendors)
+            .set({ stripeAccountId: stripeAccount.id })
+            .where(eq(vendors.id, input.vendorId))
+            .returning()
+
+          const updatedVendor = result[0] as Vendors
+          return { stripeAccountId: updatedVendor.stripeAccountId }
+        } catch (stripeError) {
+          if (
+            stripeError instanceof Error &&
+            stripeError.message.includes("signed up for Connect")
+          ) {
+            throw new TRPCError({
+              code: "PRECONDITION_FAILED",
+              message:
+                "Stripe Connect needs to be enabled in your Stripe Dashboard. Please visit https://dashboard.stripe.com/connect to set it up.",
+            })
+          }
+          throw stripeError
+        }
+      } catch (error) {
+        console.error("Error in createStripeAccount:", error)
+        if (error instanceof TRPCError) throw error
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error ? error.message : "Failed to create Stripe account",
+        })
+      }
+    }),
+
+  getStripeAccountLink: protectedProcedure
+    .input(z.object({ vendorId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const vendor = await ctx.db.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.id, input.vendorId),
+      })
+
+      if (!vendor?.stripeAccountId) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Vendor Stripe account not found",
+        })
+      }
+
+      const accountLink = await PaymentService.createAccountLink(
+        vendor.stripeAccountId,
+        `${env.NEXT_PUBLIC_APP_URL}/become-a-vendor?refresh=true`,
+        `${env.NEXT_PUBLIC_APP_URL}/become-a-vendor`,
+      )
+
+      return { url: accountLink.url }
+    }),
+
+  getStripeAccountStatus: protectedProcedure
+    .input(z.object({ vendorId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const vendor = await ctx.db.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.id, input.vendorId),
+      })
+
+      if (!vendor?.stripeAccountId) {
+        return { isEnabled: false, details_submitted: false }
+      }
+
+      return await PaymentService.getAccountStatus(vendor.stripeAccountId)
     }),
 })

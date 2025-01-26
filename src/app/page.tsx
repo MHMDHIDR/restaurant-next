@@ -6,14 +6,26 @@ import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { SearchBar } from "@/components/custom/search"
 import { Badge } from "@/components/ui/badge"
 import { api } from "@/trpc/server"
+import type { RouterOutputs } from "@/trpc/react"
+
+type VendorWithMenuItems = RouterOutputs["vendor"]["getFeatured"]["items"][number] & {
+  menuItems: RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"]
+  menuItemsCount: number
+}
+
+type MenuItem = RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"][number]
 
 export default async function Home() {
-  const { items: vendors } = await api.vendor.getFeatured({ status: "ACTIVE", limit: 3 })
+  const { items: vendors } = await api.vendor.getFeatured({
+    status: "ACTIVE",
+    limit: 3,
+    cursor: 0,
+  })
   const { menuCategories: activeCategories } = await api.menuCategory.getAllCategories({
     hasItems: true,
   })
 
-  const vendorsWithMenus = await Promise.all(
+  const vendorsWithMenus: VendorWithMenuItems[] = await Promise.all(
     vendors.map(async vendor => {
       const menuItems = await api.menuItem.getMenuItemsByVendorId({
         vendorId: vendor.id,
@@ -60,7 +72,7 @@ export default async function Home() {
               .map(vendor => (
                 <div key={vendor.id}>
                   <div className="grid gap-6 md:grid-cols-3">
-                    {vendor.menuItems.map(item => (
+                    {vendor.menuItems.map((item: MenuItem) => (
                       <RestaurantMenuItem
                         key={item.id}
                         item={item}

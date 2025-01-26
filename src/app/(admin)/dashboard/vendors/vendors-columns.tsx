@@ -12,11 +12,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
-import type { Users, Vendors } from "@/server/db/schema"
+import type { RouterOutputs } from "@/trpc/react"
 import type { ColumnDef } from "@tanstack/react-table"
 
+type Vendor = RouterOutputs["vendor"]["getFeatured"]["items"][number]
+
 // Wrapper component to handle router and mutation logic
-const VendorActionsCell: React.FC<{ vendor: Vendors }> = ({ vendor }) => {
+const VendorActionsCell: React.FC<{ vendor: Vendor }> = ({ vendor }) => {
   const router = useRouter()
   const toast = useToast()
 
@@ -26,97 +28,68 @@ const VendorActionsCell: React.FC<{ vendor: Vendors }> = ({ vendor }) => {
 
   const updateVendorMutation = api.vendor.update.useMutation({
     onSuccess: async () => {
-      toast.success("Vendor status updated successfully")
-      await utils.vendor.getAll.invalidate()
+      toast.success("Vendor updated successfully")
+      await utils.vendor.getFeatured.invalidate()
       router.refresh()
     },
     onError: error => {
-      toast.error(`Failed to update vendor status: ${error.message}`)
+      toast.error(`Failed to update vendor: ${error.message}`)
     },
     onMutate: () => {
       toast.loading("Updating Vendor...")
     },
   })
 
-  const handleActivate = () => {
-    updateVendorMutation.mutate({ email: vendor.email, status: "ACTIVE" })
-  }
-
-  const handleDeactivate = () => {
-    updateVendorMutation.mutate({ email: vendor.email, status: "DEACTIVATED" })
-  }
-
-  const handleDelete = () => {
-    updateVendorMutation.mutate({ email: vendor.email, deletedAt: new Date() })
-  }
-
-  const handleSuspend = () => {
-    updateVendorMutation.mutate({ email: vendor.email, suspendedAt: new Date() })
-  }
-
-  const handleUnsuspend = () => {
-    updateVendorMutation.mutate({ email: vendor.email, suspendedAt: null })
+  const handleAction = (action: "activate" | "deactivate" | "suspend" | "unsuspend" | "delete") => {
+    switch (action) {
+      case "activate":
+        updateVendorMutation.mutate({ email: vendor.email, status: "ACTIVE" })
+        break
+      case "deactivate":
+        updateVendorMutation.mutate({ email: vendor.email, status: "DEACTIVATED" })
+        break
+      case "suspend":
+        updateVendorMutation.mutate({ email: vendor.email, suspendedAt: new Date() })
+        break
+      case "unsuspend":
+        updateVendorMutation.mutate({ email: vendor.email, suspendedAt: null })
+        break
+      case "delete":
+        updateVendorMutation.mutate({ email: vendor.email, deletedAt: new Date() })
+        break
+    }
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="w-8 h-8 p-0">
-          <span className="sr-only">Actions</span>
-          <MoreHorizontal className="w-4 h-4" />
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="rtl:rtl">
-        <DropdownMenuLabel className="select-none">Actions</DropdownMenuLabel>
-        <DropdownMenuItem asChild>
-          <Link href={`/dashboard/vendors/${vendor.id}`}>
-            <Pencil className="mr-0.5 h-4 w-4" />
-            View / Edit
-          </Link>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleAction("activate")}>
+          <CheckCircle className="mr-0.5 h-4 w-4" /> Activate
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => {
-            if (status === "ACTIVE") {
-              handleDeactivate()
-            } else if (["DEACTIVATED", "PENDING"].includes(status)) {
-              handleActivate()
-            }
-          }}
-        >
-          {status === "ACTIVE" ? (
-            <>
-              <Ban className="mr-0.5 h-4 w-4" /> Deactivate
-            </>
-          ) : (
-            (status === "DEACTIVATED" || status === "PENDING") && (
-              <>
-                <Check className="mr-0.5 h-4 w-4" /> Activate
-              </>
-            )
-          )}
+        <DropdownMenuItem onClick={() => handleAction("deactivate")}>
+          <Ban className="mr-0.5 h-4 w-4" /> Deactivate
         </DropdownMenuItem>
-        {status === "ACTIVE" && (
-          <DropdownMenuItem onClick={isSuspended ? handleUnsuspend : handleSuspend}>
-            {isSuspended ? (
-              <>
-                <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
-              </>
-            ) : (
-              <>
-                <Ban className="mr-0.5 h-4 w-4" /> Suspend
-              </>
-            )}
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem onClick={handleDelete}>
-          <Trash2 className="mr-0.5 h-4 w-4" /> Delete
+        <DropdownMenuItem onClick={() => handleAction("suspend")}>
+          <Ban className="mr-0.5 h-4 w-4" /> Suspend
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAction("unsuspend")}>
+          <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAction("delete")}>
+          <Ban className="mr-0.5 h-4 w-4" /> Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-export const vendorsColumns: ColumnDef<Vendors>[] = [
+export const vendorsColumns: ColumnDef<Vendor>[] = [
   {
     accessorKey: "email",
     header: ({ column }) => (
@@ -134,19 +107,6 @@ export const vendorsColumns: ColumnDef<Vendors>[] = [
         <ArrowUpDown className="w-4 h-4 ml-2" />
       </Button>
     ),
-  },
-  {
-    accessorKey: "addedByName",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        Added By Name
-        <ArrowUpDown className="w-4 h-4 ml-2" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const addedByName = (row.original as Vendors & { assignedUser: Users }).assignedUser.name
-      return <span>{addedByName}</span>
-    },
   },
   {
     accessorKey: "status",
@@ -191,8 +151,19 @@ export const vendorsColumns: ColumnDef<Vendors>[] = [
     },
   },
   {
-    accessorKey: "actions",
-    header: "Actions",
+    accessorKey: "metrics.orderCount",
+    header: "Orders",
+  },
+  {
+    accessorKey: "metrics.totalRevenue",
+    header: "Revenue",
+    cell: ({ row }) => {
+      const revenue = row.original.metrics?.totalRevenue ?? 0
+      return `$${revenue.toFixed(2)}`
+    },
+  },
+  {
+    id: "actions",
     cell: ({ row }) => <VendorActionsCell vendor={row.original} />,
   },
 ]

@@ -4,7 +4,7 @@ import { z } from "zod"
 import { orderItemSchema } from "@/app/schemas/order"
 import { PaymentService } from "@/lib/stripe"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
-import { orderItems, orders } from "@/server/db/schema"
+import { orderItems, orders, vendors } from "@/server/db/schema"
 
 export const stripeRouter = createTRPCRouter({
   createPaymentIntent: protectedProcedure
@@ -40,22 +40,74 @@ export const stripeRouter = createTRPCRouter({
       z.object({
         payouts: z.array(
           z.object({
-            vendorId: z.string(),
-            amount: z.number(),
+            stripeAccountId: z.string(),
+            amount: z.number().optional(),
           }),
         ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Check if user is super admin
+      const { payouts } = input
+
+      // Ensure user is admin
       if (ctx.session.user.role !== "SUPER_ADMIN") {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Only super admins can process payouts",
         })
       }
 
-      return await PaymentService.processBatchPayouts(input.payouts)
+      try {
+        // For each vendor, calculate their total revenue from orders
+        const processedPayouts = await Promise.all(
+          payouts.map(async payout => {
+            // Find vendor by Stripe account ID
+            const vendor = await ctx.db.query.vendors.findFirst({
+              where: eq(vendors.stripeAccountId, payout.stripeAccountId),
+            })
+
+            if (!vendor) {
+              throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Vendor with Stripe account ID ${payout.stripeAccountId} not found`,
+              })
+            }
+
+            // Calculate total revenue from orders
+            const vendorOrders = await ctx.db.query.orders.findMany({
+              where: eq(orders.vendorId, vendor.id),
+              columns: { total: true },
+            })
+
+            const totalRevenue = vendorOrders.reduce((sum: number, order) => {
+              const orderTotal =
+                typeof order.total === "string" ? parseFloat(order.total) : order.total
+              return sum + orderTotal
+            }, 0)
+
+            const amount = Math.max(1, totalRevenue) // Ensure minimum amount is 1 cent
+
+            // Create payout using PaymentService
+            await PaymentService.createPayout(payout.stripeAccountId, amount)
+
+            return {
+              stripeAccountId: payout.stripeAccountId,
+              amount,
+            }
+          }),
+        )
+
+        return {
+          success: true,
+          payouts: processedPayouts,
+        }
+      } catch (error) {
+        console.error("Error processing payouts:", error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error ? error.message : "Failed to process payouts",
+        })
+      }
     }),
 
   // Update your existing create procedure to handle payment
