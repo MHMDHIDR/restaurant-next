@@ -105,8 +105,6 @@ export default async function RestaurantPage({
   const page = searchParamsProp?.page ? Number(searchParamsProp.page) : 1
   const limit = searchParamsProp?.limit ? Number(searchParamsProp.limit) : ITEMS_PER_PAGE
 
-  console.log({ page, limit })
-
   const session = await auth()
   const user = session?.user
   const ALLOWED_ROLES = [UserRole.SUPER_ADMIN] as const

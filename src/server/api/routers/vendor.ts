@@ -456,12 +456,6 @@ export const vendorRouter = createTRPCRouter({
           })
         }
 
-        console.log("Creating Stripe account for vendor:", {
-          id: vendor.id,
-          email: vendor.email,
-          name: vendor.name,
-        })
-
         try {
           const stripeAccount = await PaymentService.createConnectAccount({
             email: vendor.email,
