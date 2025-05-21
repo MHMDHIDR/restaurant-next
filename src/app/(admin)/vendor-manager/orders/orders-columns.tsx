@@ -3,7 +3,7 @@ import Image from "next/image"
 import CopyText from "@/components/custom/copy"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
+import { formatPrice } from "@/lib/format-price"
 import type { MenuItems, Orders } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
@@ -49,8 +49,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
                 height={40}
                 className="rounded-sm shadow-sm"
               />
-              {item.quantity}x {item.menuItem.name} ({DEFAULT_CURRENCY_SYMBOL}
-              {item.totalPrice.toFixed(2)})
+              {item.quantity}x {item.menuItem.name} ({formatPrice(item.totalPrice)})
             </li>
           ))}
         </ul>

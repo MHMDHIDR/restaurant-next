@@ -8,7 +8,8 @@ import { LoadingPage } from "@/components/custom/loading"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useCart } from "@/hooks/use-cart"
-import { DEFAULT_CURRENCY_SYMBOL, DELIVERY_FEE } from "@/lib/constants"
+import { DELIVERY_FEE } from "@/lib/constants"
+import { formatPrice } from "@/lib/format-price"
 
 export default function CartPage() {
   const router = useRouter()
@@ -50,10 +51,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex-grow">
                     <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {DEFAULT_CURRENCY_SYMBOL}
-                      {item.price.toFixed(2)}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{formatPrice(item.price)}</p>
                     {item.selectedAddons && item.selectedAddons.length > 0 && (
                       <ol className="text-sm text-muted-foreground">
                         {item.selectedAddons.length > 1 ? "Add-ons:" : "Add-on:"}
@@ -99,25 +97,16 @@ export default function CartPage() {
                 <h3 className="mb-4 text-lg font-semibold">Order Summary</h3>
                 <div className="mb-4 flex justify-between">
                   <span>Subtotal</span>
-                  <span>
-                    {DEFAULT_CURRENCY_SYMBOL}
-                    {total.toFixed(2)}
-                  </span>
+                  <span>{formatPrice(total)}</span>
                 </div>
                 <div className="mb-4 flex justify-between">
                   <span>Delivery Fee</span>
-                  <span>
-                    {DEFAULT_CURRENCY_SYMBOL}
-                    {DELIVERY_FEE}
-                  </span>
+                  <span>{formatPrice(DELIVERY_FEE)}</span>
                 </div>
                 <div className="mb-4 border-t pt-4">
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span>
-                      {DEFAULT_CURRENCY_SYMBOL}
-                      {(total + 5).toFixed(2)}
-                    </span>
+                    <span>{formatPrice(total + DELIVERY_FEE)}</span>
                   </div>
                 </div>
                 <Button className="w-full" onClick={() => router.push("/checkout")}>

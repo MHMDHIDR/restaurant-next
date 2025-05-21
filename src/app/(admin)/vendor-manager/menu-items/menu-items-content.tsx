@@ -1,5 +1,6 @@
 "use client"
 
+import { List, PlusCircle } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -42,8 +43,14 @@ export function MenuItemsContent({ vendor, categories, menuItems }: MenuItemsCon
       onValueChange={handleTabChange}
     >
       <TabsList>
-        <TabsTrigger value="items">Menu Items</TabsTrigger>
-        <TabsTrigger value="new-item">New Item</TabsTrigger>
+        <TabsTrigger value="items">
+          <List className="size-4 mx-1.5" />
+          Menu Items
+        </TabsTrigger>
+        <TabsTrigger value="new-item">
+          <PlusCircle className="size-4 mx-1.5" />
+          New Item
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="items">
         <MenuItemsTable menuItems={menuItems} vendorId={vendor.id} />

@@ -2,6 +2,7 @@ import { List, PoundSterling, ShoppingBag, StoreIcon, Utensils } from "lucide-re
 import Link from "next/link"
 import { AnalyticsCharts } from "@/components/custom/analytics-charts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatPrice } from "@/lib/format-price"
 import { api } from "@/trpc/server"
 
 export default async function DashboardPage() {
@@ -59,7 +60,7 @@ export default async function DashboardPage() {
     },
     {
       title: "Total Revenue",
-      value: `$${totalRevenue.toFixed(2)}`,
+      value: formatPrice(totalRevenue),
       icon: PoundSterling,
       href: "/dashboard/orders",
     },

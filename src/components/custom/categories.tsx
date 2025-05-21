@@ -23,7 +23,7 @@ export function CategoriesGrid({ categories, columns = 3, limit }: CategoriesGri
   const displayCategories = limit ? categories.slice(0, limit) : categories
 
   return (
-    <div className={`grid gap-6 md:grid-cols-${columns}`}>
+    <div className={`grid gap-6 sm:grid-cols-2 md:grid-cols-${columns}`}>
       {displayCategories.map(category => (
         <Link key={category.id} href={`/c/${category.slug}`}>
           <Card className="overflow-hidden transition-shadow hover:shadow-lg">

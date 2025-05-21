@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
-import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
+import { formatPrice } from "@/lib/format-price"
 import { truncate } from "@/lib/truncate"
 import type { MenuItems } from "@/server/db/schema"
 
@@ -74,10 +74,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
             <h1 className="text-gray-200 text-lg font-extrabold drop-shadow-md">
               {truncate(item.name)}
             </h1>
-            <span className="text-green-600">
-              <strong>{DEFAULT_CURRENCY_SYMBOL}</strong>
-              {Number(item.price).toFixed(2)}
-            </span>
+            <span className="text-green-600">{formatPrice(Number(item.price))}</span>
           </div>
           {vendor.slug && (
             <Link className="text-muted-foreground group text-sm" href={`/r/${vendor.slug}`}>
@@ -96,8 +93,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
             <div>
               <div className="flex flex-col gap-2 justify-between">
                 <strong className="text-sm text-green-600">
-                  {DEFAULT_CURRENCY_SYMBOL}
-                  {Number(item.price).toFixed(2)}
+                  {formatPrice(Number(item.price))}
                 </strong>
                 <p>{item.description}</p>
               </div>
@@ -132,9 +128,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
                   />
                   <span className="text-sm space-x-1">
                     <span>{addon.toppingName}</span>
-                    <span className="text-green-600">
-                      (+{DEFAULT_CURRENCY_SYMBOL} {addon.toppingPrice.toFixed(2)})
-                    </span>
+                    <span className="text-green-600">(+{formatPrice(addon.toppingPrice)})</span>
                   </span>
                 </label>
               ))}

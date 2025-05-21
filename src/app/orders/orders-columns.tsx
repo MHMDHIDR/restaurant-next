@@ -4,7 +4,8 @@ import Link from "next/link"
 import CopyText from "@/components/custom/copy"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants"
+import { formatPrice } from "@/lib/format-price"
+import { truncate } from "@/lib/truncate"
 import type { MenuItems, Orders } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
@@ -14,14 +15,14 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Order Number
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-2 size-4" />
       </Button>
     ),
     cell: ({ row }) => {
       return (
         <>
           <CopyText text={row.original.id} className="inline mr-3 w-3.5" />
-          <Link href={`/orders/${row.original.id}`}>{row.original.id}</Link>
+          <Link href={`/orders/${row.original.id}`}>{truncate(row.original.id, 10)}</Link>
         </>
       )
     },
@@ -31,7 +32,7 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Order Items
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-2 size-4" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -50,8 +51,7 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
                 height={40}
                 className="rounded-sm shadow-sm"
               />
-              {item.quantity}x {item.menuItem.name} ({DEFAULT_CURRENCY_SYMBOL}
-              {item.totalPrice.toFixed(2)})
+              {item.quantity}x {item.menuItem.name} ({formatPrice(item.totalPrice)})
             </li>
           ))}
         </ul>
@@ -63,7 +63,7 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Status
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-2 size-4" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -88,7 +88,7 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Total
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-2 size-4" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -104,7 +104,7 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Order Time
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-2 size-4" />
       </Button>
     ),
     cell: ({ row }) => {

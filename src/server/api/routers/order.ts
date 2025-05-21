@@ -188,7 +188,7 @@ export const orderRouter = createTRPCRouter({
       await ctx.db.insert(notifications).values({
         userId: order.user.id,
         title: notificationTitle,
-        message: `Your order (${itemsList}) has been ${input.status.toLowerCase().replace(/_/g, " ")}`,
+        message: `Your order (${itemsList}) is ${input.status.toLowerCase().replace(/_/g, " ")}`,
         type: "ORDER_STATUS",
         isRead: false,
       })
@@ -202,7 +202,7 @@ export const orderRouter = createTRPCRouter({
         case "CONFIRMED":
           emailContent = `
             <h2>Order Confirmed</h2>
-            <p>Your order (${itemsList}) has been confirmed and is being processed.</p>
+            <p>Your order (${itemsList}) is confirmed and is being processed.</p>
             <p>We'll notify you when it starts being prepared.</p>
           `
           break
@@ -230,7 +230,7 @@ export const orderRouter = createTRPCRouter({
         case "DELIVERED":
           emailContent = `
             <h2>Order Delivered</h2>
-            <p>Your order (${itemsList}) has been delivered.</p>
+            <p>Your order (${itemsList}) is delivered.</p>
             <p>We hope you enjoy your meal! Thank you for choosing us.</p>
           `
           break
@@ -238,14 +238,14 @@ export const orderRouter = createTRPCRouter({
           emailSubject = "Order Cancelled"
           emailContent = `
             <h2>Order Cancelled</h2>
-            <p>We're sorry, but your order (${itemsList}) has been cancelled.</p>
+            <p>We're sorry, but your order (${itemsList}) is cancelled.</p>
             <p>If you have any questions, please contact our support team.</p>
           `
           break
         default:
           emailContent = `
             <h2>Order Status Update</h2>
-            <p>Your order (${itemsList}) status has been updated to: ${input.status}</p>
+            <p>Your order (${itemsList}) status is updated to: ${input.status}</p>
           `
       }
 

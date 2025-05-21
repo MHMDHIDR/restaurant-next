@@ -1,26 +1,52 @@
 "use client"
 
-import { Copy } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { Check, Copy } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
 export default function CopyText({ text, className }: { text: string; className?: string }) {
-  const toast = useToast()
+  const [isCopied, setIsCopied] = useState(false)
 
-  async function handleCopyToClipboard(text: string) {
+  useEffect(() => {
+    if (isCopied) {
+      const timer = setTimeout(() => setIsCopied(false), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [isCopied])
+
+  const handleCopyToClipboard = useCallback(async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
-
-      toast.success("Copied")
+      setIsCopied(true)
     } catch (error) {
-      toast.error(JSON.stringify(error))
+      console.error(error)
     }
-  }
+  }, [])
+
+  console.log("isCopied -->", isCopied)
 
   return (
-    <Copy
-      onClick={() => handleCopyToClipboard(text)}
-      className={cn("cursor-pointer opacity-70 hover:opacity-100", className)}
-    />
+    <div className="flex items-center gap-2">
+      <div className="relative">
+        <Copy
+          onClick={() => handleCopyToClipboard(text)}
+          className={cn(
+            "cursor-pointer opacity-70 transition-all duration-200 hover:opacity-100",
+            isCopied && "scale-0",
+            className,
+          )}
+        />
+        {isCopied && (
+          <Check
+            className={cn(
+              "absolute top-0 left-0 size-6 text-white",
+              "animate-in zoom-in-50 duration-200",
+              "rounded-full bg-green-600",
+              "animate-[pulse_1s_ease-in-out]",
+            )}
+          />
+        )}
+      </div>
+    </div>
   )
 }

@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
+import { formatPrice } from "@/lib/format-price"
 import { api } from "@/trpc/react"
 import type { RouterOutputs } from "@/trpc/react"
 import type { ColumnDef } from "@tanstack/react-table"
@@ -154,7 +155,7 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     header: "Revenue",
     cell: ({ row }) => {
       const revenue = row.original.metrics?.totalRevenue ?? 0
-      return `$${revenue.toFixed(2)}`
+      return formatPrice(revenue)
     },
   },
   {

@@ -46,7 +46,7 @@ export default async function Home() {
 
       <section className="mb-12">
         <h2 className="mb-6 text-2xl font-semibold">Featured Restaurants</h2>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {vendorsWithMenus.map(vendor => (
             <RestaurantCard key={vendor.id} vendor={vendor} />
           ))}
@@ -71,7 +71,7 @@ export default async function Home() {
               .filter(vendor => vendor.menuItemsCount > 0)
               .map(vendor => (
                 <div key={vendor.id}>
-                  <div className="grid gap-6 md:grid-cols-3">
+                  <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
                     {vendor.menuItems.map((item: MenuItem) => (
                       <RestaurantMenuItem
                         key={item.id}

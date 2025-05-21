@@ -22,7 +22,7 @@ export default async function SearchPage({
       {vendors.length > 0 && (
         <section className="mb-12">
           <h2 className="mb-6 text-2xl font-semibold">Restaurants</h2>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
             {vendors.map(vendor => (
               <RestaurantCard key={vendor.id} vendor={vendor} />
             ))}
@@ -40,7 +40,7 @@ export default async function SearchPage({
       {menuItems.length > 0 && (
         <section className="mb-12">
           <h2 className="mb-6 text-2xl font-semibold">Menu Items</h2>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
             {menuItems.map(({ menuItem, vendor }) => (
               <RestaurantMenuItem key={menuItem.id} item={menuItem} vendor={vendor} />
             ))}

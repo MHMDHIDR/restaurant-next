@@ -85,7 +85,7 @@ export const vendorRouter = createTRPCRouter({
             from: env.ADMIN_EMAIL,
             to: existingVendor.email,
             cc: existingVendor.assignedUser.email,
-            subject: "Congratulations! Your Vendor has been Approved",
+            subject: "Congratulations! Your Vendor Status is Approved",
             html: `<p>To Start setting up your restaurant by creating categories, adding menu items, and sell, please <a href="${confirmLink}" style="${btnStyles}">Visit Here</a> to login to your account</p><br /><br /><p>Thank you for choosing us!</p>`,
           })
         } else if (input.status === "DEACTIVATED") {
@@ -93,24 +93,24 @@ export const vendorRouter = createTRPCRouter({
             from: env.ADMIN_EMAIL,
             to: existingVendor.email,
             cc: existingVendor.assignedUser.email,
-            subject: "Your Vendor has been Deactivated",
-            html: `<p>Your Vendor has been deactivated. Please contact the admin for more information</p>`,
+            subject: "Your Vendor Status is Deactivated",
+            html: `<p>Your Vendor Status is deactivated. Please contact the admin for more information</p>`,
           })
         } else if (input.suspendedAt) {
           await RESEND.emails.send({
             from: env.ADMIN_EMAIL,
             to: existingVendor.email,
             cc: existingVendor.assignedUser.email,
-            subject: "Your Vendor has been Suspended",
-            html: `<p>Your Vendor has been suspended. Please contact the admin for more information</p>`,
+            subject: "Your Vendor Status is Suspended",
+            html: `<p>Your Vendor Status is suspended. Please contact the admin for more information</p>`,
           })
         } else if (input.deletedAt) {
           await RESEND.emails.send({
             from: env.ADMIN_EMAIL,
             to: existingVendor.email,
             cc: existingVendor.assignedUser.email,
-            subject: "Your Vendor has been Deleted",
-            html: `<p>Your Vendor has been deleted. Please contact the admin for more information</p>`,
+            subject: "Your Vendor Status is Deleted",
+            html: `<p>Your Vendor Status is deleted. Please contact the admin for more information</p>`,
           })
         }
 

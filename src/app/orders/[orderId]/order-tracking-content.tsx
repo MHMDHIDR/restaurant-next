@@ -3,8 +3,10 @@
 import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import CopyText from "@/components/custom/copy"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import { formatPrice } from "@/lib/format-price"
 import { api } from "@/trpc/react"
 import type { orderWithOrderItems } from "@/types"
 
@@ -141,7 +143,7 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
           </div>
           <div>
             <p className="text-gray-600">Total Amount</p>
-            <p className="font-medium">${Number(order.total).toFixed(2)}</p>
+            <p className="font-medium">{formatPrice(Number(order.total))}</p>
           </div>
           {order.specialInstructions && (
             <div className="col-span-2">
@@ -151,7 +153,10 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
           )}
           <div>
             <p className="text-gray-600">OrderId</p>
-            <p className="text-sm text-gray-600">#{order.id}</p>
+            <div className="flex gap-1.5 items-center">
+              <CopyText text={order.id} className="inline mr-3 size-5" />
+              <p className="text-sm text-gray-600">{order.id}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -176,14 +181,14 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
                     <div className="text-sm text-gray-600">
                       <span>Quantity: {item.quantity}</span>
                       <span className="mx-2">·</span>
-                      <span>${Number(item.unitPrice).toFixed(2)} each</span>
+                      <span>{formatPrice(Number(item.unitPrice))} each</span>
                     </div>
                     {item.specialInstructions && (
                       <p className="text-sm text-gray-500 mt-1">Note: {item.specialInstructions}</p>
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">${Number(item.totalPrice).toFixed(2)}</p>
+                    <p className="font-medium">{formatPrice(Number(item.totalPrice))}</p>
                   </div>
                 </div>
               </li>

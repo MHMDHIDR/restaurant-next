@@ -11,6 +11,7 @@ import {
   Section,
   Text,
 } from "@react-email/components"
+import { formatPrice } from "@/lib/format-price"
 
 type OrderInvoiceEmailProps = {
   order: {
@@ -107,8 +108,8 @@ export function OrderInvoiceEmail({ order }: OrderInvoiceEmailProps) {
                   <Text style={productDescription}>Quantity: {item.quantity}</Text>
                 </Column>
                 <Column style={productPriceWrapper} align="right">
-                  <Text style={productPrice}>${Number(item.unitPrice).toFixed(2)} each</Text>
-                  <Text style={productPriceTotal}>${Number(item.totalPrice).toFixed(2)}</Text>
+                  <Text style={productPrice}>{formatPrice(Number(item.unitPrice))} each</Text>
+                  <Text style={productPriceTotal}>{formatPrice(Number(item.totalPrice))}</Text>
                 </Column>
               </Row>
             </Section>
@@ -124,9 +125,9 @@ export function OrderInvoiceEmail({ order }: OrderInvoiceEmailProps) {
                 <Text style={totalLabel}>Total</Text>
               </Column>
               <Column style={productPriceLargeWrapper}>
-                <Text style={summaryValue}>${Number(order.subtotal).toFixed(2)}</Text>
-                <Text style={summaryValue}>${Number(order.deliveryFee).toFixed(2)}</Text>
-                <Text style={totalValue}>${Number(order.total).toFixed(2)}</Text>
+                <Text style={summaryValue}>{formatPrice(Number(order.subtotal))}</Text>
+                <Text style={summaryValue}>{formatPrice(Number(order.deliveryFee))}</Text>
+                <Text style={totalValue}>{formatPrice(Number(order.total))}</Text>
               </Column>
             </Row>
           </Section>

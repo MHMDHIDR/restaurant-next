@@ -1,5 +1,6 @@
 "use client"
 
+import { PlusCircle, Users as UsersIcon } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -41,8 +42,14 @@ export function VendorAdminsContent({ vendor, staffMembers }: VendorAdminsConten
       onValueChange={handleTabChange}
     >
       <TabsList>
-        <TabsTrigger value="staff">Staff Members</TabsTrigger>
-        <TabsTrigger value="invite">Invite Staff</TabsTrigger>
+        <TabsTrigger value="staff">
+          <UsersIcon className="size-4 mx-1.5" />
+          Staff Members
+        </TabsTrigger>
+        <TabsTrigger value="invite">
+          <PlusCircle className="size-4 mx-1.5" />
+          Invite New Staff
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="staff">
         <StaffMembersTable staffMembers={staffMembers} vendorId={vendor.id} />

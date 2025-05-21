@@ -1,5 +1,7 @@
 "use client"
 
+import { IconCategory } from "@tabler/icons-react"
+import { PlusCircle } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -41,8 +43,14 @@ export default function CategoriesContent({ vendor, categories }: CategoriesCont
       onValueChange={handleTabChange}
     >
       <TabsList>
-        <TabsTrigger value="categories">Categories</TabsTrigger>
-        <TabsTrigger value="new-category">New Category</TabsTrigger>
+        <TabsTrigger value="categories">
+          <IconCategory className="size-4 mx-1.5" />
+          Categories
+        </TabsTrigger>
+        <TabsTrigger value="new-category">
+          <PlusCircle className="size-4 mx-1.5" />
+          New Category
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="categories">
         <CategoriesTable categories={categories} />

@@ -6,8 +6,8 @@ import type { Vendors } from "@/server/db/schema"
 export function RestaurantCard({ vendor }: { vendor: Vendors }) {
   return (
     <Link href={`/r/${vendor.slug}`}>
-      <Card className="overflow-hidden transition-shadow hover:shadow-lg">
-        <div className="relative h-48 max-h-48 w-full overflow-y-clip">
+      <Card className="overflow-hidden min-h-56 max-h-56 transition-shadow hover:shadow-lg">
+        <div className="relative h-32 max-h-56 w-full overflow-y-clip">
           <Image
             src={vendor.logo}
             alt={vendor.name}

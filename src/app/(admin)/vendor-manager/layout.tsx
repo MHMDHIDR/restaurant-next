@@ -1,7 +1,7 @@
 import {
-  Grid2X2,
   Grid2x2Plus,
   LayoutDashboard,
+  List,
   Package,
   PackagePlus,
   Settings,
@@ -37,17 +37,17 @@ export default async function DashboardLayout({
           {
             title: "Dashboard",
             url: "/vendor-manager",
-            icon: <Settings className="w-4 h-4" />,
+            icon: <Settings className="size-4" />,
           },
           {
             title: "Vendor Details",
             url: "/vendor-manager/vendor-details",
-            icon: <Store className="w-4 h-4" />,
+            icon: <Store className="size-4" />,
           },
           {
             title: "Vendor Admins",
             url: "/vendor-manager/vendor-admins",
-            icon: <LayoutDashboard className="w-4 h-4" />,
+            icon: <LayoutDashboard className="size-4" />,
           },
         ],
       },
@@ -58,7 +58,7 @@ export default async function DashboardLayout({
           {
             title: "Orders",
             url: "/vendor-manager/orders",
-            icon: <ShoppingCart className="w-4 h-4" />,
+            icon: <ShoppingCart className="size-4" />,
           },
         ],
       },
@@ -69,12 +69,12 @@ export default async function DashboardLayout({
           {
             title: "Items",
             url: "/vendor-manager/menu-items?view=items",
-            icon: <Grid2X2 className="w-4 h-4" />,
+            icon: <List className="size-4" />,
           },
           {
             title: "New Menu Item",
             url: "/vendor-manager/menu-items?view=new-item",
-            icon: <Grid2x2Plus className="w-4 h-4" />,
+            icon: <Grid2x2Plus className="size-4" />,
           },
         ],
       },
@@ -85,12 +85,12 @@ export default async function DashboardLayout({
           {
             title: "All Categories",
             url: "/vendor-manager/categories?view=categories",
-            icon: <Package className="w-4 h-4" />,
+            icon: <Package className="size-4" />,
           },
           {
             title: "Create",
             url: "/vendor-manager/categories?view=new-category",
-            icon: <PackagePlus className="w-4 h-4" />,
+            icon: <PackagePlus className="size-4" />,
           },
         ],
       },
