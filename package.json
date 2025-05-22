@@ -78,7 +78,7 @@
     "sonner": "^1.7.4",
     "stripe": "^17.7.0",
     "superjson": "^2.2.2",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "use-sound": "^4.0.4",
     "zod": "^3.25.20",
@@ -102,7 +102,7 @@
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwind-scrollbar": "^3.1.0",
+    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.8.3"
   },
