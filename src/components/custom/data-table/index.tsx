@@ -62,7 +62,7 @@ export function DataTable<TData extends BaseEntity>({
         }
         onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
-        className={clsx("relative w-4 h-4 flex items-center justify-center", {
+        className={clsx("relative mx-3 cursor-pointer size-4 flex items-center justify-center", {
           "hover:after:content-['✔'] hover:after:absolute hover:after:top-0 hover:after:left-0 hover:after:w-full hover:after:h-full hover:after:flex hover:after:items-center hover:after:justify-center hover:after:text-xs":
             !table.getIsAllPageRowsSelected(),
         })}
@@ -73,7 +73,7 @@ export function DataTable<TData extends BaseEntity>({
         checked={row.getIsSelected()}
         onCheckedChange={value => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className={clsx("relative w-4 h-4 flex items-center justify-center", {
+        className={clsx("relative mx-3 cursor-pointer size-4 flex items-center justify-center", {
           "hover:after:content-['✔'] hover:after:absolute hover:after:top-0 hover:after:left-0 hover:after:w-full hover:after:h-full hover:after:flex hover:after:items-center hover:after:justify-center hover:after:text-xs":
             !row.getIsSelected(),
         })}
@@ -191,7 +191,7 @@ export function DataTable<TData extends BaseEntity>({
                       <TableCell
                         key={cell.id}
                         className={clsx("whitespace-nowrap text-center", {
-                          "sticky left-0 px-3 bg-background shadow-[1px_0_0_0_#e5e7eb]": isPinned,
+                          "sticky left-0 bg-background shadow-[1px_0_0_0_#e5e7eb]": isPinned,
                         })}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

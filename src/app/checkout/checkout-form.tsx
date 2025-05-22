@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { isValidPhoneNumber } from "libphonenumber-js"
+import { isValidPhoneNumber, parsePhoneNumberWithError } from "libphonenumber-js"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -33,9 +33,15 @@ type CartCheckoutItems = Omit<CartItem, "image" | "vendorName" | "selectedAddons
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().refine(isValidPhoneNumber, {
-    message: "Please Provide a Valid Phone Number, +countryCode: (e.g: +44 XXXXXXXXX)",
-  }),
+  phone: z.string().refine(
+    value => {
+      const parsedPhone = parsePhoneNumberWithError(value, "GB")
+      return isValidPhoneNumber(parsedPhone.number)
+    },
+    {
+      message: "Please Provide a Valid Phone Number, +countryCode: (e.g: 07XXXXXXXXX)",
+    },
+  ),
   deliveryAddress: z.string().min(5, "Delivery address is required"),
   specialInstructions: z.string().optional(),
 })

@@ -18,10 +18,10 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <>
+        <div className="flex items-center gap-2">
           <CopyText text={row.original.id} className="inline mr-3 w-3.5" />
           <span>{row.original.id}</span>
-        </>
+        </div>
       )
     },
   },

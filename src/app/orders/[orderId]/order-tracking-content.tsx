@@ -28,8 +28,6 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
   // Memoize the subscription callback to prevent re-subscriptions
   const handleOrderUpdate = useCallback(
     (updatedOrder: orderWithOrderItems) => {
-      // console.log("📡 Received order update in tracking:", updatedOrder)
-
       setOrder(prevOrder => {
         const newOrder = {
           ...prevOrder,
@@ -37,7 +35,6 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
           // Preserve nested structures
           orderItems: updatedOrder.orderItems || prevOrder.orderItems,
         }
-        // console.log("🔄 Updated order state:", newOrder)
         return newOrder
       })
 
@@ -61,11 +58,7 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
     )
 
   // Debug subscription status
-  useEffect(() => {
-    console.log("🔍 Subscription status for order:", initialOrder.id)
-    console.log("📊 Subscription data:", subscriptionData)
-    console.log("⚠️ Subscription error:", subscriptionError)
-  }, [subscriptionData, subscriptionError, initialOrder.id])
+  useEffect(() => {}, [subscriptionData, subscriptionError, initialOrder.id])
 
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {
@@ -86,7 +79,6 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
     const currentIndex = orderStatuses.indexOf(order.status as (typeof orderStatuses)[number])
     const progressPercentage = (currentIndex / (orderStatuses.length - 1)) * 100
     setProgress(progressPercentage)
-    console.log("📈 Progress updated:", { status: order.status, progress: progressPercentage })
   }, [order.status])
 
   // Calculate icon position
@@ -103,19 +95,6 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4">
       <h1 className="text-3xl font-bold mb-8">Order Details</h1>
-
-      {/* Debug info in development */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="mb-4 p-4 bg-gray-100 rounded-lg text-sm">
-          <p>
-            <strong>Debug Info:</strong>
-          </p>
-          <p>Order ID: {order.id}</p>
-          <p>Current Status: {order.status}</p>
-          <p>Progress: {progress}%</p>
-          <p>Subscription Error: {subscriptionError?.message ?? "None"}</p>
-        </div>
-      )}
 
       <div className="relative">
         <svg className="w-full h-32" viewBox="0 0 800 160" preserveAspectRatio="xMidYMid meet">
@@ -251,15 +230,15 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span>Subtotal</span>
-              <span>${Number(order.subtotal).toFixed(2)}</span>
+              <span>{formatPrice(Number(order.subtotal))}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Delivery Fee</span>
-              <span>${Number(order.deliveryFee).toFixed(2)}</span>
+              <span>{formatPrice(Number(order.deliveryFee))}</span>
             </div>
             <div className="flex justify-between font-medium text-base">
               <span>Total</span>
-              <span>${Number(order.total).toFixed(2)}</span>
+              <span>{formatPrice(Number(order.total))}</span>
             </div>
           </div>
         </div>

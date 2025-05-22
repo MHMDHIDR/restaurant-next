@@ -167,8 +167,6 @@ export const orderRouter = createTRPCRouter({
   updateOrderStatus: protectedProcedure
     .input(z.object({ orderId: z.string(), status: orderStatusSchema }))
     .mutation(async ({ ctx, input }) => {
-      console.log("🔄 Updating order status:", { orderId: input.orderId, status: input.status })
-
       const [updatedOrder] = await ctx.db
         .update(orders)
         .set({ status: input.status, updatedAt: new Date() })
@@ -191,12 +189,6 @@ export const orderRouter = createTRPCRouter({
         },
       })
 
-      console.log("📦 Full order retrieved:", fullOrder?.id)
-      console.log(
-        "👥 Active subscribers for order:",
-        orderUpdateEmitter.get(input.orderId)?.size ?? 0,
-      )
-
       // Emit the update through WebSocket
       if (fullOrder) {
         // Transform the database result to match the expected type
@@ -212,17 +204,15 @@ export const orderRouter = createTRPCRouter({
 
         const callbacks = orderUpdateEmitter.get(input.orderId)
         if (callbacks && callbacks.size > 0) {
-          console.log("📡 Broadcasting update to", callbacks.size, "subscribers")
           callbacks.forEach(callback => {
             try {
               callback(transformedOrder)
-              console.log("✅ Successfully sent update to subscriber")
             } catch (error) {
               console.error("❌ Error sending update to subscriber:", error)
             }
           })
         } else {
-          console.log("⚠️ No active subscribers found for order:", input.orderId)
+          console.warn("⚠️ No active subscribers found for order:", input.orderId)
         }
       }
 

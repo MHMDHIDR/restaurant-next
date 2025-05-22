@@ -6,6 +6,7 @@ import {
   Hr,
   Html,
   Img,
+  Link,
   Preview,
   Row,
   Section,
@@ -137,6 +138,12 @@ export function OrderInvoiceEmail({ order }: OrderInvoiceEmailProps) {
           <Text style={footerText}>
             Thank you for your order! If you have any questions or concerns, please don&apos;t
             hesitate to contact our customer support.
+            <Link
+              className="mx-2"
+              href={`mailto:support@technodevlabs.com?subject=Order%20${order.id}%20Support%20Request&body=Hello,%20I%20have%20some%20questions%20about%20my%20order%20${order.id}%20.`}
+            >
+              By Clicking Here
+            </Link>
           </Text>
 
           <Text style={footerCopyright}>

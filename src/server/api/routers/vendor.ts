@@ -467,8 +467,6 @@ export const vendorRouter = createTRPCRouter({
             postalCode: vendor.postalCode,
           })
 
-          console.log("Stripe account created:", stripeAccount.id)
-
           const result = await ctx.db
             .update(vendors)
             .set({ stripeAccountId: stripeAccount.id })

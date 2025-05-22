@@ -20,10 +20,10 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <>
-          <CopyText text={row.original.id} className="inline mr-3 w-3.5" />
+        <div className="flex items-center gap-2">
+          <CopyText text={row.original.id} className="inline mr-3 size-4" />
           <Link href={`/orders/${row.original.id}`}>{truncate(row.original.id, 10)}</Link>
-        </>
+        </div>
       )
     },
   },
