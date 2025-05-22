@@ -36,7 +36,7 @@ export default async function Home() {
   )
 
   return (
-    <div className="container px-2 py-12 mx-auto max-w-screen-xl">
+    <div className="container px-2 py-12 mx-auto max-w-(--breakpoint-xl)">
       <section className="mb-12 text-center">
         <h1 className="mb-4 text-4xl font-bold leading-loose md:leading-10">
           Discover Delicious Restaurants Near You
@@ -81,7 +81,7 @@ export default async function Home() {
                     ))}
                   </div>
                   <Link href={`/r/${vendor.slug}`}>
-                    <h3 className="mt-2 font-semibold items-center flex gap-x-1.5 select-none rounded-sm bg-primary/50 p-1 w-fit shadow hover:bg-primary/70">
+                    <h3 className="mt-2 font-semibold items-center flex gap-x-1.5 select-none rounded-sm bg-primary/50 p-1 w-fit shadow-sm hover:bg-primary/70">
                       <StoreIcon className="w-4 h-4" />
                       {vendor.name}
                     </h3>

@@ -64,11 +64,11 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
             alt={item.name}
             width={300}
             height={192}
-            className="w-full h-auto object-cover shadow-sm hover:shadow-lg transition-shadow"
+            className="w-full h-auto object-cover shadow-xs hover:shadow-lg transition-shadow"
           />
           <div
             className={
-              "absolute bottom-0 w-full px-2.5 py-3.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent rounded-md"
+              "absolute bottom-0 w-full px-2.5 py-3.5 bg-linear-to-t from-black/90 via-black/50 to-transparent rounded-md"
             }
           >
             <h1 className="text-gray-200 text-lg font-extrabold drop-shadow-md">
@@ -102,12 +102,12 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
                 alt={item.name}
                 width={300}
                 height={192}
-                className="w-full max-h-72 object-cover rounded-md shadow mt-2"
+                className="w-full max-h-72 object-cover rounded-md shadow-sm mt-2"
               />
             </div>
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="!flex-col">
+        <DialogFooter className="flex-col!">
           {item.addons && item.addons.length > 0 && (
             <div className="flex flex-col">
               <p className="mb-2 text-sm font-medium">Add-ons:</p>

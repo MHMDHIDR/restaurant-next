@@ -174,10 +174,10 @@ export function AccountForm({ user }: { user: Session["user"] }) {
                       height={112}
                       placeholder="blur"
                       blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
-                      className="object-contain w-20 h-20 rounded-full shadow"
+                      className="object-contain w-20 h-20 rounded-full shadow-sm"
                     />
                   ) : (
-                    <Avatar className="w-20 h-20 rounded-full shadow text-primary">
+                    <Avatar className="w-20 h-20 rounded-full shadow-sm text-primary">
                       <AvatarFallback className="text-2xl font-bold">
                         {fallbackUsername(user.name)}
                       </AvatarFallback>

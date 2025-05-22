@@ -72,7 +72,7 @@ const CountrySelect = ({ disabled, value, onChange, options }: CountrySelectProp
       <PopoverTrigger asChild>
         <Button
           type="button"
-          variant={"outline"}
+          variant={"outline-solid"}
           className={cn("flex gap-1.5 rounded-e-none rounded-s-lg")}
           disabled={disabled}
         >

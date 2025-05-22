@@ -174,7 +174,7 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
         </div>
       </div>
 
-      <div className="mt-10 bg-white p-6 rounded-lg shadow">
+      <div className="mt-10 bg-white p-6 rounded-lg shadow-sm">
         <div className="flex justify-between">
           <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
           <Button
@@ -215,7 +215,7 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
         </div>
       </div>
 
-      <div className="mt-2 bg-white p-6 rounded-lg shadow">
+      <div className="mt-2 bg-white p-6 rounded-lg shadow-sm">
         <h2 className="text-xl font-semibold mb-4">Order Details</h2>
         <div className="space-y-2">
           <ul className="divide-y divide-gray-100">

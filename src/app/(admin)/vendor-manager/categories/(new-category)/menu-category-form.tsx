@@ -145,7 +145,7 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
                       alt="Category Image"
                       width={112}
                       height={112}
-                      className="object-contain w-28 h-28 rounded-md shadow"
+                      className="object-contain w-28 h-28 rounded-md shadow-sm"
                     />
                   ) : null}
                   <FileUpload onFilesSelected={handleFilesSelected} disabled={isUploading} />

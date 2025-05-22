@@ -194,7 +194,7 @@ export function CategoryEdit({ open, onOpenChange, category }: CategoryEditProps
                           alt="Category Image"
                           width={112}
                           height={112}
-                          className="object-cover w-28 h-28 rounded-md shadow"
+                          className="object-cover w-28 h-28 rounded-md shadow-sm"
                         />
                       )}
                       <FileUpload onFilesSelected={handleFilesSelected} disabled={isUploading} />

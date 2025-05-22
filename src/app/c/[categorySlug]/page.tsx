@@ -15,7 +15,7 @@ export default async function CategoryPage({
     if (!category) notFound()
 
     return (
-      <div className="container px-2 py-12 mx-auto max-w-screen-xl">
+      <div className="container px-2 py-12 mx-auto max-w-(--breakpoint-xl)">
         <h1 className="mb-8 text-3xl font-bold text-center">{category.name}</h1>
         {category.description && (
           <p className="mb-8 text-center text-muted-foreground">{category.description}</p>

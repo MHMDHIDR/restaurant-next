@@ -236,7 +236,7 @@ export function MenuItemEdit({ open, onOpenChange, menuItem }: MenuItemEditProps
                         alt="Item Image"
                         width={112}
                         height={112}
-                        className="object-cover w-28 h-28 rounded-md shadow"
+                        className="object-cover w-28 h-28 rounded-md shadow-sm"
                       />
                       <FileUpload onFilesSelected={handleFilesSelected} disabled={isUploading} />
                     </div>

@@ -47,7 +47,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
                 alt={item.menuItem.name}
                 width={40}
                 height={40}
-                className="rounded-sm shadow-sm"
+                className="rounded-sm shadow-xs"
               />
               {item.quantity}x {item.menuItem.name} ({formatPrice(item.totalPrice)})
             </li>

@@ -14,7 +14,7 @@ export default async function SearchPage({
   const { vendors, categories, menuItems } = await api.search.search({ query })
 
   return (
-    <div className="container px-2 py-12 mx-auto max-w-screen-xl">
+    <div className="container px-2 py-12 mx-auto max-w-(--breakpoint-xl)">
       <h1 className="mb-8 text-xl font-bold">
         Search Results for &quot;{truncate(query, 80)}&quot;
       </h1>

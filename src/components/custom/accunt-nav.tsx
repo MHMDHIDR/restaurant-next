@@ -97,7 +97,7 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
 
 function Avatar({ user, className }: { user: Session["user"]; className?: string }) {
   return (
-    <AvatarWrapper className={cn("h-8 w-8 select-none rounded-full shadow", className)}>
+    <AvatarWrapper className={cn("h-8 w-8 select-none rounded-full shadow-sm", className)}>
       {user.image ? (
         <AvatarImage
           src={user.image}

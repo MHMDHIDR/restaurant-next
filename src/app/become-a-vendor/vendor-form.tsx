@@ -301,7 +301,7 @@ export function VendorApplicationForm({
                         alt="Logo"
                         width={112}
                         height={112}
-                        className="object-contain w-28 h-28 rounded-lg shadow"
+                        className="object-contain w-28 h-28 rounded-lg shadow-sm"
                       />
                     )}
                     <FileUpload onFilesSelected={setLogoFiles} disabled={isUploading} />
@@ -328,7 +328,7 @@ export function VendorApplicationForm({
                         alt="Cover"
                         width={224}
                         height={112}
-                        className="object-cover w-56 h-28 rounded-lg shadow"
+                        className="object-cover w-56 h-28 rounded-lg shadow-sm"
                       />
                     )}
                     <FileUpload onFilesSelected={setCoverFiles} disabled={isUploading} />

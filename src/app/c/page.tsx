@@ -62,7 +62,7 @@ export default async function CategoriesPage({
     await api.menuCategory.getAllCategories({ hasItems: true, searchParams: { page, limit } })
 
   return (
-    <div className="container px-2 py-12 mx-auto max-w-screen-lg">
+    <div className="container px-2 py-12 mx-auto max-w-(--breakpoint-lg)">
       <h1 className="mb-8 text-3xl font-bold text-center">All Categories</h1>
       <CategoriesGrid categories={activeCategories} columns={2} />
 

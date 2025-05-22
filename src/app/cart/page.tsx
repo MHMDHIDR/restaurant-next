@@ -36,10 +36,10 @@ export default function CartPage() {
             {items.map(item => (
               <Card
                 key={`${item.id}-${item.selectedAddons?.join("-")}`}
-                className="mb-4 shadow-none hover:shadow-sm"
+                className="mb-4 shadow-none hover:shadow-xs"
               >
                 <CardContent className="flex items-center gap-2.5 p-2.5">
-                  <div className="relative h-20 w-20 flex-shrink-0">
+                  <div className="relative h-20 w-20 shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
@@ -49,7 +49,7 @@ export default function CartPage() {
                       priority
                     />
                   </div>
-                  <div className="flex-grow">
+                  <div className="grow">
                     <h3 className="font-semibold">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">{formatPrice(item.price)}</p>
                     {item.selectedAddons && item.selectedAddons.length > 0 && (

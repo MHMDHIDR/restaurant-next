@@ -1,11 +1,11 @@
 export function LoadingPage() {
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center w-screen h-screen bg-primary-100 dark:bg-primary-900 z-[100000]
+      className="fixed inset-0 flex items-center justify-center w-screen h-screen bg-primary-100 dark:bg-primary-900 z-100000
     [--hue:223]
-    [--bg:hsl(var(--hue),_10%,_90%)]
-    [--fg:hsl(var(--hue),_10%,_10%)]
-    [--primary:hsl(var(--hue),_90%,_55%)] dark:[--primary:hsl(var(--hue),_50%,_75%)]
+    [--bg:hsl(var(--hue),10%,90%)]
+    [--fg:hsl(var(--hue),10%,10%)]
+    [--primary:hsl(var(--hue),90%,55%)] dark:[--primary:hsl(var(--hue),50%,75%)]
     [--trans-dur:0.3s]
   "
     >
@@ -25,11 +25,11 @@ export function LoadingPage() {
             <circle cx="102" cy="111" r="13" />
           </g>
           <g
-            className="stroke-[var(--primary)] animate-[cartLines_2s_ease-in-out_infinite]"
+            className="stroke-(--primary) animate-[cartLines_2s_ease-in-out_infinite]"
             stroke="currentColor"
           >
             <polyline
-              className="stroke-[var(--primary)] animate-[cartTop_2s_ease-in-out_infinite]"
+              className="stroke-(--primary) animate-[cartTop_2s_ease-in-out_infinite]"
               points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80"
               strokeDasharray="338 338"
               strokeDashoffset="-338"

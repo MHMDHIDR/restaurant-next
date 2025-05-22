@@ -126,12 +126,12 @@ export default async function RestaurantPage({
           src={vendor.coverImage}
           alt={`${vendor.name} cover`}
           className="object-cover"
-          placeholder={vendor.blurCoverImage ? "blur" : "empty"}
+          placeholder={vendor.blurCoverImage ? "blur-sm" : "empty"}
           blurDataURL={vendor.blurCoverImage!}
           fill
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-white/75 dark:via-black/75 to-transparent" />
-        <div className="container relative h-full px-2 mx-auto max-w-screen-xl">
+        <div className="absolute inset-0 bg-linear-to-t from-white dark:from-black via-white/75 dark:via-black/75 to-transparent" />
+        <div className="container relative h-full px-2 mx-auto max-w-(--breakpoint-xl)">
           <div className="absolute bottom-8">
             {user?.id === vendor.addedById &&
             checkRoleAccess(user?.role, [UserRole.VENDOR_ADMIN]) ? (
@@ -173,7 +173,7 @@ export default async function RestaurantPage({
         </div>
       </section>
 
-      <div className="container px-2 py-12 mx-auto max-w-screen-xl">
+      <div className="container px-2 py-12 mx-auto max-w-(--breakpoint-xl)">
         <div className="grid gap-6 md:grid-cols-3">
           {vendor.menuItemsCount === 0 ? (
             <EmptyState className="col-span-full">

@@ -202,7 +202,7 @@ export function MenuItemForm({ vendorId, categories }: MenuItemFormProps) {
                       alt="Item Image"
                       width={112}
                       height={112}
-                      className="object-cover w-28 h-28 rounded-md shadow"
+                      className="object-cover w-28 h-28 rounded-md shadow-sm"
                     />
                   ) : null}
                   <FileUpload onFilesSelected={handleFilesSelected} disabled={isUploading} />

@@ -31,7 +31,7 @@ export function SearchBar() {
             ? "Search for restaurants, and more..."
             : "Search for dishes, restaurants, cuisines, and more..."
         }
-        className={clsx("flex-grow outline-0 bg-transparent", {
+        className={clsx("grow outline-0 bg-transparent", {
           "text-sm": isMobile,
           "text-lg": !isMobile,
         })}
