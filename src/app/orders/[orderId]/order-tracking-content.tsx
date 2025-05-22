@@ -2,7 +2,7 @@
 
 import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import CopyText from "@/components/custom/copy"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -19,10 +19,53 @@ const orderStatuses = [
   "DELIVERED",
 ] as const
 
-export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) {
+export function OrderTrackingContent({ order: initialOrder }: { order: orderWithOrderItems }) {
+  const [order, setOrder] = useState(initialOrder)
   const [progress, setProgress] = useState(0)
   const [isSendingInvoice, setIsSendingInvoice] = useState(false)
   const toast = useToast()
+
+  // Memoize the subscription callback to prevent re-subscriptions
+  const handleOrderUpdate = useCallback(
+    (updatedOrder: any) => {
+      console.log("📡 Received order update in tracking:", updatedOrder)
+
+      setOrder(prevOrder => {
+        const newOrder = {
+          ...prevOrder,
+          ...updatedOrder,
+          // Preserve nested structures
+          orderItems: updatedOrder.orderItems || prevOrder.orderItems,
+        }
+        console.log("🔄 Updated order state:", newOrder)
+        return newOrder
+      })
+
+      toast.success(`Order status updated to ${updatedOrder.status.replace(/_/g, " ")}!`)
+    },
+    [toast],
+  )
+
+  // Subscribe to order updates with stable order ID
+  const { data: subscriptionData, error: subscriptionError } =
+    api.order.onOrderUpdate.useSubscription(
+      { orderIds: [initialOrder.id] }, // Use initialOrder.id to prevent changing
+      {
+        enabled: true,
+        onData: handleOrderUpdate,
+        onError: error => {
+          console.error("❌ Subscription error:", error)
+          toast.error(`Failed to get order updates: ${error.message}`)
+        },
+      },
+    )
+
+  // Debug subscription status
+  useEffect(() => {
+    console.log("🔍 Subscription status for order:", initialOrder.id)
+    console.log("📊 Subscription data:", subscriptionData)
+    console.log("⚠️ Subscription error:", subscriptionError)
+  }, [subscriptionData, subscriptionError, initialOrder.id])
 
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {
@@ -43,6 +86,7 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
     const currentIndex = orderStatuses.indexOf(order.status as (typeof orderStatuses)[number])
     const progressPercentage = (currentIndex / (orderStatuses.length - 1)) * 100
     setProgress(progressPercentage)
+    console.log("📈 Progress updated:", { status: order.status, progress: progressPercentage })
   }, [order.status])
 
   // Calculate icon position
@@ -60,6 +104,19 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
     <div className="container max-w-4xl mx-auto py-10 px-4">
       <h1 className="text-3xl font-bold mb-8">Order Details</h1>
 
+      {/* Debug info in development */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="mb-4 p-4 bg-gray-100 rounded-lg text-sm">
+          <p>
+            <strong>Debug Info:</strong>
+          </p>
+          <p>Order ID: {order.id}</p>
+          <p>Current Status: {order.status}</p>
+          <p>Progress: {progress}%</p>
+          <p>Subscription Error: {subscriptionError?.message || "None"}</p>
+        </div>
+      )}
+
       <div className="relative">
         <svg className="w-full h-32" viewBox="0 0 800 160" preserveAspectRatio="xMidYMid meet">
           <defs>
@@ -70,14 +127,12 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
               <stop offset="100%" stopColor="#e5e7eb" />
             </linearGradient>
           </defs>
-
           <path
             d="M 40 80 C 200 80, 600 30, 760 80"
             stroke="url(#progressGradient)"
             strokeWidth="4"
             fill="none"
           />
-
           <g transform={`translate(${iconPos.x}, ${iconPos.y})`}>
             <circle r="15" fill="white" stroke="#22c55e" strokeWidth="2" />
             <g transform="translate(-10, -10) scale(0.8)">
@@ -99,7 +154,6 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
             </g>
           </g>
         </svg>
-
         <div className="flex justify-between px-8 mt-4">
           {orderStatuses.map((status, index) => {
             const isActive =
@@ -194,7 +248,6 @@ export function OrderTrackingContent({ order }: { order: orderWithOrderItems }) 
               </li>
             ))}
           </ul>
-
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span>Subtotal</span>

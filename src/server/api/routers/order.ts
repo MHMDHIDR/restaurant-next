@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server"
+import { observable } from "@trpc/server/observable"
 import { desc, eq, sql } from "drizzle-orm"
 import { Resend } from "resend"
 import { z } from "zod"
@@ -7,8 +8,11 @@ import { OrderInvoiceEmail } from "@/components/custom/order-email-template"
 import { env } from "@/env"
 import { rateLimiter } from "@/lib/rateLimiter"
 import { PaymentService } from "@/lib/stripe"
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
+import { createTRPCRouter, protectedProcedure, subscriptionProcedure } from "@/server/api/trpc"
 import { notifications, orderItems, orders } from "@/server/db/schema"
+
+// Create an event emitter for order updates
+const orderUpdateEmitter = new Map<string, Set<(order: any) => void>>()
 
 export const orderRouter = createTRPCRouter({
   createPaymentIntent: protectedProcedure
@@ -160,104 +164,64 @@ export const orderRouter = createTRPCRouter({
     }),
 
   updateOrderStatus: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        status: orderStatusSchema,
-      }),
-    )
+    .input(z.object({ orderId: z.string(), status: orderStatusSchema }))
     .mutation(async ({ ctx, input }) => {
-      const order = await ctx.db.query.orders.findFirst({
-        where: eq(orders.id, input.id),
+      console.log("🔄 Updating order status:", { orderId: input.orderId, status: input.status })
+
+      const [updatedOrder] = await ctx.db
+        .update(orders)
+        .set({ status: input.status, updatedAt: new Date() })
+        .where(eq(orders.id, input.orderId))
+        .returning()
+
+      if (!updatedOrder) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" })
+      }
+
+      // Get the full order with items
+      const fullOrder = await ctx.db.query.orders.findFirst({
+        where: eq(orders.id, input.orderId),
         with: {
-          user: true,
-          orderItems: { with: { menuItem: { columns: { name: true } } } },
+          orderItems: {
+            with: {
+              menuItem: {
+                columns: {
+                  id: true,
+                  name: true,
+                  image: true,
+                  price: true,
+                },
+              },
+            },
+          },
         },
       })
 
-      if (!order) throw new Error("Order not found")
+      console.log("📦 Full order retrieved:", fullOrder?.id)
+      console.log(
+        "👥 Active subscribers for order:",
+        orderUpdateEmitter.get(input.orderId)?.size || 0,
+      )
 
-      await ctx.db.update(orders).set({ status: input.status }).where(eq(orders.id, input.id))
-
-      // Create notification
-      const notificationTitle = `Order ${input.status.toLowerCase().replace(/_/g, " ")}`
-      const itemsList = order.orderItems
-        .map(item => `${item.quantity}x ${item.menuItem.name}`)
-        .join(", ")
-
-      await ctx.db.insert(notifications).values({
-        userId: order.user.id,
-        title: notificationTitle,
-        message: `Your order (${itemsList}) is ${input.status.toLowerCase().replace(/_/g, " ")}`,
-        type: "ORDER_STATUS",
-        isRead: false,
-      })
-
-      // Prepare email content
-      const RESEND = new Resend(env.AUTH_RESEND_KEY)
-      let emailSubject = "Order Status Update"
-      let emailContent = ""
-
-      switch (input.status) {
-        case "CONFIRMED":
-          emailContent = `
-            <h2>Order Confirmed</h2>
-            <p>Your order (${itemsList}) is confirmed and is being processed.</p>
-            <p>We'll notify you when it starts being prepared.</p>
-          `
-          break
-        case "PREPARING":
-          emailContent = `
-            <h2>Order Being Prepared</h2>
-            <p>Good news! Your order (${itemsList}) is now being prepared.</p>
-            <p>We'll let you know when it's ready for pickup or delivery.</p>
-          `
-          break
-        case "READY_FOR_PICKUP":
-          emailContent = `
-            <h2>Order Ready for Pickup</h2>
-            <p>Great news! Your order (${itemsList}) is ready for pickup.</p>
-            <p>Please come to our restaurant to collect your order.</p>
-          `
-          break
-        case "OUT_FOR_DELIVERY":
-          emailContent = `
-            <h2>Order Out for Delivery</h2>
-            <p>Your order (${itemsList}) is now out for delivery!</p>
-            <p>Our delivery partner is on the way to your location.</p>
-          `
-          break
-        case "DELIVERED":
-          emailContent = `
-            <h2>Order Delivered</h2>
-            <p>Your order (${itemsList}) is delivered.</p>
-            <p>We hope you enjoy your meal! Thank you for choosing us.</p>
-          `
-          break
-        case "CANCELLED":
-          emailSubject = "Order Cancelled"
-          emailContent = `
-            <h2>Order Cancelled</h2>
-            <p>We're sorry, but your order (${itemsList}) is cancelled.</p>
-            <p>If you have any questions, please contact our support team.</p>
-          `
-          break
-        default:
-          emailContent = `
-            <h2>Order Status Update</h2>
-            <p>Your order (${itemsList}) status is updated to: ${input.status}</p>
-          `
+      // Emit the update through WebSocket
+      if (fullOrder) {
+        const callbacks = orderUpdateEmitter.get(input.orderId)
+        if (callbacks && callbacks.size > 0) {
+          console.log("📡 Broadcasting update to", callbacks.size, "subscribers")
+          callbacks.forEach(callback => {
+            try {
+              callback(fullOrder)
+              console.log("✅ Successfully sent update to subscriber")
+            } catch (error) {
+              console.error("❌ Error sending update to subscriber:", error)
+            }
+          })
+        } else {
+          console.log("⚠️ No active subscribers found for order:", input.orderId)
+        }
       }
 
-      // Send email notification using Resend
-      await RESEND.emails.send({
-        from: env.ADMIN_EMAIL,
-        to: order.user.email,
-        subject: emailSubject,
-        html: emailContent,
-      })
-
-      return { success: true }
+      return updatedOrder
     }),
 
   emailInvoice: protectedProcedure
@@ -307,6 +271,49 @@ export const orderRouter = createTRPCRouter({
         react: OrderInvoiceEmail({ order }),
       })
 
+      return { success: true }
+    }),
+
+  // Add subscription endpoint for order updates
+  // In src/server/api/routers/order.ts
+  onOrderUpdate: subscriptionProcedure
+    .input(z.object({ orderIds: z.array(z.string()) }))
+    .subscription(({ input }) => {
+      return observable<any>(emit => {
+        const onUpdate = (order: any) => {
+          if (input.orderIds.includes(order.id)) {
+            emit.next(order)
+          }
+        }
+
+        // Add the callback to the emitter map for each order ID
+        input.orderIds.forEach(orderId => {
+          if (!orderUpdateEmitter.has(orderId)) {
+            orderUpdateEmitter.set(orderId, new Set())
+          }
+          orderUpdateEmitter.get(orderId)?.add(onUpdate)
+        })
+
+        // Return cleanup function
+        return () => {
+          input.orderIds.forEach(orderId => {
+            orderUpdateEmitter.get(orderId)?.delete(onUpdate)
+            if (orderUpdateEmitter.get(orderId)?.size === 0) {
+              orderUpdateEmitter.delete(orderId)
+            }
+          })
+        }
+      })
+    }),
+
+  // Helper function to emit order updates
+  emitOrderUpdate: protectedProcedure
+    .input(z.object({ orderId: z.string(), order: z.any() }))
+    .mutation(({ input }) => {
+      const callbacks = orderUpdateEmitter.get(input.orderId)
+      if (callbacks) {
+        callbacks.forEach(callback => callback(input.order))
+      }
       return { success: true }
     }),
 })

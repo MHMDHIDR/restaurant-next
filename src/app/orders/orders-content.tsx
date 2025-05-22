@@ -1,17 +1,54 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { DataTable } from "@/components/custom/data-table"
+import { useToast } from "@/hooks/use-toast"
+import { api } from "@/trpc/react"
 import { customerOrdersColumns } from "./orders-columns"
 import type { BaseEntity } from "@/components/custom/data-table/base-columns"
 import type { Orders } from "@/server/db/schema"
 import type { ColumnDef } from "@tanstack/react-table"
 
 type OrdersContentProps = {
-  orders: Orders[]
+  orders: (Orders & { orderItems: any[] })[]
   count: number
 }
 
-export function OrdersContent({ orders, count }: OrdersContentProps) {
+export function OrdersContent({ orders: initialOrders, count }: OrdersContentProps) {
+  const [orders, setOrders] = useState(initialOrders)
+  const toast = useToast()
+
+  // Subscribe to order updates for all orders in the list
+  api.order.onOrderUpdate.useSubscription(
+    { orderIds: orders.map(order => order.id) },
+    {
+      onData: updatedOrder => {
+        console.log("Received order update:", updatedOrder) // Debug log
+        setOrders(prevOrders =>
+          prevOrders.map(order => {
+            if (order.id === updatedOrder.id) {
+              // Merge the updated order data while preserving the structure
+              return {
+                ...order,
+                ...updatedOrder,
+                // Ensure orderItems structure is preserved
+                orderItems: updatedOrder.orderItems || order.orderItems,
+              }
+            }
+            return order
+          }),
+        )
+        toast.success(
+          `Order #${updatedOrder.id} status updated to ${updatedOrder.status.replace(/_/g, " ")}!`,
+        )
+      },
+      onError: error => {
+        console.error("Failed to subscribe to order updates:", error)
+        toast.error("Failed to get real-time order updates")
+      },
+    },
+  )
+
   const ordersWithName = orders.map(order => ({ ...order, name: `Order #${order.id}` }))
 
   return (

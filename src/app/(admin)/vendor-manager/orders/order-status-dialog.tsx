@@ -97,10 +97,10 @@ export function OrderStatusDialog({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (isMultiple && selectedOrders) {
       for (const selectedOrder of selectedOrders) {
-        updateOrderStatus({ id: selectedOrder.id, status: values.status })
+        updateOrderStatus({ orderId: selectedOrder.id, status: values.status })
       }
     } else {
-      updateOrderStatus({ id: order.id, status: values.status })
+      updateOrderStatus({ orderId: order.id, status: values.status })
     }
   }
 
