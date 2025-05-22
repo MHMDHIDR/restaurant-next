@@ -43,23 +43,6 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
     [toast],
   )
 
-  // Subscribe to order updates with stable order ID
-  const { data: subscriptionData, error: subscriptionError } =
-    api.order.onOrderUpdate.useSubscription(
-      { orderIds: [initialOrder.id] }, // Use initialOrder.id to prevent changing
-      {
-        enabled: true,
-        onData: handleOrderUpdate,
-        onError: error => {
-          console.error("❌ Subscription error:", error)
-          toast.error(`Failed to get order updates: ${error.message}`)
-        },
-      },
-    )
-
-  // Debug subscription status
-  useEffect(() => {}, [subscriptionData, subscriptionError, initialOrder.id])
-
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {
       setIsSendingInvoice(true)
