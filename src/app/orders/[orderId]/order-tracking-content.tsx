@@ -27,8 +27,8 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
 
   // Memoize the subscription callback to prevent re-subscriptions
   const handleOrderUpdate = useCallback(
-    (updatedOrder: any) => {
-      console.log("📡 Received order update in tracking:", updatedOrder)
+    (updatedOrder: orderWithOrderItems) => {
+      // console.log("📡 Received order update in tracking:", updatedOrder)
 
       setOrder(prevOrder => {
         const newOrder = {
@@ -37,7 +37,7 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
           // Preserve nested structures
           orderItems: updatedOrder.orderItems || prevOrder.orderItems,
         }
-        console.log("🔄 Updated order state:", newOrder)
+        // console.log("🔄 Updated order state:", newOrder)
         return newOrder
       })
 
@@ -113,7 +113,7 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
           <p>Order ID: {order.id}</p>
           <p>Current Status: {order.status}</p>
           <p>Progress: {progress}%</p>
-          <p>Subscription Error: {subscriptionError?.message || "None"}</p>
+          <p>Subscription Error: {subscriptionError?.message ?? "None"}</p>
         </div>
       )}
 

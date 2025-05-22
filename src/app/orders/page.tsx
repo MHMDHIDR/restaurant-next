@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { auth } from "@/server/auth"
 import { api } from "@/trpc/server"
 import { OrdersContent } from "./orders-content"
+import type { orderWithOrderItems } from "@/types"
 
 export default async function OrdersPage() {
   const session = await auth()
@@ -11,5 +12,10 @@ export default async function OrdersPage() {
 
   const userOrders = await api.order.getOrdersByUserId()
 
-  return <OrdersContent orders={userOrders.orders} count={userOrders.count} />
+  return (
+    <OrdersContent
+      orders={userOrders.orders as unknown as orderWithOrderItems[]}
+      count={userOrders.count}
+    />
+  )
 }

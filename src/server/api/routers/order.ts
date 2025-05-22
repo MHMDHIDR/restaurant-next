@@ -9,10 +9,11 @@ import { env } from "@/env"
 import { rateLimiter } from "@/lib/rateLimiter"
 import { PaymentService } from "@/lib/stripe"
 import { createTRPCRouter, protectedProcedure, subscriptionProcedure } from "@/server/api/trpc"
-import { notifications, orderItems, orders } from "@/server/db/schema"
+import { orderItems, orders } from "@/server/db/schema"
+import type { orderWithOrderItems } from "@/types"
 
 // Create an event emitter for order updates
-const orderUpdateEmitter = new Map<string, Set<(order: any) => void>>()
+const orderUpdateEmitter = new Map<string, Set<(order: orderWithOrderItems) => void>>()
 
 export const orderRouter = createTRPCRouter({
   createPaymentIntent: protectedProcedure
@@ -184,14 +185,7 @@ export const orderRouter = createTRPCRouter({
         with: {
           orderItems: {
             with: {
-              menuItem: {
-                columns: {
-                  id: true,
-                  name: true,
-                  image: true,
-                  price: true,
-                },
-              },
+              menuItem: true,
             },
           },
         },
@@ -200,17 +194,28 @@ export const orderRouter = createTRPCRouter({
       console.log("📦 Full order retrieved:", fullOrder?.id)
       console.log(
         "👥 Active subscribers for order:",
-        orderUpdateEmitter.get(input.orderId)?.size || 0,
+        orderUpdateEmitter.get(input.orderId)?.size ?? 0,
       )
 
       // Emit the update through WebSocket
       if (fullOrder) {
+        // Transform the database result to match the expected type
+        const transformedOrder: orderWithOrderItems = {
+          ...fullOrder,
+          orderItems: fullOrder.orderItems.map(item => ({
+            ...item,
+            unitPrice: parseFloat(item.unitPrice),
+            totalPrice: parseFloat(item.totalPrice),
+            specialInstructions: item.specialInstructions ?? "", // Handle null values
+          })),
+        }
+
         const callbacks = orderUpdateEmitter.get(input.orderId)
         if (callbacks && callbacks.size > 0) {
           console.log("📡 Broadcasting update to", callbacks.size, "subscribers")
           callbacks.forEach(callback => {
             try {
-              callback(fullOrder)
+              callback(transformedOrder)
               console.log("✅ Successfully sent update to subscriber")
             } catch (error) {
               console.error("❌ Error sending update to subscriber:", error)
@@ -279,8 +284,8 @@ export const orderRouter = createTRPCRouter({
   onOrderUpdate: subscriptionProcedure
     .input(z.object({ orderIds: z.array(z.string()) }))
     .subscription(({ input }) => {
-      return observable<any>(emit => {
-        const onUpdate = (order: any) => {
+      return observable<orderWithOrderItems>(emit => {
+        const onUpdate = (order: orderWithOrderItems) => {
           if (input.orderIds.includes(order.id)) {
             emit.next(order)
           }
@@ -304,16 +309,5 @@ export const orderRouter = createTRPCRouter({
           })
         }
       })
-    }),
-
-  // Helper function to emit order updates
-  emitOrderUpdate: protectedProcedure
-    .input(z.object({ orderId: z.string(), order: z.any() }))
-    .mutation(({ input }) => {
-      const callbacks = orderUpdateEmitter.get(input.orderId)
-      if (callbacks) {
-        callbacks.forEach(callback => callback(input.order))
-      }
-      return { success: true }
     }),
 })

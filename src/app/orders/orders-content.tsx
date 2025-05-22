@@ -1,16 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { DataTable } from "@/components/custom/data-table"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
 import { customerOrdersColumns } from "./orders-columns"
 import type { BaseEntity } from "@/components/custom/data-table/base-columns"
 import type { Orders } from "@/server/db/schema"
+import type { orderWithOrderItems } from "@/types"
 import type { ColumnDef } from "@tanstack/react-table"
 
 type OrdersContentProps = {
-  orders: (Orders & { orderItems: any[] })[]
+  orders: orderWithOrderItems[]
   count: number
 }
 
@@ -23,7 +24,7 @@ export function OrdersContent({ orders: initialOrders, count }: OrdersContentPro
     { orderIds: orders.map(order => order.id) },
     {
       onData: updatedOrder => {
-        console.log("Received order update:", updatedOrder) // Debug log
+        // console.log("Received order update:", updatedOrder)
         setOrders(prevOrders =>
           prevOrders.map(order => {
             if (order.id === updatedOrder.id) {
