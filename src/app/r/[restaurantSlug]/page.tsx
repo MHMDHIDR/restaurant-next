@@ -126,7 +126,7 @@ export default async function RestaurantPage({
           src={vendor.coverImage}
           alt={`${vendor.name} cover`}
           className="object-cover"
-          placeholder={vendor.blurCoverImage ? "blur-sm" : "empty"}
+          placeholder={vendor.blurCoverImage ? "blur" : "empty"}
           blurDataURL={vendor.blurCoverImage!}
           fill
         />

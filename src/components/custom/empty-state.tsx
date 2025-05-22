@@ -24,7 +24,7 @@ export default function EmptyState({
         width={isSmall ? 100 : 300}
       />
 
-      {children ? children : <h3 className="text-lg font-semibold">No data available</h3>}
+      {children ?? <h3 className="text-lg font-semibold">No data available</h3>}
     </div>
   )
 }

@@ -36,7 +36,7 @@ const AvatarImage = React.forwardRef<
     className={cn("aspect-square h-full w-full object-cover", className)}
     width={40}
     height={40}
-    placeholder={blurDataURL ? "blur-sm" : "empty"}
+    placeholder={blurDataURL ? "blur" : "empty"}
     blurDataURL={blurDataURL}
   />
 ))

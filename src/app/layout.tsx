@@ -4,7 +4,7 @@ import Nav from "@/components/custom/nav"
 import { auth } from "@/server/auth"
 import { Providers } from "./providers"
 import { ThemeProvider } from "./providers/theme-provider"
-import "@/styles/globals.css"
+import "../styles/globals.css"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
