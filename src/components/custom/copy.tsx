@@ -23,8 +23,6 @@ export default function CopyText({ text, className }: { text: string; className?
     }
   }, [])
 
-  console.log("isCopied -->", isCopied)
-
   return (
     <div className="flex items-center gap-2">
       <div className="relative">

@@ -24,15 +24,12 @@ export function OrdersContent({ orders: initialOrders, count }: OrdersContentPro
     { orderIds: orders.map(order => order.id) },
     {
       onData: updatedOrder => {
-        // console.log("Received order update:", updatedOrder)
         setOrders(prevOrders =>
           prevOrders.map(order => {
             if (order.id === updatedOrder.id) {
-              // Merge the updated order data while preserving the structure
               return {
                 ...order,
                 ...updatedOrder,
-                // Ensure orderItems structure is preserved
                 orderItems: updatedOrder.orderItems || order.orderItems,
               }
             }

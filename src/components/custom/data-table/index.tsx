@@ -51,6 +51,10 @@ export function DataTable<TData extends BaseEntity>({
 
   const selectionColumn: ColumnDef<TData> = {
     id: "select",
+    enableHiding: false,
+    enableSorting: false,
+    enablePinning: true,
+    meta: { pinned: "left" },
     header: ({ table }) => (
       <Checkbox
         checked={
@@ -75,8 +79,6 @@ export function DataTable<TData extends BaseEntity>({
         })}
       />
     ),
-    enableSorting: false,
-    enableHiding: false,
   }
 
   const allColumns = [
@@ -93,7 +95,11 @@ export function DataTable<TData extends BaseEntity>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onRowSelectionChange: setRowSelection,
-    state: { rowSelection },
+    enableColumnPinning: true,
+    state: {
+      rowSelection,
+      columnPinning: { left: ["select"] },
+    },
   })
 
   useEffect(() => {
@@ -143,13 +149,23 @@ export function DataTable<TData extends BaseEntity>({
         <TableHeader className="select-none">
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
-              {headerGroup.headers.map(header => (
-                <TableHead key={header.id} className="text-center">
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
-                </TableHead>
-              ))}
+              {headerGroup.headers.map(header => {
+                const isPinned = header.column.getIsPinned()
+
+                return (
+                  <TableHead
+                    key={header.id}
+                    className={clsx(
+                      "text-center",
+                      isPinned && "sticky left-0 bg-background shadow-[1px_0_0_0_#e5e7eb]",
+                    )}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                )
+              })}
             </TableRow>
           ))}
         </TableHeader>
@@ -168,11 +184,20 @@ export function DataTable<TData extends BaseEntity>({
                   data-state={row.getIsSelected() && "selected"}
                   className={statusStyles[getRowStatus(row)]}
                 >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id} className="whitespace-nowrap text-center">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map(cell => {
+                    const isPinned = cell.column.getIsPinned()
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={clsx("whitespace-nowrap text-center", {
+                          "sticky left-0 px-3 bg-background shadow-[1px_0_0_0_#e5e7eb]": isPinned,
+                        })}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    )
+                  })}
                 </TableRow>
               ),
             )
