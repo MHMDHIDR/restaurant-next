@@ -36,7 +36,7 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
     if (order?.status !== lastStatus) {
       toast.success("Order status updated!")
     }
-  }, [order?.status, lastStatus, toast])
+  }, [lastStatus])
 
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {
