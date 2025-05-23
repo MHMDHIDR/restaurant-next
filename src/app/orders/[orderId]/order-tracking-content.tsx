@@ -22,21 +22,21 @@ const orderStatuses = [
 export function OrderTrackingContent({ order: initialOrder }: { order: orderWithOrderItems }) {
   const [progress, setProgress] = useState(0)
   const [isSendingInvoice, setIsSendingInvoice] = useState(false)
+  const [lastStatus] = useState(initialOrder.status)
   const toast = useToast()
+  const FIVE_SECONDS_REFETCH_INTERVAL = 5000
 
   // Use tRPC query hook directly
   const { data: order = initialOrder } = api.order.subscribeToOrderUpdates.useQuery(
     { orderId: initialOrder.id },
-    {
-      refetchInterval: 5000, // Poll every 5 seconds
-    },
+    { refetchInterval: FIVE_SECONDS_REFETCH_INTERVAL },
   )
 
   useEffect(() => {
-    if (order?.status !== initialOrder.status) {
+    if (order?.status !== lastStatus) {
       toast.success("Order status updated!")
     }
-  }, [order?.status, initialOrder.status, toast])
+  }, [order?.status, lastStatus, toast])
 
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {
