@@ -32,12 +32,6 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
     { refetchInterval: FIVE_SECONDS_REFETCH_INTERVAL },
   )
 
-  useEffect(() => {
-    if (order?.status !== lastStatus) {
-      toast.success("Order status updated!")
-    }
-  }, [lastStatus, toast])
-
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {
       setIsSendingInvoice(true)
