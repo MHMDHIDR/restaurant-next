@@ -20,38 +20,23 @@ const orderStatuses = [
 ] as const
 
 export function OrderTrackingContent({ order: initialOrder }: { order: orderWithOrderItems }) {
-  const [order, setOrder] = useState(initialOrder)
   const [progress, setProgress] = useState(0)
   const [isSendingInvoice, setIsSendingInvoice] = useState(false)
   const toast = useToast()
 
+  // Use tRPC query hook directly
+  const { data: order = initialOrder } = api.order.subscribeToOrderUpdates.useQuery(
+    { orderId: initialOrder.id },
+    {
+      refetchInterval: 5000, // Poll every 5 seconds
+    },
+  )
+
   useEffect(() => {
-    // Create EventSource for SSE
-    const eventSource = new EventSource(`/api/orders/${order.id}/events`)
-
-    // Handle incoming messages
-    eventSource.onmessage = event => {
-      try {
-        const updatedOrder = JSON.parse(event.data as string) as orderWithOrderItems
-        setOrder(updatedOrder)
-        toast.success("Order status updated!")
-      } catch (error) {
-        console.error("Error parsing SSE message:", error)
-      }
+    if (order?.status !== initialOrder.status) {
+      toast.success("Order status updated!")
     }
-
-    // Handle errors
-    eventSource.onerror = error => {
-      console.error("SSE Error:", error)
-      eventSource.close()
-      toast.error("Lost connection to order updates. Please refresh the page.")
-    }
-
-    // Cleanup on unmount
-    return () => {
-      eventSource.close()
-    }
-  }, [order.id, toast])
+  }, [order?.status, initialOrder.status, toast])
 
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {
@@ -191,34 +176,45 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
         <h2 className="text-xl font-semibold mb-4">Order Details</h2>
         <div className="space-y-2">
           <ul className="divide-y divide-gray-100">
-            {order.orderItems.map(item => (
-              <li key={item.id} className="py-4">
-                <div className="flex items-start gap-4">
-                  <div className="relative h-16 w-16 flex-none rounded-lg overflow-hidden">
-                    <Image
-                      src={item.menuItem.image}
-                      alt={item.menuItem.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex-auto">
-                    <h4 className="font-medium">{item.menuItem.name}</h4>
-                    <div className="text-sm text-gray-600">
-                      <span>Quantity: {item.quantity}</span>
-                      <span className="mx-2">·</span>
-                      <span>{formatPrice(Number(item.unitPrice))} each</span>
+            {order.orderItems.map(
+              (item: {
+                id: string
+                menuItem: { name: string; image: string }
+                quantity: number
+                unitPrice: number
+                totalPrice: number
+                specialInstructions?: string
+              }) => (
+                <li key={item.id} className="py-4">
+                  <div className="flex items-start gap-4">
+                    <div className="relative size-16 flex-none rounded-lg overflow-hidden">
+                      <Image
+                        src={item.menuItem.image}
+                        alt={item.menuItem.name}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
-                    {item.specialInstructions && (
-                      <p className="text-sm text-gray-500 mt-1">Note: {item.specialInstructions}</p>
-                    )}
+                    <div className="flex-auto">
+                      <h4 className="font-medium">{item.menuItem.name}</h4>
+                      <div className="text-sm text-gray-600">
+                        <span>Quantity: {item.quantity}</span>
+                        <span className="mx-2">·</span>
+                        <span>{formatPrice(Number(item.unitPrice))} each</span>
+                      </div>
+                      {item.specialInstructions && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          Note: {item.specialInstructions}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">{formatPrice(Number(item.totalPrice))}</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">{formatPrice(Number(item.totalPrice))}</p>
-                  </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ),
+            )}
           </ul>
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between text-sm">
