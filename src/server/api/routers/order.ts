@@ -12,7 +12,7 @@ import { createTRPCRouter, protectedProcedure, subscriptionProcedure } from "@/s
 import { orderItems, orders } from "@/server/db/schema"
 import type { orderWithOrderItems } from "@/types"
 
-// Create an event emitter for order updates
+// Create a simple event emitter for SSE
 const orderUpdateEmitter = new Map<string, Set<(order: orderWithOrderItems) => void>>()
 
 export const orderRouter = createTRPCRouter({
@@ -164,6 +164,38 @@ export const orderRouter = createTRPCRouter({
       return { success: true }
     }),
 
+  subscribeToOrderUpdates: protectedProcedure
+    .input(z.object({ orderId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const order = await ctx.db.query.orders.findFirst({
+        where: eq(orders.id, input.orderId),
+        with: {
+          orderItems: {
+            with: {
+              menuItem: true,
+            },
+          },
+        },
+      })
+
+      if (!order) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" })
+      }
+
+      // Transform the order to match the expected type
+      const transformedOrder: orderWithOrderItems = {
+        ...order,
+        orderItems: order.orderItems.map(item => ({
+          ...item,
+          unitPrice: parseFloat(item.unitPrice),
+          totalPrice: parseFloat(item.totalPrice),
+          specialInstructions: item.specialInstructions ?? "",
+        })),
+      }
+
+      return transformedOrder
+    }),
+
   updateOrderStatus: protectedProcedure
     .input(z.object({ orderId: z.string(), status: orderStatusSchema }))
     .mutation(async ({ ctx, input }) => {
@@ -174,7 +206,10 @@ export const orderRouter = createTRPCRouter({
         .returning()
 
       if (!updatedOrder) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" })
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Order not found",
+        })
       }
 
       // Get the full order with items
@@ -189,7 +224,6 @@ export const orderRouter = createTRPCRouter({
         },
       })
 
-      // Emit the update through WebSocket
       if (fullOrder) {
         // Transform the database result to match the expected type
         const transformedOrder: orderWithOrderItems = {
@@ -198,21 +232,14 @@ export const orderRouter = createTRPCRouter({
             ...item,
             unitPrice: parseFloat(item.unitPrice),
             totalPrice: parseFloat(item.totalPrice),
-            specialInstructions: item.specialInstructions ?? "", // Handle null values
+            specialInstructions: item.specialInstructions ?? "",
           })),
         }
 
+        // Emit the update through SSE
         const callbacks = orderUpdateEmitter.get(input.orderId)
-        if (callbacks && callbacks.size > 0) {
-          callbacks.forEach(callback => {
-            try {
-              callback(transformedOrder)
-            } catch (error) {
-              console.error("❌ Error sending update to subscriber:", error)
-            }
-          })
-        } else {
-          console.warn("⚠️ No active subscribers found for order:", input.orderId)
+        if (callbacks) {
+          callbacks.forEach(callback => callback(transformedOrder))
         }
       }
 

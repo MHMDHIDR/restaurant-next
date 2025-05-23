@@ -2,7 +2,7 @@
 
 import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import CopyText from "@/components/custom/copy"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -25,23 +25,33 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
   const [isSendingInvoice, setIsSendingInvoice] = useState(false)
   const toast = useToast()
 
-  // Memoize the subscription callback to prevent re-subscriptions
-  const handleOrderUpdate = useCallback(
-    (updatedOrder: orderWithOrderItems) => {
-      setOrder(prevOrder => {
-        const newOrder = {
-          ...prevOrder,
-          ...updatedOrder,
-          // Preserve nested structures
-          orderItems: updatedOrder.orderItems || prevOrder.orderItems,
-        }
-        return newOrder
-      })
+  useEffect(() => {
+    // Create EventSource for SSE
+    const eventSource = new EventSource(`/api/orders/${order.id}/events`)
 
-      toast.success(`Order status updated to ${updatedOrder.status.replace(/_/g, " ")}!`)
-    },
-    [toast],
-  )
+    // Handle incoming messages
+    eventSource.onmessage = event => {
+      try {
+        const updatedOrder = JSON.parse(event.data as string) as orderWithOrderItems
+        setOrder(updatedOrder)
+        toast.success("Order status updated!")
+      } catch (error) {
+        console.error("Error parsing SSE message:", error)
+      }
+    }
+
+    // Handle errors
+    eventSource.onerror = error => {
+      console.error("SSE Error:", error)
+      eventSource.close()
+      toast.error("Lost connection to order updates. Please refresh the page.")
+    }
+
+    // Cleanup on unmount
+    return () => {
+      eventSource.close()
+    }
+  }, [order.id, toast])
 
   const emailInvoice = api.order.emailInvoice.useMutation({
     onMutate: () => {

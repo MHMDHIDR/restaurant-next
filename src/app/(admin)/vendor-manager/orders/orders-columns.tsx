@@ -13,7 +13,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Order Number
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -61,7 +61,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Status
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -86,31 +86,25 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Total
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("total"))
-      return new Intl.NumberFormat("en-GB", {
-        style: "currency",
-        currency: "GBP",
-      }).format(amount)
-    },
+    cell: ({ row }) => formatPrice(row.getValue("total")),
   },
   {
     accessorKey: "deliveryAddress",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Delivery Address
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
       return (
-        <>
+        <div className="flex items-center gap-2">
           <CopyText text={row.original.deliveryAddress} className="inline mr-3 w-3.5" />
           <span>{row.original.deliveryAddress}</span>
-        </>
+        </div>
       )
     },
   },
@@ -119,7 +113,7 @@ export const ordersColumns: ColumnDef<Orders>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Order Time
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {

@@ -98,7 +98,9 @@ export function DataTable<TData extends BaseEntity>({
     enableColumnPinning: true,
     state: {
       rowSelection,
-      columnPinning: { left: ["select"] },
+      columnPinning: {
+        left: ["select"],
+      },
     },
   })
 
@@ -156,7 +158,7 @@ export function DataTable<TData extends BaseEntity>({
                   <TableHead
                     key={header.id}
                     className={clsx(
-                      "text-center",
+                      "z-50 text-center",
                       isPinned && "sticky left-0 bg-background shadow-[1px_0_0_0_#e5e7eb]",
                     )}
                   >
@@ -190,7 +192,7 @@ export function DataTable<TData extends BaseEntity>({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={clsx("whitespace-nowrap text-center", {
+                        className={clsx("z-50 whitespace-nowrap text-center", {
                           "sticky left-0 bg-background shadow-[1px_0_0_0_#e5e7eb]": isPinned,
                         })}
                       >
