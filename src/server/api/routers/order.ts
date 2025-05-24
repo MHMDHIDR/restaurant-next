@@ -1,7 +1,6 @@
 // Create a simple event emitter for SSE
 import EventEmitter, { on } from "node:events"
 import { TRPCError } from "@trpc/server"
-import { observable } from "@trpc/server/observable"
 import { desc, eq, sql } from "drizzle-orm"
 import { Resend } from "resend"
 import { z } from "zod"
@@ -14,17 +13,18 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { notifications, orderItems, orders } from "@/server/db/schema"
 import type { orderWithOrderItems } from "@/types"
 
-interface OrderEvents extends Record<string, any[]> {
+type EventMap<T> = Record<keyof T, unknown[]>
+
+interface OrderEvents {
   orderUpdate: [order: orderWithOrderItems]
 }
 
-// Create a typed EventEmitter
-class IterableEventEmitter<T extends Record<string, any[]>> extends EventEmitter<T> {
+class IterableEventEmitter<T extends EventMap<T>> extends EventEmitter {
   toIterable<TEventName extends keyof T & string>(
     eventName: TEventName,
     opts?: NonNullable<Parameters<typeof on>[2]>,
   ): AsyncIterable<T[TEventName]> {
-    return on(this as any, eventName, opts) as any
+    return on(this, eventName, opts) as AsyncIterable<T[TEventName]>
   }
 }
 
