@@ -5,6 +5,7 @@ import clsx from "clsx"
 import { Package2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useState } from "react"
 import { SignoutButton } from "@/components/custom/signout-button"
 import { AvatarFallback, AvatarImage, Avatar as AvatarWrapper } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -25,6 +26,7 @@ import { UserRole } from "@/server/db/schema"
 import type { Session } from "next-auth"
 
 export default function AccountNav({ user }: { user: Session["user"] }) {
+  const [isAccountNavOpen, setIsAccountNavOpen] = useState(false)
   const NAV_ITEMS = [
     { href: "/", icon: IconHome, label: "Home" },
     { href: "/account", icon: IconUser, label: "Account" },
@@ -52,7 +54,7 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
   ].filter(Boolean)
 
   return (
-    <Sheet>
+    <Sheet open={isAccountNavOpen} onOpenChange={setIsAccountNavOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" className="inline-flex justify-between px-0">
           <Avatar user={user} className="rounded-sm rounded-r-none h-9 w-9" />
@@ -87,7 +89,7 @@ export default function AccountNav({ user }: { user: Session["user"] }) {
 
         <SheetFooter className="self-stretch md:self-start">
           <SheetClose asChild>
-            <SignoutButton />
+            <SignoutButton setIsAccountNavOpen={setIsAccountNavOpen} />
           </SheetClose>
         </SheetFooter>
       </SheetContent>

@@ -23,9 +23,11 @@ export default function Nav({
   isHidden = isHidden ?? false
   const pathname = usePathname()
   const { data: session, status } = useSession()
-  const currentUser = session?.user ?? user
   const { items } = useCart()
   const itemCount = items.reduce((total, item) => total + (item.quantity ?? 1), 0)
+
+  // Only use the server-provided user if there's no client session
+  const currentUser = session?.user ?? (status === "unauthenticated" ? undefined : user)
 
   return (pathname.includes("/dashboard") || pathname.includes("/vendor-manager")) &&
     isHidden ? null : (
@@ -49,7 +51,7 @@ export default function Nav({
               </Button>
             </Link>
           )}
-          {!currentUser && status === "loading" ? (
+          {status === "loading" ? (
             <LoadingCard renderedSkeletons={1} layout="vertical" className={"h-9 w-52"} />
           ) : currentUser ? (
             <>

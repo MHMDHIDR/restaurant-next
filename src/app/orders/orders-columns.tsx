@@ -20,9 +20,11 @@ export const customerOrdersColumns: ColumnDef<Orders>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex flex-col gap-1.5">
-          <Link href={`/orders/${row.original.id}`} className="w-full">
-            <Button className="w-full">View Order</Button>
+        <div className="flex flex-col md:items-center gap-1.5">
+          <Link href={`/orders/${row.original.id}`} className="max-sm:w-full">
+            <Button className="max-sm:w-full" variant={"outline"}>
+              View Order
+            </Button>
           </Link>
           <div className="flex items-center gap-2">
             <CopyText text={row.original.id} className="inline mr-3 size-4" />
