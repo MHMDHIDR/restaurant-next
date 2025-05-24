@@ -97,7 +97,9 @@ export default function Notifications() {
     const hasUnread = notifications.some(n => !n.isRead)
     const newFavicon = hasUnread ? "/logo-notification.svg" : "/logo.svg"
 
-    document.title = hasUnread ? `(${unreadCount}) | Restaurant App` : "Restaurant App"
+    document.title = hasUnread
+      ? `(${unreadCount}) Unread ${unreadCount > 0 ? "Notifications" : "Notification"} | Restaurant App`
+      : "Restaurant App"
 
     const link = document.querySelector("link[type='image/svg+xml']")
     if (link) {

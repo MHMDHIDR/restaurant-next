@@ -127,20 +127,3 @@ export const protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, 
     },
   })
 })
-
-/**
- * Subscription procedure
- *
- * This is used for real-time updates using WebSocket connections.
- * It verifies the session is valid and guarantees `ctx.session.user` is not null.
- */
-export const subscriptionProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" })
-  }
-  return next({
-    ctx: {
-      session: { ...ctx.session, user: ctx.session.user },
-    },
-  })
-})

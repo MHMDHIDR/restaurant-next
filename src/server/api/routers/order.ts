@@ -1,3 +1,5 @@
+// Create a simple event emitter for SSE
+import EventEmitter, { on } from "node:events"
 import { TRPCError } from "@trpc/server"
 import { observable } from "@trpc/server/observable"
 import { desc, eq, sql } from "drizzle-orm"
@@ -8,12 +10,31 @@ import { OrderInvoiceEmail } from "@/components/custom/order-email-template"
 import { env } from "@/env"
 import { rateLimiter } from "@/lib/rateLimiter"
 import { PaymentService } from "@/lib/stripe"
-import { createTRPCRouter, protectedProcedure, subscriptionProcedure } from "@/server/api/trpc"
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { notifications, orderItems, orders } from "@/server/db/schema"
 import type { orderWithOrderItems } from "@/types"
 
-// Create a simple event emitter for SSE
-const orderUpdateEmitter = new Map<string, Set<(order: orderWithOrderItems) => void>>()
+interface OrderEvents extends Record<string, any[]> {
+  orderUpdate: [order: orderWithOrderItems]
+}
+
+// Create a typed EventEmitter
+class IterableEventEmitter<T extends Record<string, any[]>> extends EventEmitter<T> {
+  toIterable<TEventName extends keyof T & string>(
+    eventName: TEventName,
+    opts?: NonNullable<Parameters<typeof on>[2]>,
+  ): AsyncIterable<T[TEventName]> {
+    return on(this as any, eventName, opts) as any
+  }
+}
+
+// Create the event emitter instance
+export const orderEventEmitter = new IterableEventEmitter<OrderEvents>()
+
+// Helper function to emit order updates (call this from wherever you update orders)
+export function emitOrderUpdate(order: orderWithOrderItems) {
+  orderEventEmitter.emit("orderUpdate", order)
+}
 
 export const orderRouter = createTRPCRouter({
   createPaymentIntent: protectedProcedure
@@ -206,17 +227,14 @@ export const orderRouter = createTRPCRouter({
           orderItems: { with: { menuItem: { columns: { name: true } } } },
         },
       })
-
       if (!orderToUpdate) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" })
       }
-
       // Create notification
       const notificationTitle = `Order ${input.status.toLowerCase().replace(/_/g, " ")}`
       const itemsList = orderToUpdate.orderItems
         .map(item => `${item.quantity}x ${item.menuItem.name}`)
         .join(", ")
-
       return await ctx.db.transaction(async tx => {
         // Update order status
         const [updatedOrder] = await tx
@@ -224,7 +242,6 @@ export const orderRouter = createTRPCRouter({
           .set({ status: input.status, updatedAt: new Date() })
           .where(eq(orders.id, orderToUpdate.id))
           .returning()
-
         // Create notification for the user
         await tx.insert(notifications).values({
           userId: orderToUpdate.user.id,
@@ -233,13 +250,11 @@ export const orderRouter = createTRPCRouter({
           type: "ORDER_STATUS",
           isRead: false,
         })
-
         // Get the full order with items
         const fullOrder = await tx.query.orders.findFirst({
           where: eq(orders.id, input.orderId),
           with: { orderItems: { with: { menuItem: true } } },
         })
-
         if (fullOrder) {
           // Transform the database result to match the expected type
           const transformedOrder: orderWithOrderItems = {
@@ -251,14 +266,9 @@ export const orderRouter = createTRPCRouter({
               specialInstructions: item.specialInstructions ?? "",
             })),
           }
-
-          // Emit the update through SSE
-          const callbacks = orderUpdateEmitter.get(input.orderId)
-          if (callbacks) {
-            callbacks.forEach(callback => callback(transformedOrder))
-          }
+          // Emit the update through the new event emitter
+          orderEventEmitter.emit("orderUpdate", transformedOrder)
         }
-
         // Prepare email content
         const RESEND = new Resend(env.AUTH_RESEND_KEY)
         let emailSubject = `Order Update from ${env.NEXT_PUBLIC_APP_NAME}`
@@ -314,7 +324,6 @@ export const orderRouter = createTRPCRouter({
             <p>Your order (${itemsList}) status has been updated to: ${input.status}</p>
           `
         }
-
         // Send email notification using Resend
         await RESEND.emails.send({
           from: env.ADMIN_EMAIL,
@@ -322,7 +331,6 @@ export const orderRouter = createTRPCRouter({
           subject: emailSubject,
           html: emailContent,
         })
-
         return updatedOrder
       })
     }),
@@ -377,35 +385,17 @@ export const orderRouter = createTRPCRouter({
       return { success: true }
     }),
 
-  // Add subscription endpoint for order updates
-  // In src/server/api/routers/order.ts
-  onOrderUpdate: subscriptionProcedure
+  onOrderUpdate: protectedProcedure
     .input(z.object({ orderIds: z.array(z.string()) }))
-    .subscription(({ input }) => {
-      return observable<orderWithOrderItems>(emit => {
-        const onUpdate = (order: orderWithOrderItems) => {
-          if (input.orderIds.includes(order.id)) {
-            emit.next(order)
-          }
+    .subscription(async function* (opts) {
+      // Listen for order update events
+      for await (const [order] of orderEventEmitter.toIterable("orderUpdate", {
+        signal: opts.signal,
+      })) {
+        // Only yield orders that match the requested order IDs
+        if (opts.input.orderIds.includes(order.id)) {
+          yield order
         }
-
-        // Add the callback to the emitter map for each order ID
-        input.orderIds.forEach(orderId => {
-          if (!orderUpdateEmitter.has(orderId)) {
-            orderUpdateEmitter.set(orderId, new Set())
-          }
-          orderUpdateEmitter.get(orderId)?.add(onUpdate)
-        })
-
-        // Return cleanup function
-        return () => {
-          input.orderIds.forEach(orderId => {
-            orderUpdateEmitter.get(orderId)?.delete(onUpdate)
-            if (orderUpdateEmitter.get(orderId)?.size === 0) {
-              orderUpdateEmitter.delete(orderId)
-            }
-          })
-        }
-      })
+      }
     }),
 })
