@@ -21,7 +21,9 @@ import { truncate } from "@/lib/truncate"
 import type { MenuItems } from "@/server/db/schema"
 
 type RestaurantMenuItemProps = {
-  item: MenuItems
+  item: MenuItems & {
+    blurImage?: string | null
+  }
   vendor: {
     id: string
     name: string
@@ -64,6 +66,8 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
             alt={item.name}
             width={300}
             height={192}
+            placeholder={item.blurImage ? "blur" : "empty"}
+            blurDataURL={item.blurImage!}
             className="w-full h-auto object-cover shadow-xs hover:shadow-lg transition-shadow"
           />
           <div

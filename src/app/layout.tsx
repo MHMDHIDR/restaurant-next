@@ -1,11 +1,11 @@
 import { GeistSans } from "geist/font/sans"
 import { SessionProvider } from "next-auth/react"
+import { Providers } from "@/app/providers"
+import { ThemeProvider } from "@/app/providers/theme-provider"
 import Nav from "@/components/custom/nav"
 import { auth } from "@/server/auth"
-import { Providers } from "./providers"
-import { ThemeProvider } from "./providers/theme-provider"
-import "../styles/globals.css"
 import type { Metadata } from "next"
+import "../styles/globals.css"
 
 export const metadata: Metadata = {
   title: "Restaurant App",

@@ -18,6 +18,7 @@ import type { RouterOutputs } from "@/trpc/react"
 type VendorWithMenuItems = Vendors & {
   menuItems: RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"]
   menuItemsCount: number
+  blurLogoImage: string | null
   blurCoverImage: string | null
   pagination: PaginationResult | undefined
 }
@@ -232,6 +233,7 @@ export const vendorRouter = createTRPCRouter({
       }
 
       const blurCoverImage = await getBlurPlaceholder(vendor.coverImage, 300, 90)
+      const blurLogoImage = await getBlurPlaceholder(vendor.logo, 100, 100)
 
       if (input.getItems) {
         const caller = createCaller(ctx)
@@ -252,10 +254,17 @@ export const vendorRouter = createTRPCRouter({
           searchParams: input.searchParams,
         })
 
-        return { ...vendor, blurCoverImage, menuItems, pagination, menuItemsCount }
+        return { ...vendor, blurLogoImage, blurCoverImage, menuItems, pagination, menuItemsCount }
       }
 
-      return { ...vendor, blurCoverImage, menuItems: [], pagination: undefined, menuItemsCount: 0 }
+      return {
+        ...vendor,
+        blurLogoImage,
+        blurCoverImage,
+        menuItems: [],
+        pagination: undefined,
+        menuItemsCount: 0,
+      }
     }),
 
   getBySessionUser: protectedProcedure.query(async ({ ctx }) => {

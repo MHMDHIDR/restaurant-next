@@ -9,6 +9,7 @@ import { Logo } from "@/components/custom/icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/hooks/use-cart"
+import { LoadingCard } from "./data-table/loading"
 import Notifications from "./notifications"
 import type { Session } from "next-auth"
 
@@ -21,8 +22,8 @@ export default function Nav({
 }) {
   isHidden = isHidden ?? false
   const pathname = usePathname()
-  const { data: session } = useSession()
-  const currentUser = session?.user ?? user
+  const { data: session, status } = useSession()
+  const currentUser = session?.user ?? (user as Session["user"])
   const { items } = useCart()
   const itemCount = items.reduce((total, item) => total + (item.quantity ?? 1), 0)
 
@@ -48,10 +49,12 @@ export default function Nav({
               </Button>
             </Link>
           )}
-          {user ? (
+          {!currentUser && status === "loading" ? (
+            <LoadingCard renderedSkeletons={1} layout="vertical" className={"h-9 w-52"} />
+          ) : currentUser ? (
             <>
               <Notifications />
-              <AccountNav user={currentUser!} />
+              <AccountNav user={currentUser} />
             </>
           ) : (
             <Link href="/signin">

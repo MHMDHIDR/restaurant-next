@@ -175,13 +175,15 @@ export default async function RestaurantPage({ params, searchParams }: Restauran
             )}
 
             <div className="flex items-center gap-3">
-              <div className="relative w-36">
+              <div className="relative max-w-32 max-h-32 size-32">
                 <Image
                   src={vendor.logo}
                   alt={`${vendor.name} logo`}
                   width={128}
                   height={128}
-                  className="object-contain shadow-md rounded-md w-full"
+                  placeholder={vendor.blurLogoImage ? "blur" : "empty"}
+                  blurDataURL={vendor.blurLogoImage!}
+                  className="object-cover shadow-md rounded-md min-w-full min-h-full"
                 />
               </div>
               <div className="select-none">

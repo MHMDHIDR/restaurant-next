@@ -5,6 +5,7 @@ import { menuItemSchema } from "@/app/schemas/menuItem"
 import { ITEMS_PER_PAGE } from "@/lib/constants"
 import { createSlug } from "@/lib/create-slug"
 import { extractS3FileName } from "@/lib/extract-s3-filename"
+import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { pagination } from "@/lib/pagination"
 import { createCaller } from "@/server/api/root"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc"
@@ -132,7 +133,14 @@ export const menuItemRouter = createTRPCRouter({
         const items = await ctx.db.query.menuItems.findMany({
           where: whereCondition,
         })
-        return { items, count }
+
+        const itemsWithBlurImages = items.map(async item => {
+          const blurItemImage = await getBlurPlaceholder(item.image, 200, 200)
+
+          return { ...item, blurImage: item.image ? blurItemImage : null }
+        })
+
+        return { items: await Promise.all(itemsWithBlurImages), count }
       }
 
       // Handle pagination when searchParams is provided
@@ -146,8 +154,14 @@ export const menuItemRouter = createTRPCRouter({
         offset: paginationData.offset,
       })
 
+      const itemsWithBlurImages = paginatedItems.map(async item => {
+        const blurItemImage = await getBlurPlaceholder(item.image, 200, 200)
+        return { ...item, blurImage: item.image ? blurItemImage : null }
+      })
+      const paginatedItemsWithBlur = await Promise.all(itemsWithBlurImages)
+
       return {
-        items: paginatedItems,
+        items: paginatedItemsWithBlur,
         count,
         pagination: paginationData,
       }
