@@ -1,7 +1,8 @@
 "use client"
 
-import { CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
+import { ArrowLeft, CookingPot, Loader2, MapPin, Package, Truck } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import CopyText from "@/components/custom/copy"
 import { Button } from "@/components/ui/button"
@@ -65,6 +66,12 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
 
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4">
+      <Link
+        href="/orders"
+        className="text-sm text-blue-500 mb-4 inline-flex gap-x-2 hover:underline underline-offset-4"
+      >
+        <ArrowLeft className="size-5" /> Back to Orders
+      </Link>
       <h1 className="text-3xl font-bold mb-8">Order Details</h1>
 
       <div className="relative">

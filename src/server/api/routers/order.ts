@@ -1,7 +1,6 @@
-// Create a simple event emitter for SSE
 import EventEmitter, { on } from "node:events"
 import { TRPCError } from "@trpc/server"
-import { desc, eq, sql } from "drizzle-orm"
+import { desc, eq, inArray, sql } from "drizzle-orm"
 import { Resend } from "resend"
 import { z } from "zod"
 import { orderItemSchema, orderStatusSchema } from "@/app/schemas/order"
@@ -388,13 +387,83 @@ export const orderRouter = createTRPCRouter({
   onOrderUpdate: protectedProcedure
     .input(z.object({ orderIds: z.array(z.string()) }))
     .subscription(async function* (opts) {
-      // Listen for order update events
-      for await (const [order] of orderEventEmitter.toIterable("orderUpdate", {
-        signal: opts.signal,
-      })) {
-        // Only yield orders that match the requested order IDs
-        if (opts.input.orderIds.includes(order.id)) {
-          yield order
+      // Store the last known state of orders
+      const lastKnownStates = new Map<string, string>()
+
+      // Initial fetch to establish baseline
+      const initialOrders = await opts.ctx.db.query.orders.findMany({
+        where: inArray(orders.id, opts.input.orderIds),
+        with: { orderItems: { with: { menuItem: true } } },
+      })
+
+      // Initialize last known states
+      for (const order of initialOrders) {
+        lastKnownStates.set(order.id, order.status)
+      }
+
+      // Polling interval (adjust as needed - 2 seconds for responsiveness)
+      const POLL_INTERVAL = 2000
+
+      while (true) {
+        // Check if subscription was cancelled
+        if (opts.signal?.aborted) {
+          break
+        }
+
+        try {
+          // Fetch current order states
+          const currentOrders = await opts.ctx.db.query.orders.findMany({
+            where: inArray(orders.id, opts.input.orderIds),
+            with: { orderItems: { with: { menuItem: true } } },
+          })
+
+          // Check for status changes
+          for (const order of currentOrders) {
+            const lastKnownStatus = lastKnownStates.get(order.id)
+
+            if (lastKnownStatus && lastKnownStatus !== order.status) {
+              // Status changed - transform and yield the order
+              const transformedOrder: orderWithOrderItems = {
+                ...order,
+                orderItems: order.orderItems.map(item => ({
+                  ...item,
+                  unitPrice: parseFloat(item.unitPrice),
+                  totalPrice: parseFloat(item.totalPrice),
+                  specialInstructions: item.specialInstructions ?? "",
+                })),
+              }
+
+              // Update last known state
+              lastKnownStates.set(order.id, order.status)
+
+              // Yield the updated order
+              yield transformedOrder
+            } else if (!lastKnownStatus) {
+              // New order - set initial state
+              lastKnownStates.set(order.id, order.status)
+            }
+          }
+
+          // Wait before next poll
+          await new Promise(resolve => {
+            const timeout = setTimeout(resolve, POLL_INTERVAL)
+
+            // Clear timeout if subscription is cancelled
+            opts.signal?.addEventListener("abort", () => {
+              clearTimeout(timeout)
+              resolve(undefined)
+            })
+          })
+        } catch (error) {
+          console.error("Error polling for order updates:", error)
+          // Wait a bit longer on error before retrying
+          await new Promise(resolve => {
+            const timeout = setTimeout(resolve, POLL_INTERVAL * 2)
+            opts.signal?.addEventListener("abort", () => {
+              clearTimeout(timeout)
+              resolve(undefined)
+            })
+          })
         }
       }
     }),
