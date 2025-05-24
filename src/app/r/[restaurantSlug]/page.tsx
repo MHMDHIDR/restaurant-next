@@ -93,13 +93,33 @@ function generatePaginationItems(currentPage: number, totalPages: number) {
   return items
 }
 
-export default async function RestaurantPage({
-  params,
-  searchParams,
-}: {
+type RestaurantPageProps = {
   params: Promise<{ restaurantSlug: Vendors["slug"] }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
-}) {
+}
+
+export async function generateStaticParams() {
+  try {
+    const { items: vendors } = await api.vendor.getAll({
+      status: "ACTIVE",
+      limit: 100,
+    })
+
+    return vendors.map(vendor => ({
+      restaurantSlug: vendor.slug,
+    }))
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+    }
+    return []
+  }
+}
+
+export const dynamic = "force-static"
+export const revalidate = 60
+
+export default async function RestaurantPage({ params, searchParams }: RestaurantPageProps) {
   const { restaurantSlug } = await params
   const searchParamsProp = await searchParams
   const page = searchParamsProp?.page ? Number(searchParamsProp.page) : 1

@@ -3,11 +3,28 @@ import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { api } from "@/trpc/server"
 import type { MenuCategories } from "@/server/db/schema"
 
-export default async function CategoryPage({
-  params,
-}: {
+type CategoryPageProps = {
   params: Promise<{ categorySlug: MenuCategories["slug"] }>
-}) {
+}
+
+export async function generateStaticParams() {
+  try {
+    const { menuCategories: activeCategories } = await api.menuCategory.getAllCategories({
+      hasItems: true,
+    })
+    return activeCategories.map(category => ({ categorySlug: category.slug }))
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+    }
+    return []
+  }
+}
+
+export const dynamic = "force-static"
+export const revalidate = 60
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
   const { categorySlug } = await params
 
   try {

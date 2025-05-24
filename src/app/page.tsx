@@ -15,6 +15,9 @@ type VendorWithMenuItems = RouterOutputs["vendor"]["getFeatured"]["items"][numbe
 
 type MenuItem = RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"][number]
 
+export const dynamic = "force-static"
+export const revalidate = 60
+
 export default async function Home() {
   const { items: vendors } = await api.vendor.getFeatured({
     status: "ACTIVE",

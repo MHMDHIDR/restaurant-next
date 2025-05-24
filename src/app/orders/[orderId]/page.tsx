@@ -4,11 +4,28 @@ import { api } from "@/trpc/server"
 import { OrderTrackingContent } from "./order-tracking-content"
 import type { orderWithOrderItems } from "@/types"
 
-export default async function OrderTrackingPage({
-  params,
-}: {
-  params: Promise<{ orderId: string }>
-}) {
+type OrderTrackingPageProps = { params: Promise<{ orderId: string }> }
+
+export async function generateStaticParams() {
+  try {
+    const { orders, count } = await api.order.getAllOrders()
+    if (!orders || count === 0) {
+      return []
+    }
+
+    return orders.map(order => ({ orderId: order.id }))
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+    }
+    return []
+  }
+}
+
+export const dynamic = "force-static"
+export const revalidate = 60
+
+export default async function OrderTrackingPage({ params }: OrderTrackingPageProps) {
   const { orderId } = await params
   const session = await auth()
   if (!session) {

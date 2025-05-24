@@ -49,6 +49,9 @@ function generatePaginationItems(currentPage: number, totalPages: number) {
   return items
 }
 
+export const dynamic = "force-static"
+export const revalidate = 60
+
 export default async function CategoriesPage({
   searchParams,
 }: {
