@@ -23,7 +23,7 @@ export default function Nav({
   isHidden = isHidden ?? false
   const pathname = usePathname()
   const { data: session, status } = useSession()
-  const currentUser = session?.user ?? (user as Session["user"])
+  const currentUser = session?.user ?? user
   const { items } = useCart()
   const itemCount = items.reduce((total, item) => total + (item.quantity ?? 1), 0)
 
