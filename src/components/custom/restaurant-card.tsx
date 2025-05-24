@@ -19,7 +19,7 @@ export function RestaurantCard({ vendor }: { vendor: Vendors }) {
         </div>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="relative h-12 w-12">
+            <div className="relative size-12">
               <Image
                 src={vendor.logo}
                 alt={`${vendor.name} logo`}

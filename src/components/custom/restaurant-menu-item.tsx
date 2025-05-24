@@ -1,5 +1,6 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -14,8 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useCart } from "@/hooks/use-cart"
-import { useToast } from "@/hooks/use-toast"
 import { formatPrice } from "@/lib/format-price"
 import { truncate } from "@/lib/truncate"
 import type { MenuItems } from "@/server/db/schema"
@@ -31,31 +30,18 @@ type RestaurantMenuItemProps = {
   }
 }
 
+// Create a client-only component for cart functionality
+const AddToCartButton = dynamic(() => import("./add-to-cart-button"), {
+  ssr: false,
+  loading: () => (
+    <Button className="w-full mt-3" disabled>
+      Loading...
+    </Button>
+  ),
+})
+
 export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemProps) {
-  const toast = useToast()
-  const { addItem } = useCart()
-  const [selectedAddons, setSelectedAddons] = useState<Record<string, string[]>>({})
-
-  const handleAddToCart = (item: MenuItems) => {
-    const itemAddons = selectedAddons[item.id] ?? []
-    const addonsCost = itemAddons.reduce((total, addonName) => {
-      const addon = item.addons?.find(a => a.toppingName === addonName)
-      return total + (addon?.toppingPrice ?? 0)
-    }, 0)
-
-    addItem({
-      id: item.id,
-      name: item.name,
-      price: Number(item.price) + addonsCost,
-      image: item.image,
-      vendorId: vendor.id,
-      vendorName: vendor.name,
-      selectedAddons: itemAddons,
-      quantity: 1,
-    })
-
-    toast.success(`${item.name} has been added to your cart.`)
-  }
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([])
 
   return (
     <Dialog>
@@ -118,16 +104,14 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
               {item.addons.map(addon => (
                 <label key={addon.toppingName} className="flex items-center gap-2">
                   <Checkbox
-                    id="addon-checkbox"
-                    checked={selectedAddons[item.id]?.includes(addon.toppingName)}
-                    onCheckedChange={e => {
-                      const current = selectedAddons[item.id] ?? []
-                      setSelectedAddons({
-                        ...selectedAddons,
-                        [item.id]: e.valueOf()
-                          ? [...current, addon.toppingName]
-                          : current.filter(name => name !== addon.toppingName),
-                      })
+                    id={`addon-${addon.toppingName}`}
+                    checked={selectedAddons.includes(addon.toppingName)}
+                    onCheckedChange={checked => {
+                      setSelectedAddons(prev =>
+                        checked
+                          ? [...prev, addon.toppingName]
+                          : prev.filter(name => name !== addon.toppingName),
+                      )
                     }}
                   />
                   <span className="text-sm space-x-1">
@@ -138,9 +122,7 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
               ))}
             </div>
           )}
-          <Button onClick={() => handleAddToCart(item)} className="w-full mt-3">
-            Add to Cart
-          </Button>
+          <AddToCartButton item={item} vendor={vendor} selectedAddons={selectedAddons} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

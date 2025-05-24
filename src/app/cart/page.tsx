@@ -4,6 +4,8 @@ import { Trash2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { ConfirmationDialog } from "@/components/custom/data-table/confirmation-dialog"
 import { LoadingPage } from "@/components/custom/loading"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,8 +14,10 @@ import { DELIVERY_FEE } from "@/lib/constants"
 import { formatPrice } from "@/lib/format-price"
 
 export default function CartPage() {
+  const [isEmptyCartDialogIsOpen, setIsEmptyCartDialogIsOpen] = useState(false)
+
   const router = useRouter()
-  const { items, total, updateQuantity, removeItem, isLoading } = useCart()
+  const { items, total, updateQuantity, removeItem, isLoading, clearCart } = useCart()
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -26,7 +30,7 @@ export default function CartPage() {
           <div className="text-center">
             <p className="mb-4 text-gray-600">Your cart is empty</p>
             <Link href="/">
-              <Button>Continue Shopping</Button>
+              <Button>Continue Adding Items</Button>
             </Link>
           </div>
         </div>
@@ -51,14 +55,19 @@ export default function CartPage() {
                   </div>
                   <div className="grow">
                     <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground">{formatPrice(item.price)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Price {item.selectedAddons?.length ? "with Add-ons " : null}
+                      <strong className="text-primary">{formatPrice(item.price)}</strong>
+                    </p>
                     {item.selectedAddons && item.selectedAddons.length > 0 && (
-                      <ol className="text-sm text-muted-foreground">
+                      <>
                         {item.selectedAddons.length > 1 ? "Add-ons:" : "Add-on:"}
-                        {item.selectedAddons.map(addon => (
-                          <li key={addon}>{addon}</li>
-                        ))}
-                      </ol>
+                        <ol className="text-sm text-muted-foreground list-decimal ml-4">
+                          {item.selectedAddons.map(addon => (
+                            <li key={addon}>{addon}</li>
+                          ))}
+                        </ol>
+                      </>
                     )}
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -109,11 +118,35 @@ export default function CartPage() {
                     <span>{formatPrice(total + DELIVERY_FEE)}</span>
                   </div>
                 </div>
-                <Button className="w-full" onClick={() => router.push("/checkout")}>
-                  Checkout
-                </Button>
+                <div className="flex gap-1.5">
+                  <Button className="w-full" onClick={() => router.push("/checkout")}>
+                    Checkout
+                  </Button>
+                  <Button
+                    className="w-fit"
+                    variant="destructive"
+                    onClick={() => setIsEmptyCartDialogIsOpen(true)}
+                  >
+                    <Trash2 size={7} />
+                    <span className="sr-only">Empty Cart</span>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
+
+            <ConfirmationDialog
+              open={isEmptyCartDialogIsOpen}
+              onOpenChange={setIsEmptyCartDialogIsOpen}
+              title="Confirm Empty Cart"
+              description={`${
+                items.length > 0
+                  ? `Are you sure you want to empty your cart from ${items.length} menu items?`
+                  : "Are you sure you want to empty your cart?"
+              } This action cannot be undone.`}
+              buttonText="Empty Cart"
+              buttonClass="bg-destructive hover:bg-destructive/90"
+              onConfirm={clearCart}
+            />
           </div>
         </div>
       )}

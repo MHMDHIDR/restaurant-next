@@ -40,7 +40,7 @@ export function SearchBar() {
       />
       <button
         type="submit"
-        className="flex items-center px-2.5 py-1.5 text-white rounded-full bg-primary hover:bg-primary-dark transition-colors"
+        className="flex cursor-pointer items-center px-2.5 py-1.5 text-white rounded-full bg-primary hover:bg-primary-dark transition-colors"
       >
         <IconSearch className="mr-1" size={20} />
         <span className="hidden sm:inline-flex">Search</span>
