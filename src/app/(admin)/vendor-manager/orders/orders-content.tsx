@@ -101,7 +101,7 @@ export function OrdersContent({ orders }: OrdersContentProps) {
   ]
 
   return (
-    <div className="container max-w-6xl md:px-3.5 px-2 py-3">
+    <div className="container max-w-7xl mx-auto md:px-3.5 px-2 py-3">
       <DataTable<Orders & BaseEntity>
         columns={columns as ColumnDef<Orders & BaseEntity>[]}
         data={ordersWithName}

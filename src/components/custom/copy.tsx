@@ -37,7 +37,7 @@ export default function CopyText({ text, className }: { text: string; className?
         {isCopied && (
           <Check
             className={cn(
-              "absolute top-0 left-0 size-6 text-white",
+              "absolute top-0 left-0 size-4.5 text-white",
               "animate-in zoom-in-50 duration-200",
               "rounded-full bg-green-600",
               "animate-[pulse_1s_ease-in-out]",

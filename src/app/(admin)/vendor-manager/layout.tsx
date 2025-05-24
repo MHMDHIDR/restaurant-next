@@ -88,7 +88,7 @@ export default async function DashboardLayout({
             icon: <Package className="size-4" />,
           },
           {
-            title: "Create",
+            title: "Create Category",
             url: "/vendor-manager/categories?view=new-category",
             icon: <PackagePlus className="size-4" />,
           },
