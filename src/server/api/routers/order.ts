@@ -9,7 +9,7 @@ import { env } from "@/env"
 import { rateLimiter } from "@/lib/rateLimiter"
 import { PaymentService } from "@/lib/stripe"
 import { createTRPCRouter, protectedProcedure, subscriptionProcedure } from "@/server/api/trpc"
-import { orderItems, orders } from "@/server/db/schema"
+import { notifications, orderItems, orders } from "@/server/db/schema"
 import type { orderWithOrderItems } from "@/types"
 
 // Create a simple event emitter for SSE
@@ -199,51 +199,132 @@ export const orderRouter = createTRPCRouter({
   updateOrderStatus: protectedProcedure
     .input(z.object({ orderId: z.string(), status: orderStatusSchema }))
     .mutation(async ({ ctx, input }) => {
-      const [updatedOrder] = await ctx.db
-        .update(orders)
-        .set({ status: input.status, updatedAt: new Date() })
-        .where(eq(orders.id, input.orderId))
-        .returning()
-
-      if (!updatedOrder) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Order not found",
-        })
-      }
-
-      // Get the full order with items
-      const fullOrder = await ctx.db.query.orders.findFirst({
+      const orderToUpdate = await ctx.db.query.orders.findFirst({
         where: eq(orders.id, input.orderId),
         with: {
-          orderItems: {
-            with: {
-              menuItem: true,
-            },
-          },
+          user: true,
+          orderItems: { with: { menuItem: { columns: { name: true } } } },
         },
       })
 
-      if (fullOrder) {
-        // Transform the database result to match the expected type
-        const transformedOrder: orderWithOrderItems = {
-          ...fullOrder,
-          orderItems: fullOrder.orderItems.map(item => ({
-            ...item,
-            unitPrice: parseFloat(item.unitPrice),
-            totalPrice: parseFloat(item.totalPrice),
-            specialInstructions: item.specialInstructions ?? "",
-          })),
-        }
-
-        // Emit the update through SSE
-        const callbacks = orderUpdateEmitter.get(input.orderId)
-        if (callbacks) {
-          callbacks.forEach(callback => callback(transformedOrder))
-        }
+      if (!orderToUpdate) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" })
       }
 
-      return updatedOrder
+      // Create notification
+      const notificationTitle = `Order ${input.status.toLowerCase().replace(/_/g, " ")}`
+      const itemsList = orderToUpdate.orderItems
+        .map(item => `${item.quantity}x ${item.menuItem.name}`)
+        .join(", ")
+
+      return await ctx.db.transaction(async tx => {
+        // Update order status
+        const [updatedOrder] = await tx
+          .update(orders)
+          .set({ status: input.status, updatedAt: new Date() })
+          .where(eq(orders.id, orderToUpdate.id))
+          .returning()
+
+        // Create notification for the user
+        await tx.insert(notifications).values({
+          userId: orderToUpdate.user.id,
+          title: notificationTitle,
+          message: `Your order (${itemsList}) has been ${input.status.toLowerCase().replace(/_/g, " ")}`,
+          type: "ORDER_STATUS",
+          isRead: false,
+        })
+
+        // Get the full order with items
+        const fullOrder = await tx.query.orders.findFirst({
+          where: eq(orders.id, input.orderId),
+          with: { orderItems: { with: { menuItem: true } } },
+        })
+
+        if (fullOrder) {
+          // Transform the database result to match the expected type
+          const transformedOrder: orderWithOrderItems = {
+            ...fullOrder,
+            orderItems: fullOrder.orderItems.map(item => ({
+              ...item,
+              unitPrice: parseFloat(item.unitPrice),
+              totalPrice: parseFloat(item.totalPrice),
+              specialInstructions: item.specialInstructions ?? "",
+            })),
+          }
+
+          // Emit the update through SSE
+          const callbacks = orderUpdateEmitter.get(input.orderId)
+          if (callbacks) {
+            callbacks.forEach(callback => callback(transformedOrder))
+          }
+        }
+
+        // Prepare email content
+        const RESEND = new Resend(env.AUTH_RESEND_KEY)
+        let emailSubject = `Order Update from ${env.NEXT_PUBLIC_APP_NAME}`
+        let emailContent = ""
+
+        switch (input.status) {
+          case "CONFIRMED":
+            emailContent = `
+            <h2>Order Confirmed</h2>
+            <p>Your order (${itemsList}) has been confirmed and is being processed.</p>
+            <p>We'll notify you when it starts being prepared.</p>
+          `
+            break
+          case "PREPARING":
+            emailContent = `
+            <h2>Order Being Prepared</h2>
+            <p>Good news! Your order (${itemsList}) is now being prepared.</p>
+            <p>We'll let you know when it's ready for pickup or delivery.</p>
+          `
+            break
+          case "READY_FOR_PICKUP":
+            emailContent = `
+            <h2>Order Ready for Pickup</h2>
+            <p>Great news! Your order (${itemsList}) is ready for pickup.</p>
+            <p>Please come to our restaurant to collect your order.</p>
+          `
+            break
+          case "OUT_FOR_DELIVERY":
+            emailContent = `
+            <h2>Order Out for Delivery</h2>
+            <p>Your order (${itemsList}) is now out for delivery!</p>
+            <p>Our delivery partner is on the way to your location.</p>
+          `
+            break
+          case "DELIVERED":
+            emailContent = `
+            <h2>Order Delivered</h2>
+            <p>Your order (${itemsList}) has been delivered.</p>
+            <p>We hope you enjoy your meal! Thank you for choosing us.</p>
+          `
+            break
+          case "CANCELLED":
+            emailSubject = "Order Cancelled"
+            emailContent = `
+            <h2>Order Cancelled</h2>
+            <p>We're sorry, but your order (${itemsList}) has been cancelled.</p>
+            <p>If you have any questions, please contact our support team.</p>
+          `
+            break
+          default:
+            emailContent = `
+            <h2>Order Status Update</h2>
+            <p>Your order (${itemsList}) status has been updated to: ${input.status}</p>
+          `
+        }
+
+        // Send email notification using Resend
+        await RESEND.emails.send({
+          from: env.ADMIN_EMAIL,
+          to: orderToUpdate.user.email,
+          subject: emailSubject,
+          html: emailContent,
+        })
+
+        return updatedOrder
+      })
     }),
 
   emailInvoice: protectedProcedure

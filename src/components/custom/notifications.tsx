@@ -12,6 +12,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { formatDate } from "@/lib/format-date"
 import { api } from "@/trpc/react"
+import { Badge } from "../ui/badge"
 import type { Notifications } from "@/server/db/schema"
 
 type OptimisticAction = { type: "markAsRead"; id: string } | { type: "markAllAsRead" }
@@ -23,10 +24,12 @@ export default function Notifications() {
   const [isProcessing, setIsProcessing] = useState<Record<string, boolean>>({})
   const prevNotificationsRef = useRef<Notifications[]>([])
 
+  const REFRESH_INTERVAL = 1000 * 10 // 10 seconds
+
   const { data: notifications, refetch } = api.notification.getAll.useQuery(undefined, {
     enabled: !!session?.user,
-    staleTime: 1000 * 60 * 2, // Cache for 2 minutes
-    refetchInterval: 1000 * 60 * 2, // Refetch every 2 minutes
+    staleTime: REFRESH_INTERVAL,
+    refetchInterval: REFRESH_INTERVAL,
   })
 
   const markSoundPlayed = api.notification.markSoundPlayed.useMutation()
@@ -153,9 +156,9 @@ export default function Notifications() {
                 onClick={() => handleMarkAsRead(notification.id)}
               >
                 {isProcessing[notification.id] ? (
-                  <Loader2 className="flex translate-y-1.5 text-blue-500 animate-spin-spinner bg-blue-500 h-7 w-7 border-[0.5px] border-blue-500/30 bg-blue-500/15 rounded-full p-1 group-hover:border-blue-500/70" />
+                  <Loader2 className="flex translate-y-1.5 text-blue-500 animate-spin-spinner size-7 border-[0.5px] border-blue-500/30 bg-blue-500/15 rounded-full p-1 group-hover:border-blue-500/70" />
                 ) : (
-                  <span className="flex translate-y-1.5 bg-blue-500 h-7 w-7 border-[0.5px] border-blue-500/30 bg-blue-500/15 rounded-full p-1 group-hover:border-blue-500/70" />
+                  <span className="flex translate-y-1.5 size-7 border-[0.5px] border-blue-500/30 bg-blue-500/15 rounded-full p-1 group-hover:border-blue-500/70" />
                 )}
                 <div className="flex flex-col gap-1">
                   <p className="font-medium">{notification.title}</p>
@@ -180,7 +183,7 @@ export default function Notifications() {
 
     return (
       <div className="grid grid-cols-[2.5rem_1fr] items-center p-2">
-        <Check className="h-7 w-7 text-green-500 border-[0.5px] border-green-500/30 bg-green-500/15 rounded-full p-1" />
+        <Check className="size-7 text-green-500 border-[0.5px] border-green-500/30 bg-green-500/15 rounded-full p-1" />
         <div className="flex flex-col gap-1">
           <p className="font-medium">{notification.title}</p>
           <p className="text-gray-600 dark:text-gray-300">{notification.message}</p>
@@ -198,9 +201,12 @@ export default function Notifications() {
         <Button variant="outline" className="relative">
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-blue-500" />
+            <span className="absolute -right-1 -top-1 flex size-3.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+              <Badge className="absolute inline-flex size-3 z-10 items-center justify-center rounded-full bg-red-500 text-xs font-semibold text-white">
+                {unreadCount}
+              </Badge>
+              <span className="relative inline-flex size-3.5 rounded-full bg-red-500" />
             </span>
           )}
         </Button>

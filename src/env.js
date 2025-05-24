@@ -17,6 +17,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url(),
     NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string().min(1),
+    NEXT_PUBLIC_APP_NAME: z.string().min(1).default("Restaurant"),
   },
   runtimeEnv: {
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
@@ -32,6 +33,7 @@ export const env = createEnv({
 
     NEXT_PUBLIC_STRIPE_PUBLIC_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

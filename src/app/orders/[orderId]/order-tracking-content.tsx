@@ -22,7 +22,6 @@ const orderStatuses = [
 export function OrderTrackingContent({ order: initialOrder }: { order: orderWithOrderItems }) {
   const [progress, setProgress] = useState(0)
   const [isSendingInvoice, setIsSendingInvoice] = useState(false)
-  const [lastStatus] = useState(initialOrder.status)
   const toast = useToast()
   const FIVE_SECONDS_REFETCH_INTERVAL = 5000
 
@@ -31,21 +30,6 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
     { orderId: initialOrder.id },
     { refetchInterval: FIVE_SECONDS_REFETCH_INTERVAL },
   )
-
-  const emailInvoice = api.order.emailInvoice.useMutation({
-    onMutate: () => {
-      setIsSendingInvoice(true)
-      toast.loading("Sending order invoice...")
-    },
-    onSuccess: async () => {
-      toast.success("Order invoice sent successfully! Please check your email.")
-      setIsSendingInvoice(false)
-    },
-    onError: error => {
-      toast.error(`Failed to send invoice: ${error.message}`)
-      setIsSendingInvoice(false)
-    },
-  })
 
   useEffect(() => {
     const currentIndex = orderStatuses.indexOf(order.status as (typeof orderStatuses)[number])
@@ -63,6 +47,21 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
   }
 
   const iconPos = getIconPosition(progress)
+
+  const emailInvoice = api.order.emailInvoice.useMutation({
+    onMutate: () => {
+      setIsSendingInvoice(true)
+      toast.loading("Sending order invoice...")
+    },
+    onSuccess: async () => {
+      toast.success("Order invoice sent successfully! Please check your email.")
+      setIsSendingInvoice(false)
+    },
+    onError: error => {
+      toast.error(`Failed to send invoice: ${error.message}`)
+      setIsSendingInvoice(false)
+    },
+  })
 
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4">
