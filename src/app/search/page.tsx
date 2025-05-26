@@ -1,10 +1,15 @@
+import { IconCategory } from "@tabler/icons-react"
+import Link from "next/link"
 import { Suspense } from "react"
+import LOGO_PATH from "@/../public/logo.png"
 import { CategoriesGrid } from "@/components/custom/categories"
 import { LoadingCard } from "@/components/custom/data-table/loading"
 import EmptyState from "@/components/custom/empty-state"
 import { RestaurantCard } from "@/components/custom/restaurant-card"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { SearchBar } from "@/components/custom/search"
+import { Button } from "@/components/ui/button"
+import { env } from "@/env"
 import { truncate } from "@/lib/truncate"
 import { api } from "@/trpc/server"
 
@@ -60,10 +65,17 @@ async function EmptyStateWrapper({ query }: { query: string }) {
 
   if (vendors.length === 0 && categories.length === 0 && menuItems.length === 0) {
     return (
-      <EmptyState className="text-center text-muted-foreground">
+      <EmptyState className="text-center text-muted-foreground flex flex-col gap-6" isSmall>
         <p className="mt-4 text-sm text-gray-500 select-none dark:text-gray-400">
-          No results found for &quot;{query}&quot;
+          Oof! 😮‍💨 We searched the universe, but couldn&apos;t find anything for &quot;
+          {query}&quot;.
         </p>
+        <Link href="/c">
+          <Button>
+            <IconCategory className="size-5" />
+            Maybe try browsing categories?
+          </Button>
+        </Link>
       </EmptyState>
     )
   }
@@ -71,11 +83,28 @@ async function EmptyStateWrapper({ query }: { query: string }) {
   return null
 }
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ search?: string }>
-}) {
+type SearchPageProps = { searchParams: Promise<{ search?: string }> }
+
+export async function generateMetadata({ searchParams }: SearchPageProps) {
+  const searchQuery = (await searchParams).search ?? ""
+
+  return {
+    title: `Search Results for "${searchQuery}" | ${env.NEXT_PUBLIC_APP_NAME}`,
+    description: env.NEXT_PUBLIC_APP_NAME,
+    openGraph: {
+      images: [
+        {
+          url: LOGO_PATH.src,
+          alt: env.NEXT_PUBLIC_APP_NAME,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+  }
+}
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
   const query = (await searchParams).search ?? ""
 
   return !query ? (

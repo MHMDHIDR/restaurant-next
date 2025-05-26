@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
+import { env } from "@/env"
+import { APP_LOGO } from "@/lib/constants"
 import { api } from "@/trpc/server"
 import type { MenuItems, Vendors } from "@/server/db/schema"
 
@@ -22,6 +24,38 @@ export async function generateStaticParams() {
 
 export const dynamic = "force-static"
 export const revalidate = 60
+
+export async function generateMetadata({ params }: ItemPageProps) {
+  const { restaurantSlug: vendorSlug, itemSlug } = await params
+
+  try {
+    const { item, vendor } = await api.menuItem.getMenuItemByVendorSlugAndItemSlug({
+      vendorSlug,
+      itemSlug,
+    })
+    if (!item || !vendor) return {}
+
+    return {
+      title: `${item.name} | ${vendor.name} | ${env.NEXT_PUBLIC_APP_NAME}`,
+      description: `${item.description ?? vendor.description} | ${env.NEXT_PUBLIC_APP_NAME}`,
+      openGraph: {
+        title: `${item.name} | ${vendor.name}`,
+        description: item.description || vendor.description,
+        images: [
+          {
+            url: item.image || vendor.logo || APP_LOGO,
+            alt: item.name,
+            width: 1200,
+            height: 630,
+          },
+        ],
+      },
+    }
+  } catch (error) {
+    console.error(error)
+    return {}
+  }
+}
 
 export default async function ItemPage({ params }: ItemPageProps) {
   const { restaurantSlug: vendorSlug, itemSlug } = await params
