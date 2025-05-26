@@ -46,7 +46,7 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -54,8 +54,9 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
       return
     }
 
+    setIsLoadingSuggestions(true)
+
     const fetchSuggestions = async () => {
-      setIsLoading(true)
       try {
         const { vendors, categories, menuItems } = await utils.search.search.fetch({
           query: searchQuery,
@@ -95,7 +96,7 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
         console.error("Suggestion error", err)
         setSuggestions([])
       } finally {
-        setIsLoading(false)
+        setIsLoadingSuggestions(false)
       }
     }
 
@@ -143,7 +144,7 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
         </button>
       </form>
 
-      {isLoading ? (
+      {isLoadingSuggestions ? (
         <Card className="absolute z-10 w-full mt-1 border border-gray-200 shadow-md bg-white">
           <CardContent className="p-2 flex justify-center items-center gap-2 md:gap-3 text-sm text-gray-500">
             <IconChefHat className="animate-bounce size-5" />
@@ -187,7 +188,7 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
           ))}
         </Card>
       ) : (
-        !isLoading &&
+        !isLoadingSuggestions &&
         searchQuery.trim() &&
         suggestions.length === 0 && (
           <Card className="absolute z-10 w-full mt-1 border border-gray-200 shadow-md bg-white">
