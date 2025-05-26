@@ -6,6 +6,7 @@ import Nav from "@/components/custom/nav"
 import { auth } from "@/server/auth"
 import type { Metadata } from "next"
 import "../styles/globals.css"
+import { APP_LOGO } from "@/lib/constants"
 
 export const metadata: Metadata = {
   title: "Restaurant App",
@@ -21,7 +22,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
       <head>
         <meta content="width=device-width, initial-scale=1 maximum-scale=1" name="viewport" />
-        <link href="/logo.svg" rel="icon" type="image/svg+xml" />
+        <link href={APP_LOGO} rel="icon" type="image/svg+xml" />
         <script
           defer
           src="https://analytics.technodevlabs.com/script.js"
@@ -36,7 +37,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               attribute="class"
               defaultTheme={session?.user.theme ?? "light"}
               disableTransitionOnChange
-              enableSystem
+              enableSystem={false}
             >
               {children}
             </ThemeProvider>

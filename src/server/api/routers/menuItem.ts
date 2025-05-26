@@ -167,6 +167,81 @@ export const menuItemRouter = createTRPCRouter({
       }
     }),
 
+  getMenuItemsByVendorSlug: publicProcedure
+    .input(z.object({ vendorSlug: z.string().default("all") }))
+    .query(async ({ ctx, input }) => {
+      let items: (typeof menuItems.$inferSelect)[]
+
+      if (input.vendorSlug === "all") {
+        // Get all menu items
+        items = await ctx.db.query.menuItems.findMany()
+      } else {
+        // First get the vendor by slug
+        const vendor = await ctx.db.query.vendors.findFirst({
+          where: (vendors, { eq }) => eq(vendors.slug, input.vendorSlug),
+        })
+        if (!vendor) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
+        }
+        // Get relevant category IDs for the vendor
+        const categories = await ctx.db.query.menuCategories.findMany({
+          where: (categories, { eq, and }) =>
+            and(eq(categories.vendorId, vendor.id), eq(categories.isActive, true)),
+          columns: { id: true },
+        })
+        const categoryIds = categories.map(cat => cat.id)
+        // Create the where condition to fetch all items in these categories
+        const whereCondition = inArray(menuItems.categoryId, categoryIds)
+        // Fetch all menu items for the vendor
+        items = await ctx.db.query.menuItems.findMany({
+          where: whereCondition,
+        })
+      }
+
+      // Add blur images to the items
+      const itemsWithBlurImages = items.map(async item => {
+        const blurItemImage = await getBlurPlaceholder(item.image, 200, 200)
+        return { ...item, blurImage: item.image ? blurItemImage : null }
+      })
+
+      return { items: await Promise.all(itemsWithBlurImages) }
+    }),
+
+  getMenuItemByVendorSlugAndItemSlug: publicProcedure
+    .input(z.object({ vendorSlug: z.string(), itemSlug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // First get the vendor by slug
+      const vendor = await ctx.db.query.vendors.findFirst({
+        where: (vendors, { eq }) => eq(vendors.slug, input.vendorSlug),
+      })
+      if (!vendor) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" })
+      }
+
+      // Get relevant category IDs for the vendor
+      const categories = await ctx.db.query.menuCategories.findMany({
+        where: (categories, { eq, and }) =>
+          and(eq(categories.vendorId, vendor.id), eq(categories.isActive, true)),
+        columns: { id: true },
+      })
+      const categoryIds = categories.map(cat => cat.id)
+      // Create the where condition to fetch the item
+      const whereCondition = and(
+        inArray(menuItems.categoryId, categoryIds),
+        eq(menuItems.slug, input.itemSlug),
+      )
+      // Fetch the menu item
+      const item = await ctx.db.query.menuItems.findFirst({
+        where: whereCondition,
+      })
+      if (!item) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Menu item not found" })
+      }
+      // Add blur image to the item
+      const blurItemImage = await getBlurPlaceholder(item.image, 200, 200)
+      return { item: { ...item, blurImage: item.image ? blurItemImage : null }, vendor }
+    }),
+
   deleteMenuItem: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

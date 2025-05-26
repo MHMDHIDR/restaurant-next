@@ -1,5 +1,7 @@
+import Link from "next/link"
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import type { LinkProps } from "next/link"
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
@@ -44,6 +46,14 @@ const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
 )
 CardContent.displayName = "CardContent"
 
+const CardContentLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.HTMLAttributes<HTMLAnchorElement> & LinkProps
+>(({ className, href, ...props }, ref) => (
+  <Link href={href} ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContentLink.displayName = "CardContentLink"
+
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
@@ -51,4 +61,4 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 )
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, CardContentLink }

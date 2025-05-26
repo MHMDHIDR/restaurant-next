@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input"
 import { PhoneInput } from "@/components/ui/phone-input"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
+import { APP_LOGO } from "@/lib/constants"
 import { fallbackUsername } from "@/lib/fallback-username"
 import { api } from "@/trpc/react"
 import type { AccountFormValues } from "@/app/schemas/account"
@@ -172,8 +173,8 @@ export function AccountForm({ user }: { user: Session["user"] }) {
                       alt={`Profile Image of ${user.name}`}
                       width={112}
                       height={112}
-                      placeholder="blur"
-                      blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
+                      placeholder={user.blurImageDataURL ? "blur" : "empty"}
+                      blurDataURL={user.blurImageDataURL ?? APP_LOGO}
                       className="object-contain w-20 h-20 rounded-full shadow-sm"
                     />
                   ) : (

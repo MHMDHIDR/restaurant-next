@@ -47,8 +47,8 @@ async function MenuItemsSection({ query }: { query: string }) {
     <section className="mb-12">
       <h2 className="mb-6 text-2xl font-semibold">Menu Items</h2>
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-        {menuItems.map(({ menuItem, vendor }) => (
-          <RestaurantMenuItem key={menuItem.id} item={menuItem} vendor={vendor} />
+        {menuItems.map(item => (
+          <RestaurantMenuItem key={item.id} item={item} vendor={item.vendor} />
         ))}
       </div>
     </section>

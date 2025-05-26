@@ -35,7 +35,7 @@ const AddToCartButton = dynamic(() => import("./add-to-cart-button"), {
   ssr: false,
   loading: () => (
     <Button className="w-full mt-3" disabled>
-      Loading...
+      Add to Cart
     </Button>
   ),
 })
@@ -50,21 +50,23 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
           <Image
             src={item.image}
             alt={item.name}
-            width={300}
-            height={192}
             placeholder={item.blurImage ? "blur" : "empty"}
             blurDataURL={item.blurImage!}
-            className="w-full h-auto object-cover shadow-xs hover:shadow-lg transition-shadow"
+            className="w-75 h-48 object-cover shadow-xs hover:shadow-lg transition-shadow"
+            priority
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 300px"
+            fill
           />
           <div
             className={
-              "absolute bottom-0 w-full px-2.5 py-3.5 bg-linear-to-t from-black/90 via-black/50 to-transparent rounded-md"
+              "absolute bottom-0 w-full px-2.5 pb-1.5 pt-5 bg-linear-to-t from-black/90 via-black/50 to-transparent rounded-md"
             }
           >
             <h1 className="text-gray-200 text-lg font-extrabold drop-shadow-md">
               {truncate(item.name)}
             </h1>
-            <span className="text-green-600">{formatPrice(Number(item.price))}</span>
+            <strong className="text-green-400">{formatPrice(Number(item.price))}</strong>
           </div>
           {vendor.slug && (
             <Link className="text-muted-foreground group text-sm" href={`/r/${vendor.slug}`}>
@@ -93,6 +95,10 @@ export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemP
                 width={300}
                 height={192}
                 className="w-full max-h-72 object-cover rounded-md shadow-sm mt-2"
+                loading="lazy"
+                placeholder={item.blurImage ? "blur" : "empty"}
+                blurDataURL={item.blurImage!}
+                sizes="(max-width: 768px) 100vw, 300px"
               />
             </div>
           </DialogDescription>

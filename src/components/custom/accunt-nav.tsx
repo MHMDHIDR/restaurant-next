@@ -20,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { checkRoleAccess } from "@/lib/check-role-access"
+import { APP_LOGO } from "@/lib/constants"
 import { fallbackUsername, truncateUsername } from "@/lib/fallback-username"
 import { cn } from "@/lib/utils"
 import { UserRole } from "@/server/db/schema"
@@ -104,7 +105,7 @@ function Avatar({ user, className }: { user: Session["user"]; className?: string
         <AvatarImage
           src={user.image}
           alt={fallbackUsername(user.name) ?? "Restaurant App User"}
-          blurDataURL={user.blurImageDataURL ?? "/logo.svg"}
+          blurDataURL={user.blurImageDataURL ?? APP_LOGO}
           className="object-contain"
         />
       ) : (

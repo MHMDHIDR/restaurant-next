@@ -19,9 +19,9 @@ export default function EmptyState({
     >
       <Image
         alt="Empty State"
-        height={isSmall ? 100 : 300}
         src="/empty-state.svg"
-        width={isSmall ? 100 : 300}
+        height={isSmall ? 170 : 300}
+        width={isSmall ? 170 : 300}
       />
 
       {children ?? <h3 className="text-lg font-semibold">No data available</h3>}

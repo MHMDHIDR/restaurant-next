@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { APP_LOGO } from "@/lib/constants"
 
 export const menuCategorySchema = z.object({
   name: z.string().nonempty("Category name is required"),
@@ -13,7 +14,7 @@ export const updateCategorySchema = z.object({
   id: z.string(),
   name: z.string().optional(),
   description: z.string().optional(),
-  image: z.string().optional(),
+  image: z.string().optional().default(APP_LOGO),
   isActive: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
 })

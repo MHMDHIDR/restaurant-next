@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { APP_LOGO } from "@/lib/constants"
 import { formatDate } from "@/lib/format-date"
 import { api } from "@/trpc/react"
 import { Badge } from "../ui/badge"
@@ -95,7 +96,7 @@ export default function Notifications() {
     if (!notifications) return
 
     const hasUnread = notifications.some(n => !n.isRead)
-    const newFavicon = hasUnread ? "/logo-notification.svg" : "/logo.svg"
+    const newFavicon = hasUnread ? "/logo-notification.svg" : APP_LOGO
 
     document.title = hasUnread
       ? `(${unreadCount}) Unread ${unreadCount > 0 ? "Notifications" : "Notification"} | Restaurant App`

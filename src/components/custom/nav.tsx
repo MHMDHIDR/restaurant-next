@@ -34,7 +34,7 @@ export default function Nav({
     <header className="w-full border-b shadow-xs sticky top-0 z-40 bg-white dark:bg-black">
       <div className="flex items-center justify-between p-1.5 max-w-(--breakpoint-xl) mx-auto">
         <Link href="/" className="flex select-none gap-x-2 text-xl font-bold text-primary">
-          <Logo className="mx-auto h-7 w-7 stroke-1 stroke-current" />
+          <Logo className="mx-auto size-7 stroke-1 stroke-current" />
           <span className="hidden sm:inline-flex">
             Restaurant
             <span className="text-black">App</span>
