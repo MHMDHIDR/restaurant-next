@@ -6,6 +6,7 @@ import { RestaurantCard } from "@/components/custom/restaurant-card"
 import RestaurantMenuItem from "@/components/custom/restaurant-menu-item"
 import { SearchBar } from "@/components/custom/search"
 import { Badge } from "@/components/ui/badge"
+import { getBlurPlaceholder } from "@/lib/optimize-image"
 import { api } from "@/trpc/server"
 import type { RouterOutputs } from "@/trpc/react"
 
@@ -39,15 +40,20 @@ export default async function Home() {
     }),
   )
 
+  const heroImagePath = "/hero-bg.webp"
+  const blurHeroImage = await getBlurPlaceholder(heroImagePath, 300, 90)
+
   return (
     <>
       <section className="relative w-full h-[480px] flex items-center justify-center">
         <Image
-          src="/hero-bg.webp"
+          src={heroImagePath}
           alt="Hero Background"
           width={1920}
           height={480}
           className="absolute inset-0 object-cover w-full h-full"
+          blurDataURL={blurHeroImage ?? heroImagePath}
+          placeholder="blur"
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/70 to-transparent" />
