@@ -5,11 +5,6 @@ import { OrdersContent } from "./orders-content"
 import type { orderWithOrderItems } from "@/types"
 
 export default async function OrdersPage() {
-  const session = await auth()
-  if (!session) {
-    redirect("/signin")
-  }
-
   const userOrders = await api.order.getOrdersByUserId()
 
   return (

@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation"
-import { auth } from "@/server/auth"
 import { api } from "@/trpc/server"
 import { OrderTrackingContent } from "./order-tracking-content"
 import type { orderWithOrderItems } from "@/types"
@@ -22,15 +21,8 @@ export async function generateStaticParams() {
   }
 }
 
-export const dynamic = "force-static"
-export const revalidate = 60
-
 export default async function OrderTrackingPage({ params }: OrderTrackingPageProps) {
   const { orderId } = await params
-  const session = await auth()
-  if (!session) {
-    redirect("/signin")
-  }
 
   const userOrders = await api.order.getOrdersByUserId()
   const order = userOrders.orders.find(
