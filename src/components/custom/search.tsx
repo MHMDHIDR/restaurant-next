@@ -125,10 +125,10 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
   }
 
   return (
-    <div className="relative max-w-xl mx-auto">
+    <div className="relative max-w-xl mx-auto md:mt-20">
       <form
         onSubmit={handleSearch}
-        className="flex items-center max-w-xl p-1 pl-2 mx-auto bg-accent-foreground/10 rounded-full"
+        className="flex items-center max-w-xl p-1 pl-2 mx-auto bg-accent/100 rounded-full"
       >
         <input
           type="text"
@@ -137,7 +137,7 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
               ? "Search for restaurants, and more..."
               : "Search for dishes, restaurants, cuisines, and more..."
           }
-          className={clsx("grow px-2.5 outline-0", {
+          className={clsx("grow px-2.5 py-4 outline-0", {
             "text-sm": isMobile,
             "text-lg": !isMobile,
           })}
@@ -146,7 +146,7 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
         />
         <button
           type="submit"
-          className="flex cursor-pointer items-center px-2.5 py-1.5 rounded-full bg-primary hover:bg-primary-dark transition-colors text-white"
+          className="flex cursor-pointer items-center px-3 md:px-4 py-4 rounded-full bg-primary hover:bg-primary-dark transition-colors text-white"
         >
           <IconSearch className="mr-1" size={20} />
           <span className="hidden sm:inline-flex">Search</span>
