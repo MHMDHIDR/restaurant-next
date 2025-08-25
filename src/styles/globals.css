@@ -293,3 +293,12 @@
 @utility pressable {
   @apply ring-offset-background focus-visible:ring-ring inline-flex h-10 min-w-28 cursor-pointer items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium whitespace-nowrap text-white shadow-[0_7px] shadow-green-700 transition-all hover:translate-y-1 hover:bg-green-700 hover:shadow-[0_5px] hover:shadow-green-900 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
 }
+
+@utility scrollbar-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

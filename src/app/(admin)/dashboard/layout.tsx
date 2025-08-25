@@ -77,8 +77,8 @@ export default async function DashboardLayout({
         <div className="border-b px-4 py-0">
           <SidebarTrigger className="-ml-1" />
         </div>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 grid-cols-1">{children}</div>
+        <div className="flex flex-1 flex-col h-full">
+          <div className="grid auto-rows-min gap-4 grid-cols-1 min-h-full">{children}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>

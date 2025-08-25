@@ -170,6 +170,42 @@ export const aiChatRouter = createTRPCRouter({
       })
     }),
 
+  deleteChatSession: protectedProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = ctx.session.user
+      const session = await ctx.db.query.chatSessions.findFirst({
+        where: and(eq(chatSessions.id, input.sessionId), eq(chatSessions.userId, user.id)),
+      })
+
+      if (!session) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Chat session not found" })
+      }
+
+      await ctx.db.delete(chatSessions).where(eq(chatSessions.id, input.sessionId))
+    }),
+
+  renameChatSession: protectedProcedure
+    .input(z.object({ sessionId: z.string(), title: z.string().min(1).max(100) }))
+    .mutation(async ({ ctx, input }) => {
+      const user = ctx.session.user
+      const session = await ctx.db.query.chatSessions.findFirst({
+        where: and(eq(chatSessions.id, input.sessionId), eq(chatSessions.userId, user.id)),
+      })
+
+      if (!session) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Chat session not found" })
+      }
+
+      const [updatedSession] = await ctx.db
+        .update(chatSessions)
+        .set({ title: input.title, updatedAt: new Date() })
+        .where(eq(chatSessions.id, input.sessionId))
+        .returning()
+
+      return updatedSession
+    }),
+
   // Get vendor-specific data for context
   getVendorData: protectedProcedure
     .input(z.object({ vendorId: z.string() }))

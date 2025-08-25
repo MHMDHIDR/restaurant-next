@@ -21,7 +21,7 @@ export class OpenAIService {
       model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: systemPrompt },
-        ...messages.slice(-10), // Keep last 10 messages for context
+        ...messages.slice(-10), // sending the last 10 messages for context
       ],
       max_tokens: 1000,
       temperature: 0.3,

@@ -1,29 +1,70 @@
 "use client"
 
-import { Bot, Plus, Send, User } from "lucide-react"
+import clsx from "clsx"
+import {
+  Bot,
+  ChevronLeft,
+  ChevronRight,
+  Edit2,
+  Ellipsis,
+  Menu,
+  Plus,
+  Send,
+  Trash2,
+  User,
+} from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
+import { ConfirmationDialog } from "./data-table/confirmation-dialog"
 import type { ChatMessages } from "@/server/db/schema"
 
 export function AiChatInterface() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [message, setMessage] = useState("")
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [isRenameDialogOpen, setRenameDialogOpen] = useState(false)
+  const [renameSessionId, setRenameSessionId] = useState<string | null>(null)
+  const [newSessionTitle, setNewSessionTitle] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [hasAttemptedInitialSession, setHasAttemptedInitialSession] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
+  const defaultChatMessages = [
+    "How is my restaurant performing this month?",
+    "What are my best-selling menu items?",
+    "Give me insights on my recent orders",
+    "Show me revenue trends for the past quarter",
+    "Which dishes have the highest profit margins?",
+  ]
 
   const { data: session } = useSession()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const toast = useToast()
+  const utils = api.useUtils()
 
   // Get all chat sessions
-  const { data: sessions, refetch: refetchSessions } = api.aiChat.getChatSessions.useQuery()
+  const { data: chatSessions, refetch: refetchSessions } = api.aiChat.getChatSessions.useQuery()
 
   // Get messages for current session
   const { data: messages, refetch: refetchMessages } = api.aiChat.getChatHistory.useQuery(
@@ -36,7 +77,6 @@ export function AiChatInterface() {
     onSuccess: async session => {
       setCurrentSessionId(session?.id ?? null)
       await refetchSessions()
-      // Only show toast for manually created sessions, not the initial one
       if (hasAttemptedInitialSession) {
         toast.success("New chat session created!")
       }
@@ -58,6 +98,57 @@ export function AiChatInterface() {
     },
   })
 
+  const deleteSession = api.aiChat.deleteChatSession.useMutation({
+    onSuccess: async () => {
+      await refetchSessions()
+      setDeleteDialogOpen(false)
+      // If we deleted the current session, switch to the first available one
+      if (chatSessions && chatSessions.length > 1) {
+        const remainingSessions = chatSessions.filter(s => s.id !== renameSessionId)
+        if (remainingSessions.length > 0) {
+          setCurrentSessionId(remainingSessions[0]?.id ?? null)
+        }
+      } else {
+        setCurrentSessionId(null)
+      }
+    },
+    onError: error => {
+      toast.error(error.message)
+      setDeleteDialogOpen(false)
+    },
+  })
+
+  const renameSession = api.aiChat.renameChatSession.useMutation({
+    onMutate: async ({ sessionId, title }) => {
+      // Optimistically update the UI immediately
+      const previousSessions = utils.aiChat.getChatSessions.getData()
+
+      utils.aiChat.getChatSessions.setData(undefined, old => {
+        if (!old) return old
+        return old.map(session => (session.id === sessionId ? { ...session, title } : session))
+      })
+
+      return { previousSessions }
+    },
+    onSuccess: async () => {
+      setRenameDialogOpen(false)
+      setRenameSessionId(null)
+      setNewSessionTitle("")
+      toast.success("Chat session renamed successfully!")
+    },
+    onError: (error, _variables, context) => {
+      // Revert to previous state on error
+      if (context?.previousSessions) {
+        utils.aiChat.getChatSessions.setData(undefined, context.previousSessions)
+      }
+      toast.error(error.message)
+    },
+    onSettled: () => {
+      // Refetch to ensure we have the latest server state
+      void utils.aiChat.getChatSessions.invalidate()
+    },
+  })
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -66,161 +157,356 @@ export function AiChatInterface() {
   // Create initial session if none exist
   useEffect(() => {
     if (
-      sessions &&
-      sessions.length === 0 &&
+      chatSessions &&
+      chatSessions.length === 0 &&
       !hasAttemptedInitialSession &&
       !createSession.isPending
     ) {
       setHasAttemptedInitialSession(true)
       createSession.mutate({ title: "Restaurant Insights Chat" })
-    } else if (sessions && sessions.length > 0 && !currentSessionId) {
-      setCurrentSessionId(sessions[0]?.id ?? null)
+    } else if (chatSessions && chatSessions.length > 0 && !currentSessionId) {
+      setCurrentSessionId(chatSessions[0]?.id ?? null)
     }
-  }, [sessions, currentSessionId, hasAttemptedInitialSession, createSession])
+  }, [chatSessions, currentSessionId, hasAttemptedInitialSession, createSession])
 
-  const handleSendMessage = async () => {
-    if (!message.trim() || !currentSessionId || isLoading) return
+  const handleSendMessage = async (messageText: string) => {
+    if (!messageText.trim() || !currentSessionId || isLoading) return
 
     setIsLoading(true)
     sendMessage.mutate({
       sessionId: currentSessionId,
-      message: message.trim(),
+      message: messageText.trim(),
     })
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      void handleSendMessage()
+      void handleSendMessage(message)
     }
   }
 
   const handleNewChat = () => {
-    setHasAttemptedInitialSession(true) // Mark that we've attempted initial session
+    setHasAttemptedInitialSession(true)
     createSession.mutate({
       title: `Chat from ${session?.user.name} on ${new Date().toLocaleTimeString()}`,
     })
   }
 
+  const handleRename = (sessionId: string, currentTitle: string) => {
+    setRenameSessionId(sessionId)
+    setNewSessionTitle(currentTitle)
+    setRenameDialogOpen(true)
+  }
+
+  const handleRenameSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!renameSessionId || !newSessionTitle.trim()) return
+
+    renameSession.mutate({
+      sessionId: renameSessionId,
+      title: newSessionTitle.trim(),
+    })
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-full">
+    <div className="flex h-screen max-h-[calc(100vh-5.7rem)] bg-background relative">
+      {/* Mobile Backdrop */}
+      {!isSidebarCollapsed && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={e => {
+            e.preventDefault()
+            e.stopPropagation()
+            setIsSidebarCollapsed(true)
+          }}
+        />
+      )}
+
       {/* Sessions Sidebar */}
-      <Card className="md:col-span-1">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-medium">Chat History</CardTitle>
-            <Button size="sm" variant="outline" onClick={handleNewChat}>
+      <div
+        className={`
+        border-r border-border flex flex-col transition-all duration-300 bg-background z-50
+        ${
+          isSidebarCollapsed
+            ? "w-0 md:w-16 -translate-x-full md:translate-x-0"
+            : "w-80 fixed md:relative left-0 top-0 h-full md:h-auto"
+        }
+      `}
+      >
+        {/* Sidebar Header with Toggle */}
+        <Button
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          variant="ghost"
+          size="sm"
+          className="size-10 p-0 shrink-0 absolute -top-10 left-13"
+        >
+          {isSidebarCollapsed ? (
+            <ChevronRight className="size-4" />
+          ) : (
+            <ChevronLeft className="size-4" />
+          )}
+        </Button>
+        <div className={clsx("flex items-center justify-between", !isSidebarCollapsed && "p-2")}>
+          {!isSidebarCollapsed && (
+            <Button
+              onClick={handleNewChat}
+              className="flex-1 justify-start gap-2 mr-2 text-sm h-9"
+              variant="outline"
+            >
+              <Plus className="size-4" />
+              <span className="inline">New Chat</span>
+            </Button>
+          )}
+        </div>
+
+        {/* Collapsed state - Show new chat button */}
+        {isSidebarCollapsed && (
+          <div className="p-2 hidden md:block">
+            <Button onClick={handleNewChat} variant="outline" size="sm" className="w-full p-0 h-8">
               <Plus className="size-4" />
             </Button>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <ScrollArea className="h-[400px]">
-            <div className="space-y-1 p-3">
-              {sessions?.map(session => (
-                <Button
-                  key={session.id}
-                  variant={currentSessionId === session.id ? "secondary" : "ghost"}
-                  className="w-full justify-start text-left h-auto p-2"
-                  onClick={() => setCurrentSessionId(session.id)}
-                >
-                  <div className="truncate">
-                    <div className="font-medium text-xs">{session.title}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(session.createdAt).toLocaleDateString()}
+        )}
+
+        {/* Sessions List */}
+        <ScrollArea className="flex-1">
+          <div className="p-2 space-y-1">
+            {chatSessions?.map(session => (
+              <div key={session.id} className="group relative">
+                {isSidebarCollapsed ? (
+                  // Collapsed view - just a dot
+                  <Button
+                    variant={currentSessionId === session.id ? "secondary" : "ghost"}
+                    className="w-full h-8 p-0 hidden md:flex"
+                    onClick={() => setCurrentSessionId(session.id)}
+                    title={session.title}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-current" />
+                  </Button>
+                ) : (
+                  // Expanded view
+                  <>
+                    <Button
+                      variant={currentSessionId === session.id ? "secondary" : "ghost"}
+                      className="w-full justify-start text-left h-auto p-3 pr-10"
+                      onClick={() => {
+                        setCurrentSessionId(session.id)
+                        // Close sidebar on mobile after selection
+                        if (window.innerWidth < 768) {
+                          setIsSidebarCollapsed(true)
+                        }
+                      }}
+                    >
+                      <div className="min-w-0 flex-1 overflow-hidden">
+                        <div className="font-medium text-sm truncate max-w-[200px] sm:max-w-[240px]">
+                          {session.title}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(session.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                    </Button>
+
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                            <Ellipsis className="size-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onClick={() => handleRename(session.id, session.title)}
+                            className="cursor-pointer"
+                          >
+                            <Edit2 className="size-4 mr-2" />
+                            Rename
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setRenameSessionId(session.id)
+                              setDeleteDialogOpen(true)
+                            }}
+                            className="cursor-pointer text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="size-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                  </div>
-                </Button>
-              ))}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* Mobile Menu Button - Show when sidebar is collapsed */}
+      {isSidebarCollapsed && (
+        <Button
+          onClick={e => {
+            e.preventDefault()
+            e.stopPropagation()
+            setIsSidebarCollapsed(false)
+          }}
+          variant="ghost"
+          size="sm"
+          className="fixed top-4 left-4 z-30 md:hidden h-9 w-9 p-0 bg-background border border-border shadow-sm"
+        >
+          <Menu className="size-4" />
+        </Button>
+      )}
 
       {/* Chat Interface */}
-      <Card className="md:col-span-3 flex flex-col">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5" />
-            Restaurant AI Assistant
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent className="flex-1 flex flex-col">
-          {/* Messages */}
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-4 min-h-[400px]">
-              {messages?.length === 0 && (
-                <div className="text-center text-muted-foreground py-12">
-                  <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium mb-2">
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Messages Area */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full">
+            <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-6 space-y-4 md:space-y-6">
+              {messages?.length === 0 ? (
+                <div className="text-center py-8 md:py-12">
+                  <Bot className="size-12 md:size-16 mx-auto mb-4 md:mb-6 text-muted-foreground/50" />
+                  <h3 className="text-xl md:text-2xl font-semibold mb-2">
                     Welcome to your Restaurant AI Assistant!
-                  </p>
-                  <p className="text-sm">
+                  </h3>
+                  <p className="text-muted-foreground mb-6 md:mb-8 max-w-md mx-auto text-sm md:text-base px-4">
                     Ask me anything about your restaurant performance, menu optimization, or
                     business insights.
                   </p>
-                  <div className="mt-4 text-xs space-y-1">
-                    <p>Try asking:</p>
-                    <p>{"'How is my restaurant performing this month?'"}</p>
-                    <p>{"'What are my best-selling menu items?'"}</p>
-                    <p>{"'Give me insights on my recent orders'"}</p>
-                  </div>
                 </div>
-              )}
+              ) : (
+                <>
+                  {messages?.map(msg => <ChatMessage key={msg.id} message={msg} />)}
 
-              {messages?.map(msg => <ChatMessage key={msg.id} message={msg} />)}
-
-              {isLoading && (
-                <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                    <Bot className="size-4 text-primary-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="bg-muted rounded-lg p-3">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.1s" }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.2s" }}
-                        ></div>
+                  {isLoading && (
+                    <div className="flex gap-3 md:gap-4">
+                      <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                        <Bot className="size-3 md:size-4 text-primary-foreground" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="bg-muted rounded-2xl px-3 md:px-4 py-2 md:py-3 max-w-fit">
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" />
+                            <div
+                              className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"
+                              style={{ animationDelay: "0.1s" }}
+                            />
+                            <div
+                              className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"
+                              style={{ animationDelay: "0.2s" }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  )}
+                </>
               )}
+
+              {/* Default message suggestions */}
+              <div className="relative">
+                <div className="flex gap-2 md:gap-3 overflow-x-auto pb-4 scrollbar-hide">
+                  <div className="absolute left-0 top-0 bottom-4 w-4 md:w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+                  <div className="flex gap-2 md:gap-3 px-4 md:px-8">
+                    {defaultChatMessages.map(msg => (
+                      <Button
+                        key={msg}
+                        variant="outline"
+                        onClick={() => void handleSendMessage(msg)}
+                        className="whitespace-nowrap text-xs md:text-sm min-w-fit h-8 md:h-auto px-3 md:px-4"
+                        disabled={isLoading || !currentSessionId}
+                      >
+                        {msg}
+                      </Button>
+                    ))}
+                  </div>
+                  <div className="absolute right-0 top-0 bottom-4 w-4 md:w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+                </div>
+              </div>
 
               <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
+        </div>
 
-          <Separator className="my-4" />
-
-          {/* Message Input */}
-          <div className="flex gap-2">
-            <Input
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="Ask about your restaurant performance..."
-              disabled={isLoading || !currentSessionId}
-              className="flex-1"
-              dir="auto"
-            />
-            <Button
-              onClick={handleSendMessage}
-              disabled={!message.trim() || isLoading || !currentSessionId}
-              size="sm"
-            >
-              <Send className="size-4" />
-            </Button>
+        {/* Input Area */}
+        <div className="border-t border-border p-3 md:p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex gap-2 md:gap-3 items-end">
+              <div className="flex-1">
+                <Input
+                  value={message}
+                  onChange={e => setMessage(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Ask about your restaurant performance..."
+                  disabled={isLoading || !currentSessionId}
+                  className="min-h-10 md:min-h-12 px-3 md:px-4 py-2 md:py-3 resize-none rounded-xl border-2 focus:border-primary text-sm md:text-base"
+                />
+              </div>
+              <Button
+                onClick={() => handleSendMessage(message)}
+                disabled={!message.trim() || isLoading || !currentSessionId}
+                size="sm"
+                className="h-10 w-10 md:h-12 md:w-12 rounded-xl p-0 shrink-0"
+              >
+                <Send className="size-3 md:size-4" />
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Rename Dialog */}
+      <Dialog open={isRenameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] mx-4 max-w-[calc(100vw-2rem)]">
+          <form onSubmit={handleRenameSubmit}>
+            <DialogHeader>
+              <DialogTitle>Rename Chat</DialogTitle>
+              <DialogDescription hidden />
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="title">Chat Title</Label>
+                <Input
+                  id="title"
+                  value={newSessionTitle}
+                  onChange={e => setNewSessionTitle(e.target.value)}
+                  placeholder="Enter new chat title..."
+                  maxLength={100}
+                />
+              </div>
+            </div>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <DialogClose asChild>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" disabled={!newSessionTitle.trim()} className="w-full sm:w-auto">
+                Save
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete Chat Session?"
+        description="Are you sure you want to delete this chat? This action cannot be undone and all messages will be permanently lost."
+        buttonText="Delete"
+        buttonClass="bg-destructive hover:bg-destructive/90"
+        onConfirm={() => {
+          if (renameSessionId) {
+            deleteSession.mutate({ sessionId: renameSessionId })
+          }
+        }}
+      />
     </div>
   )
 }
@@ -229,29 +515,33 @@ function ChatMessage({ message }: { message: ChatMessages }) {
   const isUser = message.role === "user"
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-3 md:gap-4 w-full">
       <div
-        className={`size-8 rounded-full flex items-center justify-center ${
+        className={`size-6 md:size-8 rounded-full flex items-center justify-center flex-shrink-0 ${
           isUser ? "bg-blue-500" : "bg-primary"
         }`}
       >
         {isUser ? (
-          <User className="size-4 text-white" />
+          <User className="size-3 md:size-4 text-white" />
         ) : (
-          <Bot className="size-4 text-primary-foreground" />
+          <Bot className="size-3 md:size-4 text-primary-foreground" />
         )}
       </div>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0 max-w-full">
         <div
-          className={`rounded-lg p-3 ${isUser ? "bg-blue-50 dark:text-background border" : "bg-muted"}`}
+          className={`rounded-2xl px-3 md:px-4 py-2 md:py-3 max-w-[85%] md:max-w-[75%] ${
+            isUser ? "bg-blue-500 text-white ml-auto" : "bg-muted"
+          }`}
           dir="auto"
         >
-          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+          <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed break-words word-wrap text-wrap">
+            {message.content}
+          </p>
           {message.tokensUsed && (
-            <p className="text-xs text-muted-foreground mt-2">Tokens used: {message.tokensUsed}</p>
+            <p className="text-xs opacity-70 mt-2">Tokens used: {message.tokensUsed}</p>
           )}
         </div>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-1 md:mt-2">
           {new Date(message.createdAt).toLocaleTimeString()}
         </p>
       </div>
