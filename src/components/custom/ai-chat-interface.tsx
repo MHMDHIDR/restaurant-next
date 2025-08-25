@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
-import type { ChatMessages, ChatSessions } from "@/server/db/schema"
+import type { ChatMessages } from "@/server/db/schema"
 
 export function AiChatInterface() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
@@ -33,9 +33,9 @@ export function AiChatInterface() {
 
   // Mutations
   const createSession = api.aiChat.createChatSession.useMutation({
-    onSuccess: session => {
+    onSuccess: async session => {
       setCurrentSessionId(session?.id ?? null)
-      refetchSessions()
+      await refetchSessions()
       // Only show toast for manually created sessions, not the initial one
       if (hasAttemptedInitialSession) {
         toast.success("New chat session created!")
@@ -47,8 +47,8 @@ export function AiChatInterface() {
   })
 
   const sendMessage = api.aiChat.sendMessage.useMutation({
-    onSuccess: () => {
-      refetchMessages()
+    onSuccess: async () => {
+      await refetchMessages()
       setMessage("")
       setIsLoading(false)
     },
@@ -76,7 +76,7 @@ export function AiChatInterface() {
     } else if (sessions && sessions.length > 0 && !currentSessionId) {
       setCurrentSessionId(sessions[0]?.id ?? null)
     }
-  }, [sessions, currentSessionId, hasAttemptedInitialSession, createSession.isPending])
+  }, [sessions, currentSessionId, hasAttemptedInitialSession, createSession])
 
   const handleSendMessage = async () => {
     if (!message.trim() || !currentSessionId || isLoading) return
@@ -91,7 +91,7 @@ export function AiChatInterface() {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      handleSendMessage()
+      void handleSendMessage()
     }
   }
 
@@ -162,9 +162,9 @@ export function AiChatInterface() {
                   </p>
                   <div className="mt-4 text-xs space-y-1">
                     <p>Try asking:</p>
-                    <p>"How is my restaurant performing this month?"</p>
-                    <p>"What are my best-selling menu items?"</p>
-                    <p>"Give me insights on my recent orders"</p>
+                    <p>{"'How is my restaurant performing this month?'"}</p>
+                    <p>{"'What are my best-selling menu items?'"}</p>
+                    <p>{"'Give me insights on my recent orders'"}</p>
                   </div>
                 </div>
               )}
@@ -209,6 +209,7 @@ export function AiChatInterface() {
               placeholder="Ask about your restaurant performance..."
               disabled={isLoading || !currentSessionId}
               className="flex-1"
+              dir="auto"
             />
             <Button
               onClick={handleSendMessage}
@@ -243,6 +244,7 @@ function ChatMessage({ message }: { message: ChatMessages }) {
       <div className="flex-1">
         <div
           className={`rounded-lg p-3 ${isUser ? "bg-blue-50 dark:text-background border" : "bg-muted"}`}
+          dir="auto"
         >
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
           {message.tokensUsed && (

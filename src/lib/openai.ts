@@ -28,8 +28,8 @@ export class OpenAIService {
     })
 
     const content =
-      response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response."
-    const tokensUsed = response.usage?.total_tokens || 0
+      response.choices[0]?.message?.content ?? "I'm sorry, I couldn't generate a response."
+    const tokensUsed = response.usage?.total_tokens ?? 0
 
     return { content, tokensUsed }
   }
@@ -73,41 +73,41 @@ Always be professional, supportive, and provide actionable insights. Use the pro
     if (context.isAdmin) {
       return `
 PLATFORM OVERVIEW:
-- Total Restaurants: ${context.allVendors?.length || 0}
-- Total Orders: ${context.allOrders?.length || 0}
-- Total Revenue: $${context.totalRevenue?.toFixed(2) || "0.00"}
-- Average Order Value: $${context.averageOrderValue?.toFixed(2) || "0.00"}
+- Total Restaurants: ${context.allVendors?.length ?? 0}
+- Total Orders: ${context.allOrders?.length ?? 0}
+- Total Revenue: $${context.totalRevenue?.toFixed(2) ?? "0.00"}
+- Average Order Value: $${context.averageOrderValue?.toFixed(2) ?? "0.00"}
 
 TOP PERFORMING RESTAURANTS:
-${context.topVendors?.map(v => `- ${v.name}: ${v.orderCount} orders, $${v.totalRevenue.toFixed(2)} revenue`).join("\n") || "No data available"}
+${context.topVendors?.map(v => `- ${v.name}: ${v.orderCount} orders, $${v.totalRevenue.toFixed(2)} revenue`).join("\n") ?? "No data available"}
 
 RECENT ACTIVITY:
 ${
   context.recentOrders
     ?.slice(0, 10)
     .map(o => `- Order #${o.id}: $${o.total} (${new Date(o.createdAt).toLocaleDateString()})`)
-    .join("\n") || "No recent orders"
+    .join("\n") ?? "No recent orders"
 }
 `
     } else {
       return `
 RESTAURANT: ${context.vendorName}
 OVERVIEW:
-- Total Orders: ${context.orders?.length || 0}
-- Total Revenue: $${context.totalRevenue?.toFixed(2) || "0.00"}
-- Average Order Value: $${context.averageOrderValue?.toFixed(2) || "0.00"}
-- Menu Items: ${context.menuItems?.length || 0}
+- Total Orders: ${context.orders?.length ?? 0}
+- Total Revenue: $${context.totalRevenue?.toFixed(2) ?? "0.00"}
+- Average Order Value: $${context.averageOrderValue?.toFixed(2) ?? "0.00"}
+- Menu Items: ${context.menuItems?.length ?? 0}
 
 RECENT ORDERS:
 ${
   context.orders
     ?.slice(0, 10)
     .map(o => `- Order #${o.id}: $${o.total} (${new Date(o.createdAt).toLocaleDateString()})`)
-    .join("\n") || "No recent orders"
+    .join("\n") ?? "No recent orders"
 }
 
 TOP MENU ITEMS:
-${context.topMenuItems?.map(item => `- ${item.name}: $${item.price}`).join("\n") || "No menu items available"}
+${context.topMenuItems?.map(item => `- ${item.name}: $${item.price}`).join("\n") ?? "No menu items available"}
 
 PERFORMANCE TRENDS:
 - This week vs last week order volume

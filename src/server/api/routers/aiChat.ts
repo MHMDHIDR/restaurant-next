@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { and, desc, eq, sql } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { z } from "zod"
 import { OpenAIService } from "@/lib/openai"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
@@ -12,6 +12,8 @@ import {
   vendors,
 } from "@/server/db/schema"
 import type { RestaurantContext } from "@/lib/openai"
+import type { db } from "@/server/db"
+import type { Orders, Vendors } from "@/server/db/schema"
 
 const openAIService = new OpenAIService()
 
@@ -44,7 +46,7 @@ export const aiChatRouter = createTRPCRouter({
         .values({
           userId: user.id,
           vendorId,
-          title: input.title || "New Chat",
+          title: input.title ?? "New Chat",
         })
         .returning()
 
@@ -246,7 +248,7 @@ export const aiChatRouter = createTRPCRouter({
     for (const order of allOrders) {
       const vendor = allVendors.find(v => v.id === order.vendorId)
       if (vendor) {
-        const existing = vendorRevenue.get(vendor.id) || {
+        const existing = vendorRevenue.get(vendor.id) ?? {
           name: vendor.name,
           orderCount: 0,
           totalRevenue: 0,
@@ -273,9 +275,9 @@ export const aiChatRouter = createTRPCRouter({
 
 // Helper function to build restaurant context
 async function buildRestaurantContext(
-  ctx: any,
-  user: any,
-  vendor: any,
+  ctx: { db: typeof db },
+  user: { role: string },
+  vendor: Vendors | null,
 ): Promise<RestaurantContext> {
   const isAdmin = user.role === UserRole.SUPER_ADMIN
 
@@ -291,7 +293,10 @@ async function buildRestaurantContext(
       }),
     ])
 
-    const totalRevenue = allOrders.reduce((sum: number, order: any) => sum + Number(order.total), 0)
+    const totalRevenue = allOrders.reduce(
+      (sum: number, order: Orders) => sum + Number(order.total),
+      0,
+    )
     const averageOrderValue = allOrders.length > 0 ? totalRevenue / allOrders.length : 0
 
     // Calculate top vendors by revenue
@@ -301,9 +306,9 @@ async function buildRestaurantContext(
     >()
 
     for (const order of allOrders) {
-      const vendorData = allVendors.find((v: any) => v.id === order.vendorId)
+      const vendorData = allVendors.find((v: Vendors) => v.id === order.vendorId)
       if (vendorData) {
-        const existing = vendorRevenue.get(vendorData.id) || {
+        const existing = vendorRevenue.get(vendorData.id) ?? {
           name: vendorData.name,
           orderCount: 0,
           totalRevenue: 0,
@@ -347,7 +352,7 @@ async function buildRestaurantContext(
     ])
 
     const totalRevenue = vendorOrders.reduce(
-      (sum: number, order: any) => sum + Number(order.total),
+      (sum: number, order: Orders) => sum + Number(order.total),
       0,
     )
     const averageOrderValue = vendorOrders.length > 0 ? totalRevenue / vendorOrders.length : 0

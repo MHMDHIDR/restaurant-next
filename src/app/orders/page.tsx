@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation"
-import { auth } from "@/server/auth"
 import { api } from "@/trpc/server"
 import { OrdersContent } from "./orders-content"
 import type { orderWithOrderItems } from "@/types"
