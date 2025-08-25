@@ -1,4 +1,5 @@
 import {
+  Bot,
   Grid2x2Plus,
   LayoutDashboard,
   List,
@@ -48,6 +49,11 @@ export default async function DashboardLayout({
             title: "Vendor Admins",
             url: "/vendor-manager/vendor-admins",
             icon: <LayoutDashboard className="size-4" />,
+          },
+          {
+            title: "AI Chat",
+            url: "/vendor-manager/ai-chat",
+            icon: <Bot className="size-4" />,
           },
         ],
       },

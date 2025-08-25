@@ -1,5 +1,5 @@
 import { IconCategory2 } from "@tabler/icons-react"
-import { ChefHatIcon, Home, LineChart, Package, ShoppingCart, Users } from "lucide-react"
+import { Bot, ChefHatIcon, Home, LineChart, Package, ShoppingCart, Users } from "lucide-react"
 import { notFound } from "next/navigation"
 import Nav from "@/components/custom/nav"
 import { AppSidebar } from "@/components/ui/app-sidebar"
@@ -56,6 +56,11 @@ export default async function DashboardLayout({
             title: "Analytics",
             url: "https://analytics.technodevlabs.com/share/E060vsZebCFZhhy7/restaurant-app.technodevlabs.com",
             icon: <LineChart className="w-4 h-4" />,
+          },
+          {
+            title: "AI Insights",
+            url: "/dashboard/ai-chat",
+            icon: <Bot className="w-4 h-4" />,
           },
         ],
       },

@@ -1,4 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc"
+import { aiChatRouter } from "./routers/aiChat"
 import { menuCategoryRouter } from "./routers/menuCategory"
 import { menuItemRouter } from "./routers/menuItem"
 import { notificationRouter } from "./routers/notification"
@@ -28,6 +29,7 @@ export const appRouter = createTRPCRouter({
   stripe: stripeRouter,
   search: searchRouter,
   vendorAdmin: vendorAdminRouter,
+  aiChat: aiChatRouter,
 })
 
 // export type definition of API

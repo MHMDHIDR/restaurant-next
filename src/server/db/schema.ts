@@ -354,3 +354,48 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
     references: [menuItems.id],
   }),
 }))
+
+export const chatSessions = createTable("chat_session", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  vendorId: varchar("vendor_id", { length: 255 }).references(() => vendors.id), // null for SUPER_ADMIN
+  title: varchar("title", { length: 255 }).notNull().default("New Chat"),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+export type ChatSessions = typeof chatSessions.$inferSelect
+
+export const chatMessages = createTable("chat_message", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  sessionId: varchar("session_id", { length: 255 })
+    .notNull()
+    .references(() => chatSessions.id),
+  role: varchar("role", { length: 20 }).notNull(), // 'user' | 'assistant'
+  content: text("content").notNull(),
+  tokensUsed: integer("tokens_used"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+export type ChatMessages = typeof chatMessages.$inferSelect
+
+// Chat relations
+export const chatSessionsRelations = relations(chatSessions, ({ one, many }) => ({
+  user: one(users, { fields: [chatSessions.userId], references: [users.id] }),
+  vendor: one(vendors, { fields: [chatSessions.vendorId], references: [vendors.id] }),
+  messages: many(chatMessages),
+}))
+
+export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
+  session: one(chatSessions, {
+    fields: [chatMessages.sessionId],
+    references: [chatSessions.id],
+  }),
+}))
