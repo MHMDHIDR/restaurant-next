@@ -444,6 +444,7 @@ export function AiChatInterface() {
                   placeholder="Ask about your restaurant performance..."
                   disabled={isLoading || !currentSessionId}
                   className="min-h-10 md:min-h-12 px-3 md:px-4 py-2 md:py-3 resize-none rounded-xl border-2 focus:border-primary text-sm md:text-base"
+                  dir="auto"
                 />
               </div>
               <Button

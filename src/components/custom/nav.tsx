@@ -37,7 +37,7 @@ export default function Nav({
           <Logo className="mx-auto size-7 stroke-1 stroke-current" />
           <span className="hidden sm:inline-flex">
             Restaurant
-            <span className="text-black">App</span>
+            <span className="text-black dark:text-foreground">App</span>
           </span>
         </Link>
         <nav className="flex items-center gap-4">

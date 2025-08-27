@@ -51,7 +51,7 @@ export default async function DashboardLayout({
             icon: <LayoutDashboard className="size-4" />,
           },
           {
-            title: "AI Chat",
+            title: "AI Insights",
             url: "/vendor-manager/ai-chat",
             icon: <Bot className="size-4" />,
           },
