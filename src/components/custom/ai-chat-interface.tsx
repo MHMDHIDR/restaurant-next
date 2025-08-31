@@ -17,6 +17,13 @@ import { useSession } from "next-auth/react"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -366,7 +373,7 @@ export function AiChatInterface() {
         {/* Messages Area */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
-            <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-6 space-y-4 md:space-y-6">
+            <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-1.5 md:px-4 py-4 md:py-6 space-y-4 md:space-y-6">
               {messages?.length === 0 ? (
                 <div className="text-center py-8 md:py-12">
                   <Bot className="size-12 md:size-16 mx-auto mb-4 md:mb-6 text-muted-foreground/50" />
@@ -407,26 +414,24 @@ export function AiChatInterface() {
                 </>
               )}
 
-              {/* Default message suggestions */}
-              <div className="relative">
-                <div className="flex gap-2 md:gap-3 overflow-x-auto pb-4 scrollbar-hide">
-                  <div className="absolute left-0 top-0 bottom-4 w-4 md:w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-                  <div className="flex gap-2 md:gap-3 px-4 md:px-8">
-                    {defaultChatMessages.map(msg => (
+              <Carousel opts={{ align: "start", loop: true }} className="w-full">
+                <CarouselContent className="md:-ml-3" containerClassName="max-sm:max-w-xs mx-auto">
+                  {defaultChatMessages.map((msg, index) => (
+                    <CarouselItem key={index} className="pl-2 md:pl-3 basis-auto">
                       <Button
-                        key={msg}
                         variant="outline"
                         onClick={() => void handleSendMessage(msg)}
-                        className="whitespace-nowrap text-xs md:text-sm min-w-fit h-8 md:h-auto px-3 md:px-4"
+                        className="whitespace-nowrap text-xs md:text-sm h-8 md:h-auto px-3 md:px-4"
                         disabled={isLoading || !currentSessionId}
                       >
                         {msg}
                       </Button>
-                    ))}
-                  </div>
-                  <div className="absolute right-0 top-0 bottom-4 w-4 md:w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-                </div>
-              </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-0 md:-left-10" />
+                <CarouselNext className="right-0 md:-right-10" />
+              </Carousel>
 
               <div ref={messagesEndRef} />
             </div>
@@ -515,6 +520,7 @@ export function AiChatInterface() {
 
 function ChatMessage({ message }: { message: ChatMessages }) {
   const isUser = message.role === "user"
+  const messageTime = new Date(message.createdAt).toLocaleString()
 
   // Parse chart data if available
   let chartConfig: ChartConfig | null = null
@@ -527,7 +533,7 @@ function ChatMessage({ message }: { message: ChatMessages }) {
   }
 
   return (
-    <div className="flex gap-3 md:gap-4 w-full">
+    <div className="flex gap-1.5 md:gap-2 w-full">
       <div
         className={`size-6 md:size-8 rounded-full flex items-center justify-center flex-shrink-0 ${
           isUser ? "bg-blue-500" : "bg-primary"
@@ -561,12 +567,12 @@ function ChatMessage({ message }: { message: ChatMessages }) {
               <ChartRenderer config={chartConfig} />
             </div>
           )}
-
-          {message.tokensUsed && (
-            <p className="text-xs opacity-70 mt-2">Tokens used: {message.tokensUsed}</p>
-          )}
         </div>
-        <p className="text-xs text-muted-foreground mt-1 md:mt-2">
+        <p
+          className="text-xs text-muted-foreground mt-1 md:mt-2"
+          title={messageTime}
+          aria-label={messageTime}
+        >
           {new Date(message.createdAt).toLocaleTimeString()}
         </p>
       </div>

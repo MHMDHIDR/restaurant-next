@@ -57,6 +57,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
     "drizzle-orm": "^0.38.4",
+    "embla-carousel-react": "^8.6.0",
     "geist": "^1.4.2",
     "libphonenumber-js": "^1.12.8",
     "lucide-react": "^0.462.0",
