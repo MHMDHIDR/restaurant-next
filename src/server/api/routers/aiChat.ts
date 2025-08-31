@@ -6,14 +6,16 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import {
   chatMessages,
   chatSessions,
+  menuCategories,
   menuItems,
+  orderItems,
   orders,
   UserRole,
   vendors,
 } from "@/server/db/schema"
 import type { RestaurantContext } from "@/lib/openai"
 import type { db } from "@/server/db"
-import type { Orders, Vendors } from "@/server/db/schema"
+import type { MenuItems, Orders, Vendors } from "@/server/db/schema"
 
 const openAIService = new OpenAIService()
 
@@ -144,10 +146,11 @@ export const aiChatRouter = createTRPCRouter({
         }))
 
         // Get AI response
-        const { content: aiResponse, tokensUsed } = await openAIService.generateResponse(
-          messages,
-          context,
-        )
+        const {
+          content: aiResponse,
+          tokensUsed,
+          chartData,
+        } = await openAIService.generateResponse(messages, context)
 
         // Save AI response
         const [assistantMessage] = await tx
@@ -157,6 +160,7 @@ export const aiChatRouter = createTRPCRouter({
             role: "assistant",
             content: aiResponse,
             tokensUsed,
+            chartData,
           })
           .returning()
 
@@ -377,31 +381,131 @@ async function buildRestaurantContext(
       })
     }
 
-    const [vendorOrders, vendorMenuItems] = await Promise.all([
+    // Get comprehensive vendor data with proper relationships
+    const [vendorOrders, vendorCategories, allOrderItems] = await Promise.all([
+      // Get all orders for this vendor with order items
       ctx.db.query.orders.findMany({
         where: eq(orders.vendorId, vendor.id),
         orderBy: [desc(orders.createdAt)],
+        with: {
+          orderItems: {
+            with: {
+              menuItem: true,
+            },
+          },
+        },
       }),
-      ctx.db.query.menuItems.findMany({
-        where: eq(menuItems.categoryId, vendor.id),
+      // Get all menu categories for this vendor with their menu items
+      ctx.db.query.menuCategories.findMany({
+        where: eq(menuCategories.vendorId, vendor.id),
+        with: {
+          menuItems: true,
+        },
       }),
+      // Get all order items for this vendor through orders
+      ctx.db
+        .select({
+          orderItem: orderItems,
+          menuItem: menuItems,
+          order: orders,
+        })
+        .from(orderItems)
+        .innerJoin(orders, eq(orderItems.orderId, orders.id))
+        .innerJoin(menuItems, eq(orderItems.menuItemId, menuItems.id))
+        .innerJoin(menuCategories, eq(menuItems.categoryId, menuCategories.id))
+        .where(eq(orders.vendorId, vendor.id)),
     ])
 
-    const totalRevenue = vendorOrders.reduce(
-      (sum: number, order: Orders) => sum + Number(order.total),
-      0,
-    )
+    // Flatten all menu items from categories
+    const allMenuItems = vendorCategories.flatMap(category => category.menuItems)
+
+    // Calculate sales statistics for each menu item
+    const menuItemSales = new Map<
+      string,
+      {
+        item: MenuItems
+        totalQuantity: number
+        totalRevenue: number
+        orderCount: number
+      }
+    >()
+
+    // Process all order items to build sales data
+    for (const record of allOrderItems) {
+      if (record.menuItem) {
+        const existing = menuItemSales.get(record.menuItem.id) ?? {
+          item: record.menuItem,
+          totalQuantity: 0,
+          totalRevenue: 0,
+          orderCount: 0,
+        }
+
+        existing.totalQuantity += record.orderItem.quantity
+        existing.totalRevenue += Number(record.orderItem.totalPrice)
+        existing.orderCount += 1
+
+        menuItemSales.set(record.menuItem.id, existing)
+      }
+    }
+
+    // Get top menu items by quantity sold
+    const topMenuItemsByQuantity = Array.from(menuItemSales.values())
+      .sort((a, b) => b.totalQuantity - a.totalQuantity)
+      .slice(0, 10)
+
+    // Get top menu items by revenue
+    const topMenuItemsByRevenue = Array.from(menuItemSales.values())
+      .sort((a, b) => b.totalRevenue - a.totalRevenue)
+      .slice(0, 10)
+
+    // Calculate business metrics
+    const totalRevenue = vendorOrders.reduce((sum: number, order) => sum + Number(order.total), 0)
     const averageOrderValue = vendorOrders.length > 0 ? totalRevenue / vendorOrders.length : 0
+
+    // Get recent order activity (last 30 days)
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+    const recentOrders = vendorOrders.filter(order => new Date(order.createdAt) >= thirtyDaysAgo)
+
+    const recentRevenue = recentOrders.reduce((sum: number, order) => sum + Number(order.total), 0)
 
     return {
       isAdmin: false,
       vendorName: vendor.name,
       vendorId: vendor.id,
       orders: vendorOrders,
-      menuItems: vendorMenuItems,
+      menuItems: allMenuItems,
+      menuCategories: vendorCategories,
       totalRevenue,
       averageOrderValue,
-      topMenuItems: vendorMenuItems.slice(0, 10),
+      topMenuItems: topMenuItemsByQuantity.map(sale => ({
+        ...sale.item,
+        totalQuantitySold: sale.totalQuantity,
+        totalRevenue: sale.totalRevenue,
+        orderCount: sale.orderCount,
+      })),
+      topMenuItemsByRevenue: topMenuItemsByRevenue.map(sale => ({
+        ...sale.item,
+        totalQuantitySold: sale.totalQuantity,
+        totalRevenue: sale.totalRevenue,
+        orderCount: sale.orderCount,
+      })),
+      menuItemSalesData: Array.from(menuItemSales.values()),
+      recentOrders,
+      recentRevenue,
+      salesAnalytics: {
+        totalItemsSold: Array.from(menuItemSales.values()).reduce(
+          (sum, sale) => sum + sale.totalQuantity,
+          0,
+        ),
+        uniqueItemsSold: menuItemSales.size,
+        totalMenuItems: allMenuItems.length,
+        averageItemPrice:
+          allMenuItems.length > 0
+            ? allMenuItems.reduce((sum, item) => sum + Number(item.price), 0) / allMenuItems.length
+            : 0,
+      },
     }
   }
 }

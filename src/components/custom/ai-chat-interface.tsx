@@ -36,8 +36,10 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/trpc/react"
+import { ChartRenderer } from "./charts/chart-renderer"
 import { ConfirmationDialog } from "./data-table/confirmation-dialog"
 import type { ChatMessages } from "@/server/db/schema"
+import type { ChartConfig } from "@/types/chart"
 
 export function AiChatInterface() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
@@ -52,10 +54,9 @@ export function AiChatInterface() {
 
   const defaultChatMessages = [
     "How is my restaurant performing this month?",
+    "Show me my revenue for the last month in chart format",
     "What are my best-selling menu items?",
-    "Give me insights on my recent orders",
-    "Show me revenue trends for the past quarter",
-    "Which dishes have the highest profit margins?",
+    "Give me my order distribution as a pie chart",
   ]
 
   const { data: session } = useSession()
@@ -515,6 +516,16 @@ export function AiChatInterface() {
 function ChatMessage({ message }: { message: ChatMessages }) {
   const isUser = message.role === "user"
 
+  // Parse chart data if available
+  let chartConfig: ChartConfig | null = null
+  if (message.chartData && !isUser) {
+    try {
+      chartConfig = JSON.parse(message.chartData) as ChartConfig
+    } catch (error) {
+      console.error("Failed to parse chart data:", error)
+    }
+  }
+
   return (
     <div className="flex gap-3 md:gap-4 w-full">
       <div
@@ -530,14 +541,27 @@ function ChatMessage({ message }: { message: ChatMessages }) {
       </div>
       <div className="flex-1 min-w-0 max-w-full">
         <div
-          className={`rounded-2xl px-3 md:px-4 py-2 md:py-3 max-w-[85%] md:max-w-[75%] ${
-            isUser ? "bg-blue-500 text-white ml-auto" : "bg-muted"
+          className={`rounded-2xl px-3 md:px-4 py-2 md:py-3 ${
+            isUser
+              ? "bg-blue-500 text-white ml-auto max-w-[85%] md:max-w-[75%]"
+              : "bg-muted max-w-full"
           }`}
           dir="auto"
         >
-          <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed break-words word-wrap text-wrap">
-            {message.content}
-          </p>
+          {/* Text content */}
+          {message.content && (
+            <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed break-words word-wrap text-wrap mb-3">
+              {message.content}
+            </p>
+          )}
+
+          {/* Chart content */}
+          {chartConfig && !isUser && (
+            <div className="mt-3 p-3 bg-background rounded-lg border">
+              <ChartRenderer config={chartConfig} />
+            </div>
+          )}
+
           {message.tokensUsed && (
             <p className="text-xs opacity-70 mt-2">Tokens used: {message.tokensUsed}</p>
           )}

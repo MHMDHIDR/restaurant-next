@@ -1,0 +1,1 @@
+ALTER TABLE "restaurant_chat_message" ADD COLUMN "chart_data" text;

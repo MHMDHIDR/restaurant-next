@@ -382,6 +382,7 @@ export const chatMessages = createTable("chat_message", {
   role: varchar("role", { length: 20 }).notNull(), // 'user' | 'assistant'
   content: text("content").notNull(),
   tokensUsed: integer("tokens_used"),
+  chartData: text("chart_data"), // JSON string for chart configuration
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 export type ChatMessages = typeof chatMessages.$inferSelect
