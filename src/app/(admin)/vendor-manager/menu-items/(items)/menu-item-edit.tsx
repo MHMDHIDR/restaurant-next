@@ -391,7 +391,7 @@ export function MenuItemEdit({ open, onOpenChange, menuItem }: MenuItemEditProps
                     className="h-10 w-10 text-destructive"
                     onClick={() => removeAddon(index)}
                   >
-                    <IconTrash className="h-4 w-4" />
+                    <IconTrash className="size-4" />
                     <span className="sr-only">Remove topping</span>
                   </Button>
                 </div>

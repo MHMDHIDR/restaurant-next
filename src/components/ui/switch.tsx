@@ -36,7 +36,7 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       >
         <SwitchPrimitives.Thumb
           className={cn(
-            "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0",
+            "pointer-events-none block size-5 rounded-full bg-background shadow-lg ring-0",
             isThreeState
               ? cn(
                   layout === "dotted" && "translate-x-0",

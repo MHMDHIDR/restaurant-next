@@ -66,27 +66,27 @@ const UsersActionsCell: React.FC<{ user: Users }> = ({ user }) => {
         <DropdownMenuLabel className="select-none">Actions</DropdownMenuLabel>
         <DropdownMenuItem asChild>
           <Link href={`/dashboard/users/${user.id}`}>
-            <Pencil className="mr-0.5 h-4 w-4" />
+            <Pencil className="mr-0.5 size-4" />
             View / Edit
           </Link>
         </DropdownMenuItem>
         {status === "PENDING" && (
           <DropdownMenuItem onClick={handleActivate}>
-            <Check className="mr-0.5 h-4 w-4" /> Activate
+            <Check className="mr-0.5 size-4" /> Activate
           </DropdownMenuItem>
         )}
         {status === "ACTIVE" && (
           <DropdownMenuItem onClick={handleSuspend}>
-            <Ban className="mr-0.5 h-4 w-4" /> Suspend
+            <Ban className="mr-0.5 size-4" /> Suspend
           </DropdownMenuItem>
         )}
         {isSuspended && (
           <DropdownMenuItem onClick={handleUnsuspend}>
-            <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
+            <CheckCircle className="mr-0.5 size-4" /> Unsuspend
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onClick={handleDelete}>
-          <Trash2 className="mr-0.5 h-4 w-4" /> Delete
+          <Trash2 className="mr-0.5 size-4" /> Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -61,24 +61,24 @@ const VendorActionsCell: React.FC<{ vendor: Vendor }> = ({ vendor }) => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
+          <MoreHorizontal className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleAction("activate")}>
-          <CheckCircle className="mr-0.5 h-4 w-4" /> Activate
+          <CheckCircle className="mr-0.5 size-4" /> Activate
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleAction("deactivate")}>
-          <Ban className="mr-0.5 h-4 w-4" /> Deactivate
+          <Ban className="mr-0.5 size-4" /> Deactivate
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleAction("suspend")}>
-          <Ban className="mr-0.5 h-4 w-4" /> Suspend
+          <Ban className="mr-0.5 size-4" /> Suspend
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleAction("unsuspend")}>
-          <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
+          <CheckCircle className="mr-0.5 size-4" /> Unsuspend
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleAction("delete")}>
-          <Ban className="mr-0.5 h-4 w-4" /> Delete
+          <Ban className="mr-0.5 size-4" /> Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

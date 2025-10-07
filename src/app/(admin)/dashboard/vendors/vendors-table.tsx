@@ -119,16 +119,16 @@ export function VendorsTable({ vendors, count }: VendorsTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => handleBulkAction("activate")}>
-                <Check className="mr-0.5 h-4 w-4" /> Activate
+                <Check className="mr-0.5 size-4" /> Activate
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleBulkAction("deactivate")}>
-                <Ban className="mr-0.5 h-4 w-4" /> Deactivate
+                <Ban className="mr-0.5 size-4" /> Deactivate
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleBulkAction("suspend")}>
-                <Ban className="mr-0.5 h-4 w-4" /> Suspend
+                <Ban className="mr-0.5 size-4" /> Suspend
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleBulkAction("unsuspend")}>
-                <CheckCircle className="mr-0.5 h-4 w-4" /> Unsuspend
+                <CheckCircle className="mr-0.5 size-4" /> Unsuspend
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

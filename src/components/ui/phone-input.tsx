@@ -78,7 +78,7 @@ const CountrySelect = ({ disabled, value, onChange, options }: CountrySelectProp
         >
           <FlagComponent country={value} countryName={value} />
           <ChevronsUpDown
-            className={cn("h-4 w-4 opacity-50", disabled ? "hidden" : "opacity-100")}
+            className={cn("size-4 opacity-50", disabled ? "hidden" : "opacity-100")}
           />
         </Button>
       </PopoverTrigger>
@@ -106,7 +106,7 @@ const CountrySelect = ({ disabled, value, onChange, options }: CountrySelectProp
                       )}
                       <CheckIcon
                         className={cn(
-                          "ml-auto h-4 w-4",
+                          "ml-auto size-4",
                           option.value === value ? "opacity-100" : "opacity-0",
                         )}
                       />

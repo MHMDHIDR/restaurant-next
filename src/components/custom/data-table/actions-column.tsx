@@ -27,12 +27,12 @@ export function ActionCell<T extends BaseEntity>({ row, onDelete, onEdit }: Acti
       <DropdownMenuContent align="end" className="rtl:rtl">
         {onEdit && (
           <DropdownMenuItem onClick={() => onEdit(row)}>
-            <Edit className="mr-0.5 h-4 w-4" />
+            <Edit className="mr-0.5 size-4" />
             Edit
           </DropdownMenuItem>
         )}
         <DropdownMenuItem className="text-red-600" onClick={() => onDelete(row.id)}>
-          <Trash className="mr-0.5 h-4 w-4" />
+          <Trash className="mr-0.5 size-4" />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>

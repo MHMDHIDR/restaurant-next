@@ -202,7 +202,7 @@ export default function Notifications() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="relative">
-          <Bell className="h-4 w-4" />
+          <Bell className="size-4" />
           {unreadCount > 0 && (
             <span className="absolute -right-1 -top-1 flex size-3.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
