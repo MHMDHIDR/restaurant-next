@@ -158,14 +158,14 @@ export default async function RestaurantPage({ params, searchParams }: Restauran
               <Link href="/vendor-manager/vendor-details" title={`Edit ${vendor.name} Details`}>
                 <h1 className="mb-4 text-3xl font-bold leading-loose md:leading-10 select-none hover:text-gray-300">
                   {vendor.name}
-                  <Edit className="inline-flex w-5 h-5 ml-2" />
+                  <Edit className="inline-flex size-5 ml-2" />
                 </h1>
               </Link>
             ) : checkRoleAccess(user?.role, ALLOWED_ROLES) ? (
               <Link href={`/dashboard/vendors/${vendor.id}`} title={`Edit ${vendor.name} Details`}>
                 <h1 className="mb-4 text-3xl font-bold leading-loose md:leading-10 select-none hover:text-gray-300">
                   {vendor.name}
-                  <Edit className="inline-flex w-5 h-5 ml-2" />
+                  <Edit className="inline-flex size-5 ml-2" />
                 </h1>
               </Link>
             ) : (

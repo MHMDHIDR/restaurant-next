@@ -391,7 +391,7 @@ export function AiChatInterface() {
 
                   {isLoading && (
                     <div className="flex gap-3 md:gap-4">
-                      <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                      <div className="size-6 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                         <Bot className="size-3 md:size-4 text-primary-foreground" />
                       </div>
                       <div className="flex-1">

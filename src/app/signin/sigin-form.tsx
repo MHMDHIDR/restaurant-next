@@ -30,7 +30,7 @@ export default function Sigin() {
           onClick={() => signIn("google", { callbackUrl })}
           className="w-full text-white bg-blue-500 hover:bg-blue-600"
         >
-          <IconBrandGoogle className="inline-block w-6 h-6 mx-1" />
+          <IconBrandGoogle className="inline-block size-6 mx-1" />
           Sign in with Google
         </Button>
 
@@ -50,9 +50,9 @@ export default function Sigin() {
                 disabled={isPending}
               >
                 {isPending ? (
-                  <IconLoader className="w-5 h-5 mr-2 animate-spin" />
+                  <IconLoader className="size-5 mr-2 animate-spin" />
                 ) : (
-                  <IconMail className="inline-block w-6 h-6 mx-1" />
+                  <IconMail className="inline-block size-6 mx-1" />
                 )}
                 Sign in with Email
               </Button>

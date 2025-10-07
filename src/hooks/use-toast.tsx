@@ -48,7 +48,7 @@ export function useToast(): ToastFunctions {
 
     const toastContent = (
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-        <Icon className="w-5 h-5" />
+        <Icon className="size-5" />
         <span>{message}</span>
       </div>
     )

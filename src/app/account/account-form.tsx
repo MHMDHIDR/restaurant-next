@@ -278,7 +278,7 @@ export function AccountForm({ user }: { user: Session["user"] }) {
             <Button type="submit" disabled={updateUserMutation.isPending || isUploading}>
               {updateUserMutation.isPending || isUploading ? (
                 <>
-                  <IconLoader2 className="w-5 h-5 stroke-current animate-spin stroke-1" /> Saving...
+                  <IconLoader2 className="size-5 stroke-current animate-spin stroke-1" /> Saving...
                 </>
               ) : (
                 "Save"

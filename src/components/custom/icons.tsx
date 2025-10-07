@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 import type { JSX } from "react"
 
-const ICON_SIZE_CLASS = "w-5 h-5"
+const ICON_SIZE_CLASS = "size-5"
 
 export function Logo({ className }: { className?: string }): JSX.Element {
   return (

@@ -24,7 +24,7 @@ export default async function RootNotFound() {
           <div className="flex items-center w-full mt-6 shrink-0 gap-x-3 sm:w-auto">
             <Link href="/" className="w-full cursor-pointer">
               <Button type="button" variant={"pressable"}>
-                <IconHome className="w-5 h-5 stroke-2" />
+                <IconHome className="size-5 stroke-2" />
                 Go Home
               </Button>
             </Link>
