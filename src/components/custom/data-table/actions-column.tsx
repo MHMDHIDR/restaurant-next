@@ -21,7 +21,7 @@ export function ActionCell<T extends BaseEntity>({ row, onDelete, onEdit }: Acti
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="w-8 h-8 p-0">
           <span className="sr-only">Actions</span>
-          <MoreHorizontal className="w-4 h-4" />
+          <MoreHorizontal className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rtl:rtl">

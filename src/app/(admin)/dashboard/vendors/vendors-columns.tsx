@@ -91,7 +91,7 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Email
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
   },
@@ -100,7 +100,7 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Phone
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
   },
@@ -109,7 +109,7 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Status
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -125,7 +125,7 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Created At
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -138,7 +138,7 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Updated At
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {

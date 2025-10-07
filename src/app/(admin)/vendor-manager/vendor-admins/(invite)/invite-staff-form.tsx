@@ -72,7 +72,7 @@ export function InviteStaffForm({ vendorId }: InviteStaffFormProps) {
         <Button type="submit" className="w-full md:w-auto" disabled={isPending}>
           {isPending ? (
             <>
-              <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+              <IconLoader2 className="size-4 mr-2 animate-spin" />
               Sending Invitation...
             </>
           ) : (

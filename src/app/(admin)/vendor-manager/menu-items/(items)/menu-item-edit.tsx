@@ -328,7 +328,7 @@ export function MenuItemEdit({ open, onOpenChange, menuItem }: MenuItemEditProps
                       <span>Is Available</span>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <CircleHelp className="w-4 h-4" />
+                          <CircleHelp className="size-4" />
                         </TooltipTrigger>
                         <TooltipContent side="right" align="center" className="text-sm bg-primary">
                           If unchecked, customers won&apos;t be able to order this item.
@@ -479,7 +479,7 @@ export function MenuItemEdit({ open, onOpenChange, menuItem }: MenuItemEditProps
             >
               {updateMenuItemMutation.isPending || isUploading ? (
                 <>
-                  <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <IconLoader2 className="size-4 mr-2 animate-spin" />
                   Updating...
                 </>
               ) : (

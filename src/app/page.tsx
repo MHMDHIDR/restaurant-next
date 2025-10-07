@@ -103,7 +103,7 @@ export default async function Home() {
                     </div>
                     <Link href={`/r/${vendor.slug}`}>
                       <h3 className="mt-2 font-semibold items-center flex gap-x-1.5 select-none rounded-sm bg-primary/50 p-1 w-fit shadow-sm hover:bg-primary/70">
-                        <StoreIcon className="w-4 h-4" />
+                        <StoreIcon className="size-4" />
                         {vendor.name}
                       </h3>
                     </Link>

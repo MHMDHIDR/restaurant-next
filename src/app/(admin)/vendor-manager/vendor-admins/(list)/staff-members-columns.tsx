@@ -10,7 +10,7 @@ export const staffMembersColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Image
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -31,7 +31,7 @@ export const staffMembersColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Email
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
   },
@@ -40,7 +40,7 @@ export const staffMembersColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Phone
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
   },

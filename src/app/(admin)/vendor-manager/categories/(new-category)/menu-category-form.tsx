@@ -197,7 +197,7 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
                   <span>Is Active</span>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <CircleHelp className="w-4 h-4" />
+                      <CircleHelp className="size-4" />
                     </TooltipTrigger>
                     <TooltipContent side="right" align="center" className="text-sm bg-primary">
                       If unchecked, the category will not be displayed, and you cannot add items to
@@ -236,7 +236,7 @@ export function MenuCategoryForm({ vendorId }: { vendorId: string }) {
         >
           {createMenuCategoryMutation.isPending || isUploading ? (
             <>
-              <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+              <IconLoader2 className="size-4 mr-2 animate-spin" />
               Creating...
             </>
           ) : (

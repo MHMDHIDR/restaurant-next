@@ -59,7 +59,7 @@ const UsersActionsCell: React.FC<{ user: Users }> = ({ user }) => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="w-8 h-8 p-0">
           <span className="sr-only">Actions</span>
-          <MoreHorizontal className="w-4 h-4" />
+          <MoreHorizontal className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rtl:rtl">
@@ -99,7 +99,7 @@ export const userColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Email
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
   },
@@ -108,7 +108,7 @@ export const userColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Phone
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
   },
@@ -117,7 +117,7 @@ export const userColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Role
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
   },
@@ -126,7 +126,7 @@ export const userColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Status
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -141,7 +141,7 @@ export const userColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Created At
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -154,7 +154,7 @@ export const userColumns: ColumnDef<Users>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Updated At
-        <ArrowUpDown className="w-4 h-4 ml-2" />
+        <ArrowUpDown className="size-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {

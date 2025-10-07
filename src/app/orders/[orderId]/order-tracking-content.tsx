@@ -118,7 +118,7 @@ export function OrderTrackingContent({ order: initialOrder }: { order: orderWith
             return (
               <div key={status} className="flex flex-col items-center">
                 <div
-                  className={`w-4 h-4 rounded-full mb-2 ${isActive ? "bg-green-500" : "bg-gray-300"}`}
+                  className={`size-4 rounded-full mb-2 ${isActive ? "bg-green-500" : "bg-gray-300"}`}
                 />
                 <span
                   className={`text-sm font-medium ${isActive ? "text-green-500" : "text-gray-500"}`}

@@ -247,7 +247,7 @@ export default function CheckoutForm({ user }: CheckoutFormProps) {
                   </div>
 
                   <Button type="submit" className="w-full" disabled={isProcessing}>
-                    {isProcessing ? <Loader2 className="w-4 h-4" /> : "Continue to Payment"}
+                    {isProcessing ? <Loader2 className="size-4" /> : "Continue to Payment"}
                   </Button>
                 </form>
               </Form>

@@ -222,7 +222,7 @@ export function CategoryEdit({ open, onOpenChange, category }: CategoryEditProps
                       <span>Is Active</span>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <CircleHelp className="w-4 h-4" />
+                          <CircleHelp className="size-4" />
                         </TooltipTrigger>
                         <TooltipContent side="right" align="center" className="text-sm bg-primary">
                           If unchecked, the category will not be displayed, and you cannot add items
@@ -261,7 +261,7 @@ export function CategoryEdit({ open, onOpenChange, category }: CategoryEditProps
             >
               {updateCategoryMutation.isPending || isUploading ? (
                 <>
-                  <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <IconLoader2 className="size-4 mr-2 animate-spin" />
                   Updating...
                 </>
               ) : (

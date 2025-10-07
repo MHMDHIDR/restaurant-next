@@ -674,7 +674,7 @@ export function VendorApplicationForm({
             >
               {createStripeAccountMutation.isPending || getStripeAccountLinkMutation.isPending ? (
                 <>
-                  <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <IconLoader2 className="size-4 mr-2 animate-spin" />
                   Setting up...
                 </>
               ) : isLoadingStripeAccount ? (
@@ -695,7 +695,7 @@ export function VendorApplicationForm({
         <Button type="submit" className="w-full md:w-auto" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+              <IconLoader2 className="size-4 mr-2 animate-spin" />
               Submitting...
             </>
           ) : isEditing ? (
