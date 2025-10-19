@@ -164,12 +164,7 @@ export function AiChatInterface() {
 
   // Create initial session if none exist
   useEffect(() => {
-    if (
-      chatSessions &&
-      chatSessions.length === 0 &&
-      !hasAttemptedInitialSession &&
-      !createSession.isPending
-    ) {
+    if (chatSessions?.length === 0 && !hasAttemptedInitialSession && !createSession.isPending) {
       setHasAttemptedInitialSession(true)
       createSession.mutate({ title: "Restaurant Insights Chat" })
     } else if (chatSessions && chatSessions.length > 0 && !currentSessionId) {

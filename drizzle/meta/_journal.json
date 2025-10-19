@@ -15,6 +15,13 @@
       "when": 1756598195077,
       "tag": "0001_left_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760902422079,
+      "tag": "0002_needy_obadiah_stane",
+      "breakpoints": true
     }
   ]
 }

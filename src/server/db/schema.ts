@@ -41,6 +41,13 @@ export const orderStatusEnum = pgEnum("restaurant_order_status", [
   "CANCELLED",
 ])
 
+export const payoutStatusEnum = pgEnum("restaurant_payout_status", [
+  "PENDING",
+  "PAID",
+  "FAILED",
+  "CANCELED",
+])
+
 export type themeEnumType = (typeof users.theme.enumValues)[number]
 
 export const UserRole = {
@@ -303,6 +310,35 @@ export const rateLimits = createTable("rate_limit", {
 })
 export type RateLimits = typeof rateLimits.$inferSelect
 
+export const payouts = createTable("payout", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  vendorId: varchar("vendor_id", { length: 255 })
+    .notNull()
+    .references(() => vendors.id),
+  stripePayoutId: varchar("stripe_payout_id", { length: 255 }).notNull().unique(),
+  stripeAccountId: varchar("stripe_account_id", { length: 255 }).notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).notNull().default("gbp"),
+  status: payoutStatusEnum("status").notNull(),
+  arrivalDate: timestamp("arrival_date").notNull(),
+  method: varchar("method", { length: 50 }).notNull(), // "standard" or "instant"
+  type: varchar("type", { length: 50 }).notNull(), // "bank_account" or "card"
+  description: text("description"),
+  failureCode: varchar("failure_code", { length: 100 }),
+  failureMessage: text("failure_message"),
+  // Store the full Stripe payout object for reference
+  stripePayoutData: json("stripe_payout_data").$type<Record<string, unknown>>().notNull(),
+  // Store balance transaction details
+  balanceTransactions: json("balance_transactions").$type<unknown[]>(),
+  pdfUrl: varchar("pdf_url", { length: 500 }), // URL to generated PDF statement
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+export type Payouts = typeof payouts.$inferSelect
+
 // Relations
 export const vendorsRelations = relations(vendors, ({ many, one }) => ({
   menuCategories: many(menuCategories),
@@ -353,6 +389,10 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
     fields: [orderItems.menuItemId],
     references: [menuItems.id],
   }),
+}))
+
+export const payoutsRelations = relations(payouts, ({ one }) => ({
+  vendor: one(vendors, { fields: [payouts.vendorId], references: [vendors.id] }),
 }))
 
 export const chatSessions = createTable("chat_session", {

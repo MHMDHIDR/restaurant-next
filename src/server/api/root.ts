@@ -5,6 +5,7 @@ import { menuItemRouter } from "./routers/menuItem"
 import { notificationRouter } from "./routers/notification"
 import { optimizeImageRouter } from "./routers/optimize-image"
 import { orderRouter } from "./routers/order"
+import { payoutRouter } from "./routers/payout"
 import { S3Router } from "./routers/s3"
 import { searchRouter } from "./routers/search"
 import { stripeRouter } from "./routers/stripe"
@@ -30,6 +31,7 @@ export const appRouter = createTRPCRouter({
   search: searchRouter,
   vendorAdmin: vendorAdminRouter,
   aiChat: aiChatRouter,
+  payout: payoutRouter,
 })
 
 // export type definition of API
