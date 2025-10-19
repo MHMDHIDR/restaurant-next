@@ -339,7 +339,7 @@ export const menuCategoryRouter = createTRPCRouter({
         )
         .where(eq(menuCategories.slug, input.categorySlug))
 
-      if (!categories || categories.length === 0) {
+      if (categories?.length === 0) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Category not found" })
       }
 
