@@ -125,31 +125,35 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
   }
 
   return (
-    <div className="relative max-w-xl mx-auto md:mt-20">
+    <div className="relative max-w-2xl mx-auto">
       <form
         onSubmit={handleSearch}
-        className="flex items-center max-w-xl p-1 pl-2 mx-auto bg-accent/100 rounded-full"
+        className="flex items-center max-w-2xl p-1.5 pl-4 mx-auto bg-white/95 dark:bg-black/50 backdrop-blur-md rounded-full shadow-2xl shadow-black/10 border border-white/20 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300"
       >
+        <IconSearch className="size-5 text-muted-foreground mr-2 shrink-0" />
         <input
           type="text"
           placeholder={
             isMobile
-              ? "Search for restaurants, and more..."
+              ? "Search restaurants, dishes..."
               : "Search for dishes, restaurants, cuisines, and more..."
           }
-          className={clsx("grow px-2.5 py-4 outline-0", {
-            "text-sm": isMobile,
-            "text-lg": !isMobile,
-          })}
+          className={clsx(
+            "grow px-2 py-3.5 outline-0 bg-transparent text-foreground placeholder:text-muted-foreground/70",
+            {
+              "text-sm": isMobile,
+              "text-base": !isMobile,
+            },
+          )}
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
         />
         <button
           type="submit"
-          className="flex cursor-pointer items-center px-3 md:px-4 py-4 rounded-full bg-primary hover:bg-primary-dark transition-colors text-white"
+          className="flex cursor-pointer items-center px-5 md:px-6 py-3.5 rounded-full bg-linear-to-r from-primary to-orange-500 hover:from-primary-dark hover:to-orange-600 transition-all duration-300 text-white font-medium shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <IconSearch className="mr-1" size={20} />
-          <span className="hidden sm:inline-flex">Search</span>
+          <span className="hidden sm:inline-flex mr-1.5">Search</span>
+          <IconSearch size={18} />
         </button>
       </form>
 
