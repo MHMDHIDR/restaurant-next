@@ -159,7 +159,7 @@ export function SearchBar({ maxSuggestions = 10 }: SearchBarProps) {
 
       {isLoadingSuggestions ? (
         <Card className="absolute z-10 w-full mt-0.5 border shadow-md overflow-clip">
-          <CardContent className="p-2 py-10 flex justify-center items-center gap-2 md:gap-3 text-lg break-words">
+          <CardContent className="p-2 py-10 flex justify-center items-center gap-2 md:gap-3 text-lg wrap-break-word">
             <IconChefHat className="animate-bounce size-6" size={24} />
             <span>Looking for {searchQuery}</span>
           </CardContent>

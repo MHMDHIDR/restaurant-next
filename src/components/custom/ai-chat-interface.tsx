@@ -382,7 +382,9 @@ export function AiChatInterface() {
                 </div>
               ) : (
                 <>
-                  {messages?.map(msg => <ChatMessage key={msg.id} message={msg} />)}
+                  {messages?.map(msg => (
+                    <ChatMessage key={msg.id} message={msg} />
+                  ))}
 
                   {isLoading && (
                     <div className="flex gap-3 md:gap-4">
@@ -551,7 +553,7 @@ function ChatMessage({ message }: { message: ChatMessages }) {
         >
           {/* Text content */}
           {message.content && (
-            <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed break-words word-wrap text-wrap mb-3">
+            <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed wrap-break-word word-wrap text-wrap mb-3">
               {message.content}
             </p>
           )}

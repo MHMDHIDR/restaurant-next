@@ -44,7 +44,7 @@ const AddToCartButton = dynamic(() => import("./add-to-cart-button"), {
 
 export default function RestaurantMenuItem({ item, vendor }: RestaurantMenuItemProps) {
   const [selectedAddons, setSelectedAddons] = useState<string[]>([])
-  const [isHovered, setIsHovered] = useState(false)
+  const [_, setIsHovered] = useState(false)
 
   return (
     <Dialog>
