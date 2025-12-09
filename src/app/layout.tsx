@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <link href={APP_LOGO} rel="icon" type="image/svg+xml" />
         <script
           defer
-          src="https://analytics.technodevlabs.com/script.js"
+          src="https://analytics.mohammedhaydar.com/script.js"
           data-website-id="fe55d0ec-b756-4bcc-8e05-4490451bec0a"
         ></script>
       </head>
@@ -35,7 +35,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <Nav user={user} key={user?.image} isHidden />
             <ThemeProvider
               attribute="class"
-              defaultTheme={session?.user.theme ?? "light"}
+              defaultTheme={user?.theme ?? "light"}
               disableTransitionOnChange
               enableSystem={false}
             >

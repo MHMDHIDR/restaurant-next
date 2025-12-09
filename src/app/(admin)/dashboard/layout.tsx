@@ -54,7 +54,7 @@ export default async function DashboardLayout({
           },
           {
             title: "Analytics",
-            url: "https://analytics.technodevlabs.com/share/E060vsZebCFZhhy7/restaurant-app.technodevlabs.com",
+            url: "https://analytics.mohammedhaydar.com/share/fOjBdBEWUaMCrVDI/restaurant.mohammedhaydar.com",
             icon: <LineChart className="size-4" />,
           },
           {

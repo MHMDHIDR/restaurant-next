@@ -54,7 +54,7 @@ export function OrderInvoiceEmail({ order }: OrderInvoiceEmailProps) {
             <Row>
               <Column>
                 <Img
-                  src={"https://restaurant-app.technodevlabs.com/logo.png"}
+                  src={"https://restaurant.mohammedhaydar.com/logo.png"}
                   width="79"
                   height="92"
                   alt="Restaurant Logo"
@@ -140,7 +140,7 @@ export function OrderInvoiceEmail({ order }: OrderInvoiceEmailProps) {
             hesitate to contact our customer support.
             <Link
               className="mx-2"
-              href={`mailto:support@technodevlabs.com?subject=Order%20${order.id}%20Support%20Request&body=Hello,%20I%20have%20some%20questions%20about%20my%20order%20${order.id}%20.`}
+              href={`mailto:support@mohammedhaydar.com?subject=Order%20${order.id}%20Support%20Request&body=Hello,%20I%20have%20some%20questions%20about%20my%20order%20${order.id}%20.`}
             >
               By Clicking Here
             </Link>

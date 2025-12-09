@@ -17,8 +17,7 @@ type VendorWithMenuItems = RouterOutputs["vendor"]["getFeatured"]["items"][numbe
 
 type MenuItem = RouterOutputs["menuItem"]["getMenuItemsByVendorId"]["items"][number]
 
-export const dynamic = "force-static"
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 export default async function Home() {
   const { items: vendors } = await api.vendor.getFeatured({
@@ -56,7 +55,7 @@ export default async function Home() {
           placeholder="blur"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/70 to-transparent" />
         <div className="container relative z-10 px-4 mx-auto text-center">
           <h1 className="mt-14 mb-10 text-2xl md:text-3xl lg:text-5xl select-none max-md:text-balance text-pretty font-bold text-white leading-loose">
             Discover Delicious Restaurants, takeaways, Near You.
